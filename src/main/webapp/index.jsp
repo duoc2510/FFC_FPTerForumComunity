@@ -7,8 +7,10 @@
         <div class="body-wrapper">
             <%@ include file="include/navbar_guest.jsp" %>
             <div class="container-fluid d-flex">
-                <!--                <div >
+                
+                <!--          eee      <div >
                 <%@ include file="user/newsfeed.jsp" %>
+                
             </div>-->
             </div>
         </div>
