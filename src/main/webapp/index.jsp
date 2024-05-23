@@ -10,8 +10,11 @@
                 
                 <!--          eee      <div >
                 <%@ include file="user/newsfeed.jsp" %>
+                               
+
                 
             </div>-->
+                 <%--<%@ include file="rank/index.jsp" %>--%>
             </div>
         </div>
     </div>
