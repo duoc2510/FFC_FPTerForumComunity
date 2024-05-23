@@ -21,12 +21,13 @@ public class User {
     private Date userCreateDate;
     private String userSex;
     private boolean userActiveStatus;
+    private String usernameVip;
 
     public User() {
     }
 
     // Constructor
-    public User(int userId, String userEmail, String userPassword, int userRole, String username, String userFullName, double userWallet, String userAvatar, String userStory, int userRank, int userScore, Date userCreateDate, String userSex, boolean userActiveStatus) {
+    public User(int userId, String userEmail, String userPassword, int userRole, String username, String userFullName, double userWallet, String userAvatar, String userStory, int userRank, int userScore, Date userCreateDate, String userSex, boolean userActiveStatus, String usernameVip) {
         this.userId = userId;
         this.userEmail = userEmail;
         this.userPassword = userPassword;
@@ -41,6 +42,7 @@ public class User {
         this.userCreateDate = userCreateDate;
         this.userSex = userSex;
         this.userActiveStatus = userActiveStatus;
+        this.usernameVip = usernameVip;
     }
 
     public User(String userEmail, String userPassword, String username) {
@@ -49,7 +51,7 @@ public class User {
         this.username = username;
     }
 
-    public User(String userEmail, String userPassword, int userRole, String username, String userFullName, double userWallet, String userAvatar, String userStory, int userRank, int userScore, Date userCreateDate, String userSex, boolean userActiveStatus) {
+    public User(String userEmail, String userPassword, int userRole, String username, String userFullName, double userWallet, String userAvatar, String userStory, int userRank, int userScore, Date userCreateDate, String userSex, boolean userActiveStatus, String usernameVip) {
         this.userEmail = userEmail;
         this.userPassword = userPassword;
         this.userRole = userRole;
@@ -63,10 +65,18 @@ public class User {
         this.userCreateDate = userCreateDate;
         this.userSex = userSex;
         this.userActiveStatus = userActiveStatus;
+        this.usernameVip = usernameVip;
     }
-    
+
+    public String getUsernameVip() {
+        return usernameVip;
+    }
 
     // Getters and Setters
+    public void setUsernameVip(String usernameVip) {
+        this.usernameVip = usernameVip;
+    }
+
     public int getUserId() {
         return userId;
     }
@@ -179,25 +189,25 @@ public class User {
         this.userActiveStatus = userActiveStatus;
     }
 
- public static User login(String identify, String inputMatKhau) {
-    User user = User_DB.getUserByEmailorUsername(identify);
-    if (user != null) {
-        String storedPassword = user.getUserPassword();
-        // Kiểm tra nếu mật khẩu được lưu trữ là mật khẩu đã mã hóa bằng BCrypt
-        if (storedPassword.startsWith("$2a$") || storedPassword.startsWith("$2b$") || storedPassword.startsWith("$2y$")) {
-            // Kiểm tra mật khẩu đã mã hóa
-            if (BCrypt.checkpw(inputMatKhau, storedPassword)) {
-                return user;
-            }
-        } else {
-            // Kiểm tra mật khẩu thô cho các tài khoản ngoại lệ
-            if (storedPassword.equals(inputMatKhau)) {
-                // Trả về người dùng nếu mật khẩu khớp
-                return user;
+    public static User login(String identify, String inputMatKhau) {
+        User user = User_DB.getUserByEmailorUsername(identify);
+        if (user != null) {
+            String storedPassword = user.getUserPassword();
+            // Kiểm tra nếu mật khẩu được lưu trữ là mật khẩu đã mã hóa bằng BCrypt
+            if (storedPassword.startsWith("$2a$") || storedPassword.startsWith("$2b$") || storedPassword.startsWith("$2y$")) {
+                // Kiểm tra mật khẩu đã mã hóa
+                if (BCrypt.checkpw(inputMatKhau, storedPassword)) {
+                    return user;
+                }
+            } else {
+                // Kiểm tra mật khẩu thô cho các tài khoản ngoại lệ
+                if (storedPassword.equals(inputMatKhau)) {
+                    // Trả về người dùng nếu mật khẩu khớp
+                    return user;
+                }
             }
         }
+        return null;
     }
-    return null;
-}
 
 }
