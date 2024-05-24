@@ -19,7 +19,7 @@ public class Post {
     private String reason;
 
     // Constructor
-    public Post(int postId, int userId, int groupId, int topicId, String content, Timestamp createDate, String image, String status, String postStatus, String reason) {
+    public Post(int postId, String content, Timestamp createDate, String image, String status) {
         this.postId = postId;
         this.userId = userId;
         this.groupId = groupId;
