@@ -1,7 +1,6 @@
 package controller;
 
 import jakarta.servlet.annotation.MultipartConfig;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 import java.io.IOException;
@@ -18,12 +17,12 @@ import model.DAO.Post_DB;
 import model.DAO.User_DB;
 import model.Post;
 import model.User;
+import static org.apache.http.client.methods.RequestBuilder.post;
 
 @MultipartConfig(
         maxFileSize = 1024 * 1024 * 10 // 10 MB
 )
-@WebServlet(name = "AddPost", urlPatterns = {"/AddPost"})
-public class AddPost extends HttpServlet {
+public class Post_addpost extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -39,12 +38,6 @@ public class AddPost extends HttpServlet {
             out.println("</body>");
             out.println("</html>");
         }
-    }
-
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        request.getRequestDispatcher("/user/profile.jsp").forward(request, response);
     }
 
     @Override
@@ -81,7 +74,7 @@ public class AddPost extends HttpServlet {
         int topicId = getTopicId(postTopic);
         int groupId = getGroupId(postGroup);
 
-        String avatar = null; 
+        String avatar = null;
         Part filePart = request.getPart("postImage");
         if (filePart != null && filePart.getSize() > 0) {
             String applicationPath = request.getServletContext().getRealPath("");

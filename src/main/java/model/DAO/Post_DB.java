@@ -22,9 +22,7 @@ public class Post_DB {
     public static void addPost(Post post) throws SQLException {
         String insertPostQuery = "INSERT INTO Post (User_id, Group_id, Topic_id, Content, Status, postStatus, Reason) VALUES (?, ?, ?, ?, ?, ?, ?)";
         String insertUploadQuery = "INSERT INTO Upload (Post_id, UploadPath) VALUES (?, ?)";
-
         try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement pstmtPost = con.prepareStatement(insertPostQuery, PreparedStatement.RETURN_GENERATED_KEYS); PreparedStatement pstmtUpload = con.prepareStatement(insertUploadQuery)) {
-
             // Insert post details
             pstmtPost.setInt(1, post.getUserId());
             pstmtPost.setInt(2, post.getGroupId());
@@ -43,11 +41,10 @@ public class Post_DB {
                     postId = generatedKeys.getInt(1);
                 }
             }
-
-            if (postId != -1 && post.getImage() != null) {
+            if (postId != -1 && post.getUpload() != null) {
                 // Insert image into Upload table
                 pstmtUpload.setInt(1, postId);
-                pstmtUpload.setString(2, post.getImage());
+                pstmtUpload.setString(2, post.getUpload());
                 pstmtUpload.executeUpdate();
             }
         } catch (SQLException ex) {
@@ -65,7 +62,6 @@ public class Post_DB {
                 + "WHERE u.User_id = ?";
 
         try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement pstmtUser = con.prepareStatement(selectUserQuery)) {
-
             // Fetch userId based on username
             pstmtUser.setString(1, username);
             int userId = -1;
@@ -74,7 +70,6 @@ public class Post_DB {
                     userId = rsUser.getInt("User_id");
                 }
             }
-
             if (userId != -1) {
                 try (PreparedStatement pstmtPost = con.prepareStatement(selectPostQuery)) {
                     // Fetch posts based on userId
@@ -88,17 +83,8 @@ public class Post_DB {
                             java.sql.Timestamp createDate = rsPost.getTimestamp("createDate");
 
                             // Create a new Post object
-                            Post post = new Post(userId, content, createDate, uploadPath, status);
+                            Post post = new Post(postId, userId, postId, postId, content, createDate, uploadPath, status, status, status);
                             posts.add(post);
-
-                            // Print the required fields
-                            System.out.println("PostID: " + postId);
-                            System.out.println("UserID: " + userId);
-                            System.out.println("Content: " + content);
-                            System.out.println("Status: " + status);
-                            System.out.println("UploadPath: " + uploadPath);
-                            System.out.println("CreateDate: " + createDate);
-                            System.out.println("-----------");
                         }
                     }
                 }
