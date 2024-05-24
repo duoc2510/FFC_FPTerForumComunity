@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="5.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd">
+    <servlet>
+        <servlet-name>User_viewpPost</servlet-name>
+        <servlet-class>controller.User_viewpPost</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>User_Rank</servlet-name>
         <url-pattern>/userrank</url-pattern>
@@ -11,6 +15,10 @@
     <servlet-mapping>
         <servlet-name>TopVip</servlet-name>
         <url-pattern>/topvip</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>User_viewpPost</servlet-name>
+        <url-pattern>/post</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

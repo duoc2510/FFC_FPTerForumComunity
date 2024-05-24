@@ -109,7 +109,7 @@ public class User_login extends HttpServlet {
                     message = "Your account has been banned.";
                     request.setAttribute("message", message);
                     request.getRequestDispatcher("/auth/login.jsp").forward(request, response);
-                    return; 
+                    return;
                 case 1:
                     role = "USER";
                     message = "Welcome, User!";

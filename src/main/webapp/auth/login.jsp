@@ -31,19 +31,20 @@
                                             <label for="password" class="form-label">Password</label>
                                             <input type="password" id="password" name="password" class="form-control" placeholder="Enter password" value="${cookie.password.value}">
                                         </div>
-                                        
+
+
                                         <c:if test="${not empty message}">
                                             <div class="alert alert-danger">${message}</div>
                                         </c:if>
-                                        
+
                                         <div class="d-flex align-items-center justify-content-between mb-4">
                                             <div class="form-check">
                                                 <input class="form-check-input primary" type="checkbox" value="true" id="flexCheckChecked" name="rememberMe" <c:if test="${cookie.rememberMe.value eq 'true'}">checked</c:if>>
-                                                <label class="form-check-label text-dark" for="flexCheckChecked">
-                                                    Remember me
-                                                </label>
-                                            </div>
-                                            <a class="text-primary fw-bold" href="${pageContext.request.contextPath}/lostaccount">Forgot Password ?</a>
+                                                    <label class="form-check-label text-dark" for="flexCheckChecked">
+                                                        Remember me
+                                                    </label>
+                                                </div>
+                                                <a class="text-primary fw-bold" href="${pageContext.request.contextPath}/lostaccount">Forgot Password ?</a>
                                         </div>
                                         <input class="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2" type="submit" value="Sign in">
                                         <%@ include file="googlelogin.jsp" %>
