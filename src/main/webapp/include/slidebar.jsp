@@ -21,6 +21,15 @@
                         <span class="hide-menu">News Feed</span>
                     </a>
                 </li>
+                
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="${pageContext.request.contextPath}/viewPost" aria-expanded="false">
+                        <span>
+                            <i class="ti ti-article"></i>
+                        </span>
+                        <span class="hide-menu">View Post</span>
+                    </a>
+                </li>
 
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="${pageContext.request.contextPath}/group" aria-expanded="false">

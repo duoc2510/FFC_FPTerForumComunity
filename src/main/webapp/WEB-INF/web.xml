@@ -4,6 +4,14 @@
         <servlet-name>User_viewpost</servlet-name>
         <servlet-class>controller.User_viewpost</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>viewPost</servlet-name>
+        <servlet-class>controller.viewPost</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AddPost</servlet-name>
+        <servlet-class>controller.AddPost</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>User_Rank</servlet-name>
         <url-pattern>/userrank</url-pattern>
@@ -19,6 +27,14 @@
     <servlet-mapping>
         <servlet-name>User_viewpost</servlet-name>
         <url-pattern>/post</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>viewPost</servlet-name>
+        <url-pattern>/viewPost</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddPost</servlet-name>
+        <url-pattern>/AddPost</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

@@ -18,21 +18,27 @@ public class Post {
     private String postStatus;
     private String reason;
 
-    // Constructor
-    public Post(int postId, int userId, int groupId, int topicId, String content, Timestamp createDate, String image, String status, String postStatus, String reason) {
-        this.postId = postId;
-        this.userId = userId;
-        this.groupId = groupId;
+    public Post() {
+    }
+
+    public Post(int topicId, String content, Timestamp createDate, String image, String status) {
         this.topicId = topicId;
         this.content = content;
         this.createDate = createDate;
         this.image = image;
         this.status = status;
-        this.postStatus = postStatus;
-        this.reason = reason;
     }
 
-    // Getters and Setters
+    
+    public Post(int userId, int groupId, int topicId, String content, String image, String status) {
+        this.userId = userId;
+        this.groupId = groupId;
+        this.topicId = topicId;
+        this.content = content;
+        this.image = image;
+        this.status = status;
+    }
+
     public int getPostId() {
         return postId;
     }
