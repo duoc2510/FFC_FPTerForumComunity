@@ -73,6 +73,10 @@
         <servlet-name>TopVip</servlet-name>
         <servlet-class>controller.TopVip</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>User_MyRank</servlet-name>
+        <servlet-class>controller.User_MyRank</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>User_login</servlet-name>
         <url-pattern>/login</url-pattern>
