@@ -1,43 +1,84 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
+ */
 package controller;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import java.io.File;
 import model.DAO.Post_DB;
 import model.Post;
 import model.User;
 
+/**
+ *
+ * @author ThanhDuoc
+ */
 @MultipartConfig(
         maxFileSize = 1024 * 1024 * 10 // 10 MB
 )
 public class Post_addpost extends HttpServlet {
 
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet AddPost</title>");
+            out.println("<title>Servlet Post_addpost</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet AddPost at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet Post_addpost at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
     }
 
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -50,15 +91,9 @@ public class Post_addpost extends HttpServlet {
             return;
         }
 
-        int userId = user.getUserId(); // Sử dụng user.getId() thay vì User_DB.getUserIdByUsername(username)
-        String status = request.getParameter("status");
+        int userId = user.getUserId();
         String postStatus = request.getParameter("postStatus");
-        String postTopic = request.getParameter("postTopic");
-        String postGroup = request.getParameter("postGroup");
         String postContent = request.getParameter("postContent");
-
-        int topicId = getTopicId(postTopic);
-        int groupId = getGroupId(postGroup);
 
         String uploadPath = null;
         Part filePart = request.getPart("postImage");
@@ -77,7 +112,7 @@ public class Post_addpost extends HttpServlet {
         }
 
         // Tạo bài đăng mới
-        Post post = new Post(userId, groupId, topicId, postContent,status, postStatus, uploadPath);
+        Post post = new Post(userId, postContent, "Active", postStatus, uploadPath);
 
         try {
             Post_DB.addPost(post);
@@ -85,34 +120,6 @@ public class Post_addpost extends HttpServlet {
         } catch (SQLException ex) {
             Logger.getLogger(Post_addpost.class.getName()).log(Level.SEVERE, null, ex);
             response.sendRedirect(request.getContextPath() + "/user/profile.jsp?errorMessage=Error adding post");
-        }
-    }
-
-    private int getTopicId(String topic) {
-        switch (topic) {
-            case "Technology":
-                return 1;
-            case "Economics":
-                return 2;
-            case "Politics":
-                return 3;
-            case "Language":
-                return 4;
-            default:
-                return 0;
-        }
-    }
-
-    private int getGroupId(String group) {
-        switch (group) {
-            case "IT":
-                return 1;
-            case "Business":
-                return 2;
-            case "Language":
-                return 3;
-            default:
-                return 0;
         }
     }
 
@@ -127,9 +134,14 @@ public class Post_addpost extends HttpServlet {
         return "";
     }
 
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
     @Override
     public String getServletInfo() {
-        return "AddPostServlet handles post creation";
-    }
+        return "Short description";
+    }// </editor-fold>
 
 }

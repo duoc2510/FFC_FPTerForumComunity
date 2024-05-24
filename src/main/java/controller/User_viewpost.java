@@ -83,7 +83,7 @@ public class User_viewpost extends HttpServlet {
 
         request.setAttribute("userInfo", userInfo);
         request.setAttribute("posts", posts);
-        request.getRequestDispatcher("/user/viewPost.jsp").forward(request, response);
+        request.getRequestDispatcher("/user/newsfeed.jsp").forward(request, response);
     }
 
     @Override

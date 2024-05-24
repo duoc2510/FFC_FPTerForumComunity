@@ -6,16 +6,7 @@
         <%@ include file="include/slidebar_guest.jsp" %>
         <div class="body-wrapper">
             <%@ include file="include/navbar_guest.jsp" %>
-            <div class="container-fluid d-flex">
-                
-                <!--          eee      <div >
-                <%@ include file="user/newsfeed.jsp" %>
-                               
-
-                
-            </div>-->
-                 <%--<%@ include file="rank/index.jsp" %>--%>
-            </div>
+            
         </div>
     </div>
 </body>

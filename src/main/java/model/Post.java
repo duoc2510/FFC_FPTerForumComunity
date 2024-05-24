@@ -20,8 +20,15 @@ public class Post {
     private String uploadPath;
 
     // Constructors
-    
-    public Post(int postId, int userId, int groupId, String content, String status,String postStatus, String uploadPath) {
+    public Post(int userId, String content, String status, String postStatus, String uploadPath) {
+        this.userId = userId;
+        this.content = content;
+        this.status = status;
+        this.postStatus = postStatus;
+        this.uploadPath = uploadPath;
+    }
+
+    public Post(int postId, int userId, int groupId, String content, String status, String postStatus, String uploadPath) {
         this.postId = postId;
         this.userId = userId;
         this.groupId = groupId;

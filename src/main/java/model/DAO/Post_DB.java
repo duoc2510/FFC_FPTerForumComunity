@@ -20,19 +20,17 @@ public class Post_DB {
     }
 
     public static void addPost(Post post) throws SQLException {
-        String insertPostQuery = "INSERT INTO Post (User_id, Group_id, Topic_id, Content, Status, postStatus, Reason) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        String insertUploadQuery = "INSERT INTO Upload (Post_id, UploadPath, Event_id, Shop_id, Comment_id, Product_id) VALUES (?, ?, ?, ?, ?, ?)";
+        String insertPostQuery = "INSERT INTO Post (User_id, Content, Status, postStatus, Reason) VALUES (?, ?, ?, ?, ?)";
+        String insertUploadQuery = "INSERT INTO Upload (Post_id, UploadPath) VALUES (?, ?)";
 
         try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement pstmtPost = con.prepareStatement(insertPostQuery, PreparedStatement.RETURN_GENERATED_KEYS); PreparedStatement pstmtUpload = con.prepareStatement(insertUploadQuery)) {
 
             // Chèn chi tiết bài đăng
             pstmtPost.setInt(1, post.getUserId());
-            pstmtPost.setInt(2, post.getGroupId());
-            pstmtPost.setInt(3, post.getTopicId());
-            pstmtPost.setString(4, post.getContent());
-            pstmtPost.setString(5, post.getStatus());
-            pstmtPost.setString(6, "Pending"); // Thiết lập giá trị mặc định cho postStatus
-            pstmtPost.setString(7, post.getReason());
+            pstmtPost.setString(2, post.getContent());
+            pstmtPost.setString(3, "Active");
+            pstmtPost.setString(4, post.getPostStatus());
+            pstmtPost.setString(5, post.getReason());
 
             pstmtPost.executeUpdate();
 
@@ -48,30 +46,12 @@ public class Post_DB {
             if (postId != -1 && post.getUploadPath() != null) {
                 pstmtUpload.setInt(1, postId);
                 pstmtUpload.setString(2, post.getUploadPath());
-                // Set các giá trị mặc định cho các cột khác
-                pstmtUpload.setNull(3, java.sql.Types.INTEGER);
-                pstmtUpload.setNull(4, java.sql.Types.INTEGER);
-                pstmtUpload.setNull(5, java.sql.Types.INTEGER);
-                pstmtUpload.setNull(6, java.sql.Types.INTEGER);
                 pstmtUpload.executeUpdate();
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
             throw ex;
         }
-    }
-
-    // Phương thức để lấy Post_id mới được tạo ra
-    private static int getLastInsertedPostId(Connection con) throws SQLException {
-        String query = "SELECT LAST_INSERT_ID() AS PostId";
-        try (PreparedStatement pstmt = con.prepareStatement(query)) {
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("PostId");
-                }
-            }
-        }
-        return -1;
     }
 
     public static List<Post> getPostsByUsername(String username) {
