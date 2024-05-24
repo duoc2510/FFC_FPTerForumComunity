@@ -289,4 +289,23 @@ public class User_DB implements DBinfo {
 
         return postCount;
     }
+    
+    public static int getUserIdByUsername(String username) throws SQLException {
+        int userId = -1;
+        String query = "SELECT User_id FROM Users WHERE Username = ?";
+        
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass);
+             PreparedStatement ps = con.prepareStatement(query)) {
+            ps.setString(1, username);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    userId = rs.getInt("User_id");
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(User_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return userId;
+    }
 }

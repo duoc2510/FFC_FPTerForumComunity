@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="5.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd">
-    <servlet>
-        <servlet-name>User_viewpost</servlet-name>
-        <servlet-class>controller.User_viewpost</servlet-class>
-    </servlet>
-    <session-config>
+   <session-config>
         <session-timeout>
             30
         </session-timeout>
-    </session-config>
+    </session-config>  
+  <servlet>
+        <servlet-name>User_viewpost</servlet-name>
+        <servlet-class>controller.User_viewpost</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Post_addpost</servlet-name>
+        <servlet-class>controller.Post_addpost</servlet-class>
+    </servlet>
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>/WEB-INF/applicationContext.xml</param-value>
@@ -125,7 +129,7 @@
         <servlet-name>LoginGoogleHandler</servlet-name>
         <url-pattern>/logingooglehandler</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
+  <servlet-mapping>
         <servlet-name>User_Rank</servlet-name>
         <url-pattern>/userrank</url-pattern>
     </servlet-mapping>
@@ -136,6 +140,10 @@
     <servlet-mapping>
         <servlet-name>TopVip</servlet-name>
         <url-pattern>/topvip</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AddPost</servlet-name>
+        <url-pattern>/AddPost</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>User_viewpost</servlet-name>
