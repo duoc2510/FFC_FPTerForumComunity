@@ -14,10 +14,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
 import model.DAO.Post_DB;
-import model.DAO.User_DB;
 import model.Post;
 import model.User;
-import static org.apache.http.client.methods.RequestBuilder.post;
 
 @MultipartConfig(
         maxFileSize = 1024 * 1024 * 10 // 10 MB
@@ -52,20 +50,8 @@ public class Post_addpost extends HttpServlet {
             return;
         }
 
-        String username = user.getUsername();
-        int userId;
-        try {
-            userId = User_DB.getUserIdByUsername(username);
-            if (userId == -1) {
-                response.sendRedirect(request.getContextPath() + "/auth/login.jsp?errorMessage=User not found");
-                return;
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(AddPost.class.getName()).log(Level.SEVERE, null, ex);
-            response.sendRedirect(request.getContextPath() + "/user/profile.jsp?errorMessage=Database error");
-            return;
-        }
-
+        int userId = user.getUserId(); // Sử dụng user.getId() thay vì User_DB.getUserIdByUsername(username)
+        String status = request.getParameter("status");
         String postStatus = request.getParameter("postStatus");
         String postTopic = request.getParameter("postTopic");
         String postGroup = request.getParameter("postGroup");
@@ -74,30 +60,30 @@ public class Post_addpost extends HttpServlet {
         int topicId = getTopicId(postTopic);
         int groupId = getGroupId(postGroup);
 
-        String avatar = null;
+        String uploadPath = null;
         Part filePart = request.getPart("postImage");
         if (filePart != null && filePart.getSize() > 0) {
             String applicationPath = request.getServletContext().getRealPath("");
             String uploadDirName = "imPost";
             String uploadFilePath = applicationPath + File.separator + uploadDirName;
-
             File uploadDir = new File(uploadFilePath);
             if (!uploadDir.exists()) {
                 uploadDir.mkdirs();
             }
-
             String fileName = getFileName(filePart);
             filePart.write(uploadFilePath + File.separator + fileName);
 
-            avatar = uploadDirName + "/" + fileName;
+            uploadPath = uploadDirName + "/" + fileName;
         }
 
-        Post post = new Post(userId, groupId, topicId, postContent, avatar, postStatus);
+        // Tạo bài đăng mới
+        Post post = new Post(userId, groupId, topicId, postContent,status, postStatus, uploadPath);
+
         try {
             Post_DB.addPost(post);
             response.sendRedirect(request.getContextPath() + "/user/profile.jsp?successMessage=Post added successfully!");
         } catch (SQLException ex) {
-            Logger.getLogger(AddPost.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Post_addpost.class.getName()).log(Level.SEVERE, null, ex);
             response.sendRedirect(request.getContextPath() + "/user/profile.jsp?errorMessage=Error adding post");
         }
     }
@@ -130,19 +116,20 @@ public class Post_addpost extends HttpServlet {
         }
     }
 
+    private String getFileName(Part part) {
+        String contentDisposition = part.getHeader("content-disposition");
+        String[] items = contentDisposition.split(";");
+        for (String item : items) {
+            if (item.trim().startsWith("filename")) {
+                return item.substring(item.indexOf("=") + 2, item.length() - 1);
+            }
+        }
+        return "";
+    }
+
     @Override
     public String getServletInfo() {
         return "AddPostServlet handles post creation";
     }
 
-    private String getFileName(Part part) {
-        String contentDisposition = part.getHeader("content-disposition");
-        String[] tokens = contentDisposition.split(";");
-        for (String token : tokens) {
-            if (token.trim().startsWith("filename")) {
-                return token.substring(token.indexOf('=') + 2, token.length() - 1);
-            }
-        }
-        return "";
-    }
 }

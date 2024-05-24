@@ -142,8 +142,8 @@
         <url-pattern>/topvip</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>AddPost</servlet-name>
-        <url-pattern>/AddPost</url-pattern>
+        <servlet-name>Post_addpost</servlet-name>
+        <url-pattern>/addpost</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>User_viewpost</servlet-name>

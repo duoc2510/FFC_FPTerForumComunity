@@ -58,7 +58,7 @@
                                 }
                             </style>
 
-                            <form id="postForm" action="AddPost" method="post" enctype="multipart/form-data" >
+                            <form id="postForm" action="addpost" method="post" enctype="multipart/form-data" >
                                 <div class="form-group">
                                     <label for="postStatus">Status</label>
                                     <select class="form-control" id="postStatus" name="postStatus">

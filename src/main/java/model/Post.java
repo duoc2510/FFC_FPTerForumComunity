@@ -14,47 +14,49 @@ public class Post {
     private int topicId;
     private String content;
     private Timestamp createDate;
-    private String upload;
     private String status;
     private String postStatus;
     private String reason;
+    private String uploadPath;
 
-    public Post() {
+    // Constructors
+    
+    public Post(int postId, int userId, int groupId, String content, String status,String postStatus, String uploadPath) {
+        this.postId = postId;
+        this.userId = userId;
+        this.groupId = groupId;
+        this.content = content;
+        this.status = status;
+        this.postStatus = postStatus;
+        this.uploadPath = uploadPath;
     }
 
-    public Post(int postId, int userId, int groupId, int topicId, String content, Timestamp createDate, String upload, String status, String postStatus, String reason) {
+    public Post(int userId, int groupId, int topicId, String content, Timestamp createDate, String status, String postStatus, String reason, String uploadPath) {
+        this.userId = userId;
+        this.groupId = groupId;
+        this.topicId = topicId;
+        this.content = content;
+        this.createDate = createDate;
+        this.status = status;
+        this.postStatus = postStatus;
+        this.reason = reason;
+        this.uploadPath = uploadPath;
+    }
+
+    public Post(int postId, int userId, int groupId, int topicId, String content, Timestamp createDate, String status, String postStatus, String reason, String uploadPath) {
         this.postId = postId;
         this.userId = userId;
         this.groupId = groupId;
         this.topicId = topicId;
         this.content = content;
         this.createDate = createDate;
-        this.upload = upload;
         this.status = status;
         this.postStatus = postStatus;
         this.reason = reason;
+        this.uploadPath = uploadPath;
     }
 
-    public Post(int userId, int groupId, int topicId, String content, Timestamp createDate, String upload, String status, String postStatus, String reason) {
-        this.userId = userId;
-        this.groupId = groupId;
-        this.topicId = topicId;
-        this.content = content;
-        this.createDate = createDate;
-        this.upload = upload;
-        this.status = status;
-        this.postStatus = postStatus;
-        this.reason = reason;
-    }
-
-    public String getUpload() {
-        return upload;
-    }
-
-    public void setUpload(String upload) {
-        this.upload = upload;
-    }
-
+    // Getters and Setters
     public int getPostId() {
         return postId;
     }
@@ -125,5 +127,13 @@ public class Post {
 
     public void setReason(String reason) {
         this.reason = reason;
+    }
+
+    public String getUploadPath() {
+        return uploadPath;
+    }
+
+    public void setUploadPath(String uploadPath) {
+        this.uploadPath = uploadPath;
     }
 }
