@@ -10,7 +10,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.util.List;
+import model.DAO.Post_DB;
 import model.DAO.User_DB;
+import model.Post;
 import model.User;
 
 /**
@@ -55,17 +59,37 @@ public class User_profile extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-      protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        User user = (User) request.getSession().getAttribute("USER");
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("USER");
+
+        if (user == null) {
+            response.sendRedirect(request.getContextPath() + "/auth/login.jsp?errorMessage=You must be logged in to view posts");
+            return;
+        }
+
         String userEmail = user.getUserEmail();
         User userInfo = User_DB.getUserByEmailorUsername(userEmail);
+
+        if (userInfo == null) {
+            response.sendRedirect(request.getContextPath() + "/auth/login.jsp?errorMessage=User not found");
+            return;
+        }
+
+        // Cập nhật điểm số và đếm số bài đăng của người dùng
         User_DB.updateScore(userEmail);
-        int postCount = User_DB.countPost(userEmail); 
-        // Đặt danh sách người dùng vào thuộc tính của request
-        request.getSession().setAttribute("postCount", postCount);
+        int postCount = User_DB.countPost(userEmail);
+
+        // Thiết lập các thuộc tính cho session và request
+        session.setAttribute("postCount", postCount);
         request.setAttribute("userInfo", userInfo);
-        // Chuyển hướng sang trang jsp để hiển thị thông tin người dùng
+
+        // Lấy bài đăng của người dùng từ cơ sở dữ liệu
+        String username = user.getUsername();
+        List<Post> posts = Post_DB.getPostsByUsername(username);
+        request.setAttribute("posts", posts);
+        // Chuyển tiếp yêu cầu tới trang profile.jsp
         request.getRequestDispatcher("/user/profile.jsp").forward(request, response);
     }
 

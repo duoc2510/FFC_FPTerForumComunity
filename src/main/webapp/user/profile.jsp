@@ -58,30 +58,13 @@
                                 }
                             </style>
 
-                            <form id="postForm" action="AddPost" method="post" enctype="multipart/form-data" >
+                            <form id="postForm" action="addpost" method="post" enctype="multipart/form-data">
                                 <div class="form-group">
                                     <label for="postStatus">Status</label>
                                     <select class="form-control" id="postStatus" name="postStatus">
                                         <option value="Public">Public</option>
                                         <option value="Friends">Friends</option>
                                         <option value="Only me">Only me</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="postTopic">Topic</label>
-                                    <select class="form-control" id="postTopic" name="postTopic">
-                                        <option value="Technology">Technology</option>
-                                        <option value="Economics">Economics</option>
-                                        <option value="Politics">Politics</option>
-                                        <option value="Language">Language</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="postGroup">Group</label>
-                                    <select class="form-control" id="postGroup" name="postGroup">
-                                        <option value="IT">IT</option>
-                                        <option value="Business">Business</option>
-                                        <option value="Language">Language</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
@@ -94,10 +77,54 @@
                                 </div>
                                 <button type="submit" class="btn btn-primary">Add Post</button>
                             </form>
+                            <c:forEach var="post" items="${posts}">
+                                <div class="col-lg-12 ">
+                                    <div class="card w-100">
+                                        <div class="card-body p-4">
+                                            <div class="pb-3 d-inline">
+                                                <a class="row nav-icon-hover" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <div class="col-1 text-center mt-2">
+                                                        <img class="rounded-circle d-inline mr-3"  alt="" width="32" src="${pageContext.request.contextPath}/${userInfo.userAvatar}" class="avatar">>
+                                                    </div>
+                                                    <div class="col">
+                                                        <h6 class="card-title fw-semibold mb-4 d-inline">${userInfo.userFullName}</h6>
+                                                        <p class="s-4"> ${post.createDate}</p>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="mt-3">
+                                                <p>${post.content}</p>
+                                                <c:if test="${not empty post.uploadPath}">
+                                                    <img src="${pageContext.request.contextPath}/${post.uploadPath}" alt="Post Image" class="post-image">
+                                                </c:if>
+                                            </div>
 
-                            <div class="row">
-                                <%@ include file="newsfeed.jsp" %>
-                            </div>
+                                            <div class="">
+                                                <div class="row p-3 d-flex justify-content-center text-center">
+
+                                                    <a class="col nav-link nav-icon-hover" href="javascript:void(0)">
+                                                        <span><i class="ti ti-heart"></i></span>
+                                                        <span class="hide-menu">Like</span>
+                                                    </a>
+
+                                                    <a class="col nav-link nav-icon-hover" >
+                                                        <span><i class="ti ti-message-plus"></i></span>
+                                                        <span class="hide-menu">Comment</span>
+                                                    </a>
+
+                                                    <a class="col nav-link nav-icon-hover" href="javascript:void(0)">
+                                                        <span><i class="ti ti-share"></i></span>
+                                                        <span class="hide-menu">Share</span>
+                                                    </a>
+                                                </div>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" placeholder="Write a comment" >
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </c:forEach> 
                         </div>
                     </div>
                 </div>

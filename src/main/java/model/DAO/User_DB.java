@@ -227,7 +227,7 @@ public class User_DB implements DBinfo {
     public static void updateScore(String email) {
         String getUserQuery = "SELECT User_id FROM Users WHERE User_email = ?";
         String countCommentsQuery = "SELECT COUNT(*) FROM Comment WHERE User_id = ?";
-        String countPostsQuery = "SELECT COUNT(*) FROM Post WHERE User_id = ? AND postStatus = 'Approved'";
+        String countPostsQuery = "SELECT COUNT(*) FROM Post WHERE User_id = ? AND postStatus = 'Active'";
         String updateScoreQuery = "UPDATE Users SET User_score = ? WHERE User_id = ?";
 
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement getUserStmt = con.prepareStatement(getUserQuery); PreparedStatement countCommentsStmt = con.prepareStatement(countCommentsQuery); PreparedStatement countPostsStmt = con.prepareStatement(countPostsQuery); PreparedStatement updateScoreStmt = con.prepareStatement(updateScoreQuery)) {
@@ -273,8 +273,7 @@ public class User_DB implements DBinfo {
 
     public static int countPost(String email) {
         int postCount = 0;
-        String countPostsQuery = "SELECT COUNT(*) FROM Post WHERE User_id = (SELECT User_id FROM Users WHERE User_email = ?) AND postStatus = 'Approved'";
-
+        String countPostsQuery = "SELECT COUNT(*) FROM Post WHERE User_id = (SELECT User_id FROM Users WHERE User_email = ?) AND postStatus = 'Active'";
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement countPostsStmt = con.prepareStatement(countPostsQuery)) {
 
             countPostsStmt.setString(1, email);
@@ -286,7 +285,25 @@ public class User_DB implements DBinfo {
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-
         return postCount;
+    }
+
+    public static int getUserIdByUsername(String identifier) throws SQLException {
+        int userId = -1;
+        String query = "SELECT User_id FROM Users WHERE Username = ?, User_email";
+
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement ps = con.prepareStatement(query)) {
+            ps.setString(1, identifier);
+            ps.setString(2, identifier);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    userId = rs.getInt("User_id");
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(User_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return userId;
     }
 }

@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package model;
+
 import java.sql.Timestamp;
 
 public class Post {
@@ -13,23 +14,53 @@ public class Post {
     private int topicId;
     private String content;
     private Timestamp createDate;
-    private String image;
     private String status;
     private String postStatus;
     private String reason;
+    private String uploadPath;
 
-    // Constructor
-    public Post(int postId, int userId, int groupId, int topicId, String content, Timestamp createDate, String image, String status, String postStatus, String reason) {
+    // Constructors
+    public Post(int userId, String content, String status, String postStatus, String uploadPath) {
+        this.userId = userId;
+        this.content = content;
+        this.status = status;
+        this.postStatus = postStatus;
+        this.uploadPath = uploadPath;
+    }
+
+    public Post(int postId, int userId, int groupId, String content, String status, String postStatus, String uploadPath) {
+        this.postId = postId;
+        this.userId = userId;
+        this.groupId = groupId;
+        this.content = content;
+        this.status = status;
+        this.postStatus = postStatus;
+        this.uploadPath = uploadPath;
+    }
+
+    public Post(int userId, int groupId, int topicId, String content, Timestamp createDate, String status, String postStatus, String reason, String uploadPath) {
+        this.userId = userId;
+        this.groupId = groupId;
+        this.topicId = topicId;
+        this.content = content;
+        this.createDate = createDate;
+        this.status = status;
+        this.postStatus = postStatus;
+        this.reason = reason;
+        this.uploadPath = uploadPath;
+    }
+
+    public Post(int postId, int userId, int groupId, int topicId, String content, Timestamp createDate, String status, String postStatus, String reason, String uploadPath) {
         this.postId = postId;
         this.userId = userId;
         this.groupId = groupId;
         this.topicId = topicId;
         this.content = content;
         this.createDate = createDate;
-        this.image = image;
         this.status = status;
         this.postStatus = postStatus;
         this.reason = reason;
+        this.uploadPath = uploadPath;
     }
 
     // Getters and Setters
@@ -81,14 +112,6 @@ public class Post {
         this.createDate = createDate;
     }
 
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
     public String getStatus() {
         return status;
     }
@@ -111,5 +134,13 @@ public class Post {
 
     public void setReason(String reason) {
         this.reason = reason;
+    }
+
+    public String getUploadPath() {
+        return uploadPath;
+    }
+
+    public void setUploadPath(String uploadPath) {
+        this.uploadPath = uploadPath;
     }
 }
