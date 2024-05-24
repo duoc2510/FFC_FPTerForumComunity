@@ -55,13 +55,13 @@ public class User_profile extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-      protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         User user = (User) request.getSession().getAttribute("USER");
         String userEmail = user.getUserEmail();
         User userInfo = User_DB.getUserByEmailorUsername(userEmail);
         User_DB.updateScore(userEmail);
-        int postCount = User_DB.countPost(userEmail); 
+        int postCount = User_DB.countPost(userEmail);
         // Đặt danh sách người dùng vào thuộc tính của request
         request.getSession().setAttribute("postCount", postCount);
         request.setAttribute("userInfo", userInfo);
