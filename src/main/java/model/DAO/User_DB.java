@@ -227,9 +227,8 @@ public class User_DB implements DBinfo {
     public static void updateScore(String email) {
         String getUserQuery = "SELECT User_id FROM Users WHERE User_email = ?";
         String countCommentsQuery = "SELECT COUNT(*) FROM Comment WHERE User_id = ?";
-        String countPostsQuery = "SELECT COUNT(*) FROM Post WHERE User_id = ? AND postStatus = 'Active'";
+        String countPostsQuery = "SELECT COUNT(*) FROM Post WHERE User_id = ? AND Status = 'Active' AND Topic_id IS NOT NULL";
         String updateScoreQuery = "UPDATE Users SET User_score = ? WHERE User_id = ?";
-
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement getUserStmt = con.prepareStatement(getUserQuery); PreparedStatement countCommentsStmt = con.prepareStatement(countCommentsQuery); PreparedStatement countPostsStmt = con.prepareStatement(countPostsQuery); PreparedStatement updateScoreStmt = con.prepareStatement(updateScoreQuery)) {
 
             // Lấy User_id từ email
@@ -273,7 +272,7 @@ public class User_DB implements DBinfo {
 
     public static int countPost(String email) {
         int postCount = 0;
-        String countPostsQuery = "SELECT COUNT(*) FROM Post WHERE User_id = (SELECT User_id FROM Users WHERE User_email = ?) AND postStatus = 'Active'";
+        String countPostsQuery = "SELECT COUNT(*) FROM Post WHERE User_id = (SELECT User_id FROM Users WHERE User_email = ?) AND Status = 'Active'";
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement countPostsStmt = con.prepareStatement(countPostsQuery)) {
 
             countPostsStmt.setString(1, email);

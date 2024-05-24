@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model;
 
 import java.sql.Timestamp;
@@ -18,8 +14,12 @@ public class Post {
     private String postStatus;
     private String reason;
     private String uploadPath;
+    private String comment;
+    private Timestamp commentDate; // Thêm trường commentDate
+    private User user;
 
     // Constructors
+    // Constructor cho trường hợp không có commentDate
     public Post(int userId, String content, String status, String postStatus, String uploadPath) {
         this.userId = userId;
         this.content = content;
@@ -38,7 +38,9 @@ public class Post {
         this.uploadPath = uploadPath;
     }
 
-    public Post(int userId, int groupId, int topicId, String content, Timestamp createDate, String status, String postStatus, String reason, String uploadPath) {
+    // Constructor cho trường hợp có commentDate
+    public Post(int postId, int userId, int groupId, int topicId, String content, Timestamp createDate, String status, String postStatus, String reason, String uploadPath, String comment, Timestamp commentDate) {
+        this.postId = postId;
         this.userId = userId;
         this.groupId = groupId;
         this.topicId = topicId;
@@ -48,6 +50,8 @@ public class Post {
         this.postStatus = postStatus;
         this.reason = reason;
         this.uploadPath = uploadPath;
+        this.comment = comment;
+        this.commentDate = commentDate;
     }
 
     public Post(int postId, int userId, int groupId, int topicId, String content, Timestamp createDate, String status, String postStatus, String reason, String uploadPath) {
@@ -64,6 +68,22 @@ public class Post {
     }
 
     // Getters and Setters
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public Timestamp getCommentDate() {
+        return commentDate;
+    }
+
+    public void setCommentDate(Timestamp commentDate) {
+        this.commentDate = commentDate;
+    }
+
     public int getPostId() {
         return postId;
     }
@@ -142,5 +162,13 @@ public class Post {
 
     public void setUploadPath(String uploadPath) {
         this.uploadPath = uploadPath;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public User getUser() {
+        return user;
     }
 }

@@ -115,7 +115,7 @@ public class Post_addpost extends HttpServlet {
         Post post = new Post(userId, postContent, "Active", postStatus, uploadPath);
 
         try {
-            Post_DB.addPost(post);
+            Post_DB.addPostUser(post);
             response.sendRedirect(request.getContextPath() + "/user/profile.jsp?successMessage=Post added successfully!");
         } catch (SQLException ex) {
             Logger.getLogger(Post_addpost.class.getName()).log(Level.SEVERE, null, ex);

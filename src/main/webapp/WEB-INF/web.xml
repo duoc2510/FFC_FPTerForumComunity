@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="5.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd">
-    
-    <session-config>
-        <session-timeout>
-            30
-        </session-timeout>
-    </session-config>
-    <servlet>
-        <servlet-name>User_viewpost</servlet-name>
-        <servlet-class>controller.User_viewpost</servlet-class>
-    </servlet>
+
+    <!-- Context Parameters -->
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>/WEB-INF/applicationContext.xml</param-value>
     </context-param>
+
+    <!-- Listener -->
     <listener>
         <description>ServletContextListener</description>
         <listener-class>model.DAO.DBListener</listener-class>
     </listener>
+
+    <!-- Servlets -->
+    <servlet>
+        <servlet-name>Post_comment</servlet-name>
+        <servlet-class>controller.Post_comment</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>User_viewpost</servlet-name>
+        <servlet-class>controller.User_viewpost</servlet-class>
+    </servlet>
     <servlet>
         <servlet-name>User_login</servlet-name>
         <servlet-class>controller.User_login</servlet-class>
@@ -82,6 +86,16 @@
         <servlet-name>Post_addpost</servlet-name>
         <servlet-class>controller.Post_addpost</servlet-class>
     </servlet>
+
+    <!-- Servlet Mappings -->
+    <servlet-mapping>
+        <servlet-name>Post_comment</servlet-name>
+        <url-pattern>/comment</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>User_viewpost</servlet-name>
+        <url-pattern>/post</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>User_login</servlet-name>
         <url-pattern>/login</url-pattern>
@@ -131,7 +145,7 @@
         <url-pattern>/logingooglehandler</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>User_Rank</servlet-name>
+        <servlet-name>User_MyRank</servlet-name>
         <url-pattern>/userrank</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
@@ -142,16 +156,13 @@
         <servlet-name>TopVip</servlet-name>
         <url-pattern>/topvip</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
-        <servlet-name>User_viewpost</servlet-name>
-        <url-pattern>/post</url-pattern>
-    </servlet-mapping>
-  <servlet-mapping>
         <servlet-name>Post_addpost</servlet-name>
         <url-pattern>/addpost</url-pattern>
     </servlet-mapping>
+
+    <!-- Welcome File List -->
     <welcome-file-list>
-        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>home</welcome-file>
     </welcome-file-list>
 </web-app>

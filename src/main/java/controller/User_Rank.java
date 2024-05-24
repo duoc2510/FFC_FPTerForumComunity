@@ -34,7 +34,7 @@ public class User_Rank extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet User_Rank</title>");            
+            out.println("<title>Servlet User_Rank</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet User_Rank at " + request.getContextPath() + "</h1>");
@@ -55,7 +55,7 @@ public class User_Rank extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-          request.getRequestDispatcher("/rank/index.jsp").forward(request, response);
+        request.getRequestDispatcher("/rank/index.jsp").forward(request, response);
     }
 
     /**

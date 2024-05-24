@@ -10,25 +10,34 @@ package model;
  */
 import java.util.Date;
 
-public class Post_comment {
+public class Comment {
+
     private int commentId; // id tự động tăng cho bình luận
     private int postId;    // id của bài viết mà bình luận thuộc về
     private int userId;    // id của người bình luận
     private String content; // Nội dung bình luận
-    private String image;  // Hình ảnh đính kèm bình luận
+    private String uploadPath;  // Hình ảnh đính kèm bình luận
     private Date date;     // Thời gian bình luận, mặc định là ngày hiện tại
 
     // Constructors
-    public Post_comment() {
+    public Comment() {
         // Default constructor
     }
 
-    public Post_comment(int commentId, int postId, int userId, String content, String image, Date date) {
+    public Comment(int commentId, int postId, int userId, String content, Date date) {
         this.commentId = commentId;
         this.postId = postId;
         this.userId = userId;
         this.content = content;
-        this.image = image;
+        this.date = date;
+    }
+
+    public Comment(int commentId, int postId, int userId, String content, String uploadPath, Date date) {
+        this.commentId = commentId;
+        this.postId = postId;
+        this.userId = userId;
+        this.content = content;
+        this.uploadPath = uploadPath;
         this.date = date;
     }
 
@@ -65,12 +74,12 @@ public class Post_comment {
         this.content = content;
     }
 
-    public String getImage() {
-        return image;
+    public String getUploadPath() {
+        return uploadPath;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setUploadPath(String uploadPath) {
+        this.uploadPath = uploadPath;
     }
 
     public Date getDate() {

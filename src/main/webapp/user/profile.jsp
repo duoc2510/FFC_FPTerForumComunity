@@ -11,18 +11,18 @@
                             <div class="px-4 py-4 cover cover" style="background: url(${pageContext.request.contextPath}/upload/deli-2.png)">
                                 <div class="media align-items-end profile-head">
                                     <div class="profile mr-3 d-flex justify-content-between align-items-end">
-                                        <img src="${pageContext.request.contextPath}/${userInfo.userAvatar}" class="rounded-circle img-thumbnail">
+                                        <img src="${pageContext.request.contextPath}/${USER.userAvatar}" class="rounded-circle img-thumbnail">
                                         <a href="${pageContext.request.contextPath}/profile/setting" class="btn btn-outline-dark btn-sm btn-block edit-cover">Edit profile</a>
                                     </div>
                                 </div>
                             </div>
                             <div class="bg-light pt-4 px-4 d-flex justify-content-between text-center">
                                 <div class="media-body mb-5 text-white">
-                                    <h4 class="mt-0 mb-0">${userInfo.userFullName}</h4>
+                                    <h4 class="mt-0 mb-0">${USER.userFullName}</h4>
                                 </div>
                                 <ul class="list-inline mb-0">
                                     <li class="list-inline-item">
-                                        <h5 class="font-weight-bold mb-0 d-block">60</h5><small class="text-muted"><i class="fas fa-image mr-1"></i>Posts</small>
+                                        <h5 class="font-weight-bold mb-0 d-block">${postCount}</h5><small class="text-muted"><i class="fas fa-image mr-1"></i>Posts</small>
                                     </li>
                                     <li class="list-inline-item">
                                         <h5 class="font-weight-bold mb-0 d-block">745</h5><small class="text-muted"><i class="fas fa-user mr-1"></i>Followers</small>
@@ -31,10 +31,10 @@
                                         <h5 class="font-weight-bold mb-0 d-block">340</h5><small class="text-muted"><i class="fas fa-user mr-1"></i>Following</small>
                                     </li>
                                     <li class="list-inline-item">
-                                        <h5 class="font-weight-bold mb-0 d-block">${userInfo.userScore}</h5><small class="text-muted"><i class="fas fa-image mr-1"></i>Score</small>
+                                        <h5 class="font-weight-bold mb-0 d-block">${USER.userScore}</h5><small class="text-muted"><i class="fas fa-image mr-1"></i>Score</small>
                                     </li>
                                     <li class="list-inline-item">
-                                        <h5 class="font-weight-bold mb-0 d-block">${userInfo.userRank}</h5><small class="text-muted"><i class="fas fa-user mr-1"></i>Rank</small>
+                                        <h5 class="font-weight-bold mb-0 d-block">${USER.userRank}</h5><small class="text-muted"><i class="fas fa-user mr-1"></i>Rank</small>
                                     </li>
                                 </ul>
                             </div>
@@ -58,25 +58,31 @@
                                 }
                             </style>
 
-                            <form id="postForm" action="addpost" method="post" enctype="multipart/form-data">
-                                <div class="form-group">
-                                    <label for="postStatus">Status</label>
-                                    <select class="form-control" id="postStatus" name="postStatus">
-                                        <option value="Public">Public</option>
-                                        <option value="Friends">Friends</option>
-                                        <option value="Only me">Only me</option>
-                                    </select>
+
+
+                            <div class="container-fluid pt-0">
+                                <div class="row form-settings bg-white shadow rounded py-4 px-4 d-flex justify-content-between ">
+                                    <form id="postForm" action="addpost" method="post" enctype="multipart/form-data">
+                                        <div class="form-group pb-3">
+                                            <label for="postStatus">Status</label>
+                                            <select class="form-control" id="postStatus" name="postStatus">
+                                                <option value="Public">Public</option>
+                                                <option value="Friends">Friends</option>
+                                                <option value="Only me">Only me</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group pb-3">
+                                            <label for="postContent">What's on your mind?</label>
+                                            <textarea class="form-control" id="postContent" name="postContent" rows="3"></textarea>
+                                        </div>
+                                        <div class="form-group pb-3">
+                                            <label for="postImage">Upload Image</label>
+                                            <input type="file" class="form-control" id="postImage" name="postImage">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Add Post</button>
+                                    </form>
                                 </div>
-                                <div class="form-group">
-                                    <label for="postContent">What's on your mind?</label>
-                                    <textarea class="form-control" id="postContent" name="postContent" rows="3"></textarea>
-                                </div>
-                                <div class="form-group">
-                                    <label for="postImage">Upload Image</label>
-                                    <input type="file" class="form-control-file" id="postImage" name="postImage">
-                                </div>
-                                <button type="submit" class="btn btn-primary">Add Post</button>
-                            </form>
+                            </div>
                             <c:forEach var="post" items="${posts}">
                                 <div class="col-lg-12 ">
                                     <div class="card w-100">
@@ -84,10 +90,10 @@
                                             <div class="pb-3 d-inline">
                                                 <a class="row nav-icon-hover" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown" aria-expanded="false">
                                                     <div class="col-1 text-center mt-2">
-                                                        <img class="rounded-circle d-inline mr-3"  alt="" width="32" src="${pageContext.request.contextPath}/${userInfo.userAvatar}" class="avatar">>
+                                                        <img class="rounded-circle d-inline mr-3"  alt="" width="50" src="${pageContext.request.contextPath}/${USER.userAvatar}" class="avatar">
                                                     </div>
                                                     <div class="col">
-                                                        <h6 class="card-title fw-semibold mb-4 d-inline">${userInfo.userFullName}</h6>
+                                                        <h6 class="card-title fw-semibold mb-4 d-inline">${USER.username}</h6>
                                                         <p class="s-4"> ${post.createDate}</p>
                                                     </div>
                                                 </a>
@@ -101,35 +107,38 @@
 
                                             <div class="">
                                                 <div class="row p-3 d-flex justify-content-center text-center">
-
                                                     <a class="col nav-link nav-icon-hover" href="javascript:void(0)">
                                                         <span><i class="ti ti-heart"></i></span>
                                                         <span class="hide-menu">Like</span>
                                                     </a>
-
-                                                    <a class="col nav-link nav-icon-hover" >
+                                                    <a class="col nav-link nav-icon-hover" href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#comment${post.postId}" aria-expanded="false" aria-controls="comment${post.postId}">
                                                         <span><i class="ti ti-message-plus"></i></span>
                                                         <span class="hide-menu">Comment</span>
                                                     </a>
-
                                                     <a class="col nav-link nav-icon-hover" href="javascript:void(0)">
                                                         <span><i class="ti ti-share"></i></span>
                                                         <span class="hide-menu">Share</span>
                                                     </a>
                                                 </div>
-                                                <div class="input-group">
-                                                    <input type="text" class="form-control" placeholder="Write a comment" >
+                                                <div class="collapse" id="comment${post.postId}">
+                                                    <div class="input-group">
+                                                        <form action="comment" method="post">
+                                                            <input type="hidden" name="postId" value="${post.postId}">
+                                                            <input type="hidden" name="userId" value="${USER.userId}">
+                                                            <input type="text" class="form-control" name="content" placeholder="Write a comment" required>
+                                                            <button type="submit" class="btn btn-primary">Comment</button>
+                                                        </form>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </c:forEach> 
+                            </c:forEach>
                         </div>
                     </div>
                 </div>
             </div>
-            <%@ include file="../include/right-slidebar.jsp" %>
         </div>
     </div>
     <%@ include file="../include/footer.jsp" %>

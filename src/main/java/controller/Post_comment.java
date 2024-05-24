@@ -10,19 +10,16 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import java.sql.SQLException;
 import java.util.List;
 import model.Comment;
 import model.DAO.Post_DB;
-import model.DAO.User_DB;
-import model.Post;
-import model.User;
 
 /**
  *
  * @author ThanhDuoc
  */
-public class User_profile extends HttpServlet {
+public class Post_comment extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +38,10 @@ public class User_profile extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet User_profile</title>");
+            out.println("<title>Servlet Post_comment</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet User_profile at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet Post_comment at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -60,39 +57,9 @@ public class User_profile extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("USER");
-
-        if (user == null) {
-            response.sendRedirect(request.getContextPath() + "/auth/login.jsp?errorMessage=You must be logged in to view posts");
-            return;
-        }
-
-        String userEmail = user.getUserEmail();
-        User userInfo = User_DB.getUserByEmailorUsername(userEmail);
-
-        if (userInfo == null) {
-            response.sendRedirect(request.getContextPath() + "/auth/login.jsp?errorMessage=User not found");
-            return;
-        }
-
-        // Cập nhật điểm số và đếm số bài đăng của người dùng
-        User_DB.updateScore(userEmail);
-        int postCount = User_DB.countPost(userEmail);
-
-        // Thiết lập các thuộc tính cho session và request
-        session.setAttribute("postCount", postCount);
-
-        // Lấy bài đăng của người dùng từ cơ sở dữ liệu
-        String username = user.getUsername();
-        List<Post> posts = Post_DB.getPostsByUsername(username);
-
-
-        request.setAttribute("posts", posts);
-
-        // Chuyển tiếp yêu cầu tới trang profile.jsp
-        request.getRequestDispatcher("/user/profile.jsp").forward(request, response);
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
     }
 
     /**
@@ -104,8 +71,28 @@ public class User_profile extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
 
+        // Lấy thông tin từ request
+        int postId = Integer.parseInt(request.getParameter("postId"));
+        int userId = Integer.parseInt(request.getParameter("userId"));
+        String content = request.getParameter("content");
+
+        // Thêm comment vào cơ sở dữ liệu
+        Post_DB postDB = new Post_DB();
+        boolean success = postDB.addCommentToPost(postId, userId, content);
+
+        // Kiểm tra kết quả và xử lý phản hồi
+        if (success) {
+            // Chuyển hướng hoặc hiển thị thông báo thành công
+            response.sendRedirect(request.getContextPath() + "/viewPost.jsp?postId=" + postId);
+        } else {
+            // Xử lý khi thất bại, ví dụ: hiển thị thông báo lỗi
+            request.setAttribute("errorMessage", "Failed to add comment. Please try again.");
+            request.getRequestDispatcher("/errorPage.jsp").forward(request, response);
+        }
     }
 
     /**

@@ -5,9 +5,8 @@
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
          data-sidebar-position="fixed" data-header-position="fixed">
         <%@ include file="../include/slidebar.jsp" %>
-
         <div class="body-wrapper">
-            <%@ include file="../include/navbar.jsp" %>
+            <%@ include file="../include/navbar_guest.jsp" %>
             <div class="container-fluid">
 
                 <div class="col-lg-12 ">
@@ -95,21 +94,16 @@
 
             </div>
         </div>
-
-        <%@ include file="../include/right-slidebar.jsp" %>
     </div>
-
     <%@ include file="../include/footer.jsp" %>
 
     <!-- Popup -->
-
-
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h1 class="text-center mb-4 font-weight-bold mx-auto" id="exampleModalLabel">Giới thiệu</h1>
-                    
+
                 </div>
                 <div class="modal-body">
                     Nhằm tri ân những người có đóng góp tích cực để giúp FFC ngày càng phát triển hơn.
@@ -124,7 +118,6 @@
                         Với mỗi hoạt động được duyệt và không vi phạm thì bạn sẽ nhận được số điểm tương ứng.
                         Khi điểm tích lũy đạt được các cột mốc sau thì bạn sẽ lên rank và nhận được các phần thưởng tương ứng:
                     </p>
-
                     <table class="table">
                         <thead>
                             <tr>
@@ -164,7 +157,6 @@
                             </tr>
                         </tbody>
                     </table>
-                   
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -172,5 +164,4 @@
             </div>
         </div>
     </div>
-
 </body>

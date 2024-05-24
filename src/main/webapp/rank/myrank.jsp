@@ -96,7 +96,6 @@
         <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
              data-sidebar-position="fixed" data-header-position="fixed">
             <%@ include file="../include/slidebar.jsp" %>
-
             <div class="body-wrapper">
                 <%@ include file="../include/navbar.jsp" %>
                 <div class="container-fluid">
@@ -145,6 +144,7 @@
                                 <c:set var="endrankimage" value="diamond" />
                                 <c:set var="tiendo" value="100" />
                             </c:if>
+
                             <div>   
                                 <h3 style="text-align: center;">TÍCH ƯU ĐÃI THÁNG SAU</h3>
                                 <div style="text-align: center; width: 100%;">${tiendo}%</div>
@@ -195,7 +195,6 @@
                     </div>
                 </div>
             </div>
-            <%@ include file="../include/right-slidebar.jsp" %>
         </div>
         <%@ include file="../include/footer.jsp" %>
     </body>

@@ -90,11 +90,9 @@
                         <button type="submit" class="btn btn-primary">Save changes</button>
                         <a href="changepass" class="btn btn-primary">Change Password</a>
                     </form>
-
                 </div>
             </div>
         </div>
-        <%@ include file="../include/right-slidebar.jsp" %>
     </div>
 </body>
 <%@ include file="../include/footer.jsp" %>

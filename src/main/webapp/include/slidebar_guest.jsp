@@ -12,24 +12,6 @@
         <!-- Sidebar navigation-->
         <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
             <ul id="sidebarnav">
-
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="${pageContext.request.contextPath}" aria-expanded="false">
-                        <span>
-                            <i class="ti ti-article"></i>
-                        </span>
-                        <span class="hide-menu">News Feed</span>
-                    </a>
-                </li>
-
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="${pageContext.request.contextPath}/group" aria-expanded="false">
-                        <span>
-                            <i class="ti ti-users"></i>
-                        </span>
-                        <span class="hide-menu">Group</span>
-                    </a>
-                </li>
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="${pageContext.request.contextPath}/event" aria-expanded="false">
                         <span>
@@ -38,7 +20,6 @@
                         <span class="hide-menu">Event</span>
                     </a>
                 </li>
-
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="${pageContext.request.contextPath}/advertising" aria-expanded="false">
                         <span>
@@ -47,7 +28,6 @@
                         <span class="hide-menu">Advertising</span>
                     </a>
                 </li>
-                
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="${pageContext.request.contextPath}/rank" aria-expanded="false">
                         <span>

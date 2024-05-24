@@ -359,7 +359,7 @@ GO
 INSERT INTO Comment (Post_id, User_id, Content)
 VALUES 
 (1, 2, 'This is a sample comment on the first post.'),
-(2, 1, 'Another comment on the second post.');
+(1, 1, 'Another comment on the second post.');
 GO
 -- Insert dữ liệu mẫu vào bảng Rate
 INSERT INTO Rate (Post_id, User_id, TypeRate)
@@ -387,7 +387,7 @@ VALUES
 (1, 'post1_image2.jpg'),
 (2, 'post2_image1.jpg');
 GO
-CREATE VIEW PostWithUploads AS
+CREATE VIEW PostWithUploadAndComment AS
 SELECT 
     p.Post_id,
     p.User_id,
@@ -398,17 +398,23 @@ SELECT
     p.Status,
     p.postStatus,
     p.Reason,
-    u.Upload_id,
-    u.Event_id,
-    u.Shop_id,
-    u.Comment_id,
-    u.Product_id,
-    u.UploadPath
+    u.UploadPath AS UploadPath,
+    c.Comment_id,
+    c.User_id AS Comment_User_id,
+    c.Content AS Comment_Content,
+    c.Date AS Comment_Date
 FROM 
     Post p
 LEFT JOIN 
-    Upload u ON p.Post_id = u.Post_id;
-SELECT * FROM PostWithUploads;
+    Upload u ON p.Post_id = u.Post_id
+LEFT JOIN 
+    Comment c ON p.Post_id = c.Post_id;
+
+
+
+SELECT * FROM PostWithUploadAndComment;
+
+
 
 -- Xem thông tin từ bảng Users
 SELECT * FROM Users;
