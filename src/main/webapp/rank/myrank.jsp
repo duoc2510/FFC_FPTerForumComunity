@@ -145,7 +145,6 @@
                                 <c:set var="endrankimage" value="diamond" />
                                 <c:set var="tiendo" value="100" />
                             </c:if>
-
                             <div>   
                                 <h3 style="text-align: center;">TÍCH ƯU ĐÃI THÁNG SAU</h3>
                                 <div style="text-align: center; width: 100%;">${tiendo}%</div>
