@@ -119,29 +119,66 @@
 
                     <div class="card w-100">
                         <div class="card-body p-4">
-                            <table class="table table-striped table-hover">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Hạng</th>
-                                        <th scope="col" class="text-center">Tên</th>
-                                        <th scope="col" class="text-center">Bậc</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <c:set var="userIndex" value="${4}" />
-                                    <c:forEach var="user" items="${userlist}" begin="3" end="49">
+                            <div style="max-height: 400px; overflow-y: scroll;">
+                                <table class="table table-striped table-hover">
+                                    <thead>
                                         <tr>
-                                            <th scope="row">${userIndex}</th>
-                                            <td class="text-center">${user.getUsername()}</td>
-                                            <td class="text-center">${user.getUserRank()}</td>
+                                            <th scope="col">Hạng</th>
+                                            <th scope="col" class="text-center">Tên</th>
+                                            <th scope="col" class="text-center">Bậc</th>
                                         </tr>
-                                        <c:set var="userIndex" value="${userIndex+1}" />
-                                    </c:forEach>
-                                </tbody>
-
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        <c:set var="userIndex" value="${4}" />
+                                        <c:forEach var="user" items="${userlist}" begin="3" end="49">
+                                            <c:if test="${user.getUserRank() == 0}">
+                                                <c:set var="rank" value="BRONZE" />
+                                                <tr>
+                                                    <th scope="row">${userIndex}</th>
+                                                    <td class="text-center">${user.getUsername()}</td>
+                                                    <td class="text-center">${rank}</td>
+                                                </tr>
+                                            </c:if>
+                                            <c:if test="${user.getUserRank() == 1}">
+                                                <c:set var="rank" value="SILVER" />
+                                                <tr>
+                                                    <th scope="row">${userIndex}</th>
+                                                    <td class="text-center">${user.getUsername()}</td>
+                                                    <td class="text-center">${rank}</td>
+                                                </tr>
+                                            </c:if>
+                                            <c:if test="${user.getUserRank() == 2}">
+                                                <c:set var="rank" value="GOLD" />
+                                                <tr>
+                                                    <th scope="row">${userIndex}</th>
+                                                    <td class="text-center">${user.getUsername()}</td>
+                                                    <td class="text-center">${rank}</td>
+                                                </tr>
+                                            </c:if>
+                                            <c:if test="${user.getUserRank() == 3}">
+                                                <c:set var="rank" value="PLATINUM" />
+                                                <tr>
+                                                    <th scope="row">${userIndex}</th>
+                                                    <td class="text-center">${user.getUsername()}</td>
+                                                    <td class="text-center">${rank}</td>
+                                                </tr>
+                                            </c:if>
+                                            <c:if test="${user.getUserRank() == 4}">
+                                                <c:set var="rank" value="DIAMOND" />
+                                                <tr>
+                                                    <th scope="row">${userIndex}</th>
+                                                    <td class="text-center">${user.getUsername()}</td>
+                                                    <td class="text-center">${rank}</td>
+                                                </tr>
+                                            </c:if>
+                                            <c:set var="userIndex" value="${userIndex + 1}" />
+                                        </c:forEach>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
+
                 </div>
 
             </div>

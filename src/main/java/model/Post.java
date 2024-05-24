@@ -18,6 +18,7 @@ public class Post {
     private String postStatus;
     private String reason;
 
+
     public Post() {
     }
 
@@ -30,7 +31,10 @@ public class Post {
     }
 
     
-    public Post(int userId, int groupId, int topicId, String content, String image, String status) {
+
+    // Constructor
+    public Post(int postId, String content, Timestamp createDate, String image, String status) {
+        this.postId = postId;
         this.userId = userId;
         this.groupId = groupId;
         this.topicId = topicId;
