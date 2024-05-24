@@ -70,19 +70,18 @@ public class User_viewpost extends HttpServlet {
             return;
         }
 
-        String userEmail = user.getUserEmail();
-        User userInfo = User_DB.getUserByEmailorUsername(userEmail);
-
-        if (userInfo == null) {
-            response.sendRedirect(request.getContextPath() + "/auth/login.jsp?errorMessage=You must be logged in to view posts");
-            return;
-        }
-
+        // Lấy thông tin người dùng từ session
         String username = user.getUsername();
+        String userAvatar = user.getUserAvatar();
+
+        // Lấy bài đăng của người dùng từ cơ sở dữ liệu
         List<Post> posts = Post_DB.getPostsByUsername(username);
 
-        request.setAttribute("userInfo", userInfo);
+        // Thiết lập các thuộc tính để gửi đến trang JSP
+        request.setAttribute("userAvatar", userAvatar);
         request.setAttribute("posts", posts);
+
+        // Chuyển tiếp yêu cầu tới trang newsfeed.jsp
         request.getRequestDispatcher("/user/newsfeed.jsp").forward(request, response);
     }
 
