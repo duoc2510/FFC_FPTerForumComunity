@@ -4,22 +4,6 @@
         <servlet-name>User_viewpost</servlet-name>
         <servlet-class>controller.User_viewpost</servlet-class>
     </servlet>
-    <servlet-mapping>
-        <servlet-name>User_MyRank</servlet-name>
-        <url-pattern>/userrank</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>User_Rank</servlet-name>
-        <url-pattern>/rank</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>TopVip</servlet-name>
-        <url-pattern>/topvip</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>User_viewpost</servlet-name>
-        <url-pattern>/post</url-pattern>
-    </servlet-mapping>
     <session-config>
         <session-timeout>
             30
@@ -148,6 +132,14 @@
     <servlet-mapping>
         <servlet-name>TopVip</servlet-name>
         <url-pattern>/topvip</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>User_MyRank</servlet-name>
+        <url-pattern>/userrank</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>User_viewpost</servlet-name>
+        <url-pattern>/post</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>

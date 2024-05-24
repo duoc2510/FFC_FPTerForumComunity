@@ -104,42 +104,93 @@
                         <div class="header">QUYỀN LỢI VIP THÁNG</div>
                         <div class="vip-info">
                             <div style="text-align: center;">
-                                <p>Tên: ***Phúc</p>
-                                <p>Email: ***@gmail.com</p>
-                                <p>Giới tính: ***Male</p>
+                                <p>Tên: ${USER.userFullName}</p>
+                                <p>Email: ${USER.userEmail}</p>
+                                <p>Giới tính: ${USER.userSex}</p>
                             </div>
                             <div style="text-align: center;">
-                                <p>Username: ***Lep</p>
-                                <p>Score: 147515061</p>
-                                <p>Wallet: 0đ</p>
+                                <p>Username: ${USER.username}</p>
+                                <p>Score: ${USER.userScore}</p>
+                                <p>Wallet: ${USER.userWallet}đ</p>
                             </div>
                         </div>
                         <div class="vip-status">
-                            <div>
+                            <c:if test="${USER.userScore >= 0 && USER.userScore <100}">
+                                <c:set var="ranknext" value="BRONZE" />
+                                <c:set var="startrankimage" value="bronze" />
+                                <c:set var="endrankimage" value="silver" />
+                                <c:set var="tiendo" value="${USER.userScore / 100 *100}" />
+                            </c:if>
+                            <c:if test="${USER.userScore >= 100 && USER.userScore <1000}">
+                                <c:set var="ranknext" value="SILVER" />
+                                <c:set var="startrankimage" value="silver" />
+                                <c:set var="endrankimage" value="gold" />
+                                <c:set var="tiendo" value="${(USER.userScore - 100) / 900 *100}" />
+                            </c:if>
+                            <c:if test="${USER.userScore >= 1000 && USER.userScore <1500}">
+                                <c:set var="ranknext" value="GOLD" />
+                                <c:set var="startrankimage" value="gold" />
+                                <c:set var="endrankimage" value="platinum" />
+                                <c:set var="tiendo" value="${(USER.userScore-1000) / 500 *100}" />
+                            </c:if>
+                            <c:if test="${USER.userScore >= 1500 && USER.userScore <3000}">
+                                <c:set var="ranknext" value="PLATINUM" />
+                                <c:set var="startrankimage" value="platinum" />
+                                <c:set var="endrankimage" value="diamond" />
+                                <c:set var="tiendo" value="${(USER.userScore-1500) / 1500 *100}" />
+                            </c:if>
+                            <c:if test="${USER.userScore >= 3000 }">
+                                <c:set var="ranknext" value="DIAMOND" />
+                                <c:set var="startrankimage" value="platinum" />
+                                <c:set var="endrankimage" value="diamond" />
+                                <c:set var="tiendo" value="100" />
+                            </c:if>
+
+                            <div>   
                                 <h3 style="text-align: center;">TÍCH ƯU ĐÃI THÁNG SAU</h3>
-                               <div style="text-align: center; width: 100%;">50%</div>
+                                <div style="text-align: center; width: 100%;">${tiendo}%</div>
 
                                 <div class="progress-container">
-                                    <div style="flex: 2;"><img src="${pageContext.request.contextPath}/static/images/rank/silver.png" alt="Start"></div>
+                                    <div style="flex: 2;"><img src="${pageContext.request.contextPath}/static/images/rank/${startrankimage}.png" alt="Start"></div>
                                     <div class="progress-bar" style="flex: 6;">
                                         <div class="bar">
-                                            <span style="width: 50%;"></span>
+                                            <span style="width: ${tiendo}%;"></span>
                                         </div>
                                     </div>
-                                    <div style="flex: 2;"><img src="${pageContext.request.contextPath}/static/images/rank/gold.png" alt="End"></div>
+                                    <div style="flex: 2;"><img src="${pageContext.request.contextPath}/static/images/rank/${endrankimage}.png" alt="End"></div>
                                 </div>
 
-                                <p>Đã tích: 10,330 FC+MC</p>
-                                <p>VIP tháng sau: Vàng</p>
-                                <p>Sẽ hưởng ưu đãi VIP Vàng từ 01.05.2024 đến 31.05.2024</p>
+                                <p>Đã tích: ${USER.userScore} Score</p>
+                                <p>VIP tháng sau: ${ranknext}</p>
+                                <p>Sẽ hưởng ưu đãi VIP Vàng từ ${firstDayOfNextMonth} đến ${lastDayOfNextMonth}</p>
                             </div>
+                            <c:if test="${USER.userRank == 0}">
+                                <c:set var="rank" value="BRONZE" />
+                                <c:set var="rankimage" value="bronze" />
+                            </c:if>
+                            <c:if test="${USER.userRank == 1}">
+                                <c:set var="rank" value="SILVER" />
+                                <c:set var="rankimage" value="silver" />
+                            </c:if>
+                            <c:if test="${USER.userRank == 2}">
+                                <c:set var="rank" value="GOLD" />
+                                <c:set var="rankimage" value="gold" />
+                            </c:if>
+                            <c:if test="${USER.userRank == 3}">
+                                <c:set var="rank" value="PLATINUM" />
+                                <c:set var="rankimage" value="platinum" />
+                            </c:if>
+                            <c:if test="${USER.userRank == 4}">
+                                <c:set var="rank" value="DIAMOND" />
+                                <c:set var="rankimage" value="diamond" />
+                            </c:if>
                             <div>
                                 <h3 style="text-align: center;">BẬC VIP HIỆN TẠI</h3>
-                                <p style="text-align: center; width: 100%;">VÀNG</p>
+                                <p style="text-align: center; width: 100%;">${rank}</p>
                                 <div style="text-align: center; width: 100%;">
-                                    <img src="${pageContext.request.contextPath}/static/images/rank/gold.png" alt="Gold Class" width="100">
+                                    <img src="${pageContext.request.contextPath}/static/images/rank/${rankimage}.png" alt="Gold Class" width="100">
                                 </div>
-                                <p>Thời gian hưởng ưu đãi VIP từ 23h ngày 30.04.2024 đến 23h ngày 31.05.2024</p>
+                                <p>Thời gian hưởng ưu đãi VIP từ ngày ${firstDayOfMonth} đến 23h ngày ${lastDayOfMonth}</p>
                             </div>
                         </div>
                     </div>

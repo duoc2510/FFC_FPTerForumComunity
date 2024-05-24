@@ -10,6 +10,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  *
@@ -34,7 +36,7 @@ public class User_MyRank extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet User_MyRank</title>");            
+            out.println("<title>Servlet User_MyRank</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet User_MyRank at " + request.getContextPath() + "</h1>");
@@ -55,7 +57,113 @@ public class User_MyRank extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       request.getRequestDispatcher("/rank/myrank.jsp").forward(request, response);
+        // Kiểm tra xem người dùng đã đăng nhập hay chưa
+        if (request.getSession().getAttribute("USER") == null) {
+            // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
+            response.sendRedirect(response.encodeRedirectURL("login"));
+        } else {
+            // Gọi hàm và in ra kết quả ngày hiện tại
+            String currentDate = getCurrentDate();
+
+            // Gọi hàm và in ra kết quả ngày đầu tiên của tháng
+            String firstDayOfMonth = getFirstDayOfMonth(currentDate);
+
+            // Gọi hàm và in ra kết quả ngày cuối cùng của tháng
+            String lastDayOfMonth = getLastDayOfMonth(currentDate);
+
+            // Gọi hàm và in ra kết quả ngày đầu tiên của tháng sau
+            String firstDayOfNextMonth = getFirstDayOfNextMonth(currentDate);
+
+            // Gọi hàm và in ra kết quả ngày cuối cùng của tháng sau
+            String lastDayOfNextMonth = getLastDayOfNextMonth(currentDate);
+
+            request.setAttribute("currentDate", currentDate);
+            request.setAttribute("firstDayOfMonth", firstDayOfMonth);
+            request.setAttribute("lastDayOfMonth", lastDayOfMonth);
+            request.setAttribute("firstDayOfNextMonth", firstDayOfNextMonth);
+            request.setAttribute("lastDayOfNextMonth", lastDayOfNextMonth);
+
+            request.getRequestDispatcher("/rank/myrank.jsp").forward(request, response);
+        }
+
+    }
+
+    // Hàm lấy ngày tháng năm hiện tại
+    public static String getCurrentDate() {
+        // Lấy ngày hiện tại
+        LocalDate currentDate = LocalDate.now();
+
+        // Định dạng ngày theo kiểu "dd-MM-yyyy"
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        // Trả về ngày dưới dạng chuỗi
+        return currentDate.format(formatter);
+    }
+
+    // Hàm trả về ngày đầu tiên của tháng từ ngày tháng năm hiện tại
+    public static String getFirstDayOfMonth(String currentDateString) {
+        // Định dạng ngày theo kiểu "dd-MM-yyyy"
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        // Chuyển đổi chuỗi ngày tháng năm hiện tại sang đối tượng LocalDate
+        LocalDate currentDate = LocalDate.parse(currentDateString, formatter);
+
+        // Lấy ngày đầu tiên của tháng
+        LocalDate firstDayOfMonth = currentDate.withDayOfMonth(1);
+
+        // Trả về ngày đầu tiên của tháng dưới dạng chuỗi
+        return firstDayOfMonth.format(formatter);
+    }
+
+    // Hàm trả về ngày cuối cùng của tháng từ ngày tháng năm hiện tại
+    public static String getLastDayOfMonth(String currentDateString) {
+        // Định dạng ngày theo kiểu "dd-MM-yyyy"
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        // Chuyển đổi chuỗi ngày tháng năm hiện tại sang đối tượng LocalDate
+        LocalDate currentDate = LocalDate.parse(currentDateString, formatter);
+
+        // Lấy ngày cuối cùng của tháng
+        LocalDate lastDayOfMonth = currentDate.withDayOfMonth(currentDate.lengthOfMonth());
+
+        // Trả về ngày cuối cùng của tháng dưới dạng chuỗi
+        return lastDayOfMonth.format(formatter);
+    }
+
+    // Hàm trả về ngày đầu tiên của tháng sau từ ngày tháng năm hiện tại
+    public static String getFirstDayOfNextMonth(String currentDateString) {
+        // Định dạng ngày theo kiểu "dd-MM-yyyy"
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        // Chuyển đổi chuỗi ngày tháng năm hiện tại sang đối tượng LocalDate
+        LocalDate currentDate = LocalDate.parse(currentDateString, formatter);
+
+        // Tăng tháng lên 1 để lấy tháng sau
+        LocalDate nextMonth = currentDate.plusMonths(1);
+
+        // Lấy ngày đầu tiên của tháng sau
+        LocalDate firstDayOfNextMonth = nextMonth.withDayOfMonth(1);
+
+        // Trả về ngày đầu tiên của tháng sau dưới dạng chuỗi
+        return firstDayOfNextMonth.format(formatter);
+    }
+
+    // Hàm trả về ngày cuối cùng của tháng sau từ ngày tháng năm hiện tại
+    public static String getLastDayOfNextMonth(String currentDateString) {
+        // Định dạng ngày theo kiểu "dd-MM-yyyy"
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        // Chuyển đổi chuỗi ngày tháng năm hiện tại sang đối tượng LocalDate
+        LocalDate currentDate = LocalDate.parse(currentDateString, formatter);
+
+        // Tăng tháng lên 1 để lấy tháng sau
+        LocalDate nextMonth = currentDate.plusMonths(1);
+
+        // Lấy ngày cuối cùng của tháng sau
+        LocalDate lastDayOfNextMonth = nextMonth.withDayOfMonth(nextMonth.lengthOfMonth());
+
+        // Trả về ngày cuối cùng của tháng sau dưới dạng chuỗi
+        return lastDayOfNextMonth.format(formatter);
     }
 
     /**
