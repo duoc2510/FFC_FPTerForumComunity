@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import model.DAO.User_DB;
 import model.User;
+import util.Email;
 import static util.Email.sendEmail;
 
 /**
@@ -106,24 +107,24 @@ public class User_register extends HttpServlet {
             request.setAttribute("message", msg);
             request.getRequestDispatcher("/auth/register.jsp").forward(request, response);
         } else {
-            if (checkMail == false && checkUsername == true) {
+            if (!checkMail && checkUsername) {
                 msg = "Email này đã tồn tại.";
                 request.setAttribute("message", msg);
                 request.getRequestDispatcher("/auth/register.jsp").forward(request, response);
             }
-            if (checkMail == true && checkUsername == false) {
+            if (checkMail && !checkUsername) {
                 msg = "Tên người dùng đã tồn tại.";
                 request.setAttribute("message", msg);
                 request.getRequestDispatcher("/auth/register.jsp").forward(request, response);
             }
-            if (checkMail == false && checkUsername == false) {
+            if (!checkMail && !checkUsername) {
                 msg = "Email và Tên người dùng đã tồn tại.";
                 request.setAttribute("message", msg);
                 request.getRequestDispatcher("/auth/register.jsp").forward(request, response);
             }
-            if (checkMail == true && checkUsername == true) {
+            if (checkMail && checkUsername) {
                 int x = new Random().nextInt(90000) + 10000;
-                sendEmail(email, x);
+                Email.sendEmail(email, x);
                 request.setAttribute("x", x);
                 request.setAttribute("userName", userName);
                 request.setAttribute("email", email);
@@ -131,7 +132,6 @@ public class User_register extends HttpServlet {
                 request.getRequestDispatcher("/auth/verifyemail.jsp").forward(request, response);
             }
         }
-
     }
 
     /**

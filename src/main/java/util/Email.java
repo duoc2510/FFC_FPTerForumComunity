@@ -15,12 +15,6 @@ public class Email {
     private static final String FROM_EMAIL = "ffcfpterforumcomunity0@gmail.com";
     private static final String PASSWORD = "syes fwrz dcst lznl";
 
-    public static void main(String[] args) {
-        String toEmail = "phucnhde170110@fpt.edu.vn";
-        int numberToSend = 12345;
-        Email.sendEmail(toEmail, numberToSend);
-    }
-
     public static void sendEmail(String toEmail, int numberToSend) {
         // Properties
         Properties props = new Properties();
@@ -40,16 +34,21 @@ public class Email {
         // Session
         Session session = Session.getInstance(props, auth);
 
-        // Compose message
-        MimeMessage msg = new MimeMessage(session);
         try {
+            // Compose message
+            MimeMessage msg = new MimeMessage(session);
             msg.addHeader("Content-type", "text/HTML; charset=UTF-8");
-            msg.setFrom(new InternetAddress(FROM_EMAIL));
+            msg.setFrom(new InternetAddress(FROM_EMAIL, "FFCFPTER Forum Community"));
             msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail, false));
             msg.setSubject("Send the verification number!");
             msg.setSentDate(new Date());
             msg.setText("Verification number of you: " + numberToSend, "UTF-8");
+
+            // Send message
             Transport.send(msg);
+
+            System.out.println("Email sent successfully!");
+
         } catch (Exception e) {
             e.printStackTrace();
         }
