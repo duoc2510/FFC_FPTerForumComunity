@@ -1,3 +1,11 @@
+<style>
+     .avatar-cover{
+        width: 35px;
+        height: 35px;
+        object-fit: cover;
+    }
+    </style>
+
 <header class="app-header">
     <nav class="navbar navbar-expand-lg navbar-light">
 
@@ -36,14 +44,14 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link nav-icon-hover" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown"
                        aria-expanded="false">
-                        <img src="${pageContext.request.contextPath}/${userInfo.userAvatar}" alt="" width="35" class="rounded-circle">
-                        <p class="mt-0 mb-0">${userInfo.username}</p>
+                        <img src="${pageContext.request.contextPath}/${USER.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
+                     
                     </a>
                     <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
                         <div class="message-body">
                             <a href="${pageContext.request.contextPath}/profile" class="d-flex align-items-center gap-2 dropdown-item">
-                                <i class="ti ti-user fs-6"></i>
-                                <p class="mb-0 fs-3">My Profile</p>
+                                 <img src="${pageContext.request.contextPath}/${USER.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
+                                <p class="mb-0 fs-3">${USER.username}</p>
                             </a>
                             <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
                                 <i class="ti ti-mail fs-6"></i>
