@@ -26,6 +26,8 @@ public class User {
     public User() {
     }
 
+   
+
     // Constructor
     public User(int userId, String userEmail, String userPassword, int userRole, String username, String userFullName, double userWallet, String userAvatar, String userStory, int userRank, int userScore, Date userCreateDate, String userSex, boolean userActiveStatus, String usernameVip) {
         this.userId = userId;
@@ -44,6 +46,18 @@ public class User {
         this.userActiveStatus = userActiveStatus;
         this.usernameVip = usernameVip;
     }
+
+    public User(int userId, String userEmail, String userFullName, String userAvatar, boolean userActiveStatus) {
+        this.userId = userId;
+        this.userEmail = userEmail;
+        this.userFullName = userFullName;
+        this.userAvatar = userAvatar;
+        this.userActiveStatus = userActiveStatus;
+    }
+
+   
+
+   
 
     public User(String userEmail, String userPassword, String username) {
         this.userEmail = userEmail;

@@ -21,6 +21,11 @@ public class Upload {
     public Upload() {
     }
 
+    public Upload(int uploadId, int postId) {
+        this.uploadId = uploadId;
+        this.postId = postId;
+    }
+
     public Upload(int uploadId, int postId, String uploadPath) {
         this.uploadId = uploadId;
         this.postId = postId;

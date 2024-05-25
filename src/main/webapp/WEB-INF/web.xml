@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="5.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd">
-
     <!-- Context Parameters -->
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>/WEB-INF/applicationContext.xml</param-value>
     </context-param>
-
     <!-- Listener -->
     <listener>
         <description>ServletContextListener</description>
         <listener-class>model.DAO.DBListener</listener-class>
     </listener>
-
     <!-- Servlets -->
     <servlet>
         <servlet-name>Post_comment</servlet-name>
@@ -86,8 +83,19 @@
         <servlet-name>Post_addpost</servlet-name>
         <servlet-class>controller.Post_addpost</servlet-class>
     </servlet>
-
     <!-- Servlet Mappings -->
+    <servlet>
+        <servlet-name>User_group</servlet-name>
+        <servlet-class>controller.User_listGroup</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>User_groupSetting</servlet-name>
+        <servlet-class>controller.User_addGroup</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>User_inGroup</servlet-name>
+        <servlet-class>controller.User_inGroup</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Post_comment</servlet-name>
         <url-pattern>/comment</url-pattern>
@@ -160,8 +168,18 @@
         <servlet-name>Post_addpost</servlet-name>
         <url-pattern>/addpost</url-pattern>
     </servlet-mapping>
-
-    <!-- Welcome File List -->
+    <servlet-mapping>
+        <servlet-name>User_group</servlet-name>
+        <url-pattern>/group</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>User_groupSetting</servlet-name>
+        <url-pattern>/groupSetting</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>User_inGroup</servlet-name>
+        <url-pattern>/inGroup</url-pattern>
+    </servlet-mapping>
     <welcome-file-list>
         <welcome-file>home</welcome-file>
     </welcome-file-list>

@@ -13,10 +13,16 @@ public class Group_member {
     private int userId;
     private int groupId;
     private String status;
-
+    private User user;
     public Group_member() {
     }
-    
+
+    public Group_member(int memberGroupId, User user) {
+        this.memberGroupId = memberGroupId;
+        this.user = user;
+    }
+
+   
     public Group_member(int memberGroupId, int userId, int groupId, String status) {
         this.memberGroupId = memberGroupId;
         this.userId = userId;

@@ -20,6 +20,15 @@ public class Post {
     private User user;
     private List<Comment> comments;
 
+    public Post(int postId, int userId, int groupId, String content, Timestamp createDate, String status) {
+        this.postId = postId;
+        this.userId = userId;
+        this.groupId = groupId;
+        this.content = content;
+        this.createDate = createDate;
+        this.status = status;
+    }
+
     // Constructors
     // Constructor cho trường hợp không có commentDate
     public Post(int userId, String content, String status, String postStatus, String uploadPath) {

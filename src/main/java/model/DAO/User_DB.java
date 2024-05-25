@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 import static model.DAO.DBinfo.dbPass;
 import static model.DAO.DBinfo.dbURL;
 import static model.DAO.DBinfo.dbUser;
+import model.Group;
 import model.User;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -303,4 +304,7 @@ public class User_DB implements DBinfo {
 
         return userId;
     }
+    
+  
+
 }
