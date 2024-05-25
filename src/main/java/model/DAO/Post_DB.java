@@ -319,4 +319,84 @@ public class Post_DB {
         return user;
     }
 
+    public static boolean deleteCommentById(int commentId, int userId) {
+        String query = "DELETE FROM Comment WHERE Comment_id = ? AND User_id = ?";
+        try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, commentId);
+            stmt.setInt(2, userId);
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean editComment(int commentId, String newContent) {
+        boolean success = false;
+        String query = "UPDATE Comment SET Content = ? WHERE Comment_id = ?";
+
+        try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, newContent);
+            stmt.setInt(2, commentId);
+
+            int rowsUpdated = stmt.executeUpdate();
+            success = (rowsUpdated > 0);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return success;
+    }
+
+    public static boolean deletePost(int postId) {
+        boolean success = false;
+        String deleteCommentsQuery = "DELETE FROM Comment WHERE Post_id = ?";
+        String deleteUploadsQuery = "DELETE FROM Upload WHERE Post_id = ?";
+        String deleteRateQuery = "DELETE FROM Rate WHERE Post_id = ?";
+        String deletePostQuery = "DELETE FROM Post WHERE Post_id = ?";
+
+        try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass)) {
+            // Xoá các comment liên quan
+            try (PreparedStatement deleteCommentsStmt = conn.prepareStatement(deleteCommentsQuery)) {
+                deleteCommentsStmt.setInt(1, postId);
+                int commentsDeleted = deleteCommentsStmt.executeUpdate();
+                System.out.println("Deleted " + commentsDeleted + " comments related to post with ID " + postId);
+            }
+
+            // Xoá các tệp đính kèm (nếu có)
+            try (PreparedStatement deleteUploadsStmt = conn.prepareStatement(deleteUploadsQuery)) {
+                deleteUploadsStmt.setInt(1, postId);
+                int uploadsDeleted = deleteUploadsStmt.executeUpdate();
+                System.out.println("Deleted " + uploadsDeleted + " uploads related to post with ID " + postId);
+            }
+
+            // Xoá các rate liên quan
+            try (PreparedStatement deleteRateStmt = conn.prepareStatement(deleteRateQuery)) {
+                deleteRateStmt.setInt(1, postId);
+                int ratesDeleted = deleteRateStmt.executeUpdate();
+                System.out.println("Deleted " + ratesDeleted + " rates related to post with ID " + postId);
+            }
+
+            // Xoá bài đăng
+            try (PreparedStatement deletePostStmt = conn.prepareStatement(deletePostQuery)) {
+                deletePostStmt.setInt(1, postId);
+                int rowsDeleted = deletePostStmt.executeUpdate();
+                success = (rowsDeleted > 0);
+
+                if (success) {
+                    System.out.println("Post with ID " + postId + " and its comments, uploads, and rates deleted successfully.");
+                } else {
+                    System.out.println("Failed to delete post with ID " + postId + " and its comments, uploads, and rates.");
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            System.out.println("Failed to delete post with ID " + postId + " and its comments, uploads, and rates.");
+        }
+
+        return success;
+    }
+
 }

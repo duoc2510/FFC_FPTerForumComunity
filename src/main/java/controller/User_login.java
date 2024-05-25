@@ -70,28 +70,6 @@ public class User_login extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-//    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-//            throws ServletException, IOException {
-//        String identify = request.getParameter("identify");
-//        String password = request.getParameter("password");
-//        // Kiểm tra nếu email hoặc password rỗng
-//        User user = User.login(identify, password);
-//        if (user != null) {
-//             Successful login
-//            String userRole = user.getUser_role();
-//            if ("IOT".equals(userRole) || "PRJ".equals(userRole) || "MAS".equals(userRole) || "JPD".equals(userRole) || "SWE".equals(userRole)) {
-//                request.getSession().setAttribute("ADMIN", user);
-//            } else {
-//                request.getSession().setAttribute("USER", user);
-//            }
-//            response.sendRedirect("index.jsp");
-//        } else {
-//            String msg = "Invalid email or password";
-//            request.setAttribute("message", msg);
-//            request.getRequestDispatcher("auth/login.jsp").forward(request, response);
-//        }
-//    }
-
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String identify = request.getParameter("identify");
@@ -135,10 +113,10 @@ public class User_login extends HttpServlet {
                 Cookie identifyCookie = new Cookie("identify", identify);
                 Cookie passwordCookie = new Cookie("password", password);
                 Cookie rememberMeCookie = new Cookie("rememberMe", "true");
-//                int cookieMaxAge = 7 * 24 * 60 * 60;
-//                identifyCookie.setMaxAge(cookieMaxAge);
-//                passwordCookie.setMaxAge(cookieMaxAge);
-//                rememberMeCookie.setMaxAge(cookieMaxAge);
+                int cookieMaxAge = 7 * 24 * 60 * 60; // 7 days in seconds
+                identifyCookie.setMaxAge(cookieMaxAge);
+                passwordCookie.setMaxAge(cookieMaxAge);
+                rememberMeCookie.setMaxAge(cookieMaxAge);
                 response.addCookie(identifyCookie);
                 response.addCookie(passwordCookie);
                 response.addCookie(rememberMeCookie);
@@ -146,15 +124,22 @@ public class User_login extends HttpServlet {
                 Cookie identifyCookie = new Cookie("identify", "");
                 Cookie passwordCookie = new Cookie("password", "");
                 Cookie rememberMeCookie = new Cookie("rememberMe", "");
-//                identifyCookie.setMaxAge(0);
-//                passwordCookie.setMaxAge(0);
-//                rememberMeCookie.setMaxAge(0);
+                identifyCookie.setMaxAge(0); // Xóa cookie
+                passwordCookie.setMaxAge(0); // Xóa cookie
+                rememberMeCookie.setMaxAge(0); // Xóa cookie
                 response.addCookie(identifyCookie);
                 response.addCookie(passwordCookie);
                 response.addCookie(rememberMeCookie);
             }
 
-            request.getRequestDispatcher("/auth/role.jsp").forward(request, response);
+            // Lấy đường dẫn trước đó từ session và xoá nó sau khi đã sử dụng
+            String redirectURL = (String) request.getSession().getAttribute("redirectURL");
+            if (redirectURL != null && !redirectURL.isEmpty()) {
+                request.getSession().removeAttribute("redirectURL");
+                response.sendRedirect(response.encodeRedirectURL(redirectURL));
+            } else {
+                response.sendRedirect(response.encodeRedirectURL("home"));
+            }
         } else {
             String msg = "Invalid email or password";
             request.setAttribute("message", msg);

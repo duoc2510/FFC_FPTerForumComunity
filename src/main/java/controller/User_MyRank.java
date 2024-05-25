@@ -59,7 +59,11 @@ public class User_MyRank extends HttpServlet {
             throws ServletException, IOException {
         // Kiểm tra xem người dùng đã đăng nhập hay chưa
         if (request.getSession().getAttribute("USER") == null) {
-            // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
+            // Nếu chưa đăng nhập, lưu lại đường dẫn của trang hiện tại (referer) trong session và chuyển hướng đến trang đăng nhập
+            String referer = request.getHeader("referer");
+            if (referer != null && !referer.isEmpty()) {
+                request.getSession().setAttribute("redirectURL", referer);
+            }
             response.sendRedirect(response.encodeRedirectURL("login"));
         } else {
             // Gọi hàm và in ra kết quả ngày hiện tại
@@ -85,7 +89,6 @@ public class User_MyRank extends HttpServlet {
 
             request.getRequestDispatcher("/rank/myrank.jsp").forward(request, response);
         }
-
     }
 
     // Hàm lấy ngày tháng năm hiện tại

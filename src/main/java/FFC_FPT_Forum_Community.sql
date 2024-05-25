@@ -15,7 +15,7 @@ CREATE TABLE Users (
     User_fullName NVARCHAR(255), -- Họ và tên đầy đủ của người dùng
     User_wallet DECIMAL(10, 2) DEFAULT 0.00, -- Số dư trong ví của người dùng, mặc định là 0.00
     User_avatar NVARCHAR(255), -- Ảnh đại diện của người dùng
-    User_story TEXT, -- Câu chuyện của người dùng
+    User_story NVARCHAR(MAX), -- Câu chuyện của người dùng
     User_rank INT DEFAULT 0, -- Hạng của người dùng, mặc định là 0
     User_score INT DEFAULT 0, -- Điểm của người dùng, mặc định là 0
     User_createDate DATETIME DEFAULT GETDATE(), -- Ngày tạo người dùng, mặc định là ngày hiện tại
@@ -34,7 +34,7 @@ CREATE TABLE Shop (
     Shop_name NVARCHAR(255) NOT NULL, -- Tên của shop, bắt buộc
     Shop_phone NVARCHAR(20) NOT NULL, -- Số điện thoại của shop, bắt buộc
     Shop_campus NVARCHAR(255) NOT NULL, -- Cơ sở của shop, bắt buộc
-    Shop_description TEXT, -- Mô tả về shop
+    Shop_description NVARCHAR(MAX), -- Mô tả về shop
     User_id INT NOT NULL, -- ID người dùng, bắt buộc
     CONSTRAINT fk_user_shop FOREIGN KEY (User_id) REFERENCES Users(User_id) -- Tham chiếu đến User_id trong bảng Users
 );
@@ -43,7 +43,7 @@ GO
 CREATE TABLE Product (
     Product_id INT IDENTITY(1,1) PRIMARY KEY, -- ID tự động tăng cho sản phẩm
     Product_name NVARCHAR(255) NOT NULL, -- Tên của sản phẩm, bắt buộc
-    Product_description TEXT, -- Mô tả về sản phẩm
+    Product_description NVARCHAR(MAX), -- Mô tả về sản phẩm
     Product_price DECIMAL(10, 2) NOT NULL, -- Giá của sản phẩm, bắt buộc
     Stock_quantity INT NOT NULL, -- Số lượng tồn kho của sản phẩm, bắt buộc
     Category NVARCHAR(100), -- Danh mục của sản phẩm
@@ -125,7 +125,7 @@ GO
 CREATE TABLE Event (
     Event_id INT IDENTITY(1,1) PRIMARY KEY, -- id tự động tăng cho sự kiện
     Title NVARCHAR(255) NOT NULL, -- Tiêu đề của sự kiện, không được null
-	Description TEXT, -- Mô tả sự kiện
+	Description NVARCHAR(MAX), -- Mô tả sự kiện
     StartDate DATETIME NOT NULL, -- Ngày bắt đầu sự kiện, không được null
     EndDate DATETIME NOT NULL, -- Ngày kết thúc sự kiện, không được null
     User_id INT NOT NULL, -- id của người tạo sự kiện, không được null
@@ -135,7 +135,7 @@ GO
 -- Tạo bảng Payment: lưu thông tin về thanh toán
 CREATE TABLE Payment (
     Payment_id INT IDENTITY(1,1) PRIMARY KEY, -- id tự động tăng cho thanh toán
-    Payment_detail TEXT NOT NULL, -- Chi tiết thanh toán, không được null
+    Payment_detail NVARCHAR(MAX) NOT NULL, -- Chi tiết thanh toán, không được null
     User_id INT NOT NULL, -- id của người dùng, không được null
     FOREIGN KEY (User_id) REFERENCES Users(User_id) -- Khóa ngoại tham chiếu đến người dùng
 );
@@ -143,7 +143,7 @@ GO
 -- Tạo bảng Combo_ads: lưu thông tin về gói quảng cáo
 CREATE TABLE Combo_ads (
     Adsdetail_id INT IDENTITY(1,1) PRIMARY KEY, -- id tự động tăng cho gói quảng cáo
-    Content TEXT NOT NULL, -- Nội dung gói quảng cáo, không được null
+    Content NVARCHAR(MAX) NOT NULL, -- Nội dung gói quảng cáo, không được null
     budget DECIMAL(10, 2) NOT NULL -- Ngân sách của gói quảng cáo, không được null
 );
 GO
@@ -151,7 +151,7 @@ GO
 CREATE TABLE Ads (
     Ads_id INT IDENTITY(1,1) PRIMARY KEY, -- id tự động tăng cho quảng cáo
     Adsdetail_id INT NOT NULL, -- id chi tiết gói quảng cáo, không được null
-    Content TEXT NOT NULL, -- Nội dung quảng cáo, không được null
+    Content NVARCHAR(MAX) NOT NULL, -- Nội dung quảng cáo, không được null
     Image NVARCHAR(255), -- Hình ảnh quảng cáo
     User_id INT NOT NULL, -- id của người đăng quảng cáo, không được null
     FOREIGN KEY (Adsdetail_id) REFERENCES Combo_ads(Adsdetail_id), -- Khóa ngoại tham chiếu đến chi tiết gói quảng cáo
@@ -163,7 +163,7 @@ CREATE TABLE Message (
     Message_id INT IDENTITY(1,1) PRIMARY KEY, -- id tự động tăng cho tin nhắn
     From_id INT NOT NULL, -- id người gửi, không được null
     To_id INT NOT NULL, -- id người nhận, không được null
-    MessageText TEXT NOT NULL, -- Nội dung tin nhắn, không được null
+    MessageText NVARCHAR(MAX) NOT NULL, -- Nội dung tin nhắn, không được null
     TimeStamp DATETIME DEFAULT GETDATE(), -- Thời gian gửi tin nhắn, mặc định là ngày hiện tại
     FOREIGN KEY (From_id) REFERENCES Users(User_id), -- Khóa ngoại tham chiếu đến người gửi
     FOREIGN KEY (To_id) REFERENCES Users(User_id) -- Khóa ngoại tham chiếu đến người nhận
@@ -172,7 +172,7 @@ GO
 -- Tạo bảng Feeback: lưu thông tin về phản hồi
 CREATE TABLE Feedback (
     Feedback_id INT IDENTITY(1,1) PRIMARY KEY, -- id tự động tăng cho phản hồi
-    Feedback_detail TEXT NOT NULL, -- Chi tiết phản hồi
+    Feedback_detail NVARCHAR(MAX) NOT NULL, -- Chi tiết phản hồi
     Feedback_title NVARCHAR(255) NOT NULL, -- Tiêu đề phản hồi, không được null
 	User_id INT NOT NULL, -- id người gửi, không được null
     FOREIGN KEY (User_id) REFERENCES Users(User_id) -- Khóa ngoại tham chiếu đến người gửi
@@ -182,7 +182,7 @@ GO
 CREATE TABLE Topic (
     Topic_id INT IDENTITY(1,1) PRIMARY KEY, -- id tự động tăng cho chủ đề
     Topic_name NVARCHAR(255) NOT NULL, -- Tên chủ đề, không được null
-    Description TEXT -- Mô tả chủ đề
+    Description NVARCHAR(MAX) -- Mô tả chủ đề
 );
 GO
 -- Tạo bảng UserTopic: lưu thông tin về chủ đề của người dùng
@@ -199,7 +199,7 @@ CREATE TABLE [Group] (
     Group_id INT IDENTITY(1,1) PRIMARY KEY, -- id tự động tăng cho nhóm
     Creater_id INT NOT NULL, -- id của người tạo nhóm, không được null
     Group_name NVARCHAR(255) NOT NULL, -- Tên nhóm, không được null
-    Group_description TEXT, -- Mô tả nhóm
+    Group_description NVARCHAR(MAX), -- Mô tả nhóm
     FOREIGN KEY (Creater_id) REFERENCES Users(User_id) -- Khóa ngoại tham chiếu đến người tạo nhóm
 );
 GO
@@ -217,7 +217,7 @@ CREATE TABLE GroupChatMessage (
     GroupChatMessage_id INT IDENTITY(1,1) PRIMARY KEY, -- ID tự động tăng cho tin nhắn trong nhóm
     Group_id INT NOT NULL, -- ID của nhóm, không được null
     From_id INT NOT NULL, -- ID người gửi tin nhắn, không được null
-    MessageText TEXT NOT NULL, -- Nội dung tin nhắn, không được null
+    MessageText NVARCHAR(MAX) NOT NULL, -- Nội dung tin nhắn, không được null
     TimeStamp DATETIME DEFAULT GETDATE(), -- Thời gian gửi tin nhắn, mặc định là ngày hiện tại
     FOREIGN KEY (Group_id) REFERENCES [Group](Group_id), -- Khóa ngoại tham chiếu đến nhóm
     FOREIGN KEY (From_id) REFERENCES Users(User_id) -- Khóa ngoại tham chiếu đến người gửi tin nhắn
@@ -229,11 +229,11 @@ CREATE TABLE Post (
     User_id INT NOT NULL, -- id của người đăng bài viết
     Group_id INT, -- id của nhóm mà bài viết thuộc về
     Topic_id INT, -- id của chủ đề mà bài viết thuộc về
-    Content TEXT NOT NULL, -- Nội dung bài viết
+    Content NVARCHAR(MAX) NOT NULL, -- Nội dung bài viết
     createDate DATETIME DEFAULT GETDATE(), -- Ngày tạo bài viết, mặc định là ngày hiện tại
     Status NVARCHAR(50), -- Trạng thái của bài viết
     postStatus NVARCHAR(50), -- Trạng thái bài viết (duyệt, chưa duyệt)
-    Reason TEXT, -- Lý do (nếu có) của trạng thái bài viết
+    Reason NVARCHAR(MAX), -- Lý do (nếu có) của trạng thái bài viết
 	FOREIGN KEY (User_id) REFERENCES Users(User_id), -- Khóa ngoại tham chiếu đến người đăng bài viết
     FOREIGN KEY (Group_id) REFERENCES [Group](Group_id), -- Khóa ngoại tham chiếu đến nhóm
     FOREIGN KEY (Topic_id) REFERENCES Topic(Topic_id) -- Khóa ngoại tham chiếu đến chủ đề
@@ -244,7 +244,7 @@ CREATE TABLE Comment (
     Comment_id INT IDENTITY(1,1) PRIMARY KEY, -- id tự động tăng cho bình luận
     Post_id INT, -- id của bài viết mà bình luận thuộc về
     User_id INT, -- id của người bình luận
-    Content TEXT, -- Nội dung bình luận
+    Content NVARCHAR(MAX), -- Nội dung bình luận
     Date DATETIME DEFAULT GETDATE(), -- Thời gian bình luận, mặc định là ngày hiện tại
     FOREIGN KEY (Post_id) REFERENCES Post(Post_id), -- Khóa ngoại tham chiếu đến bài viết
     FOREIGN KEY (User_id) REFERENCES Users(User_id) -- Khóa ngoại tham chiếu đến người bình luận
@@ -268,7 +268,7 @@ CREATE TABLE Report (
     User_id INT , -- id của người dùng báo cáo
 	Shop_id INT, -- id cua shop bi bao cao
     Post_id INT, -- id của bài viết bị báo cáo
-    Reason TEXT, -- Lý do báo cáo
+    Reason NVARCHAR(MAX), -- Lý do báo cáo
     Status NVARCHAR(50), -- Trạng thái của báo cáo
     FOREIGN KEY (User_id) REFERENCES Users(User_id), -- Khóa ngoại tham chiếu đến người báo cáo
     FOREIGN KEY (Reporter_id) REFERENCES Users(User_id), -- Khóa ngoại tham chiếu đến người báo cáo
@@ -387,7 +387,8 @@ VALUES
 (1, 'post1_image2.jpg'),
 (2, 'post2_image1.jpg');
 GO
-CREATE VIEW PostWithUploadAndComment AS
+
+CREATE VIEW PostWithUpload AS
 SELECT 
     p.Post_id,
     p.User_id,
@@ -398,7 +399,28 @@ SELECT
     p.Status,
     p.postStatus,
     p.Reason,
-    u.UploadPath AS UploadPath,
+    u.Upload_id,
+    u.Event_id,
+    u.Shop_id,
+    u.Comment_id AS Upload_Comment_id,
+    u.Product_id,
+    u.UploadPath AS UploadPath
+FROM 
+    Post p
+LEFT JOIN 
+    Upload u ON p.Post_id = u.Post_id;
+GO
+CREATE VIEW PostWithComment AS
+SELECT 
+    p.Post_id,
+    p.User_id,
+    p.Group_id,
+    p.Topic_id,
+    p.Content,
+    p.createDate,
+    p.Status,
+    p.postStatus,
+    p.Reason,
     c.Comment_id,
     c.User_id AS Comment_User_id,
     c.Content AS Comment_Content,
@@ -406,13 +428,14 @@ SELECT
 FROM 
     Post p
 LEFT JOIN 
-    Upload u ON p.Post_id = u.Post_id
-LEFT JOIN 
     Comment c ON p.Post_id = c.Post_id;
+	GO
 
 
 
-SELECT * FROM PostWithUploadAndComment;
+SELECT * FROM PostWithUpload;
+SELECT * FROM PostWithComment;
+
 
 
 

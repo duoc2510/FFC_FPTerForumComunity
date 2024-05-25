@@ -4,9 +4,19 @@
 <body>
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
          data-sidebar-position="fixed" data-header-position="fixed">
-        <%@ include file="../include/slidebar.jsp" %>
+        <c:if test="${not empty sessionScope.USER}">
+            <%@ include file="../include/slidebar.jsp" %>
+        </c:if>
+        <c:if test="${empty sessionScope.USER}">
+            <%@ include file="../include/slidebar_guest.jsp" %>
+        </c:if>
         <div class="body-wrapper">
-            <%@ include file="../include/navbar_guest.jsp" %>
+            <c:if test="${not empty sessionScope.USER}">
+                <%@ include file="../include/navbar.jsp" %>
+            </c:if>
+            <c:if test="${empty sessionScope.USER}">
+                <%@ include file="../include/navbar_guest.jsp" %>
+            </c:if>
             <div class="container-fluid">
 
                 <div class="col-lg-12 ">
@@ -91,7 +101,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>

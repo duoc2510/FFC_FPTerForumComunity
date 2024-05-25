@@ -82,12 +82,12 @@ public class Post_addpost extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("USER");
 
         if (user == null) {
-            response.sendRedirect(request.getContextPath() + "/auth/login.jsp?errorMessage=You must be logged in to add a post");
+            response.sendRedirect("login");
             return;
         }
 
@@ -116,7 +116,7 @@ public class Post_addpost extends HttpServlet {
 
         try {
             Post_DB.addPostUser(post);
-            response.sendRedirect(request.getContextPath() + "/user/profile.jsp?successMessage=Post added successfully!");
+            response.sendRedirect("profile");
         } catch (SQLException ex) {
             Logger.getLogger(Post_addpost.class.getName()).log(Level.SEVERE, null, ex);
             response.sendRedirect(request.getContextPath() + "/user/profile.jsp?errorMessage=Error adding post");
