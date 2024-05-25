@@ -199,17 +199,19 @@ public class Post_DB {
     public static List<Comment> getCommentsByPostId(int postId) {
         List<Comment> comments = new ArrayList<>();
         String query = "SELECT * FROM Comment WHERE Post_id = ?";
-
         try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, postId);
             ResultSet rs = stmt.executeQuery();
-
             while (rs.next()) {
                 int commentId = rs.getInt("Comment_id");
                 int userId = rs.getInt("User_id");
                 String content = rs.getString("Content");
                 Date date = rs.getDate("Date");
+
+                User user = User_DB.getUserById(userId); // Get user information for the comment
+
                 Comment comment = new Comment(commentId, postId, userId, content, date);
+                comment.setUser(user); // Set user information to comment
                 comments.add(comment);
             }
         } catch (SQLException ex) {

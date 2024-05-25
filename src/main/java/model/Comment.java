@@ -18,6 +18,7 @@ public class Comment {
     private String content; // Nội dung bình luận
     private String uploadPath;  // Hình ảnh đính kèm bình luận
     private Date date;     // Thời gian bình luận, mặc định là ngày hiện tại
+    private User user;
 
     // Constructors
     public Comment() {
@@ -89,4 +90,13 @@ public class Comment {
     public void setDate(Date date) {
         this.date = date;
     }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
 }

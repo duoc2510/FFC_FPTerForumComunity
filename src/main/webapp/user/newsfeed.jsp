@@ -95,8 +95,21 @@
                                                             <span class="hide-menu">Share</span>
                                                         </a>
                                                     </div>
-                                                    <div class="input-group">
-                                                        <input type="text" class="form-control" placeholder="Write a comment">
+                                                    <!-- Add comment form -->
+                                                    <form action="${pageContext.request.contextPath}/comment" method="post" class="input-group">
+                                                        <input type="hidden" name="postId" value="${post.postId}">
+                                                        <input type="hidden" name="userId" value="${user.userId}">
+                                                        <input type="text" class="form-control" name="content" placeholder="Write a comment">
+                                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                                    </form>
+                                                    <!-- Display comments -->
+                                                    <div class="comments">
+                                                        <c:forEach var="comment" items="${post.comments}">
+                                                            <div class="comment">
+                                                                <p><strong>${comment.user.username}</strong>: ${comment.content}</p>
+                                                                <p class="text-muted">${comment.date}</p>
+                                                            </div>
+                                                        </c:forEach>
                                                     </div>
                                                 </div>
                                             </div>

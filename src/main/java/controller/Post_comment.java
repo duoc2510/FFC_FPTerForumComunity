@@ -71,27 +71,17 @@ public class Post_comment extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
-
-        // Lấy thông tin từ request
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int postId = Integer.parseInt(request.getParameter("postId"));
         int userId = Integer.parseInt(request.getParameter("userId"));
         String content = request.getParameter("content");
 
-        // Thêm comment vào cơ sở dữ liệu
-        Post_DB postDB = new Post_DB();
-        boolean success = postDB.addCommentToPost(postId, userId, content);
+        boolean success = Post_DB.addCommentToPost(postId, userId, content);
 
-        // Kiểm tra kết quả và xử lý phản hồi
         if (success) {
-            // Chuyển hướng hoặc hiển thị thông báo thành công
-            response.sendRedirect(request.getContextPath() + "/viewPost.jsp?postId=" + postId);
+            response.sendRedirect("post"); // Redirect to the newsfeed page to see the comment
         } else {
-            // Xử lý khi thất bại, ví dụ: hiển thị thông báo lỗi
-            request.setAttribute("errorMessage", "Failed to add comment. Please try again.");
-            request.getRequestDispatcher("/errorPage.jsp").forward(request, response);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to add comment.");
         }
     }
 

@@ -1,6 +1,7 @@
 package model;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 public class Post {
 
@@ -17,6 +18,7 @@ public class Post {
     private String comment;
     private Timestamp commentDate; // Thêm trường commentDate
     private User user;
+    private List<Comment> comments;
 
     // Constructors
     // Constructor cho trường hợp không có commentDate
@@ -170,5 +172,13 @@ public class Post {
 
     public User getUser() {
         return user;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 }

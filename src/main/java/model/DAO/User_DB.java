@@ -159,8 +159,8 @@ public class User_DB implements DBinfo {
 
     public static User getUserById(int userId) {
         User user = null;
-        String query = "SELECT * Users WHERE User_id = ?";
-        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
+        String query = "SELECT * FROM Users WHERE User_id = ?"; // Chỉnh sửa FROM Users
+        try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
 
             pstmt.setInt(1, userId); // Set the User_ID parameter in the query
             ResultSet rs = pstmt.executeQuery();
@@ -181,11 +181,9 @@ public class User_DB implements DBinfo {
                 String usernameVip = rs.getString("usernameVip");
 
                 user = new User(userEmail, userPassword, userRole, username, userFullName, userWallet, userAvatar, userStory, userRank, userScore, userCreateDate, userSex, userActiveStatus, usernameVip);
-
             }
         } catch (SQLException ex) {
-            Logger.getLogger(User_DB.class
-                    .getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(User_DB.class.getName()).log(Level.SEVERE, null, ex);
         }
         return user;
     }
