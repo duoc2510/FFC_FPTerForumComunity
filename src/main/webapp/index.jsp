@@ -6,9 +6,14 @@
         <%@ include file="include/slidebar_guest.jsp" %>
         <div class="body-wrapper">
             <%@ include file="include/navbar_guest.jsp" %>
-            
+            <div class="container-fluid d-flex">
+                <div class="col-lg-12 w-100">
+                    <%@ include file="user/tabTopic.jsp" %>
+                    <%@ include file="user/newPost.jsp" %>
+                    <%@ include file="user/newsfeed.jsp" %>
+                </div>
+            </div>
         </div>
     </div>
 </body>
 <%@ include file="include/footer.jsp" %>
-
