@@ -10,7 +10,6 @@
                 <div class="col-lg-12 w-100">
                     <%@ include file="user/tabTopic.jsp" %>
                     <%@ include file="user/newPost.jsp" %>
-                    <%@ include file="user/newsfeed.jsp" %>
                 </div>
             </div>
         </div>
