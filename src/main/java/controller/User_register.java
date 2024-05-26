@@ -61,8 +61,14 @@ public class User_register extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        request.getRequestDispatcher("/auth/register.jsp").forward(request, response);
+        // Kiểm tra xem người dùng đã đăng nhập hay chưa
+        if (request.getSession().getAttribute("USER") != null) {
+            // Nếu đã đăng nhập, chuyển hướng đến trang chính
+            response.sendRedirect(response.encodeRedirectURL("home"));
+        } else {
+            // Nếu chưa đăng nhập, hiển thị trang đăng nhập
+            request.getRequestDispatcher("/auth/register.jsp").forward(request, response);
+        }
     }
 
     /**
@@ -81,7 +87,6 @@ public class User_register extends HttpServlet {
         String userName = request.getParameter("userName");
         String password = request.getParameter("password");
         String confirmPassword = request.getParameter("rePassword");
-
         User_DB userDB = new User_DB();
         ArrayList<User> userlist = userDB.getAllUsers();
         boolean checkMail = true;
@@ -92,16 +97,13 @@ public class User_register extends HttpServlet {
                 break;
             }
         }
-
         for (User us : userlist) {
             if (us.getUsername().equals(userName)) {
                 checkUsername = false;
                 break;
             }
         }
-
         String msg;
-
         if (!password.equals(confirmPassword)) {
             msg = "Mật khẩu xác nhận không khớp.";
             request.setAttribute("message", msg);

@@ -17,7 +17,7 @@ import model.User;
  *
  * @author Admin
  */
-public class User_VerifyAccount extends HttpServlet {
+public class User_accountVerify extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>

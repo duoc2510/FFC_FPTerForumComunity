@@ -6,6 +6,14 @@
         <param-value>/WEB-INF/applicationContext.xml</param-value>
     </context-param>
     <!-- Listener -->
+    <filter>
+        <filter-name>AuthenticateFilter</filter-name>
+        <filter-class>view.AuthenticateFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AuthenticateFilter</filter-name>
+        <url-pattern>/rank/*</url-pattern>
+    </filter-mapping>
     <listener>
         <description>ServletContextListener</description>
         <listener-class>model.DAO.DBListener</listener-class>
@@ -17,7 +25,7 @@
     </servlet>
     <servlet>
         <servlet-name>User_viewpost</servlet-name>
-        <servlet-class>controller.User_viewpost</servlet-class>
+        <servlet-class>controller.User_postView</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>User_login</servlet-name>
@@ -41,11 +49,11 @@
     </servlet>
     <servlet>
         <servlet-name>User_changePass</servlet-name>
-        <servlet-class>controller.User_changePass</servlet-class>
+        <servlet-class>controller.User_passChange</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>User_VerifyEmail</servlet-name>
-        <servlet-class>controller.User_VerifyEmail</servlet-class>
+        <servlet-class>controller.User_emailVerify</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>home</servlet-name>
@@ -53,11 +61,11 @@
     </servlet>
     <servlet>
         <servlet-name>User_LostAccount</servlet-name>
-        <servlet-class>controller.User_LostAccount</servlet-class>
+        <servlet-class>controller.User_lostAccount</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>User_VerifyAccount</servlet-name>
-        <servlet-class>controller.User_VerifyAccount</servlet-class>
+        <servlet-class>controller.User_accountVerify</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>User_NewPass</servlet-name>
@@ -65,23 +73,23 @@
     </servlet>
     <servlet>
         <servlet-name>LoginGoogleHandler</servlet-name>
-        <servlet-class>controller.LoginGoogleHandler</servlet-class>
+        <servlet-class>controller.User_loginGoogle</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>User_Rank</servlet-name>
-        <servlet-class>controller.User_Rank</servlet-class>
+        <servlet-class>controller.User_rank</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>TopVip</servlet-name>
-        <servlet-class>controller.TopVip</servlet-class>
+        <servlet-class>controller.User_topVip</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>User_MyRank</servlet-name>
-        <servlet-class>controller.User_MyRank</servlet-class>
+        <servlet-class>controller.User_rankView</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Post_addpost</servlet-name>
-        <servlet-class>controller.Post_addpost</servlet-class>
+        <servlet-class>controller.Post_addUser</servlet-class>
     </servlet>
     <!-- Servlet Mappings -->
     <servlet-mapping>
@@ -142,7 +150,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>User_MyRank</servlet-name>
-        <url-pattern>/userrank</url-pattern>
+        <url-pattern>/rank/userrank</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>User_Rank</servlet-name>
@@ -150,7 +158,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>TopVip</servlet-name>
-        <url-pattern>/topvip</url-pattern>
+        <url-pattern>/rank/topvip</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Post_addpost</servlet-name>

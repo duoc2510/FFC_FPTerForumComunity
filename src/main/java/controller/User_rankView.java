@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter;
  *
  * @author Admin
  */
-public class User_MyRank extends HttpServlet {
+public class User_rankView extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -57,38 +57,27 @@ public class User_MyRank extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Kiểm tra xem người dùng đã đăng nhập hay chưa
-        if (request.getSession().getAttribute("USER") == null) {
-            // Nếu chưa đăng nhập, lưu lại đường dẫn của trang hiện tại (referer) trong session và chuyển hướng đến trang đăng nhập
-            String referer = request.getHeader("referer");
-            if (referer != null && !referer.isEmpty()) {
-                request.getSession().setAttribute("redirectURL", referer);
-            }
-            response.sendRedirect(response.encodeRedirectURL("login"));
-        } else {
-            // Gọi hàm và in ra kết quả ngày hiện tại
-            String currentDate = getCurrentDate();
+        // Gọi hàm và in ra kết quả ngày hiện tại
+        String currentDate = getCurrentDate();
 
-            // Gọi hàm và in ra kết quả ngày đầu tiên của tháng
-            String firstDayOfMonth = getFirstDayOfMonth(currentDate);
+        // Gọi hàm và in ra kết quả ngày đầu tiên của tháng
+        String firstDayOfMonth = getFirstDayOfMonth(currentDate);
 
-            // Gọi hàm và in ra kết quả ngày cuối cùng của tháng
-            String lastDayOfMonth = getLastDayOfMonth(currentDate);
+        // Gọi hàm và in ra kết quả ngày cuối cùng của tháng
+        String lastDayOfMonth = getLastDayOfMonth(currentDate);
 
-            // Gọi hàm và in ra kết quả ngày đầu tiên của tháng sau
-            String firstDayOfNextMonth = getFirstDayOfNextMonth(currentDate);
+        // Gọi hàm và in ra kết quả ngày đầu tiên của tháng sau
+        String firstDayOfNextMonth = getFirstDayOfNextMonth(currentDate);
 
-            // Gọi hàm và in ra kết quả ngày cuối cùng của tháng sau
-            String lastDayOfNextMonth = getLastDayOfNextMonth(currentDate);
+        // Gọi hàm và in ra kết quả ngày cuối cùng của tháng sau
+        String lastDayOfNextMonth = getLastDayOfNextMonth(currentDate);
 
-            request.setAttribute("currentDate", currentDate);
-            request.setAttribute("firstDayOfMonth", firstDayOfMonth);
-            request.setAttribute("lastDayOfMonth", lastDayOfMonth);
-            request.setAttribute("firstDayOfNextMonth", firstDayOfNextMonth);
-            request.setAttribute("lastDayOfNextMonth", lastDayOfNextMonth);
-
-            request.getRequestDispatcher("/rank/myrank.jsp").forward(request, response);
-        }
+        request.setAttribute("currentDate", currentDate);
+        request.setAttribute("firstDayOfMonth", firstDayOfMonth);
+        request.setAttribute("lastDayOfMonth", lastDayOfMonth);
+        request.setAttribute("firstDayOfNextMonth", firstDayOfNextMonth);
+        request.setAttribute("lastDayOfNextMonth", lastDayOfNextMonth);
+        request.getRequestDispatcher("/rank/myrank.jsp").forward(request, response);
     }
 
     // Hàm lấy ngày tháng năm hiện tại

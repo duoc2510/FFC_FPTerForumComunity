@@ -19,7 +19,7 @@ import model.User;
  *
  * @author Admin
  */
-public class User_viewpost extends HttpServlet {
+public class User_postView extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>

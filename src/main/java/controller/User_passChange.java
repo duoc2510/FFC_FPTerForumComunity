@@ -18,7 +18,7 @@ import model.User;
  *
  * @author PC
  */
-public class User_changePass extends HttpServlet {
+public class User_passChange extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>

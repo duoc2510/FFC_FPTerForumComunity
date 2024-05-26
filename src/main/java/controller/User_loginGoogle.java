@@ -23,7 +23,7 @@ import util.UserGoogleDto;
  *
  * @author Admin
  */
-public class LoginGoogleHandler extends HttpServlet {
+public class User_loginGoogle extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>

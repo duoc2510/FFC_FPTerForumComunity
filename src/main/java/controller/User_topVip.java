@@ -10,6 +10,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import model.DAO.User_DB;
 import model.User;
 
@@ -17,7 +20,7 @@ import model.User;
  *
  * @author Admin
  */
-public class User_VerifyEmail extends HttpServlet {
+public class User_topVip extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -36,10 +39,10 @@ public class User_VerifyEmail extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet User_VerifyEmail</title>");
+            out.println("<title>Servlet TopVip</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet User_VerifyEmail at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet TopVip at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -57,8 +60,17 @@ public class User_VerifyEmail extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        request.getRequestDispatcher("/auth/verifyemail.jsp").forward(request, response);
+        User_DB userDB = new User_DB();
+        ArrayList<User> userlist = userDB.getAllUsers();
+        userlist.removeIf(user -> user.getUserRole() == 0);
+        Collections.sort(userlist, new Comparator<User>() {
+            @Override
+            public int compare(User u1, User u2) {
+                return Integer.compare(u2.getUserScore(), u1.getUserScore()); // Sắp xếp giảm dần
+            }
+        });
+        request.setAttribute("userlist", userlist);
+        request.getRequestDispatcher("/rank/topvip.jsp").forward(request, response);
     }
 
     /**
@@ -72,31 +84,7 @@ public class User_VerifyEmail extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
-        String email = request.getParameter("email");
-        String userName = request.getParameter("userName");
-        String password = request.getParameter("password");
-        String x = request.getParameter("x");
-        String number = request.getParameter("number");
-        User_DB userDB = new User_DB();
-        String msg;
-        if (Integer.parseInt(x) == Integer.parseInt(number)) {
-            // Passwords match, proceed to add new staff
-            User newUser = new User(email, password, userName);
-            userDB.addUser(newUser);
-            msg = "Registration Success";
-            request.setAttribute("message", msg);
-            request.getRequestDispatcher("/auth/login.jsp").forward(request, response);
-        } else {
-            msg = "Verify Code Is Wrong!";
-            request.setAttribute("message", msg);
-            request.setAttribute("x", x);
-            request.setAttribute("userName", userName);
-            request.setAttribute("email", email);
-            request.setAttribute("password", password);
-            request.getRequestDispatcher("/auth/verifyemail.jsp").forward(request, response);
-        }
-
+        processRequest(request, response);
     }
 
     /**
