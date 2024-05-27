@@ -96,6 +96,10 @@
         <servlet-name>User_inGroup</servlet-name>
         <servlet-class>controller.User_inGroup</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>User_joinGroup</servlet-name>
+        <servlet-class>controller.User_joinGroup</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Post_comment</servlet-name>
         <url-pattern>/comment</url-pattern>
@@ -179,6 +183,10 @@
     <servlet-mapping>
         <servlet-name>User_inGroup</servlet-name>
         <url-pattern>/inGroup</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>User_joinGroup</servlet-name>
+        <url-pattern>/joinGroup</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>home</welcome-file>

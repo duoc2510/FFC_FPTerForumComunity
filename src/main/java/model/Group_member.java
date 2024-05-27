@@ -22,6 +22,11 @@ public class Group_member {
         this.user = user;
     }
 
+    public Group_member(int memberGroupId, String status) {
+        this.memberGroupId = memberGroupId;
+        this.status = status;
+    }
+    
    
     public Group_member(int memberGroupId, int userId, int groupId, String status) {
         this.memberGroupId = memberGroupId;

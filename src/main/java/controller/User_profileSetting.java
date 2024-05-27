@@ -67,7 +67,7 @@ public class User_profileSetting extends HttpServlet {
         User user = (User) request.getSession().getAttribute("USER");
         String userEmail = user.getUserEmail();
         User userInfo = User_DB.getUserByEmailorUsername(userEmail);
-         request.getSession().setAttribute("USER", userInfo);
+        request.getSession().setAttribute("USER", userInfo);
         // Đặt danh sách người dùng vào thuộc tính của request
         request.setAttribute("userInfo", userInfo);
         // Chuyển hướng sang trang jsp để hiển thị thông tin người dùng32
@@ -128,7 +128,7 @@ public class User_profileSetting extends HttpServlet {
 
             // Lấy lại thông tin người dùng sau khi cập nhật
             User updatedUser = User_DB.getUserByEmailorUsername(email);
-             request.getSession().setAttribute("USER", updatedUser);
+            request.getSession().setAttribute("USER", updatedUser);
             request.setAttribute("userInfo", updatedUser);
             request.getRequestDispatcher("/user/settings.jsp").forward(request, response);
         } else {

@@ -58,6 +58,7 @@ public class User_viewpost extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession(false); // Không tạo session mới nếu không tồn tại
 
         if (session != null && session.getAttribute("USER") != null) {
@@ -76,7 +77,9 @@ public class User_viewpost extends HttpServlet {
                 for (Comment comment : comments) {
                     // Lấy thông tin người dùng cho comment
                     User commentUser = User_DB.getUserById(comment.getUserId());
-                    comment.setUser(commentUser);
+                    if (commentUser != null) {
+                        comment.setUser(commentUser);
+                    }
                 }
                 post.setComments(comments); // Đặt danh sách comment vào bài viết
             }
@@ -92,9 +95,26 @@ public class User_viewpost extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        doGet(request, response);
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action = request.getParameter("action");
+        response.setContentType("text/html;charset=UTF-8");
+
+        if ("deletePost".equals(action)) {
+            // Lưu lại URL của trang hiện tại
+
+            // Xóa bài đăng
+            int postId = Integer.parseInt(request.getParameter("postId"));
+            boolean success = Post_DB.deletePost(postId);
+
+            if (success) {
+                // Nếu thành công, chuyển hướng người dùng đến trang hiện tại
+                String referer = request.getHeader("referer");
+                response.sendRedirect(referer);
+            } else {
+                // Nếu thất bại, gửi mã lỗi 500
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to delete post.");
+            }
+        }
     }
 
     /**

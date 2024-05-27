@@ -412,9 +412,50 @@ LEFT JOIN
 
 
 
+
 SELECT * FROM PostWithUploadAndComment;
 
 
+CREATE OR ALTER VIEW GroupView3 AS
+SELECT 
+    g.Group_id,
+    g.Creater_id,
+    g.Group_name,
+    g.Group_description,
+    g.image,
+    mg.MemberGroup_id,
+    u.USER_ID,
+    u.User_email,
+    u.User_fullName,
+    u.User_avatar,
+    u.User_activeStatus,
+    p.Post_id,
+    p.User_id AS Post_user_id,
+    p.Group_id AS Post_group_id,
+    p.Content AS Post_content,
+    p.createDate AS Post_createDate,
+    p.Status AS Post_status,
+    c.Comment_id,
+    c.Post_id AS Comment_post_id,
+    c.User_id AS Comment_user_id,
+    c.Content AS Comment_content,
+    c.Date AS Comment_date,
+    up.Upload_id,
+    up.Event_id,
+    up.Shop_id,
+    up.Comment_id AS Upload_comment_id,
+    up.Product_id,
+    up.UploadPath,
+    up.Post_id AS Upload_post_id,
+    (SELECT COUNT(*) FROM MemberGroup WHERE Group_id = g.Group_id) AS memberCount -- Đếm số thành viên nhóm
+FROM [Group] g
+LEFT JOIN MemberGroup mg ON g.Group_id = mg.Group_id
+LEFT JOIN Users u ON mg.User_id = u.User_id
+LEFT JOIN Post p ON g.Group_id = p.Group_id
+LEFT JOIN Comment c ON p.Post_id = c.Post_id
+LEFT JOIN Upload up ON p.Post_id = up.Post_id;
+
+SELECT * FROM GroupView3;
 
 -- Xem thông tin từ bảng Users
 SELECT * FROM Users;
@@ -437,11 +478,12 @@ SELECT * FROM Feedback;
 -- Xem thông tin từ bảng Topic
 SELECT * FROM Topic;
 -- Xem thông tin từ bảng UserTopic
-SELECT * FROM UserTopic;
+SELECT * FROM UserTopic;   
 -- Xem thông tin từ bảng [Group]
 SELECT * FROM [Group];
 -- Xem thông tin từ bảng MemberGroup
 SELECT * FROM MemberGroup;
+
 -- Xem thông tin từ bảng Post
 SELECT * FROM Post;
 -- Xem thông tin từ bảng Comment
@@ -473,3 +515,11 @@ SELECT * FROM UserFollow
 
 
 
+ALTER TABLE [Group]
+ADD image NVARCHAR(255);
+
+ALTER TABLE [Group]
+ADD memberCount INT DEFAULT 0;
+
+ALTER TABLE [Group]
+ALTER COLUMN Group_description NVARCHAR(255);

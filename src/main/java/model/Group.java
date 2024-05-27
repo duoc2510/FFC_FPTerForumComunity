@@ -19,8 +19,10 @@ public class Group {
     private List<Post> post;
     private List<Comment> comments;
     private List<Upload> upload;
-
-    public Group(int groupId, int createrId, String groupName, String groupDescription, List<Group_member> groupMember, List<Post> post, List<Comment> comments, List<Upload> upload) {
+    private String image;
+    private int memberCount;
+    private boolean isPending;
+    public Group(int groupId, int createrId, String groupName, String groupDescription, List<Group_member> groupMember, List<Post> post, List<Comment> comments, List<Upload> upload, String image, int memberCount) {
         this.groupId = groupId;
         this.createrId = createrId;
         this.groupName = groupName;
@@ -29,6 +31,8 @@ public class Group {
         this.post = post;
         this.comments = comments;
         this.upload = upload;
+        this.image = image;
+        this.memberCount = memberCount;
     }
 
    
@@ -79,5 +83,60 @@ public class Group {
 
     public void setGroupDescription(String groupDescription) {
         this.groupDescription = groupDescription;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public int getMemberCount() {
+        return memberCount;
+    }
+
+    public void setMemberCount(int memberCount) {
+        this.memberCount = memberCount;
+    }
+
+    public List<Group_member> getGroupMember() {
+        return groupMember;
+    }
+
+    public void setGroupMember(List<Group_member> groupMember) {
+        this.groupMember = groupMember;
+    }
+
+    public List<Post> getPost() {
+        return post;
+    }
+
+    public void setPost(List<Post> post) {
+        this.post = post;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public List<Upload> getUpload() {
+        return upload;
+    }
+
+    public void setUpload(List<Upload> upload) {
+        this.upload = upload;
+    }
+      public boolean isPending() {
+        return isPending;
+    }
+
+    public void setPending(boolean isPending) {
+        this.isPending = isPending;
     }
 }

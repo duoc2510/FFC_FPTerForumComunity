@@ -65,7 +65,7 @@ public class User_profile extends HttpServlet {
         User user = (User) session.getAttribute("USER");
 
         if (user == null) {
-            response.sendRedirect(request.getContextPath() + "/auth/login.jsp?errorMessage=You must be logged in to view posts");
+            response.sendRedirect("login");
             return;
         }
 
@@ -88,6 +88,23 @@ public class User_profile extends HttpServlet {
         String username = user.getUsername();
         List<Post> posts = Post_DB.getPostsByUsername(username);
 
+        // Lặp qua danh sách bài viết để lấy thông tin về người đăng và các comment
+        for (Post post : posts) {
+            // Lấy thông tin người đăng cho bài viết
+            User author = Post_DB.getUserByPostId(post.getPostId());
+            post.setUser(author); // Đặt thông tin người đăng vào thuộc tính user của bài viết
+
+            // Lấy danh sách comment cho bài viết
+            List<Comment> comments = Post_DB.getCommentsByPostId(post.getPostId());
+            for (Comment comment : comments) {
+                // Lấy thông tin người dùng cho comment
+                User commentUser = User_DB.getUserById(comment.getUserId());
+                if (commentUser != null) {
+                    comment.setUser(commentUser);
+                }
+            }
+            post.setComments(comments); // Đặt danh sách comment vào bài viết
+        }
 
         request.setAttribute("posts", posts);
 

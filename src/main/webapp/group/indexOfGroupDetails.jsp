@@ -8,7 +8,7 @@
         <div class="body-wrapper">
             <%@ include file="../include/navbar.jsp" %>
             <div class="container-fluid">
-                <%@ include file="allGroup.jsp" %>
+                <%@ include file="groupDetails.jsp" %>
             </div>
         </div>
         <%@ include file="../include/right-slidebar.jsp" %>
