@@ -15,8 +15,8 @@
                         <i class="ti ti-menu-2"></i>
                     </a>
                 </li>
-                <a href="${pageContext.request.contextPath}/logingooglehandler?value=login" class="btn btn-outline-primary mx-3 mt-2 d-block">Login</a>
-                <a href="${pageContext.request.contextPath}/register"   style="color: red;border-color: red; "class="btn btn-outline-primary mx-3 mt-2 d-block">Register</a>
+                <a href="${pageContext.request.contextPath}/logingooglehandler?value=login" class="btn btn-outline-primary mx-2 d-block">Login</a>
+                <a href="${pageContext.request.contextPath}/register" class="btn btn-outline-danger d-block">Register</a>
             </ul>
         </div>
     </nav>

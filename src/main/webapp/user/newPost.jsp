@@ -5,7 +5,6 @@
 --%>
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
 <div class="card w-100">
-
     <div class="card-body p-4">
         <div class="pb-3 d-flex">
             <div class="col-1 text-center d-inline">

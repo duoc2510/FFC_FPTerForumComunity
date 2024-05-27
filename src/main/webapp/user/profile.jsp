@@ -11,8 +11,11 @@
                             <div class="px-4 py-4 cover cover" style="background: url(${pageContext.request.contextPath}/upload/deli-2.png)">
                                 <div class="media align-items-end profile-head">
                                     <div class="profile mr-3 d-flex justify-content-between align-items-end">
-                                        <img src="${pageContext.request.contextPath}/${USER.userAvatar}" class="rounded-circle img-thumbnail">
-                                        <a href="${pageContext.request.contextPath}/profile/setting" class="btn btn-outline-dark btn-sm btn-block edit-cover">Edit profile</a>
+                                        <img src="${pageContext.request.contextPath}/${USER.userAvatar}" class="rounded-circle img-thumbnail" style="object-fit: cover;">
+                                        <div>
+                                            <a href="${pageContext.request.contextPath}/profile/setting" class="btn btn-outline-dark btn-sm btn-block edit-cover mx-2">Edit profile</a>
+                                            <a href="${pageContext.request.contextPath}/profile" class="btn btn-outline-dark btn-sm btn-block edit-cover">View profile</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -45,16 +48,52 @@
                                 </div>
                             </div>
                             <style>
-                                .post-container {
-                                    background-color: #f8f9fa; /* Light grey background */
-                                    border-radius: 10px; /* Rounded corners */
-                                    border: 1px solid #e9ecef; /* Light border */
+                                .post {
+                                    border: 1px solid #ccc;
+                                    border-radius: 8px;
+                                    padding: 10px;
+                                    margin-bottom: 20px;
                                 }
 
-                                .post-box {
-                                    background-color: #ffffff; /* White background */
-                                    border-radius: 10px; /* Rounded corners */
-                                    border: 1px solid #e9ecef; /* Light border */
+                                .post-header {
+                                    display: flex;
+                                    align-items: center;
+                                }
+
+                                .avatar {
+                                    width: 40px;
+                                    height: 40px;
+                                    border-radius: 50%;
+                                    margin-right: 10px;
+                                }
+
+                                .user-info {
+                                    display: flex;
+                                    flex-direction: column;
+                                }
+
+                                .user-name {
+                                    margin: 0;
+                                }
+
+                                .post-status {
+                                    margin: 5px 0 0;
+                                    color: #888;
+                                    font-size: 14px;
+                                }
+
+                                .post-content {
+                                    margin-top: 10px;
+                                }
+
+                                .post-content p {
+                                    margin: 0;
+                                }
+
+                                .post-image {
+                                    max-width: 100%;
+                                    height: auto;
+                                    margin-top: 10px;
                                 }
                             </style>
 
@@ -85,28 +124,42 @@
                                 <div class="col-lg-12">
                                     <div class="card w-100">
                                         <div class="card-body p-4">
-                                            <div class="pb-3 d-inline">
-                                                <a class="row nav-icon-hover" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown" aria-expanded="false">
-                                                    <div class="col-1 text-center mt-2">
-                                                        <img src="${pageContext.request.contextPath}/${post.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
-                                                    </div>
-                                                    <div class="col">
-                                                        <h6 class="card-title fw-semibold mb-4 d-inline">${post.user.username}</h6>
+                                            <div class="pb-3 d-flex row">
+                                                <div class="col-1 text-center mt-2">
+                                                    <a class="nav-icon-hover" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <img src="${pageContext.request.contextPath}/${USER.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
+                                                    </a>
+                                                </div>
+                                                <div class="col-10">
+                                                    <h6 class="card-title fw-semibold mb-4 d-inline">${USER.username}</h6>
 
-                                                        <p class="s-4">${post.createDate}</p>
+                                                    <p class="s-4">${post.createDate}</p>
+                                                </div>
+                                                <c:if test="${post.user.userId == USER.userId}">
+                                                    <div class="dropdown col-1 px-2" style="text-align: right">
+                                                        <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                            <span> <i class="ti-more-alt"></i></span>   
+                                                        </a>
+                                                        <ul class="dropdown-menu">
+                                                            <li>
+                                                                <a class="dropdown-item" href="#">Edit</a>
+                                                            </li>
+                                                            <li>
+                                                                <form class="dropdown-item mt-3" onsubmit="return confirm('Are you sure you want to delete this post?');" action="${pageContext.request.contextPath}/post" method="post">
+                                                                    <input type="hidden" name="action" value="deletePost">
+                                                                    <input type="hidden" name="postId" value="${post.postId}">
+                                                                    <button type="submit" class="dropdown-item">Delete Post</button>
+                                                                </form>
+                                                            </li>
+                                                        </ul>
                                                     </div>
-                                                </a>
+                                                </c:if>
                                             </div>
+
                                             <!-- Option to delete post for the post author -->
-                                            <c:if test="${post.user.userId == USER.userId}">
-                                                <form class="mt-3" onsubmit="return confirm('Are you sure you want to delete this post?');" action="${pageContext.request.contextPath}/post" method="post">
-                                                    <input type="hidden" name="action" value="deletePost">
-                                                    <input type="hidden" name="postId" value="${post.postId}">
-                                                    <button type="submit" class="btn btn-danger">Delete Post</button>
-                                                </form>
-                                            </c:if>
+
                                             <div class="mt-3">
-                                                <p>${post.content}</p>
+                                                <p class="fs-6">${post.content}</p>                     
                                                 <c:if test="${not empty post.uploadPath}">
                                                     <img src="${pageContext.request.contextPath}/${post.uploadPath}" alt="Post Image" class="post-image">
                                                 </c:if>
@@ -148,7 +201,7 @@
                                                                         <p class="s-4">${comment.date}</p>
                                                                     </div>
                                                                 </div>
-                                                                <c:if test="${comment.user.userId == user.userId}">
+                                                                <c:if test="${comment.user.userId == USER.userId}">
                                                                     <div class="dropdown">
                                                                         <button class="btn btn-link dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                                                                             <i class="ti ti-more"></i>
@@ -176,7 +229,6 @@
                                     </div>
                                 </div>
                             </c:forEach>
-
                             <!-- Modal for editing comment -->
                             <div class="modal fade" id="editCommentModal" tabindex="-1" aria-labelledby="editCommentModalLabel" aria-hidden="true">
                                 <div class="modal-dialog">

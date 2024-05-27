@@ -176,7 +176,6 @@ public class Post_DB {
         }
         return posts;
     }
-
     public static Post getPostById(int postId) {
         Post post = null;
         String selectPostQuery = "SELECT Post_id, User_id, Group_id, Topic_id, Content, createDate, Status, postStatus, Reason, UploadPath "

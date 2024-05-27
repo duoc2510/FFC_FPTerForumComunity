@@ -101,7 +101,6 @@ public class User_DB implements DBinfo {
     public static void addUser(User user) {
         String insertQuery = "INSERT INTO Users (User_password, User_email, Username, User_role) VALUES (?, ?, ?, ?)";
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(insertQuery)) {
-
             // Mã hóa mật khẩu
             String hashedPassword = BCrypt.hashpw(user.getUserPassword(), BCrypt.gensalt());
 

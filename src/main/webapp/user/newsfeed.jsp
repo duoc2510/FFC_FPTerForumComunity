@@ -65,39 +65,33 @@
                                             <div class="pb-3 d-flex row">
                                                 <div class="col-1 text-center mt-2">
                                                     <a class="nav-icon-hover" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown" aria-expanded="false">
-
                                                         <img src="${pageContext.request.contextPath}/${post.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
                                                     </a>
-
                                                 </div>
                                                 <div class="col-10">
                                                     <h6 class="card-title fw-semibold mb-4 d-inline">${post.user.username}</h6>
-
                                                     <p class="s-4">${post.createDate}</p>
                                                 </div>
-                                                <div class="dropdown col-1 px-2" style="text-align: right">
-                                                    <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                        <span> <i class="ti-more-alt"></i></span>   
-
-                                                    </a>
-                                                    <ul class="dropdown-menu">
-                                                        <li><a class="dropdown-item" href="#">Edit</a></li>
-
-                                                        <c:if test="${post.user.userId == user.userId}">
+                                                <c:if test="${post.user.userId == user.userId}">
+                                                    <div class="dropdown col-1 px-2" style="text-align: right">
+                                                        <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                            <span> <i class="ti-more-alt"></i></span>   
+                                                        </a>
+                                                        <ul class="dropdown-menu">
                                                             <li>
-
-                                                                <form  class="dropdown-item mt-3" href="#" onsubmit="return confirm('Are you sure you want to delete this post?');" action="${pageContext.request.contextPath}/post" method="post">
+                                                                <a class="dropdown-item" href="#">Edit</a>
+                                                            </li>
+                                                            <li>
+                                                                <form class="dropdown-item mt-3" onsubmit="return confirm('Are you sure you want to delete this post?');" action="${pageContext.request.contextPath}/post" method="post">
                                                                     <input type="hidden" name="action" value="deletePost">
                                                                     <input type="hidden" name="postId" value="${post.postId}">
-                                                                    <button type="submit">Delete Post</button>
+                                                                    <button type="submit" class="dropdown-item">Delete Post</button>
                                                                 </form>
                                                             </li>
-
-                                                        </c:if>
-                                                    </ul>
-                                                </div>
+                                                        </ul>
+                                                    </div>
+                                                </c:if>
                                             </div>
-
 
                                             <!-- Option to delete post for the post author -->
 
@@ -165,7 +159,6 @@
                                                                 </c:if>
                                                             </div>
                                                         </div>
-
                                                     </c:forEach>
                                                 </div>
                                             </div>
@@ -174,7 +167,6 @@
                                 </div>
                             </c:if>
                         </c:forEach>
-
                         <!-- Modal for editing comment -->
                         <div class="modal fade" id="editCommentModal" tabindex="-1" aria-labelledby="editCommentModalLabel" aria-hidden="true">
                             <div class="modal-dialog">
@@ -208,7 +200,6 @@
                                 editCommentModal.show();
                             }
                         </script>
-
                     </div>
                 </div>
             </div>

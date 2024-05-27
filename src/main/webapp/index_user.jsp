@@ -13,8 +13,6 @@
                     <%@ include file="user/newPost.jsp" %>
                 </div>
             </div>
-            <%@ include file="include/right-slidebar.jsp" %>
-
         </div>
     </div>
 </body>
