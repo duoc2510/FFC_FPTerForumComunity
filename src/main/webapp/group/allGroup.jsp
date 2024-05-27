@@ -37,7 +37,7 @@
 
 <div class="row">
     <div class="col-12 mb-3">
-        <a href="groupSetting" class="btn btn-success">Create Group</a>
+        <a href="addGroup" class="btn btn-success">Create Group</a>
         <a href="#" class="btn btn-secondary">Groups You Joined</a>
         <a href="javascript:void(0);" class="btn btn-info" onclick="toggleCreatedGroups()">Groups You Created</a>
     </div>

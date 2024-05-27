@@ -19,7 +19,7 @@
                         <h4>Create Group</h4>
                     </div>
                     <div class="card-body">
-                        <form action="groupSetting" method="post">
+                        <form action="addGroup" method="post">
                             <div class="form-group">
                                 <label for="groupName">Group Name</label>
                                 <input type="text" class="form-control" id="groupName" name="groupName" placeholder="Enter your group">

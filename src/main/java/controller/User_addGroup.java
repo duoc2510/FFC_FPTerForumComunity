@@ -86,7 +86,7 @@ public class User_addGroup extends HttpServlet {
         String message="";
         if (isGroupCreated) {
             message = "Group created successfully!";
-           request.getRequestDispatcher("group/groupView.jsp").forward(request, response); 
+           request.getRequestDispatcher("group/groupCreate.jsp").forward(request, response); 
         } else {
             message = "Failed to create group.";
         }

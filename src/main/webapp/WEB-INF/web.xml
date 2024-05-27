@@ -94,11 +94,11 @@
         <servlet-class>controller.Post_addpost</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>User_group</servlet-name>
+        <servlet-name>User_listGroup</servlet-name>
         <servlet-class>controller.User_listGroup</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>User_groupSetting</servlet-name>
+        <servlet-name>User_addGroup</servlet-name>
         <servlet-class>controller.User_addGroup</servlet-class>
     </servlet>
     <servlet>
@@ -176,12 +176,12 @@
         <url-pattern>/addpost</url-pattern>
     </servlet-mapping>
      <servlet-mapping>
-        <servlet-name>User_group</servlet-name>
-        <url-pattern>/group</url-pattern>
+        <servlet-name>User_listGroup</servlet-name>
+        <url-pattern>/listGroup</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>User_groupSetting</servlet-name>
-        <url-pattern>/groupSetting</url-pattern>
+        <servlet-name>User_addGroup</servlet-name>
+        <url-pattern>/addGroup</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>User_inGroup</servlet-name>
