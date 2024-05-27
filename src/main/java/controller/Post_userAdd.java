@@ -28,7 +28,7 @@ import model.User;
 @MultipartConfig(
         maxFileSize = 1024 * 1024 * 10 // 10 MB
 )
-public class Post_addUser extends HttpServlet {
+public class Post_userAdd extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -118,7 +118,7 @@ public class Post_addUser extends HttpServlet {
             Post_DB.addPostUser(post);
             response.sendRedirect("profile");
         } catch (SQLException ex) {
-            Logger.getLogger(Post_addUser.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Post_userAdd.class.getName()).log(Level.SEVERE, null, ex);
             response.sendRedirect(request.getContextPath() + "/user/profile.jsp?errorMessage=Error adding post");
         }
     }

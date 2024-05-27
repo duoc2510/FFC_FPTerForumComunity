@@ -19,7 +19,7 @@ import model.User;
  *
  * @author PC
  */
-public class User_joinGroup extends HttpServlet {
+public class User_groupJoin extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>

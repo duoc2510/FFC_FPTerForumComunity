@@ -4,7 +4,6 @@
  */
 package controller;
 
-import jakarta.servlet.http.HttpServlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,16 +11,16 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
-import java.util.List;
-import model.DAO.Group_DB;
-import model.Group;
+import java.util.Collections;
+import java.util.Comparator;
+import model.DAO.User_DB;
 import model.User;
 
 /**
  *
- * @author PC
+ * @author Admin
  */
-public class User_listGroup extends HttpServlet {
+public class User_rankViewTop extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -40,10 +39,10 @@ public class User_listGroup extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet User_group</title>");            
+            out.println("<title>Servlet TopVip</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet User_group at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet TopVip at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -59,28 +58,20 @@ public class User_listGroup extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-  protected void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-    User user = (User) request.getSession().getAttribute("USER");
-    int userId = user.getUserId();
-
-    List<Group> groups = Group_DB.getAllGroups();
-    List<Group> groupsCreated = Group_DB.getAllGroupsCreated(userId);
-
-    // Lọc bỏ các nhóm mà user đã tạo khỏi danh sách các nhóm khác
-    groups.removeIf(group -> group.getCreaterId() == userId);
-
-    // Kiểm tra trạng thái của từng nhóm còn lại
-    for (Group group : groups) {
-        boolean isPending = Group_DB.isUserPendingApproval(userId, group.getGroupId());
-        group.setPending(isPending);
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        User_DB userDB = new User_DB();
+        ArrayList<User> userlist = userDB.getAllUsers();
+        userlist.removeIf(user -> user.getUserRole() == 0);
+        Collections.sort(userlist, new Comparator<User>() {
+            @Override
+            public int compare(User u1, User u2) {
+                return Integer.compare(u2.getUserScore(), u1.getUserScore()); // Sắp xếp giảm dần
+            }
+        });
+        request.setAttribute("userlist", userlist);
+        request.getRequestDispatcher("/rank/topvip.jsp").forward(request, response);
     }
-
-    // Thiết lập các thuộc tính để truyền vào JSP
-    request.setAttribute("groups", groups);
-    request.setAttribute("groupsCreated", groupsCreated);
-    request.getRequestDispatcher("/group/index.jsp").forward(request, response);
-}
 
     /**
      * Handles the HTTP <code>POST</code> method.

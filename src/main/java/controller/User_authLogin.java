@@ -24,7 +24,7 @@ import util.UserGoogleDto;
  *
  * @author Admin
  */
-public class User_loginGoogle extends HttpServlet {
+public class User_authLogin extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>

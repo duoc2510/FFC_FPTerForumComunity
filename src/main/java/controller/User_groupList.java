@@ -4,19 +4,24 @@
  */
 package controller;
 
+import jakarta.servlet.http.HttpServlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.List;
+import model.DAO.Group_DB;
+import model.Group;
+import model.User;
 
 /**
  *
- * @author ThanhDuoc
+ * @author PC
  */
-public class User_logout extends HttpServlet {
+public class User_groupList extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,10 +40,10 @@ public class User_logout extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet User_logout</title>");
+            out.println("<title>Servlet User_group</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet User_logout at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet User_group at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -54,19 +59,28 @@ public class User_logout extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
-        HttpSession session = request.getSession();
+  protected void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+    User user = (User) request.getSession().getAttribute("USER");
+    int userId = user.getUserId();
 
-        if (session != null) {
-            session.invalidate();
-            response.sendRedirect("home");
-        }
+    List<Group> groups = Group_DB.getAllGroups();
+    List<Group> groupsCreated = Group_DB.getAllGroupsCreated(userId);
 
-        out.close();
+    // Lọc bỏ các nhóm mà user đã tạo khỏi danh sách các nhóm khác
+    groups.removeIf(group -> group.getCreaterId() == userId);
+
+    // Kiểm tra trạng thái của từng nhóm còn lại
+    for (Group group : groups) {
+        boolean isPending = Group_DB.isUserPendingApproval(userId, group.getGroupId());
+        group.setPending(isPending);
     }
+
+    // Thiết lập các thuộc tính để truyền vào JSP
+    request.setAttribute("groups", groups);
+    request.setAttribute("groupsCreated", groupsCreated);
+    request.getRequestDispatcher("/group/index.jsp").forward(request, response);
+}
 
     /**
      * Handles the HTTP <code>POST</code> method.

@@ -4,19 +4,19 @@
  */
 package controller;
 
-import jakarta.servlet.http.HttpServlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  *
- * @author PC
+ * @author ThanhDuoc
  */
-public class User_inGroup extends HttpServlet {
+public class User_authLogout extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,10 +35,10 @@ public class User_inGroup extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet User_inGroup</title>");            
+            out.println("<title>Servlet User_logout</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet User_inGroup at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet User_logout at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -56,7 +56,16 @@ public class User_inGroup extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+        HttpSession session = request.getSession();
+
+        if (session != null) {
+            session.invalidate();
+            response.sendRedirect("home");
+        }
+
+        out.close();
     }
 
     /**
