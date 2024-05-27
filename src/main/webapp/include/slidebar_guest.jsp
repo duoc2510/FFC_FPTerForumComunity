@@ -36,6 +36,15 @@
                         <span class="hide-menu">Rank</span>
                     </a>
                 </li>
+                     <li class="sidebar-item">
+                    <a class="sidebar-link" href="${pageContext.request.contextPath}/marketplace" aria-expanded="false">
+                        <span>
+                            <i class="ti ti-trophy"></i>
+                        </span>
+                        <span class="hide-menu">Marketplace</span>
+                    </a>
+                </li>
+                
             </ul>
             <%@ include file="../ads/showAds.jsp" %>
         </nav>

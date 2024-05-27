@@ -62,7 +62,7 @@
                                         <%@ include file="googlelogin.jsp" %>
                                         <div class="mt-3 d-flex align-items-center justify-content-center">
                                             <p class="fs-4 mb-0 fw-bold">Already have an account?</p>
-                                            <a class="text-primary fw-bold ms-2" href="${pageContext.request.contextPath}/login">Sign In</a>
+                                            <a class="text-primary fw-bold ms-2" href="${pageContext.request.contextPath}/logingooglehandler?value=login">Sign In</a>
                                         </div>
                                     </form>
                                 </div>

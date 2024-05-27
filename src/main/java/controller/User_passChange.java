@@ -4,6 +4,7 @@
  */
 package controller;
 
+import jakarta.servlet.http.HttpServlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -15,9 +16,9 @@ import model.User;
 
 /**
  *
- * @author Admin
+ * @author PC
  */
-public class User_VerifyEmail extends HttpServlet {
+public class User_passChange extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -36,10 +37,10 @@ public class User_VerifyEmail extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet User_VerifyEmail</title>");
+            out.println("<title>Servlet User_ChangePass</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet User_VerifyEmail at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet User_ChangePass at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -57,8 +58,12 @@ public class User_VerifyEmail extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        request.getRequestDispatcher("/auth/verifyemail.jsp").forward(request, response);
+        User user = (User) request.getSession().getAttribute("USER");
+        String userEmail = user.getUserEmail();
+        User userInfo = User_DB.getUserByEmailorUsername(userEmail);
+        // Đặt danh sách người dùng vào thuộc tính của request
+        request.setAttribute("userInfo", userInfo);
+        request.getRequestDispatcher("/user/changePassword.jsp").forward(request, response);
     }
 
     /**
@@ -73,30 +78,43 @@ public class User_VerifyEmail extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
-        String email = request.getParameter("email");
-        String userName = request.getParameter("userName");
-        String password = request.getParameter("password");
-        String x = request.getParameter("x");
-        String number = request.getParameter("number");
-        User_DB userDB = new User_DB();
-        String msg;
-        if (Integer.parseInt(x) == Integer.parseInt(number)) {
-            // Passwords match, proceed to add new staff
-            User newUser = new User(email, password, userName);
-            userDB.addUser(newUser);
-            msg = "Registration Success";
-            request.setAttribute("message", msg);
-            request.getRequestDispatcher("/auth/login.jsp").forward(request, response);
-        } else {
-            msg = "Verify Code Is Wrong!";
-            request.setAttribute("message", msg);
-            request.setAttribute("x", x);
-            request.setAttribute("userName", userName);
-            request.setAttribute("email", email);
-            request.setAttribute("password", password);
-            request.getRequestDispatcher("/auth/verifyemail.jsp").forward(request, response);
-        }
+        User user = (User) request.getSession().getAttribute("USER");
+        String userEmail = user.getUserEmail();
+        User userInfo = User_DB.getUserByEmailorUsername(userEmail);
+        // Đặt danh sách người dùng vào thuộc tính của request
+        request.setAttribute("userInfo", userInfo);
+        // Đặt danh sách người dùng vào thuộc tính của request
 
+        if (user != null) {
+            String email = user.getUserEmail();
+            String currentPassword = request.getParameter("oldPassword");
+            String newPassword = request.getParameter("newPassword");
+            String confirmNewPassword = request.getParameter("confirmPassword");
+
+            User_DB userDB = new User_DB();
+
+            if (!userDB.checkCurrentPassword(email, currentPassword)) {
+                request.setAttribute("message", "Mật khẩu cũ không đúng.");
+                request.getRequestDispatcher("/user/changePassword.jsp").forward(request, response);
+                return;
+            }
+
+            if (!newPassword.equals(confirmNewPassword)) {
+                request.setAttribute("message", "Mật khẩu mới và mật khẩu xác nhận không khớp.");
+                request.getRequestDispatcher("/user/changePassword.jsp").forward(request, response);
+                return;
+            }
+
+            boolean updateSuccess = userDB.changePass(email, newPassword);
+            if (updateSuccess) {
+                request.setAttribute("message", "Đổi mật khẩu thành công.");
+            } else {
+                request.setAttribute("message", "Đổi mật khẩu thất bại.");
+            }
+            request.getRequestDispatcher("/user/changePassword.jsp").forward(request, response);
+        } else {
+            response.sendRedirect("login");
+        }
     }
 
     /**

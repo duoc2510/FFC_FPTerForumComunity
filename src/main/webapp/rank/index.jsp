@@ -89,13 +89,13 @@
                             </table>
                             <div class="p-2 mx-auto w-100">
                                 <div class="col-4 d-inline">
-                                    <button type="button" class="btn btn-primary float-end mx-2" onclick="window.location.href = '${pageContext.request.contextPath}/userrank'">Rank của bạn</button>
+                                    <button type="button" class="btn btn-primary float-end mx-2" onclick="window.location.href = '${pageContext.request.contextPath}/rank/userrank'">Rank của bạn</button>
                                 </div>
                                 <div class="col-4 d-inline">
                                     <button type="button" class="btn btn-primary float-end mx-2" data-bs-toggle="modal" data-bs-target="#exampleModal">Xem hướng dẫn</button>
                                 </div>
                                 <div class="col-4 d-inline">
-                                    <button type="button" class="btn btn-secondary float-end mx-2" onclick="window.location.href = '${pageContext.request.contextPath}/topvip'">View Top Vip</button>
+                                    <button type="button" class="btn btn-secondary float-end mx-2" onclick="window.location.href = '${pageContext.request.contextPath}/rank/topvip'">View Top Vip</button>
                                 </div>
                             </div>
                         </div>
