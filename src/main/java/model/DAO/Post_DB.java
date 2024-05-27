@@ -6,13 +6,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import model.Comment;
 import model.Post;
-import model.Upload;
 import model.User;
 
 public class Post_DB {
@@ -180,46 +177,6 @@ public class Post_DB {
         return posts;
     }
 
-    public static boolean addCommentToPost(int postId, int userId, String content) {
-        String query = "INSERT INTO Comment (Post_id, User_id, Content) VALUES (?, ?, ?)";
-
-        try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, postId);
-            stmt.setInt(2, userId);
-            stmt.setString(3, content);
-
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0;
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            return false;
-        }
-    }
-
-    public static List<Comment> getCommentsByPostId(int postId) {
-        List<Comment> comments = new ArrayList<>();
-        String query = "SELECT * FROM Comment WHERE Post_id = ?";
-        try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, postId);
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                int commentId = rs.getInt("Comment_id");
-                int userId = rs.getInt("User_id");
-                String content = rs.getString("Content");
-                Date date = rs.getDate("Date");
-
-                User user = User_DB.getUserById(userId); // Get user information for the comment
-
-                Comment comment = new Comment(commentId, postId, userId, content, date);
-                comment.setUser(user); // Set user information to comment
-                comments.add(comment);
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return comments;
-    }
-
     public static Post getPostById(int postId) {
         Post post = null;
         String selectPostQuery = "SELECT Post_id, User_id, Group_id, Topic_id, Content, createDate, Status, postStatus, Reason, UploadPath "
@@ -317,37 +274,6 @@ public class Post_DB {
             System.out.println("getUserByPostId: Query execution failed.");
         }
         return user;
-    }
-
-    public static boolean deleteCommentById(int commentId, int userId) {
-        String query = "DELETE FROM Comment WHERE Comment_id = ? AND User_id = ?";
-        try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, commentId);
-            stmt.setInt(2, userId);
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0;
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            return false;
-        }
-    }
-
-    public static boolean editComment(int commentId, String newContent) {
-        boolean success = false;
-        String query = "UPDATE Comment SET Content = ? WHERE Comment_id = ?";
-
-        try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
-
-            stmt.setString(1, newContent);
-            stmt.setInt(2, commentId);
-
-            int rowsUpdated = stmt.executeUpdate();
-            success = (rowsUpdated > 0);
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-
-        return success;
     }
 
     public static boolean deletePost(int postId) {

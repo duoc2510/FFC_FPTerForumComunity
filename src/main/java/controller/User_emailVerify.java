@@ -73,6 +73,7 @@ public class User_emailVerify extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
+        String status = request.getParameter("status");
         String email = request.getParameter("email");
         String userName = request.getParameter("userName");
         String password = request.getParameter("password");
@@ -80,23 +81,36 @@ public class User_emailVerify extends HttpServlet {
         String number = request.getParameter("number");
         User_DB userDB = new User_DB();
         String msg;
-        if (Integer.parseInt(x) == Integer.parseInt(number)) {
-            // Passwords match, proceed to add new staff
-            User newUser = new User(email, password, userName);
-            userDB.addUser(newUser);
-            msg = "Registration Success";
-            request.setAttribute("message", msg);
-            request.getRequestDispatcher("/auth/login.jsp").forward(request, response);
+        if (status.equals("lostaccount")) {
+            if (Integer.parseInt(x) == Integer.parseInt(number)) {
+                request.setAttribute("email", email);
+                request.getRequestDispatcher("/auth/newpass.jsp").forward(request, response);
+            } else {
+                msg = "Verify Code Is Wrong!";
+                request.setAttribute("message", msg);
+                request.setAttribute("x", x);
+                request.setAttribute("email", email);
+                request.getRequestDispatcher("/auth/verifyaccount.jsp").forward(request, response);
+            }
         } else {
-            msg = "Verify Code Is Wrong!";
-            request.setAttribute("message", msg);
-            request.setAttribute("x", x);
-            request.setAttribute("userName", userName);
-            request.setAttribute("email", email);
-            request.setAttribute("password", password);
-            request.getRequestDispatcher("/auth/verifyemail.jsp").forward(request, response);
+            if (Integer.parseInt(x) == Integer.parseInt(number)) {
+                // Passwords match, proceed to add new staff
+                User newUser = new User(email, password, userName);
+                userDB.addUser(newUser);
+                msg = "Registration Success";
+                request.setAttribute("message", msg);
+                request.getRequestDispatcher("/auth/login.jsp").forward(request, response);
+            } else {
+                msg = "Verify Code Is Wrong!";
+                request.setAttribute("message", msg);
+                request.setAttribute("x", x);
+                request.setAttribute("userName", userName);
+                request.setAttribute("email", email);
+                request.setAttribute("password", password);
+                request.getRequestDispatcher("/auth/verifyemail.jsp").forward(request, response);
+            }
         }
-
+        
     }
 
     /**

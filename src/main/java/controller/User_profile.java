@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import model.Comment;
+import model.DAO.Comment_DB;
 import model.DAO.Post_DB;
 import model.DAO.User_DB;
 import model.Post;
@@ -61,14 +62,10 @@ public class User_profile extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession();
+        HttpSession session = request.getSession(false); // Không tự động tạo session mới
         User user = (User) session.getAttribute("USER");
 
-        if (user == null) {
-            response.sendRedirect("login");
-            return;
-        }
-
+        // Ở đây không cần kiểm tra đăng nhập nữa do đã làm trong filter
         String userEmail = user.getUserEmail();
         User userInfo = User_DB.getUserByEmailorUsername(userEmail);
 
@@ -95,7 +92,7 @@ public class User_profile extends HttpServlet {
             post.setUser(author); // Đặt thông tin người đăng vào thuộc tính user của bài viết
 
             // Lấy danh sách comment cho bài viết
-            List<Comment> comments = Post_DB.getCommentsByPostId(post.getPostId());
+            List<Comment> comments = Comment_DB.getCommentsByPostId(post.getPostId());
             for (Comment comment : comments) {
                 // Lấy thông tin người dùng cho comment
                 User commentUser = User_DB.getUserById(comment.getUserId());

@@ -35,6 +35,7 @@
                                             <input type="number" class="form-control" id="number" name="number" min="10000" max="99999" required>
                                         </div>
                                         <%-- Ô input ẩn --%>
+                                        <input type="hidden" id="status" name="status" value="${status}">
                                         <input type="hidden" id="x" name="x" value="${x}">
                                         <input type="hidden" id="mail" name="email" value="${email}">
                                         <input type="hidden" id="name" name="userName" value="${userName}">

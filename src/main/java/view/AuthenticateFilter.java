@@ -9,6 +9,8 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import model.User;
 
 public class AuthenticateFilter implements Filter {
 
@@ -22,20 +24,22 @@ public class AuthenticateFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        String uri = httpRequest.getRequestURI();
+        HttpSession session = httpRequest.getSession(false); // Không tự động tạo session mới
+        User user = (session != null) ? (User) session.getAttribute("USER") : null;
 
-        // Kiểm tra nếu URL bắt đầu bằng /rank/
-        if (uri.startsWith(httpRequest.getContextPath() + "/rank/")) {
-            // Kiểm tra xem người dùng đã đăng nhập chưa
-            if (httpRequest.getSession().getAttribute("USER") == null) {
+        String uri = httpRequest.getRequestURI();
+        String contextPath = httpRequest.getContextPath();
+
+        if (uri.startsWith(contextPath + "/rank/") || uri.startsWith(contextPath + "/profile")) {
+            if (user == null) {
                 // Lưu lại URL hiện tại
                 String referer = httpRequest.getHeader("referer");
                 if (referer != null && !referer.isEmpty()) {
-                    httpRequest.getSession().setAttribute("redirectURL", referer);
+                    httpRequest.getSession(true).setAttribute("redirectURL", referer);
                 }
 
                 // Chuyển hướng đến trang đăng nhập
-                httpResponse.sendRedirect(httpResponse.encodeRedirectURL(httpRequest.getContextPath() + "/login"));
+                httpResponse.sendRedirect(httpResponse.encodeRedirectURL(contextPath + "/logingooglehandler?value=login"));
                 return;
             }
         }

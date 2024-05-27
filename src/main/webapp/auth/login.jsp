@@ -22,7 +22,7 @@
                                         <img src="${pageContext.request.contextPath}/static/images/logo.png" width="100" alt="">
                                     </a>
                                     <p class="text-center">FPTer</p>
-                                    <form name="input" action="login" method="post">
+                                    <form name="input" action="logingooglehandler" method="post">
                                         <div class="mb-3">
                                             <label for="identify" class="form-label">Email</label>
                                             <input type="text" class="form-control" placeholder="Enter email or Username" id="identify" name="identify" value="${cookie.identify.value}" autofocus>

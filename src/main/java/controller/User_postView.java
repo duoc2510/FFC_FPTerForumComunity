@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.Comment;
+import model.DAO.Comment_DB;
 import model.DAO.Post_DB;
 import model.DAO.User_DB;
 import model.Post;
@@ -73,7 +74,7 @@ public class User_postView extends HttpServlet {
                 post.setUser(author); // Đặt thông tin người đăng vào thuộc tính user của bài viết
 
                 // Lấy danh sách comment cho bài viết
-                List<Comment> comments = Post_DB.getCommentsByPostId(post.getPostId());
+                List<Comment> comments = Comment_DB.getCommentsByPostId(post.getPostId());
                 for (Comment comment : comments) {
                     // Lấy thông tin người dùng cho comment
                     User commentUser = User_DB.getUserById(comment.getUserId());

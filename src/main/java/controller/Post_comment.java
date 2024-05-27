@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpSession;
 import java.sql.SQLException;
 import java.util.List;
 import model.Comment;
+import model.DAO.Comment_DB;
 import model.DAO.Post_DB;
 import model.User;
 
@@ -88,7 +89,7 @@ public class Post_comment extends HttpServlet {
                 int userId = user.getUserId(); // Lấy userId từ session
                 String content = request.getParameter("content");
 
-                boolean success = Post_DB.addCommentToPost(postId, userId, content);
+                boolean success = Comment_DB.addCommentToPost(postId, userId, content);
 
                 if (success) {
                     // Nếu thành công, chuyển hướng đến trang trước đó
@@ -110,7 +111,7 @@ public class Post_comment extends HttpServlet {
                 User user = (User) session.getAttribute("USER");
                 int userId = user.getUserId(); // Lấy userId từ session
 
-                boolean success = Post_DB.deleteCommentById(commentId, userId);
+                boolean success = Comment_DB.deleteCommentById(commentId, userId);
 
                 if (success) {
                     // Nếu thành công, chuyển hướng đến trang trước đó
@@ -128,7 +129,7 @@ public class Post_comment extends HttpServlet {
             int commentId = Integer.parseInt(request.getParameter("commentId"));
             String newContent = request.getParameter("newContent");
 
-            boolean success = Post_DB.editComment(commentId, newContent);
+            boolean success = Comment_DB.editComment(commentId, newContent);
 
             if (success) {
                 // Nếu thành công, chuyển hướng đến trang trước đó
