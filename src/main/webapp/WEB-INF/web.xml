@@ -90,6 +90,10 @@
         <servlet-class>controller.Post_addUser</servlet-class>
     </servlet>
     <!-- Servlet Mappings -->
+    <servlet>
+        <servlet-name>User_marketplace</servlet-name>
+        <servlet-class>controller.User_marketplace</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Post_comment</servlet-name>
         <url-pattern>/comment</url-pattern>
@@ -157,6 +161,10 @@
         <url-pattern>/addpost</url-pattern>
     </servlet-mapping>
     <!-- Welcome File List -->
+    <servlet-mapping>
+        <servlet-name>User_marketplace</servlet-name>
+        <url-pattern>/marketplace</url-pattern>
+    </servlet-mapping>
     <welcome-file-list>
         <welcome-file>home</welcome-file>
     </welcome-file-list>

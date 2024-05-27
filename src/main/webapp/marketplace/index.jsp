@@ -4,7 +4,6 @@
     Author     : mac
 --%>
 
-
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
 <%@ include file="../include/header.jsp" %>
 <style>
@@ -40,10 +39,10 @@
                 <div class="col-lg-12 mb-4">
                     <ul class="nav nav-pills nav-fill">
                         <li class="nav-item">
-                            <a class="nav-link active" href="#">All product</a>
+                            <a class="nav-link" href="#">All product</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">My product</a>
+                            <a class="nav-link active" href="#">My product</a>
                         </li>
 
                         <li class="nav-item">
@@ -55,14 +54,20 @@
 
 
                 <div class="col-lg-12 ">
+                    <!--Tao shop-->
+                    <%--<%@ include file="createShop.jsp" %>--%>
+                    
+                    <!--Xem tat ca san pham cua minh-->
+                    <%--<%@ include file="myProduct.jsp" %>--%>
+                    
+                     <!--Tao san pham -->
+                    <%--<%@ include file="createProduct.jsp" %>--%>
+
                     <!--Xem tat ca san pham-->
                     <%--<%@ include file="allProduct.jsp" %>--%>
 
-                    <!--Xem tat ca san pham cua minh-->
-                    <%@ include file="myProduct.jsp" %>
-
                     <!--Xem tien trinh giao hang -->
-                    <%--<%@ include file="checkProgress.jsp" %>--%>
+                    <%@ include file="checkProgress.jsp" %>
                 </div>
             </div>
         </div>
