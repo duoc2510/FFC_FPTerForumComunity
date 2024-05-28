@@ -16,6 +16,10 @@
         <filter-name>AuthenticateFilter</filter-name>
         <url-pattern>/profile/*</url-pattern>
     </filter-mapping>
+    <filter-mapping>
+        <filter-name>AuthenticateFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
     <listener>
         <description>ServletContextListener</description>
         <listener-class>model.DAO.DBListener</listener-class>
@@ -100,6 +104,10 @@
         <servlet-name>UserJoinGroup</servlet-name>
         <servlet-class>controller.User_groupJoin</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>Post_managerAprrove</servlet-name>
+        <servlet-class>controller.Post_managerAprrove</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PostComment</servlet-name>
         <url-pattern>/comment</url-pattern>
@@ -179,6 +187,10 @@
     <servlet-mapping>
         <servlet-name>UserJoinGroup</servlet-name>
         <url-pattern>/joinGroup</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Post_managerAprrove</servlet-name>
+        <url-pattern>/manager/postAprrove</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>home</welcome-file>
