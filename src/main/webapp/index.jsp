@@ -4,6 +4,11 @@
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
          data-sidebar-position="fixed" data-header-position="fixed">
         <%@ include file="include/slidebar_guest.jsp" %>
+        <c:if test="${not empty unauthorizedMessage}">
+            <script>
+                showAlert("${unauthorizedMessage}");
+            </script>
+        </c:if>
         <div class="body-wrapper">
             <%@ include file="include/navbar_guest.jsp" %>
             <div class="container-fluid d-flex">
@@ -14,5 +19,10 @@
             </div>
         </div>
     </div>
+    <script>
+        function showAlert(message) {
+            alert(message);
+        }
+    </script>
 </body>
 <%@ include file="include/footer.jsp" %>

@@ -30,18 +30,24 @@ public class AuthenticateFilter implements Filter {
         String uri = httpRequest.getRequestURI();
         String contextPath = httpRequest.getContextPath();
 
-        if (uri.startsWith(contextPath + "/rank/") || uri.startsWith(contextPath + "/profile")) {
-            if (user == null) {
-                // Lưu lại URL hiện tại
-                String referer = httpRequest.getHeader("referer");
-                if (referer != null && !referer.isEmpty()) {
-                    httpRequest.getSession(true).setAttribute("redirectURL", referer);
-                }
+        // Kiểm tra nếu người dùng đã đăng nhập và cố truy cập vào trang login hoặc register
+        if ((uri.equals(contextPath + "/login") || uri.equals(contextPath + "/register")) && user != null) {
+            // Chuyển hướng đến trang chủ
+            httpResponse.sendRedirect(contextPath + "/home");
+            return;
+        }
 
-                // Chuyển hướng đến trang đăng nhập
-                httpResponse.sendRedirect(httpResponse.encodeRedirectURL(contextPath + "/logingooglehandler?value=login"));
-                return;
+        // Kiểm tra nếu người dùng chưa đăng nhập và cố truy cập vào trang rank hoặc profile
+        if ((uri.startsWith(contextPath + "/rank/") || uri.startsWith(contextPath + "/profile")) && user == null) {
+            // Lưu lại URL hiện tại
+            String referer = httpRequest.getHeader("referer");
+            if (referer != null && !referer.isEmpty()) {
+                httpRequest.getSession(true).setAttribute("redirectURL", referer);
             }
+
+            // Chuyển hướng đến trang đăng nhập
+            httpResponse.sendRedirect(httpResponse.encodeRedirectURL(contextPath + "/logingooglehandler?value=login"));
+            return;
         }
 
         // Tiếp tục với các filter khác hoặc servlet đích

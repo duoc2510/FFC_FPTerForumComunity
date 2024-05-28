@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller;
 
 import com.google.gson.Gson;
@@ -12,29 +8,18 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import model.DAO.User_DB;
 import model.User;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Form;
 import util.Constants;
 import util.UserGoogleDto;
 
-/**
- *
- * @author Admin
- */
 public class User_authLogin extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String code = request.getParameter("code");
@@ -142,10 +127,6 @@ public class User_authLogin extends HttpServlet {
                         message = "Welcome, Manager!";
                         break;
                     case 3:
-                        role = "HOST GROUP";
-                        message = "Welcome, User!";
-                        break;
-                    case 4:
                         role = "ADMIN";
                         message = "Welcome, Admin!";
                         break;
@@ -199,10 +180,6 @@ public class User_authLogin extends HttpServlet {
                     message = "Welcome, Manager!";
                     break;
                 case 3:
-                    role = "HOST GROUP";
-                    message = "Welcome, User!";
-                    break;
-                case 4:
                     role = "ADMIN";
                     message = "Welcome, Admin!";
                     break;
@@ -250,14 +227,9 @@ public class User_authLogin extends HttpServlet {
         }
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
+    }
 
 }

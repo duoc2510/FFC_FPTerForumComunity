@@ -1,15 +1,8 @@
-<%-- 
-    Document   : settings
-    Created on : May 17, 2024, 9:55:18 AM
-    Author     : mac
---%>
-
 <%@ include file="../include/header.jsp" %>
 <body>
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
          data-sidebar-position="fixed" data-header-position="fixed">
         <%@ include file="../include/slidebar.jsp" %>
-
         <div class="body-wrapper">
             <%@ include file="../include/navbar.jsp" %>
             <div class="container-fluid pb-2">
@@ -50,7 +43,6 @@
                                 </ul>
                             </div>
                             <div class="px-4 py-3">
-                                <h5 class="mb-2">About</h5>
                                 <div class="p-4 rounded shadow-sm">
                                     <p class="font-italic mb-0">${USER.userStory}</p>
                                 </div>

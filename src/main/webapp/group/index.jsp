@@ -8,6 +8,11 @@
         <div class="body-wrapper">
             <%@ include file="../include/navbar.jsp" %>
             <div class="container-fluid">
+                <c:if test="${not empty message}">
+                    <div class="alert alert-info" role="alert">
+                        <c:out value="${message}" />
+                    </div>
+                </c:if>
                 <%@ include file="allGroup.jsp" %>
             </div>
         </div>

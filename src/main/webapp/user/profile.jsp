@@ -1,14 +1,73 @@
+
+<%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
 <%@ include file="../include/header.jsp" %>
 <body>
-    <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full" data-sidebar-position="fixed" data-header-position="fixed">
+    <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+         data-sidebar-position="fixed" data-header-position="fixed">
         <%@ include file="../include/slidebar.jsp" %>
         <div class="body-wrapper">
             <%@ include file="../include/navbar.jsp" %>
-            <div class="container-fluid">
-                <div class="row">
-                    <div id="profile-wrapper">
-                        <div class="bg-white shadow rounded overflow-hidden">
-                            <div class="px-4 py-4 cover cover" style="background: url(${pageContext.request.contextPath}/upload/deli-2.png)">
+            <div class="container-fluid pb-2">
+                <div class="row ">
+                    <div id ="profile-wrapper" >
+                        <style>
+                            .post {
+                                border: 1px solid #ccc;
+                                border-radius: 8px;
+                                padding: 10px;
+                                margin-bottom: 20px;
+                            }
+
+                            .post-header {
+                                display: flex;
+                                align-items: center;
+                            }
+
+                            .avatar {
+                                width: 40px;
+                                height: 40px;
+                                border-radius: 50%;
+                                margin-right: 10px;
+                            }
+
+                            .user-info {
+                                display: flex;
+                                flex-direction: column;
+                            }
+
+                            .user-name {
+                                margin: 0;
+                            }
+
+                            .post-status {
+                                margin: 5px 0 0;
+                                color: #888;
+                                font-size: 14px;
+                            }
+
+                            .post-content {
+                                margin-top: 10px;
+                            }
+
+                            .post-content p {
+                                margin: 0;
+                            }
+
+                            .post-image {
+                                max-width: 100%;
+                                height: auto;
+                                margin-top: 10px;
+                            }
+                            .img-preview {
+                                margin-top: 20px;
+                            }
+                            .img-preview img {
+                                max-width: 100%;
+                                max-height: 300px;
+                            }
+                        </style>
+                        <div class="bg-white shadow rounded overflow-hidden ">
+                            <div class="px-4 py-4 cover cover " style="background: url(${pageContext.request.contextPath}/upload/deli-2.png)">
                                 <div class="media align-items-end profile-head">
                                     <div class="profile mr-3 d-flex justify-content-between align-items-end">
                                         <img src="${pageContext.request.contextPath}/${USER.userAvatar}" class="rounded-circle img-thumbnail" style="object-fit: cover;">
@@ -19,7 +78,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="bg-light pt-4 px-4 d-flex justify-content-between text-center">
+                            <div class="bg-light pt-4 px-4 d-flex justify-content-between text-center ">
                                 <div class="media-body mb-5 text-white">
                                     <h4 class="mt-0 mb-0">${USER.userFullName}</h4>
                                 </div>
@@ -42,97 +101,63 @@
                                 </ul>
                             </div>
                             <div class="px-4 py-3">
-                                <h5 class="mb-2">About</h5>
                                 <div class="p-4 rounded shadow-sm">
                                     <p class="font-italic mb-0">${USER.userStory}</p>
                                 </div>
                             </div>
-                            <style>
-                                .post {
-                                    border: 1px solid #ccc;
-                                    border-radius: 8px;
-                                    padding: 10px;
-                                    margin-bottom: 20px;
-                                }
-
-                                .post-header {
-                                    display: flex;
-                                    align-items: center;
-                                }
-
-                                .avatar {
-                                    width: 40px;
-                                    height: 40px;
-                                    border-radius: 50%;
-                                    margin-right: 10px;
-                                }
-
-                                .user-info {
-                                    display: flex;
-                                    flex-direction: column;
-                                }
-
-                                .user-name {
-                                    margin: 0;
-                                }
-
-                                .post-status {
-                                    margin: 5px 0 0;
-                                    color: #888;
-                                    font-size: 14px;
-                                }
-
-                                .post-content {
-                                    margin-top: 10px;
-                                }
-
-                                .post-content p {
-                                    margin: 0;
-                                }
-
-                                .post-image {
-                                    max-width: 100%;
-                                    height: auto;
-                                    margin-top: 10px;
-                                }
-                            </style>
-
-                            <div class="container-fluid pt-0">
-                                <div class="row form-settings bg-white shadow rounded py-4 px-4 d-flex justify-content-between ">
-                                    <form id="postForm" action="addpost" method="post" enctype="multipart/form-data">
-                                        <div class="form-group pb-3">
-                                            <label for="postStatus">Status</label>
-                                            <select class="form-control" id="postStatus" name="postStatus">
-                                                <option value="Public">Public</option>
-                                                <option value="Friends">Friends</option>
-                                                <option value="Only me">Only me</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group pb-3">
-                                            <label for="postContent">What's on your mind?</label>
-                                            <textarea class="form-control" id="postContent" name="postContent" rows="3"></textarea>
-                                        </div>
-                                        <div class="form-group pb-3">
-                                            <label for="postImage">Upload Image</label>
-                                            <input type="file" class="form-control" id="postImage" name="postImage">
-                                        </div>
-                                        <button type="submit" class="btn btn-primary">Add Post</button>
-                                    </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid pt-0">
+                <div class="row form-settings bg-white shadow rounded py-4 px-4 d-flex justify-content-between ">
+                    <div class="p0">
+                        <h5 class="mb-2">Có gì mới không nà ${USER.userFullName} ơi</h5>
+                    </div>
+                    <div>
+                        <form id="postForm" action="addpost" method="post" enctype="multipart/form-data">
+                            <div class="form-group pb-3">
+                                <label for="postStatus">Status</label>
+                                <select class="form-control" id="postStatus" name="postStatus">
+                                    <option value="Public">Public</option>
+                                    <option value="Friends">Friends</option>
+                                    <option value="Only me">Only me</option>
+                                </select>
+                            </div>
+                            <div class="form-group pb-3">
+                                <textarea class="form-control" id="postContent" name="postContent" rows="3" placeholder="Có chuyện gì vui vậy :>"></textarea>
+                            </div>
+                            <div class="form-group pb-3">
+                                <label for="postImage">Upload Image</label>
+                                <input type="file" class="form-control" id="postImage" name="postImage" accept="image/*">
+                                <div class="img-preview" id="imgPreview">
+                                    <p>No image selected</p>
                                 </div>
                             </div>
-                            <c:forEach var="post" items="${posts}">
+                            <button type="submit" class="btn btn-primary">Add Post</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid pt-0">
+                <div class="row form-settings bg-white shadow rounded py-4 px-4 d-flex justify-content-between ">
+                    <div class="p0">
+                        <h5 class="mb-2">Bài viết của bạn</h5>
+                    </div>
+                    <div>
+                        <c:forEach var="post" items="${posts}">
+                            <c:if test="${post.status eq 'Active' and post.postStatus eq 'Public'}">
                                 <div class="col-lg-12">
                                     <div class="card w-100">
                                         <div class="card-body p-4">
                                             <div class="pb-3 d-flex row">
                                                 <div class="col-1 text-center mt-2">
                                                     <a class="nav-icon-hover" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown" aria-expanded="false">
-                                                        <img src="${pageContext.request.contextPath}/${USER.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
+                                                        <img src="${pageContext.request.contextPath}/${post.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
                                                     </a>
                                                 </div>
                                                 <div class="col-10">
-                                                    <h6 class="card-title fw-semibold mb-4 d-inline">${USER.username}</h6>
-
+                                                    <h6 class="card-title fw-semibold mb-4 d-inline">${post.user.username}</h6>
                                                     <p class="s-4">${post.createDate}</p>
                                                 </div>
                                                 <c:if test="${post.user.userId == USER.userId}">
@@ -142,10 +167,10 @@
                                                         </a>
                                                         <ul class="dropdown-menu">
                                                             <li>
-                                                                <a class="dropdown-item" href="#">Edit</a>
+                                                                <a class="dropdown-item" type="button" href="#">Edit</a>
                                                             </li>
                                                             <li>
-                                                                <form class="dropdown-item mt-3" onsubmit="return confirm('Are you sure you want to delete this post?');" action="${pageContext.request.contextPath}/post" method="post">
+                                                                <form class="dropdown-item p-0 m-0" onsubmit="return confirm('Are you sure you want to delete this post?');" action="${pageContext.request.contextPath}/post" method="post">
                                                                     <input type="hidden" name="action" value="deletePost">
                                                                     <input type="hidden" name="postId" value="${post.postId}">
                                                                     <button type="submit" class="dropdown-item">Delete Post</button>
@@ -157,9 +182,8 @@
                                             </div>
 
                                             <!-- Option to delete post for the post author -->
-
-                                            <div class="mt-3">
-                                                <p class="fs-6">${post.content}</p>                     
+                                            <div class="mt-0 fs-6">
+                                                <p>${post.content}</p>
                                                 <c:if test="${not empty post.uploadPath}">
                                                     <img src="${pageContext.request.contextPath}/${post.uploadPath}" alt="Post Image" class="post-image">
                                                 </c:if>
@@ -197,7 +221,7 @@
                                                                         <img src="${pageContext.request.contextPath}/${comment.user.userAvatar}" alt="" width="30" class="rounded-circle avatar-cover">
                                                                     </div>
                                                                     <div class="ms-2">
-                                                                        <h6 class="card-title fw-semibold mb-0">${comment.user.username}: ${comment.content}</h6>
+                                                                        <h6 class="card-title fw-semibold mb-0">${comment.user.username}:${comment.content}</h6>
                                                                         <p class="s-4">${comment.date}</p>
                                                                     </div>
                                                                 </div>
@@ -228,46 +252,67 @@
                                         </div>
                                     </div>
                                 </div>
-                            </c:forEach>
-                            <!-- Modal for editing comment -->
-                            <div class="modal fade" id="editCommentModal" tabindex="-1" aria-labelledby="editCommentModalLabel" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="editCommentModalLabel">Edit Comment</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <form id="editCommentForm" action="${pageContext.request.contextPath}/comment" method="post">
-                                            <div class="modal-body">
-                                                <input type="hidden" name="action" value="editComment">
-                                                <input type="hidden" id="editCommentId" name="commentId">
-                                                <div class="form-group">
-                                                    <label for="editContent">Content:</label>
-                                                    <textarea class="form-control" id="editContent" name="newContent" rows="3"></textarea>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                <button type="submit" class="btn btn-primary">Save changes</button>
-                                            </div>
-                                        </form>
+                            </c:if>
+                        </c:forEach>
+                        <!-- Modal for editing comment -->
+                        <div class="modal fade" id="editCommentModal" tabindex="-1" aria-labelledby="editCommentModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="editCommentModalLabel">Edit Comment</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
+                                    <form id="editCommentForm" action="${pageContext.request.contextPath}/comment" method="post">
+                                        <div class="modal-body">
+                                            <input type="hidden" name="action" value="editComment">
+                                            <input type="hidden" id="editCommentId" name="commentId">
+                                            <div class="form-group">
+                                                <label for="editContent">Content:</label>
+                                                <textarea class="form-control" id="editContent" name="newContent" rows="3"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Save changes</button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
-                            <script>
-                                function editComment(commentId, content) {
-                                    document.getElementById('editCommentId').value = commentId;
-                                    document.getElementById('editContent').value = content;
-                                    var editCommentModal = new bootstrap.Modal(document.getElementById('editCommentModal'));
-                                    editCommentModal.show();
-                                }
-                            </script>
                         </div>
+                        <script>
+                            function editComment(commentId, content) {
+                                document.getElementById('editCommentId').value = commentId;
+                                document.getElementById('editContent').value = content;
+                                var editCommentModal = new bootstrap.Modal(document.getElementById('editCommentModal'));
+                                editCommentModal.show();
+                            }
+                            document.getElementById('postImage').addEventListener('change', function (event) {
+                                const file = event.target.files[0];
+                                const previewContainer = document.getElementById('imgPreview');
+                                const previewImage = document.createElement('img');
+                                const previewDefaultText = previewContainer.querySelector('p');
+
+                                if (file) {
+                                    const reader = new FileReader();
+
+                                    previewDefaultText.style.display = 'none';
+                                    previewImage.style.display = 'block';
+
+                                    reader.addEventListener('load', function () {
+                                        previewImage.setAttribute('src', this.result);
+                                    });
+
+                                    reader.readAsDataURL(file);
+                                    previewContainer.appendChild(previewImage);
+                                } else {
+                                    previewDefaultText.style.display = null;
+                                    previewImage.style.display = null;
+                                }
+                            });
+                        </script>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <%@ include file="../include/footer.jsp" %>
 </body>
-</html>
+<%@ include file="../include/footer.jsp" %>

@@ -63,7 +63,7 @@
                     <c:otherwise>
                         <c:choose>
                             <c:when test="${group.createrId == sessionScope.USER.userId}">
-                                <a href="groupDetails?groupId=${group.groupId}" class="btn btn-info w-100 mt-3">Access Group</a>
+                                <a href="inGroup?groupId=${group.groupId}" class="btn btn-info w-100 mt-3">Access Group</a>
                             </c:when>
                             <c:otherwise>
                                 <a href="joinGroup?groupId=${group.groupId}" class="btn btn-primary w-100 mt-3">Join Group</a>
