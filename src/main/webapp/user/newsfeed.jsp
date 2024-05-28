@@ -79,10 +79,10 @@
                                                         </a>
                                                         <ul class="dropdown-menu">
                                                             <li>
-                                                                <a class="dropdown-item" href="#">Edit</a>
+                                                                <a class="dropdown-item" type="button" href="#">Edit</a>
                                                             </li>
                                                             <li>
-                                                                <form class="dropdown-item mt-3" onsubmit="return confirm('Are you sure you want to delete this post?');" action="${pageContext.request.contextPath}/post" method="post">
+                                                                <form class="dropdown-item p-0 m-0" onsubmit="return confirm('Are you sure you want to delete this post?');" action="${pageContext.request.contextPath}/post" method="post">
                                                                     <input type="hidden" name="action" value="deletePost">
                                                                     <input type="hidden" name="postId" value="${post.postId}">
                                                                     <button type="submit" class="dropdown-item">Delete Post</button>
@@ -94,7 +94,6 @@
                                             </div>
 
                                             <!-- Option to delete post for the post author -->
-
                                             <div class="mt-3">
                                                 <p>${post.content}</p>
                                                 <c:if test="${not empty post.uploadPath}">

@@ -50,7 +50,7 @@
                                 <img src="${pageContext.request.contextPath}/${USER.userAvatar}" alt="" width="40" class="rounded-circle avatar-cover">
                                 <p class="mb-0 fs-6">${USER.username}</p>
                             </a>
-                            <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
+                            <a href="${pageContext.request.contextPath}/profile/setting" class="d-flex align-items-center gap-2 dropdown-item">
                                 <i class="ti ti-user-circle fs-6"></i>
                                 <p class="mb-0 fs-3">My Account</p>
                             </a>
