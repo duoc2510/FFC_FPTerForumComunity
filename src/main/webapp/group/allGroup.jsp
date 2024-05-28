@@ -47,10 +47,10 @@
 <div class="row">
     <c:forEach var="group" items="${groups}">
         <div class="card col-md-3 m-2">
-            <img src="${pageContext.request.contextPath}/upload/${group.image}" class="card-img-top event-img" alt="...">
+            <img src="${pageContext.request.contextPath}/${group.image}" class="card-img-top event-img" alt="...">
             <div class="card-body">
                 <h5 class="card-title">
-                    <a href="groupDetails?groupId=${group.groupId}" class="group-link">
+                    <a href="inGroup?groupId=${group.groupId}" class="group-link">
                         ${group.groupName}
                     </a>
                 </h5>
@@ -79,19 +79,26 @@
 <!-- Hi?n th? các nhóm mà ng??i dùng ?ã t?o -->
 <div id="createdGroupsSection" class="row hidden">
     <h2>Groups You Created</h2>
-    <c:forEach var="group" items="${groupsCreated}">
-        <div class="card col-md-3 m-2">
-            <img src="${pageContext.request.contextPath}/upload/${group.image}" class="card-img-top event-img" alt="...">
-            <div class="card-body">
-                <h5 class="card-title">
-                    <a href="groupDetails?groupId=${group.groupId}" class="group-link">
-                        ${group.groupName}
-                    </a>
-                </h5>
-                <p class="card-text">${group.groupDescription}</p>
-                <p class="card-text">Members: ${group.memberCount}</p>
-                <a href="groupDetails?groupId=${group.groupId}" class="btn btn-info w-100 mt-3">Access Group</a>
-            </div>
-        </div>
-    </c:forEach>
+    <c:choose>
+        <c:when test="${empty groupsCreated}">
+            <p>You haven't created any groups yet.</p>
+        </c:when>
+        <c:otherwise>
+            <c:forEach var="group" items="${groupsCreated}">
+                <div class="card col-md-3 m-2">
+                    <img src="${pageContext.request.contextPath}/${group.image}" class="card-img-top event-img" alt="Group Avatar">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="inGroup?groupId=${group.groupId}" class="group-link">
+                                ${group.groupName}
+                            </a>
+                        </h5>
+                        <p class="card-text">${group.groupDescription}</p>
+                        <p class="card-text">Members: ${group.memberCount}</p>
+                        <a href="inGroup?groupId=${group.groupId}" class="btn btn-info w-100 mt-3">Access Group</a>
+                    </div>
+                </div>
+            </c:forEach>
+        </c:otherwise>
+    </c:choose>
 </div>

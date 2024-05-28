@@ -225,51 +225,54 @@ public class User_DB implements DBinfo {
         }
     }
 
-    public static void updateScore(String email) {
-        String getUserQuery = "SELECT User_id FROM Users WHERE User_email = ?";
-        String countCommentsQuery = "SELECT COUNT(*) FROM Comment WHERE User_id = ?";
-        String countPostsQuery = "SELECT COUNT(*) FROM Post WHERE User_id = ? AND Status = 'Active' AND Topic_id IS NOT NULL";
-        String updateScoreQuery = "UPDATE Users SET User_score = ? WHERE User_id = ?";
-        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement getUserStmt = con.prepareStatement(getUserQuery); PreparedStatement countCommentsStmt = con.prepareStatement(countCommentsQuery); PreparedStatement countPostsStmt = con.prepareStatement(countPostsQuery); PreparedStatement updateScoreStmt = con.prepareStatement(updateScoreQuery)) {
+  public static void updateScore(int userId) {
+    String countCommentsQuery = "SELECT COUNT(*) FROM Comment WHERE User_id = ?";
+    String countPostsQuery = "SELECT COUNT(*) FROM Post WHERE User_id = ? AND Status = 'Active' AND Topic_id IS NOT NULL";
+    String updateScoreQuery = "UPDATE Users SET User_score = ? WHERE User_id = ?";
+    
+    try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass);
+         PreparedStatement countCommentsStmt = con.prepareStatement(countCommentsQuery);
+         PreparedStatement countPostsStmt = con.prepareStatement(countPostsQuery);
+         PreparedStatement updateScoreStmt = con.prepareStatement(updateScoreQuery)) {
 
-            // Lấy User_id từ email
-            getUserStmt.setString(1, email);
-            ResultSet rsUser = getUserStmt.executeQuery();
-            if (rsUser.next()) {
-                int userId = rsUser.getInt("User_id");
+        // Đếm số lượng bình luận
+        countCommentsStmt.setInt(1, userId);
+        System.out.println("Executing query: " + countCommentsStmt);
+        ResultSet rsComments = countCommentsStmt.executeQuery();
+        rsComments.next();
+        int commentCount = rsComments.getInt(1);
+        System.out.println("Số lượng bình luận: " + commentCount);
 
-                // Đếm số lượng bình luận
-                countCommentsStmt.setInt(1, userId);
-                ResultSet rsComments = countCommentsStmt.executeQuery();
-                rsComments.next();
-                int commentCount = rsComments.getInt(1);
+        // Đếm số lượng bài viết
+        countPostsStmt.setInt(1, userId);
+        System.out.println("Executing query: " + countPostsStmt);
+        ResultSet rsPosts = countPostsStmt.executeQuery();
+        rsPosts.next();
+        int postCount = rsPosts.getInt(1);
+        System.out.println("Số lượng bài viết: " + postCount);
 
-                // Đếm số lượng bài viết
-                countPostsStmt.setInt(1, userId);
-                ResultSet rsPosts = countPostsStmt.executeQuery();
-                rsPosts.next();
-                int postCount = rsPosts.getInt(1);
+        // Tính điểm
+        int score = commentCount * 1 + postCount * 2;
+        System.out.println("Điểm tính được: " + score);
 
-                // Tính điểm
-                int score = commentCount * 1 + postCount * 2;
+        // Cập nhật điểm
+        updateScoreStmt.setInt(1, score);
+        updateScoreStmt.setInt(2, userId);
+        System.out.println("Executing query: " + updateScoreStmt);
+        int rowsAffected = updateScoreStmt.executeUpdate();
 
-                // Cập nhật điểm
-                updateScoreStmt.setInt(1, score);
-                updateScoreStmt.setInt(2, userId);
-                int rowsAffected = updateScoreStmt.executeUpdate();
-
-                if (rowsAffected > 0) {
-                    System.out.println("Cập nhật điểm thành công.");
-                } else {
-                    System.out.println("Không thể cập nhật điểm.");
-                }
-            } else {
-                System.out.println("Không tìm thấy người dùng với email này.");
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+        if (rowsAffected > 0) {
+            System.out.println("Cập nhật điểm thành công cho user ID: " + userId);
+        } else {
+            System.out.println("Không thể cập nhật điểm cho user ID: " + userId);
         }
+    } catch (SQLException ex) {
+        System.err.println("SQL Exception: " + ex.getMessage());
+        ex.printStackTrace();
     }
+}
+
+
 
     public static int countPost(String email) {
         int postCount = 0;

@@ -35,6 +35,13 @@ public class Group {
         this.memberCount = memberCount;
     }
 
+    public Group(int createrId, String groupName, String groupDescription, String image) {
+        this.createrId = createrId;
+        this.groupName = groupName;
+        this.groupDescription = groupDescription;
+        this.image = image;
+    }
+
    
          
     public Group() {

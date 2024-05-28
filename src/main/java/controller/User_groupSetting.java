@@ -11,6 +11,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import model.DAO.Group_DB;
+import model.Group;
+import model.User;
 
 /**
  *
@@ -56,7 +60,20 @@ public class User_groupSetting extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        // Lấy userId và groupId từ request, bạn cần thay đổi phần này tùy vào cách bạn truyền dữ liệu từ client
+               HttpSession session = request.getSession();
+       
+        int groupId = Integer.parseInt(request.getParameter("groupId"));
+        
+        // Gọi phương thức viewGroup để lấy thông tin nhóm từ cơ sở dữ liệu
+        Group group = Group_DB.viewGroup(groupId);
+        
+        // Đặt kết quả vào thuộc tính của request
+
+       session.setAttribute("group", group);
+        
+        // Chuyển hướng request đến trang JSP để hiển thị thông tin nhóm
+        request.getRequestDispatcher("/group/groupDetails.jsp").forward(request, response);
     }
 
     /**

@@ -39,47 +39,57 @@ public class Group_DB  implements DBinfo{
     }
     
      public static boolean addGroup(Group group) {
-        String insertQuery = "INSERT INTO [Group] (Creater_id, Group_name, Group_description) VALUES (?, ?, ?)";
-        
-        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); 
-             PreparedStatement pstmt = con.prepareStatement(insertQuery)) {
-             
-            pstmt.setInt(1, group.getCreaterId());
-            pstmt.setString(2, group.getGroupName());
-            pstmt.setString(3, group.getGroupDescription());
-
-            int rowsAffected = pstmt.executeUpdate();
-            return rowsAffected > 0;
-
-        } catch (SQLException ex) {
-            Logger.getLogger(Group_DB.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        }
-    }
+    String insertQuery = "INSERT INTO [Group] (Creater_id, Group_name, Group_description, Image) VALUES (?, ?, ?, ?)";
     
-  public static Group viewGroup(int userId, int groupId) {
+    try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); 
+         PreparedStatement pstmt = con.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS)) {
+         
+        pstmt.setInt(1, group.getCreaterId());
+        pstmt.setString(2, group.getGroupName());
+        pstmt.setString(3, group.getGroupDescription());
+        pstmt.setString(4, group.getImage());
+
+        int rowsAffected = pstmt.executeUpdate();
+        if (rowsAffected > 0) {
+            // Lấy ID của nhóm vừa thêm vào
+            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    int groupId = generatedKeys.getInt(1);
+                    // Thêm người tạo nhóm vào bảng MemberGroup với trạng thái "Approved"
+                    return joinGroup(group.getCreaterId(), groupId);
+                }
+            }
+        }
+        return false;
+
+    } catch (SQLException ex) {
+        Logger.getLogger(Group_DB.class.getName()).log(Level.SEVERE, null, ex);
+        return false;
+    }
+}
+
+public static Group viewGroup(int groupId) {
     Group group = null;
-    String sql = "SELECT Group_id, Creater_id, Group_name, Group_description,image, memberCount " +
-                 "MemberGroup_id, User_id, User_email, User_fullName, " +
-                 "User_avatar, User_activeStatus, Post_id, Post_user_id, " +
-                 "Post_group_id, Post_content, Post_createDate, Post_status, " +
-                 "Comment_id, Comment_post_id, Comment_user_id, Comment_content, " +
-                 "Comment_date, Upload_id, Upload_post_id " +
-                 "FROM GroupView WHERE Group_id = ? AND User_id = ?";
+    String sql = "SELECT Group_id, Creater_id, Group_name, Group_description, image, memberCount, " +
+                 "MemberGroup_id, User_id, User_email, User_fullName, User_avatar, User_activeStatus, " +
+                 "Post_id, Post_user_id, Post_group_id, Post_content, Post_createDate, Post_status, " +
+                 "Comment_id, Comment_post_id, Comment_user_id, Comment_content, Comment_date, " +
+                 "Upload_id, Upload_post_id, UploadPath " +
+                 "FROM GroupView WHERE Group_id = ?";
 
     try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass);
          PreparedStatement pstmt = conn.prepareStatement(sql)) {
         
-        pstmt.setInt(1, groupId); // Thiết lập giá trị cho tham số Group_id trong truy vấn
-        pstmt.setInt(2, userId);  // Thiết lập giá trị cho tham số User_id trong truy vấn
-        
+        pstmt.setInt(1, groupId);
+
         try (ResultSet rs = pstmt.executeQuery()) {
             List<Group_member> groupMembers = new ArrayList<>();
             List<Post> posts = new ArrayList<>();
             List<Comment> comments = new ArrayList<>();
             List<Upload> uploads = new ArrayList<>();
 
-            while (rs.next()) {
+            // Kiểm tra xem ResultSet có dữ liệu không
+            if (rs.next()) {
                 // Collect group member information
                 User user = new User(
                     rs.getInt("User_id"),
@@ -118,30 +128,34 @@ public class Group_DB  implements DBinfo{
                 // Collect upload information
                 Upload upload = new Upload(
                     rs.getInt("Upload_id"),
-                    rs.getInt("Upload_post_id")
+                    rs.getInt("Upload_post_id"),
+                    rs.getString("UploadPath")
                 );
                 uploads.add(upload);
-            }
 
-            // Tạo đối tượng Group từ thông tin thu thập được
-            group = new Group(
-                groupId,                               // Group_id
-                rs.getInt("Creater_id"),               // Creater_id
-                rs.getString("Group_name"),            // Group_name
-                rs.getString("Group_description"),     // Group_description
-                groupMembers,
-                posts,
-                comments,
-                uploads,
-                rs.getString("image"),
-                rs.getInt("memberCount")
-            );
+                // Tạo đối tượng Group nếu ResultSet có dữ liệu
+                group = new Group(
+                    groupId,
+                    rs.getInt("Creater_id"),
+                    rs.getString("Group_name"),
+                    rs.getString("Group_description"),
+                    groupMembers,
+                    posts,
+                    comments,
+                    uploads,
+                    rs.getString("image"),
+                    rs.getInt("memberCount")
+                );
+            }
         }
     } catch (SQLException e) {
-        System.out.println(e.getMessage());
+        // Xử lý lỗi SQLException
+        e.printStackTrace(); // In ra stack trace của lỗi
+        // Hoặc xử lý lỗi một cách hợp lý khác tùy theo yêu cầu
     }
     return group;
 }
+
 
 
      public static List<Group> getAllGroups() {
@@ -175,23 +189,49 @@ public class Group_DB  implements DBinfo{
         }
         return groups;
     }
-    public static boolean joinGroup(int userId, int groupId) {
-        String sql = "INSERT INTO MemberGroup (User_id, Group_id, Status) VALUES (?, ?, 'pending')";
-
-        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass);
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, userId);
-            pstmt.setInt(2, groupId);
-
-            int affectedRows = pstmt.executeUpdate();
-            return affectedRows > 0;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+   public static boolean joinGroup(int userId, int groupId) {
+    String sql;
+    boolean isCreator = false;
+    
+    // Kiểm tra xem người tham gia có phải là người tạo nhóm không
+    try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass);
+         PreparedStatement pstmt = conn.prepareStatement("SELECT Creater_id FROM [Group] WHERE Group_id = ?")) {
+        
+        pstmt.setInt(1, groupId);
+        try (ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                int createrId = rs.getInt("Creater_id");
+                isCreator = (createrId == userId);
+            }
         }
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;
     }
+    
+    // Xây dựng câu lệnh SQL phù hợp dựa vào trạng thái của người tham gia
+    if (isCreator) {
+        sql = "INSERT INTO MemberGroup (User_id, Group_id, Status) VALUES (?, ?, 'approved')";
+    } else {
+        sql = "INSERT INTO MemberGroup (User_id, Group_id, Status) VALUES (?, ?, 'pending')";
+    }
+
+    // Thực hiện câu lệnh SQL
+    try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass);
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+        pstmt.setInt(1, userId);
+        pstmt.setInt(2, groupId);
+
+        int affectedRows = pstmt.executeUpdate();
+        return affectedRows > 0;
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;
+    }
+}
+
       public static boolean isUserPendingApproval(int userId, int groupId) {
         String query = "SELECT * FROM MemberGroup WHERE User_id = ? AND Group_id = ? AND Status = 'pending'";
         try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass);
@@ -223,7 +263,7 @@ public class Group_DB  implements DBinfo{
       public static List<Group> getAllGroupsCreated(int userId) {
     List<Group> groups = new ArrayList<>();
     String sql = "SELECT g.Group_id, g.Creater_id, g.Group_name, g.Group_description, g.image, " +
-                 "COUNT(DISTINCT CASE WHEN mg.Status = 'Approved' THEN mg.MemberGroup_id END) + 1 AS memberCount " +
+                 "COUNT(DISTINCT CASE WHEN mg.Status = 'Approved' THEN mg.MemberGroup_id END) AS memberCount " +
                  "FROM [Group] g " +
                  "LEFT JOIN MemberGroup mg ON g.Group_id = mg.Group_id " +
                  "WHERE g.Creater_id = ? " +
@@ -255,5 +295,5 @@ public class Group_DB  implements DBinfo{
     }
     return groups;
 }
-
+ 
 }
