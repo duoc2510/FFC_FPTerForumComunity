@@ -55,7 +55,7 @@ public class User_rank extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+           request.getRequestDispatcher("/rank/index.jsp").forward(request, response);
     }
 
     /**
@@ -69,7 +69,7 @@ public class User_rank extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/rank/index.jsp").forward(request, response);
+     
     }
 
     /**
