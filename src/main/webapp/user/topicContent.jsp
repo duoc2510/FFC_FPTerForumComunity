@@ -7,7 +7,6 @@
             <th scope="col">#</th>
             <th scope="col">Topic</th>
             <th scope="col">Description</th>
-            <th scope="col">Action</th>
         </tr>
     </thead>
     <tbody>
@@ -16,12 +15,6 @@
                 <th scope="row">${topic.topicId}</th>
                 <td>${topic.topicName}</td>
                 <td>${topic.description}</td>
-                <td>
-                    <form action="<%=request.getContextPath()%>/deleteTopic" method="post" style="display:inline;">
-                        <input type="hidden" name="topicId" value="${topic.topicId}">
-                        <button type="submit" class="btn-delete">Delete</button>
-                    </form>
-                </td>
             </tr>
         </c:forEach>
     </tbody>

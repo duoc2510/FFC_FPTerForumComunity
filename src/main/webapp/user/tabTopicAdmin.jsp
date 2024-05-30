@@ -1,6 +1,39 @@
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
+<head>
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/css/bootstrap.min.css">
+    <style>
+        .btn-delete {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .btn-delete:hover {
+            background-color: #ff1a1a;
+        }
+        .success-message {
+            color: green;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .error-message {
+            color: red;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+    <script>
+        function showAddTopicForm() {
+            document.getElementById('addTopicForm').classList.remove('hidden');
+        }
+    </script>
+</head>
 <div class="card">
     <div class="card-body p-4">
         <ul class="nav nav-tabs" role="tablist">
@@ -16,6 +49,9 @@
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="all-topic-tab" data-bs-toggle="tab" data-bs-target="#topic-tab-pane" type="button" role="tab" aria-controls="topic-tab-pane" aria-selected="false">All topic</button>
             </li>
+             <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="add-topic-tab" type="button" role="tab" onclick="showAddTopicForm()">+</button>
+                </li>
         </ul>
         <div class="tab-content">
             <!-- Noi dung hoi dap -->
@@ -122,11 +158,35 @@
             </div>
         </div>
     </div>
+                            
+        <!-- Add Topic Form -->
+        <div id="addTopicForm" class="hidden">
+            <h3>Add New Topic</h3>
+            <form action="${pageContext.request.contextPath}/addTopic" method="post">
+                <div class="mb-3">
+                    <label for="topicName" class="form-label">Topic Name</label>
+                    <input type="text" class="form-control" id="topicName" name="topicName" required>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <input type="text" class="form-control" id="description" name="description" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Topic</button>
+            </form>
+        </div>               
+    </div>
+    <!-- Display Messages -->
+    <c:if test="${not empty successMessage}">
+        <div class="success-message">${successMessage}</div>
+    </c:if>
+    <c:if test="${not empty errorMessage}">
+        <div class="error-message">${errorMessage}</div>
+    </c:if>
 </div>
 
 <script>
     document.getElementById("all-topic-tab").addEventListener("click", function () {
-        fetch("${pageContext.request.contextPath}/viewTopic")
+        fetch("${pageContext.request.contextPath}/viewTopicAdmin")
             .then(response => response.text())
             .then(data => {
                 document.getElementById("topic-tab-pane").innerHTML = data;
@@ -134,3 +194,5 @@
             .catch(error => console.error('Error:', error));
     });
 </script>
+
+

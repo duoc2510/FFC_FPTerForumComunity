@@ -68,7 +68,8 @@ public class Topic_DB implements DBinfo {
 
     public static boolean deleteTopic(int topicId) {
         String deleteQuery = "DELETE FROM Topic WHERE topic_id = ?";
-        try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement pstmt = con.prepareStatement(deleteQuery)) {
+        try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass);
+             PreparedStatement pstmt = con.prepareStatement(deleteQuery)) {
             pstmt.setInt(1, topicId);
             int rowsAffected = pstmt.executeUpdate();
             return rowsAffected > 0;

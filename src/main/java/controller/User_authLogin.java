@@ -210,13 +210,16 @@ public class User_authLogin extends HttpServlet {
                 response.addCookie(rememberMeCookie);
             }
 
-            // Lấy đường dẫn trước đó từ session và xoá nó sau khi đã sử dụng
-            String redirectURL = (String) request.getSession().getAttribute("redirectURL");
-            if (redirectURL != null && !redirectURL.isEmpty()) {
-                request.getSession().removeAttribute("redirectURL");
-                response.sendRedirect(response.encodeRedirectURL(redirectURL));
+            if (userRole > 1) {
+                response.sendRedirect(response.encodeRedirectURL(request.getContextPath() + "/index_admin.jsp"));
             } else {
-                response.sendRedirect(response.encodeRedirectURL(request.getContextPath() + "/home"));
+                String redirectURL = (String) request.getSession().getAttribute("redirectURL");
+                if (redirectURL != null && !redirectURL.isEmpty()) {
+                    request.getSession().removeAttribute("redirectURL");
+                    response.sendRedirect(response.encodeRedirectURL(redirectURL));
+                } else {
+                    response.sendRedirect(response.encodeRedirectURL(request.getContextPath() + "/home"));
+                }
             }
         } else {
             String msg = "Invalid email or password";
