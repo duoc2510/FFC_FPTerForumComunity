@@ -67,10 +67,10 @@ public class User_groupJoin extends HttpServlet {
         
         if (success) {
             session.setAttribute("message", "You have successfully registered to join the group. Please wait for approval.");
-            response.sendRedirect("group/allGroup.jsp"); // Redirect to group details page
+            response.sendRedirect("listGroup"); // Redirect to group details page
         } else {
             session.setAttribute("error", "Failed to join the group. Please try again.");
-            response.sendRedirect("group/allGroup.jsp"); // Redirect back to groups page with error
+            response.sendRedirect("listGroup"); // Redirect back to groups page with error
         }
     }
 

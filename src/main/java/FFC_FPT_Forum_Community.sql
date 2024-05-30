@@ -560,6 +560,7 @@ SELECT
     g.Group_description,
     g.Image,
     mg.MemberGroup_id,
+    mg.Status,
     u.User_id,
     u.User_email,
     u.User_fullName,
