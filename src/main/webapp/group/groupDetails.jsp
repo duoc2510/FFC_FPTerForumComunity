@@ -30,20 +30,21 @@
                                     <p class="font-italic mb-0">${group.groupDescription}</p>
                                 </div>
                                 <ul class="list-inline mb-0">
-                                    <c:if test="${group.pending}">
-                                        <button class="btn btn-secondary btn-sm btn-block edit-cover mx-2" disabled>Pending Approval</button>
-                                    </c:if>
-                                    <c:if test="${isUserApproved}">
-                                        <button class="btn btn-primary btn-sm btn-block edit-cover mx-2" disabled>Joined Group</button>
-                                    </c:if>
-                                    <c:if test="${not group.pending and not isUserApproved}">
-                                        <c:if test="${group.createrId == USER.userId}">
+                                    <c:choose>
+                                        <c:when test="${group.pending}">
+                                            <button class="btn btn-secondary btn-sm btn-block edit-cover mx-2" disabled>Pending Approval</button>
+                                        </c:when>
+                                        <c:when test="${isUserApproved and group.createrId != USER.userId}">
+                                            <button class="btn btn-primary btn-sm btn-block edit-cover mx-2" disabled>Joined Group</button>
+                                        </c:when>
+                                        <c:when test="${group.createrId == USER.userId}">
                                             <button class="btn btn-info btn-sm btn-block edit-cover mx-2" disabled>Welcome Host Group</button>
-                                        </c:if>
-                                        <c:if test="${group.createrId != USER.userId}">
+                                        </c:when>
+                                        <c:otherwise>
                                             <a href="${pageContext.request.contextPath}/joinGroup?groupId=${group.groupId}" class="btn btn-primary btn-sm btn-block edit-cover mx-2">Join Group</a>
-                                        </c:if>
-                                    </c:if>
+                                        </c:otherwise>
+                                    </c:choose>
+
                                     <li class="list-inline-item">
                                         <h5 class="font-weight-bold mb-0 d-block">${group.memberCount}</h5><small class="text-muted"><i class="fas fa-user mr-1"></i>Members</small>
                                     </li>
@@ -294,29 +295,29 @@
     </div>
     <%@ include file="../include/footer.jsp" %>
     <script>
-    function editComment(commentId, content) {
-        document.getElementById('editCommentId').value = commentId;
-        document.getElementById('editContent').value = content;
-        var editCommentModal = new bootstrap.Modal(document.getElementById('editCommentModal'));
-        editCommentModal.show();
-    }
-    function showMemberGroup() {
-    document.getElementById('pendingRequest').style.display = 'none';
-    document.getElementById('memberGroup').style.display = 'block';
-}
+        function editComment(commentId, content) {
+            document.getElementById('editCommentId').value = commentId;
+            document.getElementById('editContent').value = content;
+            var editCommentModal = new bootstrap.Modal(document.getElementById('editCommentModal'));
+            editCommentModal.show();
+        }
+        function showMemberGroup() {
+            document.getElementById('pendingRequest').style.display = 'none';
+            document.getElementById('memberGroup').style.display = 'block';
+        }
 
 // Function cho sự kiện khi click vào nút hiển thị yêu cầu chờ
-function showPendingRequest() {
-    document.getElementById('memberGroup').style.display = 'none';
-    document.getElementById('pendingRequest').style.display = 'block';
-}
+        function showPendingRequest() {
+            document.getElementById('memberGroup').style.display = 'none';
+            document.getElementById('pendingRequest').style.display = 'block';
+        }
 
 // Gắn sự kiện cho nút hiển thị danh sách thành viên nhóm
-document.getElementById('memberGroupBtn').addEventListener('click', showMemberGroup);
+        document.getElementById('memberGroupBtn').addEventListener('click', showMemberGroup);
 
 // Gắn sự kiện cho nút hiển thị yêu cầu chờ
-document.getElementById('pendingRequestBtn').addEventListener('click', showPendingRequest);
-</script>
+        document.getElementById('pendingRequestBtn').addEventListener('click', showPendingRequest);
+    </script>
 </body>
 
 </html>
