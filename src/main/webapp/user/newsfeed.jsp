@@ -140,7 +140,7 @@
                                                                 <c:if test="${comment.user.userId == user.userId}">
                                                                     <div class="dropdown">
                                                                         <button class="btn btn-link dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                                                            <i class="ti ti-more"></i>
+                                                                            <i class="ti ti-more-alt"></i>
                                                                         </button>
                                                                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
                                                                             <li>

@@ -16,7 +16,7 @@
                                     <div class="profile mr-3 d-flex justify-content-between align-items-end">
                                         <img src="${pageContext.request.contextPath}/${group.image}" class="rounded-circle img-thumbnail" style="object-fit: cover;">
                                         <div>
-                                            <c:if test="${group.createrId == user.userId}">
+                                            <c:if test="${group.createrId == USER.userId}">
                                                 <a href="${pageContext.request.contextPath}/group/edit?groupId=${group.groupId}" class="btn btn-outline-dark btn-sm btn-block edit-cover mx-2">Edit Group</a>
                                             </c:if>
                                         </div>
@@ -42,7 +42,7 @@
                             </div>
                             <div class="container-fluid pt-0">
                                 <div class="row form-settings bg-white shadow rounded py-4 px-4 d-flex justify-content-between ">
-                                 
+
                                     <a href="${pageContext.request.contextPath}/group/members?groupId=${group.groupId}" class="btn btn-primary">Group Members</a>
                                     <c:if test="${group.createrId == USER.userId}">
                                         <a href="${pageContext.request.contextPath}/group/pendingRequests?groupId=${group.groupId}" class="btn btn-primary">Pending Requests</a>
@@ -61,7 +61,7 @@
                                     </form>
                                 </div>
                             </div>
-                                     
+
                             <c:forEach var="post" items="${group.post}">
                                 <div class="col-lg-12">
                                     <div class="card w-100">
@@ -76,7 +76,7 @@
                                                     <h6 class="card-title fw-semibold mb-4 d-inline">${post.user.username}</h6>
                                                     <p class="s-4">${post.createDate}</p>
                                                 </div>
-                                                <c:if test="${post.user.userId == user.userId}">
+                                                <c:if test="${post.user.userId == USER.userId}">
                                                     <div class="dropdown col-1 px-2" style="text-align: right">
                                                         <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                             <span><i class="ti-more-alt"></i></span>
@@ -120,7 +120,7 @@
                                             <form action="${pageContext.request.contextPath}/group/comment" method="post" class="input-group">
                                                 <input type="hidden" name="action" value="addComment">
                                                 <input type="hidden" name="postId" value="${post.postId}">
-                                                <input type="hidden" name="userId" value="${user.userId}">
+                                                <input type="hidden" name="userId" value="${USER.userId}">
                                                 <input type="text" class="form-control" name="content" placeholder="Write a comment" required>
                                                 <button type="submit" class="btn btn-primary">Submit</button>
                                             </form>
@@ -138,7 +138,7 @@
                                                                     <p class="s-4">${comment.date}</p>
                                                                 </div>
                                                             </div>
-                                                            <c:if test="${comment.user.userId == user.userId}">
+                                                            <c:if test="${comment.user.userId == USER.userId}">
                                                                 <div class="dropdown">
                                                                     <button class="btn btn-link dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                                                                         <i class="ti ti-more"></i>

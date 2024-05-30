@@ -2,7 +2,6 @@ package model;
 
 import java.util.Date;
 import model.DAO.User_DB;
-import static model.DAO.User_DB.updatePasswordByEmail;
 import org.mindrot.jbcrypt.BCrypt;
 
 public class User {
@@ -26,10 +25,8 @@ public class User {
     public User() {
     }
 
-   
-
     // Constructor
-    public User(int userId, String userEmail, String userPassword, int userRole, String username, String userFullName, double userWallet, String userAvatar, String userStory, int userRank, int userScore, Date userCreateDate, String userSex, boolean userActiveStatus, String usernameVip) {
+    public User(int userId, String userEmail, String userPassword, int userRole, String username, String userFullName, double userWallet, String userAvatar, String userStory, int userRank, int userScore, Date userCreateDate, String userSex, boolean userActiveStatus) {
         this.userId = userId;
         this.userEmail = userEmail;
         this.userPassword = userPassword;
@@ -44,7 +41,6 @@ public class User {
         this.userCreateDate = userCreateDate;
         this.userSex = userSex;
         this.userActiveStatus = userActiveStatus;
-        this.usernameVip = usernameVip;
     }
 
     public User(int userId, String userEmail, String userFullName, String userAvatar, boolean userActiveStatus) {
@@ -55,40 +51,10 @@ public class User {
         this.userActiveStatus = userActiveStatus;
     }
 
-   
-
-   
-
     public User(String userEmail, String userPassword, String username) {
         this.userEmail = userEmail;
         this.userPassword = userPassword;
         this.username = username;
-    }
-
-    public User(String userEmail, String userPassword, int userRole, String username, String userFullName, double userWallet, String userAvatar, String userStory, int userRank, int userScore, Date userCreateDate, String userSex, boolean userActiveStatus, String usernameVip) {
-        this.userEmail = userEmail;
-        this.userPassword = userPassword;
-        this.userRole = userRole;
-        this.username = username;
-        this.userFullName = userFullName;
-        this.userWallet = userWallet;
-        this.userAvatar = userAvatar;
-        this.userStory = userStory;
-        this.userRank = userRank;
-        this.userScore = userScore;
-        this.userCreateDate = userCreateDate;
-        this.userSex = userSex;
-        this.userActiveStatus = userActiveStatus;
-        this.usernameVip = usernameVip;
-    }
-
-    public String getUsernameVip() {
-        return usernameVip;
-    }
-
-    // Getters and Setters
-    public void setUsernameVip(String usernameVip) {
-        this.usernameVip = usernameVip;
     }
 
     public int getUserId() {

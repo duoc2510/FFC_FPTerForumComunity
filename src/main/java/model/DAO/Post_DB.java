@@ -5,14 +5,14 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import model.Post;
 import model.User;
 
-public class Post_DB {
+public class Post_DB implements DBinfo {
 
     public Post_DB() {
         try {
@@ -23,7 +23,7 @@ public class Post_DB {
     }
 
     public static void addPostUser(Post post) throws SQLException {
-        String insertPostQuery = "INSERT INTO Post (User_id, Content, Status, postStatus, Reason) VALUES (?, ?, ?, ?, ?)";
+        String insertPostQuery = "INSERT INTO Post (User_id, Content, Status, postStatus, Reason, createDate) VALUES (?, ?, ?, ?, ?, ?)";
         String insertUploadQuery = "INSERT INTO Upload (Post_id, UploadPath) VALUES (?, ?)";
 
         try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement pstmtPost = con.prepareStatement(insertPostQuery, PreparedStatement.RETURN_GENERATED_KEYS); PreparedStatement pstmtUpload = con.prepareStatement(insertUploadQuery)) {
@@ -34,6 +34,11 @@ public class Post_DB {
             pstmtPost.setString(3, "Active");
             pstmtPost.setString(4, post.getPostStatus());
             pstmtPost.setString(5, post.getReason());
+
+            // Tạo ngày tạo với định dạng dd/mm/yyyy
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+            String createDate = dateFormat.format(new Date());
+            pstmtPost.setString(6, createDate);
 
             pstmtPost.executeUpdate();
 
@@ -58,7 +63,7 @@ public class Post_DB {
     }
 
     public static void addPostGroup(Post post) throws SQLException {
-        String insertPostQuery = "INSERT INTO Post (User_id, Group_id, Content, Status, postStatus, Reason) VALUES (?, ?, ?, ?, ?, ?)";
+        String insertPostQuery = "INSERT INTO Post (User_id, Group_id, Content, Status, postStatus, Reason, createDate) VALUES (?, ?, ?, ?, ?, ?, ?)";
         String insertUploadQuery = "INSERT INTO Upload (Post_id, UploadPath) VALUES (?, ?)";
 
         try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement pstmtPost = con.prepareStatement(insertPostQuery, PreparedStatement.RETURN_GENERATED_KEYS); PreparedStatement pstmtUpload = con.prepareStatement(insertUploadQuery)) {
@@ -67,9 +72,14 @@ public class Post_DB {
             pstmtPost.setInt(1, post.getUserId());
             pstmtPost.setInt(2, post.getGroupId());
             pstmtPost.setString(3, post.getContent());
-            pstmtPost.setString(4, "Peding");
-            pstmtPost.setString(5, post.getPostStatus());
+            pstmtPost.setString(4, "Pending");
+            pstmtPost.setString(5, "Private");
             pstmtPost.setString(6, post.getReason());
+
+            // Tạo ngày tạo với định dạng dd/MM/yyyy
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+            String createDate = dateFormat.format(new Date());
+            pstmtPost.setString(7, createDate);
 
             pstmtPost.executeUpdate();
 
@@ -94,7 +104,7 @@ public class Post_DB {
     }
 
     public static void addPostTopic(Post post) throws SQLException {
-        String insertPostQuery = "INSERT INTO Post (User_id, Topic_id, Content, Status, postStatus, Reason) VALUES (?, ?, ?, ?, ?, ?)";
+        String insertPostQuery = "INSERT INTO Post (User_id, Topic_id, Content, Status, postStatus, Reason, createDate) VALUES (?, ?, ?, ?, ?, ?, ?)";
         String insertUploadQuery = "INSERT INTO Upload (Post_id, UploadPath) VALUES (?, ?)";
 
         try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement pstmtPost = con.prepareStatement(insertPostQuery, PreparedStatement.RETURN_GENERATED_KEYS); PreparedStatement pstmtUpload = con.prepareStatement(insertUploadQuery)) {
@@ -106,6 +116,11 @@ public class Post_DB {
             pstmtPost.setString(4, "Pending");
             pstmtPost.setString(5, post.getPostStatus());
             pstmtPost.setString(6, post.getReason());
+
+            // Tạo ngày tạo với định dạng dd/MM/yyyy
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+            String createDate = dateFormat.format(new Date());
+            pstmtPost.setString(7, createDate);
 
             pstmtPost.executeUpdate();
 
@@ -157,7 +172,7 @@ public class Post_DB {
                             int topicId = rsPost.getInt("Topic_id");
                             String content = rsPost.getString("Content");
                             // Thay đổi ở đây: Sử dụng getTimestamp() thay vì getDate()
-                            Timestamp createDate = rsPost.getTimestamp("createDate");
+                            String createDate = rsPost.getString("createDate");
                             String status = rsPost.getString("Status");
                             String postStatus = rsPost.getString("postStatus");
                             String reason = rsPost.getString("Reason");
@@ -176,6 +191,7 @@ public class Post_DB {
         }
         return posts;
     }
+
     public static Post getPostById(int postId) {
         Post post = null;
         String selectPostQuery = "SELECT Post_id, User_id, Group_id, Topic_id, Content, createDate, Status, postStatus, Reason, UploadPath "
@@ -189,13 +205,13 @@ public class Post_DB {
                     int groupId = rsPost.getInt("Group_id");
                     int topicId = rsPost.getInt("Topic_id");
                     String content = rsPost.getString("Content");
-                    Date createDate = rsPost.getDate("createDate");
+                    String createDate = rsPost.getString("createDate");
                     String status = rsPost.getString("Status");
                     String postStatus = rsPost.getString("postStatus");
                     String reason = rsPost.getString("Reason");
                     String uploadPath = rsPost.getString("UploadPath");
 
-                    post = new Post(postId, userId, groupId, topicId, content, (Timestamp) createDate, status, postStatus, reason, uploadPath);
+                    post = new Post(postId, userId, groupId, topicId, content, createDate, status, postStatus, reason, uploadPath);
                 }
             }
         } catch (SQLException ex) {
@@ -210,7 +226,6 @@ public class Post_DB {
         String query = "SELECT p.*, u.UploadPath "
                 + "FROM Post p "
                 + "LEFT JOIN Upload u ON p.Post_id = u.Post_id";
-
         try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
@@ -219,7 +234,8 @@ public class Post_DB {
                 int groupId = rs.getInt("Group_id");
                 int topicId = rs.getInt("Topic_id");
                 String content = rs.getString("Content");
-                Timestamp createDate = rs.getTimestamp("createDate"); // Sử dụng getTimestamp() thay vì getDate()
+                String createDate = rs.getString("createDate");
+                // Sử dụng getTimestamp() thay vì getDate()
                 String status = rs.getString("Status");
                 String postStatus = rs.getString("postStatus");
                 String reason = rs.getString("Reason");
@@ -262,9 +278,8 @@ public class Post_DB {
                     Date createDate = rs.getDate("User_createDate");
                     String sex = rs.getString("User_sex");
                     boolean activeStatus = rs.getBoolean("User_activeStatus");
-                    String usernameVip = rs.getString("usernameVip");
 
-                    user = new User(userId, email, password, role, username, fullName, wallet, avatar, story, rank, score, createDate, sex, activeStatus, usernameVip);
+                    user = new User(userId, email, password, role, username, fullName, wallet, avatar, story, rank, score, createDate, sex, activeStatus);
                 }
                 System.out.println("getUserByPostId: Query executed successfully.");
             }
