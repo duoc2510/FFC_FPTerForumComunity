@@ -112,6 +112,10 @@
         <servlet-name>User_lostAccount</servlet-name>
         <servlet-class>controller.User_lostAccount</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>Topic_view</servlet-name>
+        <servlet-class>controller.Topic_view</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PostComment</servlet-name>
         <url-pattern>/comment</url-pattern>
@@ -199,6 +203,10 @@
     <servlet-mapping>
         <servlet-name>User_lostAccount</servlet-name>
         <url-pattern>/lostAccount</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Topic_view</servlet-name>
+        <url-pattern>/topic/all</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>home</welcome-file>

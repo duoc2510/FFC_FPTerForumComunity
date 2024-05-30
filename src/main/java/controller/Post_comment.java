@@ -88,13 +88,13 @@ public class Post_comment extends HttpServlet {
             if (session != null && session.getAttribute("USER") != null) {
                 User user = (User) session.getAttribute("USER");
                 int userId = user.getUserId(); // Lấy userId từ session
-              
+
                 String content = request.getParameter("content");
 
                 boolean success = Comment_DB.addCommentToPost(postId, userId, content);
-               
+
                 if (success) {
-                      User_DB.updateScore(userId);
+                    User_DB.updateScore(userId);
                     // Nếu thành công, chuyển hướng đến trang trước đó
                     response.sendRedirect(referer);
                 } else {
@@ -133,7 +133,7 @@ public class Post_comment extends HttpServlet {
             String newContent = request.getParameter("newContent");
 
             boolean success = Comment_DB.editComment(commentId, newContent);
-            
+
             if (success) {
                 // Nếu thành công, chuyển hướng đến trang trước đó
                 response.sendRedirect(referer);

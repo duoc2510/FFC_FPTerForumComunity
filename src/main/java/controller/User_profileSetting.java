@@ -70,7 +70,7 @@ public class User_profileSetting extends HttpServlet {
         request.getSession().setAttribute("USER", userInfo);
         // Đặt danh sách người dùng vào thuộc tính của request
         request.setAttribute("userInfo", userInfo);
-        // Chuyển hướng sang trang jsp để hiển thị thông tin người dùng32
+        // Chuyển hướng sang trang jsp để hiển thị thông tin người dùng
         request.getRequestDispatcher("/user/settings.jsp").forward(request, response);
     }
 

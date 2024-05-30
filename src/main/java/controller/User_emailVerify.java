@@ -10,6 +10,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.text.ParseException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.DAO.User_DB;
 import model.User;
 
@@ -96,7 +99,11 @@ public class User_emailVerify extends HttpServlet {
             if (Integer.parseInt(x) == Integer.parseInt(number)) {
                 // Passwords match, proceed to add new staff
                 User newUser = new User(email, password, userName);
-                userDB.addUser(newUser);
+                try {
+                    userDB.addUser(newUser);
+                } catch (ParseException ex) {
+                    Logger.getLogger(User_emailVerify.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 msg = "Registration Success";
                 request.setAttribute("message", msg);
                 request.getRequestDispatcher("/auth/login.jsp").forward(request, response);
@@ -110,7 +117,7 @@ public class User_emailVerify extends HttpServlet {
                 request.getRequestDispatcher("/auth/verifyemail.jsp").forward(request, response);
             }
         }
-        
+
     }
 
     /**
