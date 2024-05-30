@@ -8,7 +8,6 @@ GO
 -- Bảng Users
 CREATE TABLE Users (
     Username NVARCHAR(100) NOT NULL, -- Tên người dùng, bắt buộc
-    usernameVip NVARCHAR(100), -- Tên người dùng VIP
     User_id INT IDENTITY(1,1) PRIMARY KEY, -- ID tự động tăng cho người dùng
     User_email NVARCHAR(255) NOT NULL, -- Email người dùng, bắt buộc
     User_password NVARCHAR(255) NOT NULL, -- Mật khẩu người dùng, bắt buộc
@@ -41,8 +40,13 @@ CREATE TABLE Shop (
     CONSTRAINT fk_user_shop FOREIGN KEY (Owner_id) REFERENCES Users(User_id) -- Tham chiếu đến User_id trong bảng Users
 );
 GO
-
--- Bảng Product
+-- Bảng Category
+CREATE TABLE Category (
+    Category_id INT IDENTITY(1,1) PRIMARY KEY, -- ID tự động tăng cho danh mục
+    Category_name NVARCHAR(255) NOT NULL, -- Tên của danh mục, bắt buộc
+    Category_description NVARCHAR(255) -- Mô tả về danh mục
+);
+-- Bảng Product (cập nhật thêm cột Category_id và khóa ngoại)
 CREATE TABLE Product (
     Shop_id INT NOT NULL, -- ID của shop, bắt buộc
     Description NVARCHAR(255), -- Mô tả về sản phẩm
@@ -50,7 +54,9 @@ CREATE TABLE Product (
     Product_name NVARCHAR(255) NOT NULL, -- Tên của sản phẩm, bắt buộc
     Product_price DECIMAL(10, 2) NOT NULL, -- Giá của sản phẩm, bắt buộc
     Stock_quantity INT NOT NULL, -- Số lượng tồn kho của sản phẩm, bắt buộc
-    CONSTRAINT fk_shop_product FOREIGN KEY (Shop_id) REFERENCES Shop(Shop_id) -- Tham chiếu đến Shop_id trong bảng Shop
+    Category_id INT, -- ID của danh mục sản phẩm
+    CONSTRAINT fk_shop_product FOREIGN KEY (Shop_id) REFERENCES Shop(Shop_id), -- Tham chiếu đến Shop_id trong bảng Shop
+    CONSTRAINT fk_category_product FOREIGN KEY (Category_id) REFERENCES Category(Category_id) -- Tham chiếu đến Category_id trong bảng Category
 );
 GO
 
@@ -199,15 +205,6 @@ CREATE TABLE Topic (
     Description NVARCHAR(255) -- Mô tả chủ đề
 );
 GO
--- Tạo bảng UserTopic: lưu thông tin về chủ đề của người dùng
-CREATE TABLE UserTopic (
-    UserTopic_id INT IDENTITY(1,1) PRIMARY KEY, -- id tự động tăng cho chủ đề của người dùng
-    User_id INT NOT NULL, -- id của người dùng, không được null
-    Topic_id INT NOT NULL, -- id của chủ đề, không được null
-    FOREIGN KEY (User_id) REFERENCES Users(User_id), -- Khóa ngoại tham chiếu đến người dùng
-    FOREIGN KEY (Topic_id) REFERENCES Topic(Topic_id) -- Khóa ngoại tham chiếu đến chủ đề
-);
-GO
 -- Tạo bảng Group: lưu thông tin về nhóm
 CREATE TABLE [Group] (
     Group_id INT IDENTITY(1,1) PRIMARY KEY, -- id tự động tăng cho nhóm
@@ -241,18 +238,18 @@ CREATE TABLE GroupChatMessage (
 GO
 -- Tạo bảng Post: lưu thông tin về bài viết
 CREATE TABLE Post (
-    Post_id INT IDENTITY(1,1) PRIMARY KEY, -- id tự động tăng cho bài viết
-    User_id INT NOT NULL, -- id của người đăng bài viết
-    Group_id INT, -- id của nhóm mà bài viết thuộc về
-    Topic_id INT, -- id của chủ đề mà bài viết thuộc về
-    Content NVARCHAR(255) NOT NULL, -- Nội dung bài viết
-    createDate DATETIME DEFAULT GETDATE(), -- Ngày tạo bài viết, mặc định là ngày hiện tại
-    Status NVARCHAR(50), -- Trạng thái của bài viết
-    postStatus NVARCHAR(50), -- Trạng thái bài viết (duyệt, chưa duyệt)
-    Reason NVARCHAR(255), -- Lý do (nếu có) của trạng thái bài viết
-	FOREIGN KEY (User_id) REFERENCES Users(User_id), -- Khóa ngoại tham chiếu đến người đăng bài viết
-    FOREIGN KEY (Group_id) REFERENCES [Group](Group_id), -- Khóa ngoại tham chiếu đến nhóm
-    FOREIGN KEY (Topic_id) REFERENCES Topic(Topic_id) -- Khóa ngoại tham chiếu đến chủ đề
+    Post_id INT IDENTITY(1,1) PRIMARY KEY,
+    User_id INT NOT NULL,
+    Group_id INT,
+    Topic_id INT,
+    Content NVARCHAR(255) NOT NULL,
+    createDate NVARCHAR(20), -- Đổi kiểu dữ liệu của createDate thành NVARCHAR
+    Status NVARCHAR(50),
+    postStatus NVARCHAR(50),
+    Reason NVARCHAR(255),
+    FOREIGN KEY (User_id) REFERENCES Users(User_id),
+    FOREIGN KEY (Group_id) REFERENCES [Group](Group_id),
+    FOREIGN KEY (Topic_id) REFERENCES Topic(Topic_id)
 );
 GO
 -- Tạo bảng Comment: lưu thông tin về bình luận của bài viết
@@ -336,14 +333,14 @@ LEFT JOIN
     Comment c ON p.Post_id = c.Post_id;
 GO
 -- Chèn dữ liệu mẫu vào bảng Users
-INSERT INTO Users (Username, usernameVip, User_email, User_password, User_role, User_fullName, User_wallet, User_avatar, User_story, User_rank, User_score, User_sex, User_activeStatus)
+INSERT INTO Users (Username, User_email, User_password, User_role, User_fullName, User_wallet, User_avatar, User_story, User_rank, User_score, User_sex, User_activeStatus)
 VALUES 
-('ban', NULL, 'duoc1@fpt.edu.vn', '123', 0,N'Thành Được', 100.00, Null, Null, 1, 10, 'Male', 1),
-('swpduoc', NULL, 'duoc@fpt.edu.vn', '123', 1, N'Thành Được', 100.00, Null, Null, 1, 10, 'Male', 1),
-('swpdiem', NULL, 'diem@fe.edu.vn', '123', 1, N'Thị Diễm', 200.00, Null, Null, 2, 20, 'Female', 1),
-('swpphuc', NULL, 'phuc@fe.edu.vn', '123', 2, N'Hoàng Phúc', 200.00, Null, Null, 2, 20, 'Male', 1),
-('swptrung', NULL, 'trung@fe.edu.vn', '123', 3, N'Quốc Trung', 200.00, Null, Null, 2, 20, 'Male', 1),
-('vipswptruong', 'truongvipprolugach', 'truong@fpt.edu.vn', '123', 3, N'Hải Trường', 500.00, Null, Null, 3, 30, 'Male', 1);
+('ban', 'duoc1@fpt.edu.vn', '123', 0,N'Thành Được', 100.00, Null, Null, 1, 10, 'Male', 1),
+('swpduoc', 'duoc@fpt.edu.vn', '123', 1, N'Thành Được', 100.00, Null, Null, 1, 10, 'Male', 1),
+('swpdiem', 'diem@fe.edu.vn', '123', 1, N'Thị Diễm', 200.00, Null, Null, 2, 20, 'Female', 1),
+('swpphuc', 'phuc@fe.edu.vn', '123', 2, N'Hoàng Phúc', 200.00, Null, Null, 2, 20, 'Male', 1),
+('swptrung', 'trung@fe.edu.vn', '123', 3, N'Quốc Trung', 200.00, Null, Null, 2, 20, 'Male', 1),
+('vipswptruong', 'truong@fpt.edu.vn', '123', 3, N'Hải Trường', 500.00, Null, Null, 3, 30, 'Male', 1);
 
 -- Chèn dữ liệu mẫu vào bảng Shop
 INSERT INTO Shop (Owner_id, Shop_name, Shop_phone, Shop_campus, Description, Image, Status)

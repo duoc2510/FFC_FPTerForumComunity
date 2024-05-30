@@ -115,6 +115,10 @@
     <servlet>
         <servlet-name>User_groupPendingRequest</servlet-name>
         <servlet-class>controller.User_groupPendingRequest</servlet-class>
+     </servlet>   
+     <servlet> 
+        <servlet-name>Topic_view</servlet-name>
+        <servlet-class>controller.Topic_view</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>PostComment</servlet-name>
@@ -205,6 +209,10 @@
         <url-pattern>/lostAccount</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>Topic_view</servlet-name>
+        <url-pattern>/topic/all</url-pattern>
+    </servlet-mapping> 
+    <servlet-mapping>   
         <servlet-name>User_groupPendingRequest</servlet-name>
         <url-pattern>/groupPendingRequest</url-pattern>
     </servlet-mapping>

@@ -114,7 +114,7 @@ public static int addGroup(Group group) {
                             rs.getInt("Post_user_id"),
                             rs.getInt("Post_group_id"),
                             rs.getString("Post_content"),
-                            rs.getTimestamp("Post_createDate"),
+                            rs.getString("Post_createDate"),
                             rs.getString("Post_status")
                     );
                     posts.add(post);

@@ -9,6 +9,8 @@ import java.util.logging.Logger;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.xml.bind.Marshaller.Listener;
+import model.Comment;
+import model.Post;
 import model.Group;
 import model.User;
 
@@ -25,6 +27,8 @@ public class DBListener implements ServletContextListener {
             Class.forName(DBinfo.driver);
             User us = new User();
             Group gr = new Group();
+            Post post = new Post();
+            Comment cmt = new Comment();
         } catch (Exception ex) {
             Logger.getLogger(Listener.class.getName()).log(Level.SEVERE, null, ex);
         }

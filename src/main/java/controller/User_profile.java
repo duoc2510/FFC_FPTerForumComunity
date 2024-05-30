@@ -67,7 +67,7 @@ public class User_profile extends HttpServlet {
 
         // Ở đây không cần kiểm tra đăng nhập nữa do đã làm trong filter
         String userEmail = user.getUserEmail();
-        int userId=user.getUserId();
+        int userId = user.getUserId();
         User userInfo = User_DB.getUserByEmailorUsername(userEmail);
 
         if (userInfo == null) {
@@ -76,7 +76,6 @@ public class User_profile extends HttpServlet {
         }
 
         // Cập nhật điểm số và đếm số bài đăng của người dùng
-       
         int postCount = User_DB.countPost(userEmail);
 
         // Thiết lập các thuộc tính cho session và request
@@ -103,6 +102,8 @@ public class User_profile extends HttpServlet {
             }
             post.setComments(comments); // Đặt danh sách comment vào bài viết
         }
+        request.getSession().setAttribute("USER", userInfo);
+        // Đặt danh sách người dùng vào thuộc tính của request
 
         request.setAttribute("posts", posts);
 
