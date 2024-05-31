@@ -128,6 +128,14 @@
         <servlet-name>Topic_addTopic</servlet-name>
         <servlet-class>controller.Topic_addTopic</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>Event_addEvent</servlet-name>
+        <servlet-class>controller.Event_addEvent</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Event_eventList</servlet-name>
+        <servlet-class>controller.Event_eventList</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PostComment</servlet-name>
         <url-pattern>/comment</url-pattern>
@@ -227,6 +235,14 @@
     <servlet-mapping>
         <servlet-name>Topic_addTopic</servlet-name>
         <url-pattern>/addTopic</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Event_addEvent</servlet-name>
+        <url-pattern>/addEvent</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Event_eventList</servlet-name>
+        <url-pattern>/listEvent</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>home</welcome-file>

@@ -4,18 +4,19 @@
          data-sidebar-position="fixed" data-header-position="fixed">
         <%@ include file="../include/slidebar.jsp" %>
 
-
-
         <div class="body-wrapper">
             <%@ include file="../include/navbar.jsp" %>
             <div class="container-fluid" >
-                <%@ include file="allGroup.jsp" %>
+                <c:if test="${not empty message}">
+                    <div class="alert alert-info" role="alert">
+                        <c:out value="${message}" />
+                    </div>
+                </c:if>
+
+                    <%@ include file="allEvent.jsp" %>
             </div>
         </div>
         <%@ include file="../include/right-slidebar.jsp" %>
-
-
-
     </div>
 </body>
 <%@ include file="../include/footer.jsp" %>

@@ -5,6 +5,7 @@
 package model;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  *
@@ -18,6 +19,7 @@ public class User_event {
     private java.sql.Timestamp startDate;
     private java.sql.Timestamp endDate;
     private int userId;
+    private List<String> imagePaths;
 
     public User_event() {
     }
@@ -79,5 +81,13 @@ public class User_event {
 
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+    
+    public List<String> getImagePaths() {
+        return imagePaths;
+    }
+
+    public void setImagePaths(List<String> imagePaths) {
+        this.imagePaths = imagePaths;
     }
 }

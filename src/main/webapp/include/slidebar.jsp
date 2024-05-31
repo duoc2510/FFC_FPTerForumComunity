@@ -32,7 +32,7 @@
                 </li>
 
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="${pageContext.request.contextPath}/event" aria-expanded="false">
+                    <a class="sidebar-link" href="${pageContext.request.contextPath}/listEvent" aria-expanded="false">
                         <span>
                             <i class="ti ti-calendar-event"></i>
                         </span>
