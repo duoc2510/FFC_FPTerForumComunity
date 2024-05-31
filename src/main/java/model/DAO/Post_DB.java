@@ -5,7 +5,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,7 +12,7 @@ import java.util.List;
 import model.Post;
 import model.User;
 
-public class Post_DB {
+public class Post_DB implements DBinfo {
 
     public Post_DB() {
         try {
@@ -227,7 +226,6 @@ public class Post_DB {
         String query = "SELECT p.*, u.UploadPath "
                 + "FROM Post p "
                 + "LEFT JOIN Upload u ON p.Post_id = u.Post_id";
-
         try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {

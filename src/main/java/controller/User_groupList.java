@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import model.DAO.Group_DB;
 import model.Group;
 import model.User;
@@ -66,9 +67,14 @@ public class User_groupList extends HttpServlet {
 
     List<Group> groups = Group_DB.getAllGroups();
     List<Group> groupsCreated = Group_DB.getAllGroupsCreated(userId);
+        List<Group> groupJoined = Group_DB.getAllGroupJoin(userId);
+
 
     // Lọc bỏ các nhóm mà user đã tạo khỏi danh sách các nhóm khác
-    groups.removeIf(group -> group.getCreaterId() == userId);
+     List<Integer> joinedGroupIds = groupJoined.stream()
+                                                    .map(Group::getGroupId)
+                                                    .collect(Collectors.toList());
+        groups.removeIf(group -> group.getCreaterId() == userId || joinedGroupIds.contains(group.getGroupId()));
 
     // Kiểm tra trạng thái của từng nhóm còn lại
     for (Group group : groups) {
@@ -77,6 +83,7 @@ public class User_groupList extends HttpServlet {
     }
 
     // Thiết lập các thuộc tính để truyền vào JSP
+    request.setAttribute("groupsJoined", groupJoined);
     request.setAttribute("groups", groups);
     request.setAttribute("groupsCreated", groupsCreated);
     request.getRequestDispatcher("/group/index.jsp").forward(request, response);

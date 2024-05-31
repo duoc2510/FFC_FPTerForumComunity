@@ -20,10 +20,17 @@ public class User {
     private Date userCreateDate;
     private String userSex;
     private boolean userActiveStatus;
-    private String usernameVip;
 
     public User() {
     }
+
+    public User(int userId, String username, String userAvatar ) {
+        this.userId = userId;
+        this.username = username;
+        this.userAvatar= userAvatar;
+    }
+
+   
 
     // Constructor
     public User(int userId, String userEmail, String userPassword, int userRole, String username, String userFullName, double userWallet, String userAvatar, String userStory, int userRank, int userScore, Date userCreateDate, String userSex, boolean userActiveStatus) {

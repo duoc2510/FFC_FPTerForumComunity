@@ -22,6 +22,7 @@ public class Group {
     private String image;
     private int memberCount;
     private boolean isPending;
+    
     public Group(int groupId, int createrId, String groupName, String groupDescription, List<Group_member> groupMember, List<Post> post, List<Comment> comments, List<Upload> upload, String image, int memberCount) {
         this.groupId = groupId;
         this.createrId = createrId;

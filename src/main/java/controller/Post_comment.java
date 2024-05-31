@@ -66,80 +66,79 @@ public class Post_comment extends HttpServlet {
         processRequest(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         String action = request.getParameter("action");
         String referer = request.getHeader("referer");
 
-        if ("addComment".equals(action)) {
-            // Thêm comment
-            int postId = Integer.parseInt(request.getParameter("postId"));
-            HttpSession session = request.getSession(false);
+        if (null != action) {
+            switch (action) {
+                case "addComment": {
+                    // Thêm comment
+                    int postId = Integer.parseInt(request.getParameter("postId"));
+                    HttpSession session = request.getSession(false);
+                    if (session != null && session.getAttribute("USER") != null) {
+                        User user = (User) session.getAttribute("USER");
+                        int userId = user.getUserId(); // Lấy userId từ session
 
-            if (session != null && session.getAttribute("USER") != null) {
-                User user = (User) session.getAttribute("USER");
-                int userId = user.getUserId(); // Lấy userId từ session
+                        String content = request.getParameter("content");
 
-                String content = request.getParameter("content");
+                        boolean success = Comment_DB.addCommentToPost(postId, userId, content);
 
-                boolean success = Comment_DB.addCommentToPost(postId, userId, content);
-
-                if (success) {
-                    User_DB.updateScore(userId);
-                    // Nếu thành công, chuyển hướng đến trang trước đó
-                    response.sendRedirect(referer);
-                } else {
-                    // Nếu thất bại, gửi mã lỗi 500
-                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to add comment.");
+                        if (success) {
+                            User_DB.updateScore(userId);
+                            // Nếu thành công, chuyển hướng đến trang trước đó
+                            response.sendRedirect(referer);
+                        } else {
+                            // Nếu thất bại, gửi mã lỗi 500
+                            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to add comment.");
+                        }
+                    } else {
+                        // Nếu không có session hoặc USER không tồn tại trong session, chuyển hướng đến trang login
+                        response.sendRedirect("login");
+                    }
+                    break;
                 }
-            } else {
-                // Nếu không có session hoặc USER không tồn tại trong session, chuyển hướng đến trang login
-                response.sendRedirect("login");
-            }
-        } else if ("deleteComment".equals(action)) {
-            // Xóa comment
-            int commentId = Integer.parseInt(request.getParameter("commentId"));
-            HttpSession session = request.getSession(false);
+                case "deleteComment": {
+                    // Xóa comment
+                    int commentId = Integer.parseInt(request.getParameter("commentId"));
+                    HttpSession session = request.getSession(false);
+                    if (session != null && session.getAttribute("USER") != null) {
+                        User user = (User) session.getAttribute("USER");
+                        int userId = user.getUserId(); // Lấy userId từ session
 
-            if (session != null && session.getAttribute("USER") != null) {
-                User user = (User) session.getAttribute("USER");
-                int userId = user.getUserId(); // Lấy userId từ session
+                        boolean success = Comment_DB.deleteCommentById(commentId, userId);
 
-                boolean success = Comment_DB.deleteCommentById(commentId, userId);
-
-                if (success) {
-                    // Nếu thành công, chuyển hướng đến trang trước đó
-                    response.sendRedirect(referer);
-                } else {
-                    // Nếu thất bại, gửi mã lỗi 500
-                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to delete comment.");
+                        if (success) {
+                            // Nếu thành công, chuyển hướng đến trang trước đó
+                            response.sendRedirect(referer);
+                        } else {
+                            // Nếu thất bại, gửi mã lỗi 500
+                            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to delete comment.");
+                        }
+                    } else {
+                        // Nếu không có session hoặc USER không tồn tại trong session, chuyển hướng đến trang login
+                        response.sendRedirect("login");
+                    }
+                    break;
                 }
-            } else {
-                // Nếu không có session hoặc USER không tồn tại trong session, chuyển hướng đến trang login
-                response.sendRedirect("login");
-            }
-        } else if ("editComment".equals(action)) {
-            // Sửa comment
-            int commentId = Integer.parseInt(request.getParameter("commentId"));
-            String newContent = request.getParameter("newContent");
-
-            boolean success = Comment_DB.editComment(commentId, newContent);
-
-            if (success) {
-                // Nếu thành công, chuyển hướng đến trang trước đó
-                response.sendRedirect(referer);
-            } else {
-                // Nếu thất bại, gửi mã lỗi 500
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to edit comment.");
+                case "editComment": {
+                    // Sửa comment
+                    int commentId = Integer.parseInt(request.getParameter("commentId"));
+                    String newContent = request.getParameter("newContent");
+                    boolean success = Comment_DB.editComment(commentId, newContent);
+                    if (success) {
+                        // Nếu thành công, chuyển hướng đến trang trước đó
+                        response.sendRedirect(referer);
+                    } else {
+                        // Nếu thất bại, gửi mã lỗi 500
+                        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to edit comment.");
+                    }
+                    break;
+                }
+                default:
+                    break;
             }
         }
     }

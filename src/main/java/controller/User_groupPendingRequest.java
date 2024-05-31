@@ -4,6 +4,7 @@
  */
 package controller;
 
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServlet;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,16 +15,16 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import model.DAO.Group_DB;
 import model.Group;
 import model.Group_member;
-import model.User;
 
 /**
  *
  * @author PC
  */
-public class User_groupSetting extends HttpServlet {
+public class User_groupPendingRequest extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -42,10 +43,10 @@ public class User_groupSetting extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet User_inGroup</title>");
+            out.println("<title>Servlet User_groupPendingRequest</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet User_inGroup at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet User_groupPendingRequest at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -61,36 +62,27 @@ public class User_groupSetting extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        // Lấy userId và groupId từ request, bạn cần thay đổi phần này tùy vào cách bạn truyền dữ liệu từ client
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("USER");
-         int userId=user.getUserId();
-        int groupId = Integer.parseInt(request.getParameter("groupId"));
-         int postCount= Group_DB.countPostsInGroup(groupId);
-        // Gọi phương thức viewGroup để lấy thông tin nhóm từ cơ sở dữ liệu
-        Group group = Group_DB.viewGroup(groupId);
-         List<Group_member> allMembers = Group_DB.getAllMembersByGroupId(groupId);
-       List<Group_member> approvedMembers = new ArrayList<>();
+   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    int groupId = Integer.parseInt(request.getParameter("groupId"));
 
-        // Duyệt qua tất cả các thành viên và thêm những thành viên có trạng thái "approved" vào danh sách mới
-        for (Group_member member : allMembers) {
-            if ("approved".equalsIgnoreCase(member.getStatus())) {
-                approvedMembers.add(member);
-            }
+    // Lấy danh sách tất cả các thành viên của nhóm
+    List<Group_member> allMembers = Group_DB.getAllMembersByGroupId(groupId);
+
+    // Lọc ra các thành viên có trạng thái là 'pending'
+    List<Group_member> pendingMembers = new ArrayList<>();
+
+    for (Group_member member : allMembers) {
+        if ("pending".equals(member.getStatus())) {
+            pendingMembers.add(member);
         }
-        boolean isPending = Group_DB.isUserPendingApproval(userId, groupId);
-        group.setPending(isPending);
-        boolean isUserApproved = Group_DB.isUserApproved(userId, groupId);
-        session.setAttribute("isUserApproved", isUserApproved);
-        session.setAttribute("approvedMembers", approvedMembers);
-        // Đặt kết quả vào thuộc tính của request
-        session.setAttribute("group", group);
-         session.setAttribute("postCount", postCount);
-        // Chuyển hướng request đến trang JSP để hiển thị thông tin nhóm
-        request.getRequestDispatcher("/group/groupDetails.jsp").forward(request, response);
     }
+
+    // Đặt danh sách các thành viên đang chờ duyệt vào thuộc tính request
+    request.setAttribute("pendingMembers", pendingMembers);
+
+   
+    request.getRequestDispatcher("/group/groupDetails.jsp").forward(request, response);
+}
 
     /**
      * Handles the HTTP <code>POST</code> method.
@@ -102,10 +94,30 @@ public class User_groupSetting extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-            
-}
+            throws ServletException, IOException {
+           int memberGroupId = Integer.parseInt(request.getParameter("memberId"));
+    String action = request.getParameter("action");
 
+    boolean result = false;
+    String messageOfApprove = "";
+    if ("accept".equals(action)) {
+        result = Group_DB.accept(memberGroupId);
+        messageOfApprove = result ? "Member approved successfully!" : "Failed to approve member.";
+    } else if ("deny".equals(action)) {
+        result = Group_DB.deny(memberGroupId);
+        messageOfApprove = result ? "Member denied successfully!" : "Failed to deny member.";
+    }
+
+     HttpSession session = request.getSession();
+    session.setAttribute("messageOfApprove", messageOfApprove);
+
+    if (result) {
+        response.sendRedirect("inGroup?groupId=" + request.getParameter("groupId"));
+    } else {
+        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to update member status");
+
+    }
+    }
 
     /**
      * Returns a short description of the servlet.

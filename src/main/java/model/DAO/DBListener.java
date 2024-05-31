@@ -11,6 +11,7 @@ import jakarta.servlet.ServletContextListener;
 import jakarta.xml.bind.Marshaller.Listener;
 import model.Comment;
 import model.Post;
+import model.Group;
 import model.User;
 
 /**
@@ -25,6 +26,7 @@ public class DBListener implements ServletContextListener {
         try {
             Class.forName(DBinfo.driver);
             User us = new User();
+            Group gr = new Group();
             Post post = new Post();
             Comment cmt = new Comment();
         } catch (Exception ex) {
