@@ -117,20 +117,8 @@
         <servlet-class>controller.User_groupPendingRequest</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>Topic_view</servlet-name>
-        <servlet-class>controller.Topic_view</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>User_groupEdit</servlet-name>
         <servlet-class>controller.User_groupEdit</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>Topic_view</servlet-name>
-        <servlet-class>controller.Topic_view</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>Topic_viewTopicAdmin</servlet-name>
-        <servlet-class>controller.Topic_viewTopicAdmin</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Topic_deleteTopic</servlet-name>
@@ -147,6 +135,10 @@
     <servlet>
         <servlet-name>Event_eventList</servlet-name>
         <servlet-class>controller.Event_eventList</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Topic_list</servlet-name>
+        <servlet-class>controller.Topic_list</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>PostComment</servlet-name>
@@ -237,10 +229,6 @@
         <url-pattern>/lostAccount</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>Topic_viewTopicAdmin</servlet-name>
-        <url-pattern>/viewTopicAdmin</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>Topic_deleteTopic</servlet-name>
         <url-pattern>/deleteTopic</url-pattern>
     </servlet-mapping>
@@ -257,16 +245,16 @@
         <url-pattern>/listEvent</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>Topic_view</servlet-name>
-        <url-pattern>/topic/all</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>User_groupPendingRequest</servlet-name>
         <url-pattern>/groupPendingRequest</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>User_groupEdit</servlet-name>
         <url-pattern>/inGroup/groupEdit</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Topic_list</servlet-name>
+        <url-pattern>/topic/list</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>home</welcome-file>

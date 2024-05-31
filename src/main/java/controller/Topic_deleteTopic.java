@@ -59,72 +59,53 @@ public class Topic_deleteTopic extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // Lấy topicId từ request
         int topicId = Integer.parseInt(request.getParameter("topicId"));
-        boolean success = Topic_DB.deleteTopic(topicId);
-        if (success) {
-            request.setAttribute("successMessage", "Topic delete successfully!");
+
+        // Gọi phương thức xóa từ lớp Topic_DB
+        boolean deleteSuccess = Topic_DB.deleteTopic(topicId);
+
+        if (deleteSuccess) {
+            // Nếu xóa thành công, chuyển hướng về trang danh sách chủ đề
+            response.sendRedirect("home?successMessage=Topic+deleted+successfully");
         } else {
-            request.setAttribute("errorMessage", "Failed to delete topic!");
-        }
-        if (success) {
-            request.getRequestDispatcher("/index_admin.jsp").forward(request, response);
-        } else {
-            // Xử lý khi xóa thất bại, có thể hiển thị thông báo lỗi hoặc thực hiện các hành động khác
-            PrintWriter out = response.getWriter();
-            response.setContentType("text/html");
-            out.println("<html><head><title>Delete Topic</title></head><body>");
-            out.println("<h3>Failed to delete topic</h3>");
-            out.println("<p>There was an error while deleting the topic. Please try again later.</p>");
-            out.println("</body></html>");
+            // Nếu xảy ra lỗi, chuyển hướng về trang danh sách chủ đề với thông báo lỗi
+            response.sendRedirect("home?errorMessage=Failed+to+delete+topic");
         }
     }
 
-
-/**
- * Handles the HTTP <code>POST</code> method.
- *
- * @param request servlet request
- * @param response servlet response
- * @throws ServletException if a servlet-specific error occurs
- * @throws IOException if an I/O error occurs
- */
-@Override
-protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
 
-        int topicId = Integer.parseInt(request.getParameter("topicId"));
-        boolean success = Topic_DB.deleteTopic(topicId);
-
-        String message = success ? "Topic deleted successfully!" : "Failed to delete topic.";
-        Gson gson = new Gson();
-        String jsonResponse = gson.toJson(new Response(success, message));
-
-        PrintWriter out = response.getWriter();
-        out.write(jsonResponse);
-        out.flush();
-        System.out.println("doPost method called. Topic ID: " + topicId);
-
-}
+    }
 
     private static class Response {
 
-    boolean success;
-    String message;
+        boolean success;
+        String message;
 
-    Response(boolean success, String message) {
-        this.success = success;
-        this.message = message;
+        Response(boolean success, String message) {
+            this.success = success;
+            this.message = message;
+        }
     }
-}
-/**
- * Returns a short description of the servlet.
- *
- * @return a String containing servlet description
- */
-@Override
-public String getServletInfo() {
+
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
 

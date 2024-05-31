@@ -1,28 +1,29 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
+ */
 package controller;
 
-import jakarta.servlet.ServletException;
+import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
-import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.List;
 import model.DAO.Topic_DB;
 import model.Topic;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
- * Servlet implementation class Topic_viewTopic
+ *
+ * @author ThanhDuoc
  */
-@WebServlet(name = "Topic_viewTopic", urlPatterns = {"/viewTopic"})
-public class Topic_viewTopic extends HttpServlet {
-    private static final long serialVersionUID = 1L;
-    private static final Logger LOGGER = Logger.getLogger(Topic_viewTopic.class.getName());
+public class Topic_list extends HttpServlet {
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
      *
      * @param request servlet request
      * @param response servlet response
@@ -33,13 +34,14 @@ public class Topic_viewTopic extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Topic_viewTopic</title>");
+            out.println("<title>Servlet Topic_list</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Topic_viewTopic at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet Topic_list at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -57,12 +59,15 @@ public class Topic_viewTopic extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // Fetch the list of topics from the database or any other data source
         List<Topic> topics = Topic_DB.getAllTopics();
-
 
         // Set the topics as a request attribute
         request.setAttribute("topics", topics);
-        request.getRequestDispatcher("/user/topicContent.jsp").forward(request, response);
+
+        // Forward the request to topicContent.jsp
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/topic/topicContent.jsp");
+        dispatcher.forward(request, response);
     }
 
     /**
@@ -86,6 +91,7 @@ public class Topic_viewTopic extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "Servlet that handles viewing topics.";
+        return "Short description";
     }// </editor-fold>
+
 }
