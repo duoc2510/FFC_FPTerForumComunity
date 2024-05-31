@@ -384,6 +384,44 @@ public static List<Group_member> getAllMembersByGroupId(int groupId) {
     }
     return groups;
 }
+public static boolean updateGroup(int groupId, String groupName, String groupDescription, String image) {
+    String updateQuery = "UPDATE [Group] SET Group_name = ?, Group_description = ?, Image = ? WHERE Group_id = ?";
 
+    try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass);
+         PreparedStatement pstmt = con.prepareStatement(updateQuery)) {
+
+        pstmt.setString(1, groupName);
+        pstmt.setString(2, groupDescription);
+        pstmt.setString(3, image);
+        pstmt.setInt(4, groupId);
+
+        int rowsAffected = pstmt.executeUpdate();
+        return rowsAffected > 0; // Return true if update is successful, otherwise false
+
+    } catch (SQLException ex) {
+        Logger.getLogger(Group_DB.class.getName()).log(Level.SEVERE, null, ex);
+        return false;
+    }
+}
+public static int countPostsInGroup(int groupId) {
+    String countQuery = "SELECT COUNT(*) AS postCount FROM Post WHERE Group_id = ?";
+    int postCount = 0;
+
+    try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass);
+         PreparedStatement pstmt = con.prepareStatement(countQuery)) {
+
+        pstmt.setInt(1, groupId);
+
+        try (ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                postCount = rs.getInt("postCount");
+            }
+        }
+    } catch (SQLException ex) {
+        Logger.getLogger(Group_DB.class.getName()).log(Level.SEVERE, null, ex);
+    }
+
+    return postCount;
+}
 
 }

@@ -68,7 +68,7 @@ public class User_groupSetting extends HttpServlet {
         User user = (User) session.getAttribute("USER");
          int userId=user.getUserId();
         int groupId = Integer.parseInt(request.getParameter("groupId"));
-
+         int postCount= Group_DB.countPostsInGroup(groupId);
         // Gọi phương thức viewGroup để lấy thông tin nhóm từ cơ sở dữ liệu
         Group group = Group_DB.viewGroup(groupId);
          List<Group_member> allMembers = Group_DB.getAllMembersByGroupId(groupId);
@@ -83,11 +83,11 @@ public class User_groupSetting extends HttpServlet {
         boolean isPending = Group_DB.isUserPendingApproval(userId, groupId);
         group.setPending(isPending);
         boolean isUserApproved = Group_DB.isUserApproved(userId, groupId);
-        request.setAttribute("isUserApproved", isUserApproved);
-        request.setAttribute("approvedMembers", approvedMembers);
+        session.setAttribute("isUserApproved", isUserApproved);
+        session.setAttribute("approvedMembers", approvedMembers);
         // Đặt kết quả vào thuộc tính của request
         session.setAttribute("group", group);
- 
+         session.setAttribute("postCount", postCount);
         // Chuyển hướng request đến trang JSP để hiển thị thông tin nhóm
         request.getRequestDispatcher("/group/groupDetails.jsp").forward(request, response);
     }
