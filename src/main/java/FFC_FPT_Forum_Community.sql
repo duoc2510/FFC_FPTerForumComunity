@@ -370,6 +370,7 @@ LEFT JOIN Users u ON mg.User_id = u.User_id
 LEFT JOIN Post p ON g.Group_id = p.Group_id
 LEFT JOIN Comment c ON p.Post_id = c.Post_id
 LEFT JOIN Upload up ON p.Post_id = up.Post_id;
+
 GO
 -- Chèn dữ liệu mẫu vào bảng Users
 INSERT INTO Users (Username, User_email, User_password, User_role, User_fullName, User_wallet, User_avatar, User_story, User_rank, User_score, User_sex, User_activeStatus)
