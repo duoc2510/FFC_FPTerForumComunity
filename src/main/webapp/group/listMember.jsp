@@ -9,7 +9,7 @@
                 <div class="row">
                     <div id="profile-wrapper">
                         <div class="bg-white shadow rounded overflow-hidden">
-                            <div class="px-4 py-4 cover" style="height: 300px !important; object-fit: cover; background: url(${pageContext.request.contextPath}/${group.image})">
+                            <div class="px-4 py-4 cover" style="height: 300px !important; background-image: url('${pageContext.request.contextPath}/${group.image}'); background-size: cover; background-position: top; background-repeat: no-repeat;">
                                 <div class="profile mr-3 d-flex justify-content-between align-items-end">
                                     <div>
                                         <c:if test="${group.createrId == USER.userId}">
@@ -22,7 +22,6 @@
                                 <div class="media-body mb-5 text-white">
                                     <h4 class="mt-0 mb-0">${group.groupName}</h4>
                                 </div>
-
                                 <ul class="list-inline mb-0">
                                     <c:choose>
                                         <c:when test="${group.pending}">

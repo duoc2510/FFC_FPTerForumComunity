@@ -14,9 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import java.io.File;
-import java.sql.SQLException;
 import model.DAO.Group_DB;
-import model.DAO.User_DB;
 import model.Group;
 import model.User;
 
@@ -46,7 +44,7 @@ public class User_groupAdd extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet User_groupSetting</title>");            
+            out.println("<title>Servlet User_groupSetting</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet User_groupSetting at " + request.getContextPath() + "</h1>");
@@ -68,7 +66,7 @@ public class User_groupAdd extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.getRequestDispatcher("/group/groupCreate.jsp").forward(request, response);
-        
+
     }
 
     /**
@@ -80,51 +78,49 @@ public class User_groupAdd extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     private static final String UPLOAD_DIR = "Avatar_of_group";
+
     @Override
-protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    String groupName = request.getParameter("groupName");
-    String groupDescription = request.getParameter("groupDescription");
-    Part filePart = request.getPart("groupAvatar");
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String groupName = request.getParameter("groupName");
+        String groupDescription = request.getParameter("groupDescription");
+        Part filePart = request.getPart("groupAvatar");
 
-    User user = (User) request.getSession().getAttribute("USER");
-    int creatorId = user.getUserId();
+        User user = (User) request.getSession().getAttribute("USER");
+        int creatorId = user.getUserId();
 
-    // Tạo thư mục lưu trữ nếu chưa tồn tại
-    String applicationPath = request.getServletContext().getRealPath("");
-    String uploadFilePath = applicationPath + File.separator + UPLOAD_DIR;
-    File uploadFolder = new File(uploadFilePath);
-    if (!uploadFolder.exists()) {
-        uploadFolder.mkdirs();
+        // Tạo thư mục lưu trữ nếu chưa tồn tại
+        String applicationPath = request.getServletContext().getRealPath("");
+        String uploadFilePath = applicationPath + File.separator + UPLOAD_DIR;
+        File uploadFolder = new File(uploadFilePath);
+        if (!uploadFolder.exists()) {
+            uploadFolder.mkdirs();
+        }
+
+        // Lưu tệp vào thư mục đã tạo
+        String fileName = filePart.getSubmittedFileName();
+        String filePath = uploadFilePath + File.separator + fileName;
+        filePart.write(filePath);
+
+        // Đường dẫn lưu trong cơ sở dữ liệu
+        String filePathForDatabase = UPLOAD_DIR + "/" + fileName;
+
+        Group group = new Group(creatorId, groupName, groupDescription, filePathForDatabase);
+
+        int groupId = Group_DB.addGroup(group); // Thay đổi kiểu dữ liệu trả về từ boolean sang int
+
+        String message = "";
+        if (groupId != -1) { // Kiểm tra nếu ID của nhóm là hợp lệ
+            message = "Group created successfully!";
+            request.setAttribute("message", message);
+            // Chuyển hướng đến trang "inGroup" với ID của nhóm
+            response.sendRedirect("inGroup?groupId=" + groupId);
+        } else {
+            message = "Failed to create group.";
+            request.setAttribute("message", message);
+            // Đặt thuộc tính message để hiển thị thông báo lỗi
+            response.sendRedirect("listGroup");
+        }
     }
-
-    // Lưu tệp vào thư mục đã tạo
-    String fileName = filePart.getSubmittedFileName();
-    String filePath = uploadFilePath + File.separator + fileName;
-    filePart.write(filePath);
-
-    // Đường dẫn lưu trong cơ sở dữ liệu
-    String filePathForDatabase = UPLOAD_DIR + "/" + fileName;
-
-    Group group = new Group(creatorId, groupName, groupDescription, filePathForDatabase);
-
-    int groupId = Group_DB.addGroup(group); // Thay đổi kiểu dữ liệu trả về từ boolean sang int
-
-    String message = "";
-    if (groupId != -1) { // Kiểm tra nếu ID của nhóm là hợp lệ
-        message = "Group created successfully!";
-        request.setAttribute("message", message);
-        // Chuyển hướng đến trang "inGroup" với ID của nhóm
-        response.sendRedirect("inGroup?groupId=" + groupId);
-    } else {
-        message = "Failed to create group.";
-        request.setAttribute("message", message);
-        // Đặt thuộc tính message để hiển thị thông báo lỗi
-         response.sendRedirect("listGroup");
-    }
-}
-
-       
-    
 
     /**
      * Returns a short description of the servlet.

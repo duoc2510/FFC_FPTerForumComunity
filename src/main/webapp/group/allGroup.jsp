@@ -16,47 +16,47 @@
 </style>
 
 <script>
- function toggleCreatedGroups() {
-    var createdGroupsSection = document.getElementById("createdGroupsSection");
-    var joinedGroupsSection = document.getElementById("joinedGroupsSection");
-    var groupListSection = document.getElementById("groupListSection");
+    function toggleCreatedGroups() {
+        var createdGroupsSection = document.getElementById("createdGroupsSection");
+        var joinedGroupsSection = document.getElementById("joinedGroupsSection");
+        var groupListSection = document.getElementById("groupListSection");
 
-    if (createdGroupsSection.classList.contains("hidden")) {
-        createdGroupsSection.classList.remove("hidden");
-        joinedGroupsSection.classList.add("hidden");
-        groupListSection.classList.add("hidden");
-    } else {
-        createdGroupsSection.classList.add("hidden");
+        if (createdGroupsSection.classList.contains("hidden")) {
+            createdGroupsSection.classList.remove("hidden");
+            joinedGroupsSection.classList.add("hidden");
+            groupListSection.classList.add("hidden");
+        } else {
+            createdGroupsSection.classList.add("hidden");
+        }
     }
-}
 
-function toggleJoinedGroups() {
-    var createdGroupsSection = document.getElementById("createdGroupsSection");
-    var joinedGroupsSection = document.getElementById("joinedGroupsSection");
-    var groupListSection = document.getElementById("groupListSection");
+    function toggleJoinedGroups() {
+        var createdGroupsSection = document.getElementById("createdGroupsSection");
+        var joinedGroupsSection = document.getElementById("joinedGroupsSection");
+        var groupListSection = document.getElementById("groupListSection");
 
-    if (joinedGroupsSection.classList.contains("hidden")) {
-        joinedGroupsSection.classList.remove("hidden");
-        createdGroupsSection.classList.add("hidden");
-        groupListSection.classList.add("hidden");
-    } else {
-        joinedGroupsSection.classList.add("hidden");
+        if (joinedGroupsSection.classList.contains("hidden")) {
+            joinedGroupsSection.classList.remove("hidden");
+            createdGroupsSection.classList.add("hidden");
+            groupListSection.classList.add("hidden");
+        } else {
+            joinedGroupsSection.classList.add("hidden");
+        }
     }
-}
 
-function toggleGroupList() {
-    var createdGroupsSection = document.getElementById("createdGroupsSection");
-    var joinedGroupsSection = document.getElementById("joinedGroupsSection");
-    var groupListSection = document.getElementById("groupListSection");
+    function toggleGroupList() {
+        var createdGroupsSection = document.getElementById("createdGroupsSection");
+        var joinedGroupsSection = document.getElementById("joinedGroupsSection");
+        var groupListSection = document.getElementById("groupListSection");
 
-    if (groupListSection.classList.contains("hidden")) {
-        groupListSection.classList.remove("hidden");
-        createdGroupsSection.classList.add("hidden");
-        joinedGroupsSection.classList.add("hidden");
-    } else {
-        groupListSection.classList.add("hidden");
+        if (groupListSection.classList.contains("hidden")) {
+            groupListSection.classList.remove("hidden");
+            createdGroupsSection.classList.add("hidden");
+            joinedGroupsSection.classList.add("hidden");
+        } else {
+            groupListSection.classList.add("hidden");
+        }
     }
-}
 
 
 </script>
@@ -74,7 +74,7 @@ function toggleGroupList() {
 <div class="row">
     <div class="col-12 mb-3">
         <a href="addGroup" class="btn btn-success">Create Group</a>
-          <a href="javascript:void(0);" class="btn btn-primary" onclick="toggleGroupList()">Groups You Can Join</a> <!-- Thêm nút m?i -->
+        <a href="javascript:void(0);" class="btn btn-primary" onclick="toggleGroupList()">Groups You Can Join</a> <!-- Thêm nút m?i -->
         <a href="javascript:void(0);" class="btn btn-secondary" onclick="toggleJoinedGroups()">Groups You Joined</a>
         <a href="javascript:void(0);" class="btn btn-info" onclick="toggleCreatedGroups()">Groups You Created</a>
     </div>
@@ -98,7 +98,7 @@ function toggleGroupList() {
                     <c:when test="${group.pending}">
                         <button class="btn btn-secondary w-100 mt-3" disabled>Pending approval</button>
                     </c:when>
-                        <c:when test="${group.isBanned}">
+                    <c:when test="${group.isBanned}">
                         <button class="btn btn-danger w-100 mt-3" disabled>You have been banned</button>
                     </c:when>
                     <c:otherwise>

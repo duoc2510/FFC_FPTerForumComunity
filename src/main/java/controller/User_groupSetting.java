@@ -14,9 +14,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import model.Comment;
+import model.DAO.Comment_DB;
 import model.DAO.Group_DB;
+import model.DAO.Post_DB;
+import model.DAO.User_DB;
 import model.Group;
 import model.Group_member;
+import model.Post;
 import model.User;
 
 /**
@@ -72,18 +77,31 @@ public class User_groupSetting extends HttpServlet {
 
         // Gọi phương thức viewGroup để lấy thông tin nhóm từ cơ sở dữ liệu
         Group group = Group_DB.viewGroup(groupId);
+        List<Post> posts = Post_DB.getPostsWithUploadPath();
 
+        for (Post post : posts) {
+            User author = Post_DB.getUserByPostId(post.getPostId());
+            post.setUser(author);
+
+            List<Comment> comments = Comment_DB.getCommentsByPostId(post.getPostId());
+            for (Comment comment : comments) {
+                User commentUser = User_DB.getUserById(comment.getUserId());
+                if (commentUser != null) {
+                    comment.setUser(commentUser);
+                }
+            }
+            post.setComments(comments);
+        }
         boolean isPending = Group_DB.isUserPendingApproval(userId, groupId);
         group.setPending(isPending);
         boolean isUserApproved = Group_DB.isUserApproved(userId, groupId);
         boolean isUserBanned = Group_DB.isUserBan(userId, groupId);
         session.setAttribute("isUserApproved", isUserApproved);
-         session.setAttribute("isUserBanned", isUserBanned);
+        session.setAttribute("isUserBanned", isUserBanned);
         session.setAttribute("group", group);
         session.setAttribute("postCount", postCount);
-
+        request.setAttribute("posts", posts);
         request.getRequestDispatcher("/group/groupDetails.jsp").forward(request, response);
-
     }
 
     /**
@@ -95,9 +113,26 @@ public class User_groupSetting extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action = request.getParameter("action");
+        int postId = Integer.parseInt(request.getParameter("postId"));
+        boolean success = false;
 
+        if ("acceptPost".equals(action)) {
+            success = Post_DB.updatePostStatus(postId, "Active");
+        } else if ("denyPost".equals(action)) {
+            success = Post_DB.updatePostStatus(postId, "Denied");
+        }
+
+        if (success) {
+            System.out.println("Post status updated successfully.");
+        } else {
+            System.out.println("Failed to update post status.");
+        }
+
+        // Redirect back to the current page
+        String referer = request.getHeader("referer");
+        response.sendRedirect(referer);
     }
 
     /**

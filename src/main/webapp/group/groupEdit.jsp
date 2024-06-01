@@ -9,7 +9,7 @@
                 <div class="row ">
                     <div id ="profile-wrapper" >
                         <div class="bg-white shadow rounded overflow-hidden ">
-                            <div class="px-4 py-4 cover" style="height: 300px !important; object-fit: cover; background: url(${pageContext.request.contextPath}/${group.image}">
+                            <div class="px-4 py-4 cover" style="height: 300px !important; background-image: url('${pageContext.request.contextPath}/${group.image}'); background-size: cover; background-position: top; background-repeat: no-repeat;">
 
                             </div>
                             <div class="bg-light pt-4 px-4 d-flex justify-content-between text-center ">
@@ -91,21 +91,21 @@
         </div>
     </div>
     <script>
-    function confirmDeleteGroup() {
-        // Get the number of members from the JSP
-        var memberCount = <c:out value="${group.memberCount}" />;
+        function confirmDeleteGroup() {
+            // Get the number of members from the JSP
+            var memberCount = <c:out value="${group.memberCount}" />;
 
-        // Check the number of members
-        if (memberCount > 1) {
-            // Show alert if there are more than 1 member
-            alert("Your group has more than 1 member. To delete the group, you need to remove all members.");
-            return false; // Prevent form submission
-        } else {
-            // Show confirmation alert if there is only 1 member
-            var confirmDelete = confirm("You are the last member of the group. Are you sure you want to delete it?");
-            return confirmDelete; // Allow or prevent form submission based on user's choice
+            // Check the number of members
+            if (memberCount > 1) {
+                // Show alert if there are more than 1 member
+                alert("Your group has more than 1 member. To delete the group, you need to remove all members.");
+                return false; // Prevent form submission
+            } else {
+                // Show confirmation alert if there is only 1 member
+                var confirmDelete = confirm("You are the last member of the group. Are you sure you want to delete it?");
+                return confirmDelete; // Allow or prevent form submission based on user's choice
+            }
         }
-    }
-</script>
+    </script>
 </body>
 <%@ include file="../include/footer.jsp" %>

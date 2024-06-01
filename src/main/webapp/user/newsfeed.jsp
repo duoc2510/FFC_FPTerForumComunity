@@ -149,7 +149,6 @@
                                                             <div class="d-flex justify-content-between align-items-center pb-3">
                                                                 <div class="d-flex align-items-center">
                                                                     <c:choose>
-
                                                                         <c:when test="${comment.userId == USER.userId}">
                                                                             <a href="${pageContext.request.contextPath}/profile">
                                                                                 <img src="${pageContext.request.contextPath}/${comment.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
@@ -299,8 +298,6 @@
                             }
 
                         </script>
-
-
                     </div>
                 </div>
             </div>

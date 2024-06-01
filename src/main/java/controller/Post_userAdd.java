@@ -94,8 +94,8 @@ public class Post_userAdd extends HttpServlet {
         int userId = user.getUserId();
         String postStatus = request.getParameter("postStatus");
         String postContent = request.getParameter("postContent");
-
         String uploadPath = null;
+
         Part filePart = request.getPart("postImage");
         if (filePart != null && filePart.getSize() > 0) {
             String applicationPath = request.getServletContext().getRealPath("");
@@ -110,13 +110,30 @@ public class Post_userAdd extends HttpServlet {
 
             uploadPath = uploadDirName + "/" + fileName;
         }
+        Post post = new Post();
 
         // Tạo bài đăng mới
-        Post post = new Post(userId, postContent, "Active", postStatus, uploadPath);
-
         try {
-            Post_DB.addPostUser(post);
-            response.sendRedirect("profile");
+            String groupIdStr = request.getParameter("groupId");
+            if (groupIdStr != null && !groupIdStr.isEmpty()) {
+                // Nếu groupId khác null, thêm bài đăng cho group
+                int groupId = Integer.parseInt(groupIdStr);
+                post.setUserId(userId);
+                post.setGroupId(groupId);
+                post.setContent(postContent);
+                post.setUploadPath(uploadPath);
+                Post_DB.addPostGroup(post);
+            } else {
+                post.setUserId(userId);
+                post.setContent(postContent);
+                post.setPostStatus(postStatus);
+                post.setUploadPath(uploadPath);
+                Post_DB.addPostUser(post);
+            }
+
+            // Chuyển hướng người dùng về trang trước đó sau khi đăng bài thành công
+            String referer = request.getHeader("referer");
+            response.sendRedirect(referer != null ? referer : "profile");
         } catch (SQLException ex) {
             Logger.getLogger(Post_userAdd.class.getName()).log(Level.SEVERE, null, ex);
             response.sendRedirect(request.getContextPath() + "/user/profile.jsp?errorMessage=Error adding post");

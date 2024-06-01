@@ -65,7 +65,6 @@ public class Post_DB implements DBinfo {
     public static void addPostGroup(Post post) throws SQLException {
         String insertPostQuery = "INSERT INTO Post (User_id, Group_id, Content, Status, postStatus, Reason, createDate) VALUES (?, ?, ?, ?, ?, ?, ?)";
         String insertUploadQuery = "INSERT INTO Upload (Post_id, UploadPath) VALUES (?, ?)";
-
         try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement pstmtPost = con.prepareStatement(insertPostQuery, PreparedStatement.RETURN_GENERATED_KEYS); PreparedStatement pstmtUpload = con.prepareStatement(insertUploadQuery)) {
 
             // Chèn chi tiết bài đăng
@@ -387,7 +386,30 @@ public class Post_DB implements DBinfo {
             ex.printStackTrace();
             System.out.println("Không thể cập nhật post với ID " + postId + ".");
         }
+        return success;
+    }
 
+    public static boolean updatePostStatus(int postId, String newStatus) {
+        boolean success = false;
+        String updateStatusQuery = "UPDATE Post SET Status = ? WHERE Post_id = ?";
+
+        try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass)) {
+            try (PreparedStatement updateStatusStmt = conn.prepareStatement(updateStatusQuery)) {
+                updateStatusStmt.setString(1, newStatus);
+                updateStatusStmt.setInt(2, postId);
+                int rowsUpdated = updateStatusStmt.executeUpdate();
+                success = (rowsUpdated > 0);
+
+                if (success) {
+                    System.out.println("Post with ID " + postId + " has been successfully updated to " + newStatus + ".");
+                } else {
+                    System.out.println("Failed to update the status of post with ID " + postId + ".");
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            System.out.println("Failed to update the status of post with ID " + postId + ".");
+        }
         return success;
     }
 
