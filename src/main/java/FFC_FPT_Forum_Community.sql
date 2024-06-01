@@ -213,6 +213,7 @@ CREATE TABLE [Group] (
     Group_description NVARCHAR(255), -- Mô tả nhóm
 	Image NVARCHAR(255),
 	memberCount INT DEFAULT 0,
+	Status NVARCHAR(25),
     FOREIGN KEY (Creater_id) REFERENCES Users(User_id) -- Khóa ngoại tham chiếu đến người tạo nhóm
 );
 GO
