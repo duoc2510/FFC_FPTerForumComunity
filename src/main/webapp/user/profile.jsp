@@ -146,39 +146,37 @@
                     </div>
                     <div>
                         <c:forEach var="post" items="${posts}">
-                            <c:if test="${post.status eq 'Active' and post.postStatus eq 'Public'}">
-                                <div class="col-lg-12">
-                                    <div class="card w-100">
-                                        <div class="card-body p-4">
-                                            <div class="pb-3 d-flex row">
-                                                <div class="col-1 text-center mt-2">
-                                                    <a class="nav-icon-hover" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown" aria-expanded="false">
-                                                        <img src="${pageContext.request.contextPath}/${post.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
+                            <div class="col-lg-12">
+                                <div class="card w-100">
+                                    <div class="card-body p-4">
+                                        <div class="pb-3 d-flex row">
+                                            <div class="col-1 text-center mt-2">
+                                                <a class="nav-icon-hover" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <img src="${pageContext.request.contextPath}/${post.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
+                                                </a>
+                                            </div>
+                                            <div class="col-10">
+                                                <h6 class="card-title fw-semibold mb-4 d-inline">${post.user.username}</h6>
+                                                <p class="s-4">${post.createDate}</p>
+                                            </div>
+                                            <c:if test="${post.user.userId == USER.userId}">
+                                                <div class="dropdown col-1 px-2" style="text-align: right">
+                                                    <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <span> <i class="ti-more-alt"></i></span>   
                                                     </a>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a class="dropdown-item" type="button" href="#">Edit</a>
+                                                        </li>
+                                                        <li>
+                                                            <form class="dropdown-item p-0 m-0" onsubmit="return confirm('Are you sure you want to delete this post?');" action="${pageContext.request.contextPath}/post" method="post">
+                                                                <input type="hidden" name="action" value="deletePost">
+                                                                <input type="hidden" name="postId" value="${post.postId}">
+                                                                <button type="submit" class="dropdown-item">Delete Post</button>
+                                                            </form>
+                                                        </li>
+                                                    </ul>
                                                 </div>
-                                                <div class="col-10">
-                                                    <h6 class="card-title fw-semibold mb-4 d-inline">${post.user.username}</h6>
-                                                    <p class="s-4">${post.createDate}</p>
-                                                </div>
-                                                <c:if test="${post.user.userId == USER.userId}">
-                                                    <div class="dropdown col-1 px-2" style="text-align: right">
-                                                        <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                            <span> <i class="ti-more-alt"></i></span>   
-                                                        </a>
-                                                        <ul class="dropdown-menu">
-                                                            <li>
-                                                                <a class="dropdown-item" type="button" href="#">Edit</a>
-                                                            </li>
-                                                            <li>
-                                                                <form class="dropdown-item p-0 m-0" onsubmit="return confirm('Are you sure you want to delete this post?');" action="${pageContext.request.contextPath}/post" method="post">
-                                                                    <input type="hidden" name="action" value="deletePost">
-                                                                    <input type="hidden" name="postId" value="${post.postId}">
-                                                                    <button type="submit" class="dropdown-item">Delete Post</button>
-                                                                </form>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </c:if>
                                             </div>
 
                                             <!-- Option to delete post for the post author -->

@@ -1,4 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
 <%@ include file="../include/header.jsp" %>
 <body>
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full" data-sidebar-position="fixed" data-header-position="fixed">
@@ -56,6 +57,13 @@
                                 height: auto;
                                 margin-top: 10px;
                             }
+                            .img-preview {
+                                margin-top: 20px;
+                            }
+                            .img-preview img {
+                                max-width: 100%;
+                                max-height: 300px;
+                            }
                         </style>
                         <c:forEach var="post" items="${posts}">
                             <c:if test="${post.status eq 'Active' and post.postStatus eq 'Public'}">
@@ -79,7 +87,7 @@
                                                         </a>
                                                         <ul class="dropdown-menu">
                                                             <li>
-                                                                <a class="dropdown-item" type="button" href="#">Edit</a>
+                                                                <a class="dropdown-item" type="button" href="javascript:void(0)" onclick="editPost(${post.postId}, '${post.content}', '${post.status}', '${post.uploadPath}')">Edit</a>
                                                             </li>
                                                             <li>
                                                                 <form class="dropdown-item p-0 m-0" onsubmit="return confirm('Are you sure you want to delete this post?');" action="${pageContext.request.contextPath}/post" method="post">
@@ -171,26 +179,74 @@
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="editCommentModalLabel">Edit Comment</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <h5 class="modal-title" id="editCommentModalLabel">Chỉnh sửa bình luận</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
                                     </div>
                                     <form id="editCommentForm" action="${pageContext.request.contextPath}/comment" method="post">
                                         <div class="modal-body">
                                             <input type="hidden" name="action" value="editComment">
                                             <input type="hidden" id="editCommentId" name="commentId">
                                             <div class="form-group">
-                                                <label for="editContent">Content:</label>
-                                                <textarea class="form-control" id="editContent" name="newContent" rows="3"></textarea>
+                                                <label for="editCommentContent">Nội dung:</label>
+                                                <textarea class="form-control" id="editCommentContent" name="newContent" rows="3"></textarea>
                                             </div>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            <button type="submit" class="btn btn-primary">Save changes</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
                                         </div>
                                     </form>
                                 </div>
                             </div>
                         </div>
+                        <!-- Modal chỉnh sửa bài đăng -->
+                        <div class="modal fade" id="editPostModal" tabindex="-1" aria-labelledby="editPostModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="editPostModalLabel">Chỉnh sửa bài đăng</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                                    </div>
+                                    <form id="editPostForm" action="${pageContext.request.contextPath}/post" method="post" enctype="multipart/form-data">
+                                        <div class="modal-body">
+                                            <input type="hidden" name="action" value="editPost">
+                                            <input type="hidden" id="editPostId" name="postId">
+                                            <input type="hidden" id="existingUploadPath" name="existingUploadPath"> <!-- Trường ẩn để lưu đường dẫn ảnh cũ -->
+
+                                            <div class="form-group">
+                                                <label for="editPostContent">Nội dung:</label>
+                                                <textarea class="form-control" id="editPostContent" name="newContent" rows="3"></textarea>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="editPostStatus">Trạng thái:</label>
+                                                <select class="form-control" id="editPostStatus" name="newStatus">
+                                                    <option value="Public" selected>Public</option>
+                                                    <option value="Friends">Friends</option>
+                                                    <option value="Only me">Only me</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="editPostUploadPath">Tải ảnh lên:</label>
+                                                <input type="file" class="form-control" id="editPostUploadPath" name="newUploadPath">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Ảnh hiện tại:</label>
+                                                <img id="currentUploadPath" src="" alt="Ảnh bài đăng hiện tại" style="max-width: 100%; height: auto;">
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+
                         <script>
                             function editComment(commentId, content) {
                                 document.getElementById('editCommentId').value = commentId;
@@ -198,7 +254,31 @@
                                 var editCommentModal = new bootstrap.Modal(document.getElementById('editCommentModal'));
                                 editCommentModal.show();
                             }
+                            function editPost(postId, content, status, uploadPath) {
+                                document.getElementById('editPostId').value = postId;
+                                document.getElementById('editPostContent').value = content;
+
+                                // Đặt giá trị trạng thái của bài đăng
+                                var editPostStatus = document.getElementById('editPostStatus');
+                                editPostStatus.value = "Public";
+
+                                // Lưu đường dẫn ảnh hiện tại vào trường ẩn
+                                document.getElementById('existingUploadPath').value = uploadPath;
+
+                                if (uploadPath && uploadPath !== 'null') {
+                                    document.getElementById('currentUploadPath').src = uploadPath;
+                                    document.getElementById('currentUploadPath').style.display = 'block';
+                                } else {
+                                    document.getElementById('currentUploadPath').style.display = 'none';
+                                }
+
+                                var editPostModal = new bootstrap.Modal(document.getElementById('editPostModal'));
+                                editPostModal.show();
+                            }
+
                         </script>
+
+
                     </div>
                 </div>
             </div>

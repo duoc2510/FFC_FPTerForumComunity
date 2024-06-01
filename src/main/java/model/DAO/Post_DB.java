@@ -339,37 +339,56 @@ public class Post_DB implements DBinfo {
         return success;
     }
 
-    public static List<Post> getPostsWithUploadPathByTopic(int topicId) {
-        List<Post> posts = new ArrayList<>();
-        String query = "SELECT p.*, u.UploadPath "
-                + "FROM Post p "
-                + "LEFT JOIN Upload u ON p.Post_id = u.Post_id "
-                + "WHERE p.Topic_id = ?";
-        try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, topicId);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    int postId = rs.getInt("Post_id");
-                    int userId = rs.getInt("User_id");
-                    int groupId = rs.getInt("Group_id");
-                    String content = rs.getString("Content");
-                    String createDate = rs.getString("createDate");
-                    // Sử dụng getTimestamp() thay vì getDate()
-                    String status = rs.getString("Status");
-                    String postStatus = rs.getString("postStatus");
-                    String reason = rs.getString("Reason");
-                    String uploadPath = rs.getString("UploadPath");
+    public static boolean editPost(int postId, String newContent, String newStatus, String newUploadPath) {
+        boolean success = false;
+        String editPostQuery = "UPDATE Post SET Content = ?, postStatus = ? WHERE Post_id = ?";
+        String editUploadPathQuery = "UPDATE Upload SET UploadPath = ? WHERE Post_id = ?";
 
-                    Post post = new Post(postId, userId, groupId, topicId, content, createDate, status, postStatus, reason, uploadPath);
-                    posts.add(post);
+        try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass)) {
+            try {
+                // Bắt đầu giao dịch
+                conn.setAutoCommit(false);
+
+                // Cập nhật nội dung bài viết và trạng thái bài viết
+                try (PreparedStatement editPostStmt = conn.prepareStatement(editPostQuery)) {
+                    editPostStmt.setString(1, newContent);
+                    editPostStmt.setString(2, newStatus);
+                    editPostStmt.setInt(3, postId);
+                    int rowsUpdatedPost = editPostStmt.executeUpdate();
+                    success = (rowsUpdatedPost > 0);
                 }
-                System.out.println("getPostsWithUploadPathByTopic: Query executed successfully.");
+
+                // Nếu newUploadPath không null, cập nhật đường dẫn upload
+                if (newUploadPath != null) {
+                    try (PreparedStatement editUploadPathStmt = conn.prepareStatement(editUploadPathQuery)) {
+                        editUploadPathStmt.setString(1, newUploadPath);
+                        editUploadPathStmt.setInt(2, postId);
+                        int rowsUpdatedUpload = editUploadPathStmt.executeUpdate();
+                        success = success && (rowsUpdatedUpload > 0);
+                    }
+                }
+
+                // Commit giao dịch nếu cả hai cập nhật đều thành công
+                if (success) {
+                    conn.commit();
+                    System.out.println("Post với ID " + postId + " đã được cập nhật thành công.");
+                } else {
+                    conn.rollback();
+                    System.out.println("Không thể cập nhật post với ID " + postId + ".");
+                }
+            } catch (SQLException ex) {
+                conn.rollback();
+                ex.printStackTrace();
+                System.out.println("Không thể cập nhật post với ID " + postId + ".");
+            } finally {
+                conn.setAutoCommit(true);
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
-            System.out.println("getPostsWithUploadPathByTopic: Query execution failed.");
+            System.out.println("Không thể cập nhật post với ID " + postId + ".");
         }
-        return posts;
+
+        return success;
     }
 
 }
