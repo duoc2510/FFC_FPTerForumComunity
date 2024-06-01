@@ -16,6 +16,12 @@ public class Topic {
 
     public Topic() {
     }
+
+    public Topic(String topicName, String description) {
+        this.topicName = topicName;
+        this.description = description;
+    }
+    
     
     public Topic(int topicId, String topicName, String description) {
         this.topicId = topicId;

@@ -20,7 +20,6 @@ public class User {
     private Date userCreateDate;
     private String userSex;
     private boolean userActiveStatus;
-    private String usernameVip;
 
     public User() {
     }

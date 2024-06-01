@@ -4,23 +4,22 @@
  */
 package controller;
 
-import jakarta.servlet.RequestDispatcher;
+import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.sql.SQLException;
 import java.util.List;
 import model.DAO.Topic_DB;
 import model.Topic;
 
 /**
  *
- * @author ThanhDuoc
+ * @author Admin
  */
-public class Topic_view extends HttpServlet {
+public class Topic_deleteTopic extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,10 +38,10 @@ public class Topic_view extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Topic_view</title>");
+            out.println("<title>Servlet Topic_deleteTopic</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Topic_view at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet Topic_deleteTopic at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -58,16 +57,21 @@ public class Topic_view extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Fetch the list of topics from the database or any other data source
-        List<Topic> topics = Topic_DB.getAllTopics();
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // Lấy topicId từ request
+        int topicId = Integer.parseInt(request.getParameter("topicId"));
 
-        // Set the topics as a request attribute
-        request.setAttribute("topics", topics);
+        // Gọi phương thức xóa từ lớp Topic_DB
+        boolean deleteSuccess = Topic_DB.deleteTopic(topicId);
 
-        // Forward the request to topicContent.jsp
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/user/topicContent.jsp");
-        dispatcher.forward(request, response);
+        if (deleteSuccess) {
+            // Nếu xóa thành công, chuyển hướng về trang danh sách chủ đề
+            response.sendRedirect("home?successMessage=Topic+deleted+successfully");
+        } else {
+            // Nếu xảy ra lỗi, chuyển hướng về trang danh sách chủ đề với thông báo lỗi
+            response.sendRedirect("home?errorMessage=Failed+to+delete+topic");
+        }
     }
 
     /**
@@ -81,7 +85,18 @@ public class Topic_view extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+
+    }
+
+    private static class Response {
+
+        boolean success;
+        String message;
+
+        Response(boolean success, String message) {
+            this.success = success;
+            this.message = message;
+        }
     }
 
     /**

@@ -117,10 +117,6 @@
         <servlet-class>controller.User_groupPendingRequest</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>Topic_view</servlet-name>
-        <servlet-class>controller.Topic_view</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>User_groupEdit</servlet-name>
         <servlet-class>controller.User_groupEdit</servlet-class>
     </servlet>
@@ -143,6 +139,26 @@
     <servlet>
         <servlet-name>User_viewProfile</servlet-name>
         <servlet-class>controller.User_viewProfile</servlet-class>
+    </servlet>  
+    <servlet>  
+        <servlet-name>Topic_deleteTopic</servlet-name>
+        <servlet-class>controller.Topic_deleteTopic</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Topic_addTopic</servlet-name>
+        <servlet-class>controller.Topic_addTopic</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Event_addEvent</servlet-name>
+        <servlet-class>controller.Event_addEvent</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Event_eventList</servlet-name>
+        <servlet-class>controller.Event_eventList</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Topic_list</servlet-name>
+        <servlet-class>controller.Topic_list</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>PostComment</servlet-name>
@@ -233,8 +249,20 @@
         <url-pattern>/lostAccount</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>Topic_view</servlet-name>
-        <url-pattern>/topic/all</url-pattern>
+        <servlet-name>Topic_deleteTopic</servlet-name>
+        <url-pattern>/deleteTopic</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Topic_addTopic</servlet-name>
+        <url-pattern>/addTopic</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Event_addEvent</servlet-name>
+        <url-pattern>/addEvent</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Event_eventList</servlet-name>
+        <url-pattern>/listEvent</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>User_groupPendingRequest</servlet-name>
@@ -263,6 +291,10 @@
     <servlet-mapping>
         <servlet-name>User_viewProfile</servlet-name>
         <url-pattern>/viewProfile</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>    
+        <servlet-name>Topic_list</servlet-name>
+        <url-pattern>/topic/list</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>home</welcome-file>

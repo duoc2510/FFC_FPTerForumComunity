@@ -57,7 +57,7 @@ public class User_authLogin extends HttpServlet {
             request.getSession().setAttribute("ROLE", role);
             request.setAttribute("roleMessage", message);
             request.setAttribute("userInfo", userInfo);
-            request.getRequestDispatcher("/auth/role.jsp").forward(request, response);
+            response.sendRedirect("home");
         } else {
             String msg = "Email account has not been created yet! ";
             request.setAttribute("message", msg);
@@ -133,7 +133,7 @@ public class User_authLogin extends HttpServlet {
                 request.getSession().setAttribute("ROLE", role);
                 request.setAttribute("roleMessage", message);
                 request.setAttribute("userInfo", user);
-                request.getRequestDispatcher("/auth/role.jsp").forward(request, response);
+                response.sendRedirect("home");
 
             }
         } else {
@@ -210,7 +210,6 @@ public class User_authLogin extends HttpServlet {
                 response.addCookie(rememberMeCookie);
             }
 
-            // Lấy đường dẫn trước đó từ session và xoá nó sau khi đã sử dụng
             String redirectURL = (String) request.getSession().getAttribute("redirectURL");
             if (redirectURL != null && !redirectURL.isEmpty()) {
                 request.getSession().removeAttribute("redirectURL");
