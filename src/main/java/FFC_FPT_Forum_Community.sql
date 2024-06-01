@@ -340,8 +340,9 @@ SELECT
     g.Group_name,
     g.Group_description,
     g.Image,
+	g.Status,
     mg.MemberGroup_id,
-	mg.Status,
+	mg.Status AS Group_status,
     u.User_id,
     u.User_email,
     u.User_fullName,
@@ -362,13 +363,14 @@ SELECT
     up.Event_id,
     up.UploadPath,
     up.Post_id AS Upload_post_id,
-    (SELECT COUNT(*) FROM MemberGroup mg WHERE mg.Group_id = g.Group_id AND mg.Status = 'approved') AS memberCount -- Đếm số thành viên nhóm
+   (SELECT COUNT(*) FROM MemberGroup mg WHERE mg.Group_id = g.Group_id AND mg.Status IN ('approved', 'host')) AS memberCount  -- Đếm số thành viên nhóm
 FROM [Group] g
 LEFT JOIN MemberGroup mg ON g.Group_id = mg.Group_id
 LEFT JOIN Users u ON mg.User_id = u.User_id
 LEFT JOIN Post p ON g.Group_id = p.Group_id
 LEFT JOIN Comment c ON p.Post_id = c.Post_id
 LEFT JOIN Upload up ON p.Post_id = up.Post_id;
+
 GO
 -- Chèn dữ liệu mẫu vào bảng Users
 INSERT INTO Users (Username, User_email, User_password, User_role, User_fullName, User_wallet, User_avatar, User_story, User_rank, User_score, User_sex, User_activeStatus)
