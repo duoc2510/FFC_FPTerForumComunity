@@ -1,13 +1,15 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+<%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
 <%@ include file="../include/header.jsp" %>
 <body>
-    <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full" data-sidebar-position="fixed" data-header-position="fixed">
+    <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+         data-sidebar-position="fixed" data-header-position="fixed">
         <%@ include file="../include/slidebar.jsp" %>
         <div class="body-wrapper">
             <%@ include file="../include/navbar.jsp" %>
-            <div class="container-fluid">
-                <div class="row">
-                    <div id="profile-wrapper">
+            <div class="container-fluid pb-2">
+                <div class="row ">
+                    <div id ="profile-wrapper" >
                         <style>
                             .post {
                                 border: 1px solid #ccc;
@@ -56,15 +58,64 @@
                                 height: auto;
                                 margin-top: 10px;
                             }
+                            .img-preview {
+                                margin-top: 20px;
+                            }
+                            .img-preview img {
+                                max-width: 100%;
+                                max-height: 300px;
+                            }
                         </style>
-                        <c:forEach var="post" items="${posts}">
+                        <div class="bg-white shadow rounded overflow-hidden ">
+                            <div class="px-4 py-4 cover cover " style="background: url(${pageContext.request.contextPath}/upload/deli-2.png)">
+                                <div class="media align-items-end profile-head">
+                                    <div class="profile mr-3 d-flex justify-content-between align-items-end">
+                                        <img src="${pageContext.request.contextPath}/${user.userAvatar}" class="rounded-circle img-thumbnail" style="object-fit: cover;">
+                                        <div>
+                
+                                            <a href="${pageContext.request.contextPath}/viewPersonalProfile&userId=${user.userId}" class="btn btn-outline-dark btn-sm btn-block edit-cover">View personal profile</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-light pt-4 px-4 d-flex justify-content-between text-center ">
+                                <div class="media-body mb-5 text-white">
+                                    <h4 class="mt-0 mb-0">${user.userFullName}</h4>
+                                </div>
+                                <ul class="list-inline mb-0">
+                                    <li class="list-inline-item">
+                                        <h5 class="font-weight-bold mb-0 d-block">${postCountGroup}</h5><small class="text-muted"><i class="fas fa-image mr-1"></i>Post in group</small>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <h5 class="font-weight-bold mb-0 d-block">${cmtInGroup}</h5><small class="text-muted"><i class="fas fa-user mr-1"></i>Comment in group</small>
+                                    </li>
+                                    
+                                    
+                                </ul>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+           
+            <div class="container-fluid pt-0">
+                <div class="row form-settings bg-white shadow rounded py-4 px-4 d-flex justify-content-between ">
+                    <div class="p0">
+                        <h5 class="mb-2">Bài viết trong nhóm </h5>
+                    </div>
+                     <c:if test="${empty userPosts}">
+                     <p>Người này không có bài post nào trong group.</p>
+                    </c:if>
+                    <div>
+                        <c:forEach var="post" items="${userPosts}">
                             <c:if test="${post.status eq 'Active' and post.postStatus eq 'Public'}">
                                 <div class="col-lg-12">
                                     <div class="card w-100">
                                         <div class="card-body p-4">
                                             <div class="pb-3 d-flex row">
                                                 <div class="col-1 text-center mt-2">
-                                                    <a href="${pageContext.request.contextPath}/viewProfile?username=${post.user.username}">
+                                                    <a class="nav-icon-hover" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown" aria-expanded="false">
                                                         <img src="${pageContext.request.contextPath}/${post.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
                                                     </a>
                                                 </div>
@@ -72,7 +123,7 @@
                                                     <h6 class="card-title fw-semibold mb-4 d-inline">${post.user.username}</h6>
                                                     <p class="s-4">${post.createDate}</p>
                                                 </div>
-                                                <c:if test="${post.user.userId == user.userId}">
+                                                <c:if test="${post.user.userId == USER.userId}">
                                                     <div class="dropdown col-1 px-2" style="text-align: right">
                                                         <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                             <span> <i class="ti-more-alt"></i></span>   
@@ -94,7 +145,7 @@
                                             </div>
 
                                             <!-- Option to delete post for the post author -->
-                                            <div class="mt-3">
+                                            <div class="mt-0 fs-6">
                                                 <p>${post.content}</p>
                                                 <c:if test="${not empty post.uploadPath}">
                                                     <img src="${pageContext.request.contextPath}/${post.uploadPath}" alt="Post Image" class="post-image">
@@ -129,18 +180,18 @@
                                                         <div class="comment">
                                                             <div class="d-flex justify-content-between align-items-center pb-3">
                                                                 <div class="d-flex align-items-center">
-                                                                    <a href="${pageContext.request.contextPath}/viewProfile?username=${comment.user.username}">
-                                                                        <img src="${pageContext.request.contextPath}/${comment.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
-                                                                    </a>
+                                                                    <div class="text-center mt-2">
+                                                                        <img src="${pageContext.request.contextPath}/${comment.user.userAvatar}" alt="" width="30" class="rounded-circle avatar-cover">
+                                                                    </div>
                                                                     <div class="ms-2">
-                                                                        <h6 class="card-title fw-semibold mb-0">${comment.user.username}: ${comment.content}</h6>
+                                                                        <h6 class="card-title fw-semibold mb-0">${comment.user.username}:${comment.content}</h6>
                                                                         <p class="s-4">${comment.date}</p>
                                                                     </div>
                                                                 </div>
-                                                                <c:if test="${comment.user.userId == user.userId}">
+                                                                <c:if test="${comment.user.userId == USER.userId}">
                                                                     <div class="dropdown">
                                                                         <button class="btn btn-link dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                                                            <i class="ti ti-more-alt"></i>
+                                                                            <i class="ti ti-more"></i>
                                                                         </button>
                                                                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
                                                                             <li>
@@ -198,12 +249,33 @@
                                 var editCommentModal = new bootstrap.Modal(document.getElementById('editCommentModal'));
                                 editCommentModal.show();
                             }
+                            document.getElementById('postImage').addEventListener('change', function (event) {
+                                const file = event.target.files[0];
+                                const previewContainer = document.getElementById('imgPreview');
+                                const previewImage = document.createElement('img');
+                                const previewDefaultText = previewContainer.querySelector('p');
+
+                                if (file) {
+                                    const reader = new FileReader();
+
+                                    previewDefaultText.style.display = 'none';
+                                    previewImage.style.display = 'block';
+
+                                    reader.addEventListener('load', function () {
+                                        previewImage.setAttribute('src', this.result);
+                                    });
+
+                                    reader.readAsDataURL(file);
+                                    previewContainer.appendChild(previewImage);
+                                } else {
+                                    previewDefaultText.style.display = null;
+                                    previewImage.style.display = null;
+                                }
+                            });
                         </script>
                     </div>
                 </div>
             </div>
-            <%@ include file="../include/right-slidebar.jsp" %>
         </div>
-    </div>
 </body>
 <%@ include file="../include/footer.jsp" %>

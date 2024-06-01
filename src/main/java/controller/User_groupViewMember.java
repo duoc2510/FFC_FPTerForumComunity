@@ -11,18 +11,18 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import model.DAO.Group_DB;
-import model.Group;
+import model.Group_member;
 import model.User;
 
 /**
  *
  * @author PC
  */
-public class User_groupList extends HttpServlet {
+public class User_groupViewMember extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +41,10 @@ public class User_groupList extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet User_group</title>");
+            out.println("<title>Servlet User_groupViewMember</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet User_group at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet User_groupViewMember at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -60,49 +60,24 @@ public class User_groupList extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-   protected void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-    User user = (User) request.getSession().getAttribute("USER");
-    int userId = user.getUserId();
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("USER");
+        int userId = user.getUserId();
+        int groupId = Integer.parseInt(request.getParameter("groupId"));
+        List<Group_member> approvedMembers = new ArrayList<>();
 
-    // Retrieve all groups and filter out inactive ones
-    List<Group> allGroups = Group_DB.getAllGroups();
-    List<Group> groups = allGroups.stream()
-                                  .filter(group -> !"inactive".equals(group.getStatus()))
-                                  .collect(Collectors.toList());
-
-    // Retrieve groups created by the user and filter out inactive ones
-    List<Group> allGroupsCreated = Group_DB.getAllGroupsCreated(userId);
-    List<Group> groupsCreated = allGroupsCreated.stream()
-                                                .filter(group -> !"inactive".equals(group.getStatus()))
-                                                .collect(Collectors.toList());
-
-    // Retrieve groups joined by the user and filter out inactive ones
-    List<Group> allGroupJoined = Group_DB.getAllGroupJoin(userId);
-    List<Group> groupJoined = allGroupJoined.stream()
-                                            .filter(group -> !"inactive".equals(group.getStatus()))
-                                            .collect(Collectors.toList());
-
-    // Filter out groups that the user has created or joined
-    List<Integer> joinedGroupIds = groupJoined.stream()
-                                              .map(Group::getGroupId)
-                                              .collect(Collectors.toList());
-    groups.removeIf(group -> group.getCreaterId() == userId || joinedGroupIds.contains(group.getGroupId()));
-
-    // Check the status of each remaining group
-    for (Group group : groups) {
-        boolean isPending = Group_DB.isUserPendingApproval(userId, group.getGroupId());
-        boolean isBanned = Group_DB.isUserBan(userId, group.getGroupId());
-        group.setPending(isPending);
-        group.setIsBanned(isBanned);
+        // Duyệt qua tất cả các thành viên và thêm những thành viên có trạng thái "approved" vào danh sách mới
+        List<Group_member> allMembers = Group_DB.getAllMembersByGroupId(groupId);
+        for (Group_member member : allMembers) {
+            if ("approved".equalsIgnoreCase(member.getStatus()) || "host".equalsIgnoreCase(member.getStatus())) {
+                approvedMembers.add(member);
+            }
+        }
+        session.setAttribute("approvedMembers", approvedMembers);
+        request.getRequestDispatcher("/group/listMember.jsp").forward(request, response);
     }
-
-    // Set attributes to be passed to JSP
-    request.setAttribute("groupsJoined", groupJoined);
-    request.setAttribute("groups", groups);
-    request.setAttribute("groupsCreated", groupsCreated);
-    request.getRequestDispatcher("/group/index.jsp").forward(request, response);
-}
 
     /**
      * Handles the HTTP <code>POST</code> method.

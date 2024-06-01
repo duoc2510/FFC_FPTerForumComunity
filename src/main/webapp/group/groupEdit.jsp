@@ -27,11 +27,13 @@
                                         </c:when>
                                         <c:when test="${group.createrId == USER.userId}">
                                             <button class="btn btn-info btn-sm btn-block edit-cover mx-2" disabled>Welcome Host Group</button>
-                                            <form action="${pageContext.request.contextPath}/removeMember" method="post"  style="display:inline;">
-                                                <input type="hidden" name="groupId" value="${groupId}">
+                                            <form action="${pageContext.request.contextPath}/GroupDelete?groupId=${group.groupId}" method="post" style="display:inline;" onsubmit="return confirmDeleteGroup()">
+                                                <input type="hidden" name="groupId" value="${group.groupId}">
                                                 <input type="hidden" name="memberId" value="${member.id}">
-                                                <button type="submit" class="btn btn-secondary btn-sm btn-block edit-cover mx-2">Remove</button>
+                                                <button type="submit" class="btn btn-secondary btn-sm btn-block edit-cover mx-2">Delete Group</button>
                                             </form>
+                                            <div id="deleteGroupAlert" class="alert alert-danger" role="alert" style="display: none;">
+                                            </div>
                                         </c:when>
                                         <c:otherwise>
                                             <a href="${pageContext.request.contextPath}/joinGroup?groupId=${group.groupId}" class="btn btn-primary btn-sm btn-block edit-cover mx-2">Join Group</a>
@@ -88,5 +90,22 @@
             </div>
         </div>
     </div>
+    <script>
+    function confirmDeleteGroup() {
+        // Get the number of members from the JSP
+        var memberCount = <c:out value="${group.memberCount}" />;
+
+        // Check the number of members
+        if (memberCount > 1) {
+            // Show alert if there are more than 1 member
+            alert("Your group has more than 1 member. To delete the group, you need to remove all members.");
+            return false; // Prevent form submission
+        } else {
+            // Show confirmation alert if there is only 1 member
+            var confirmDelete = confirm("You are the last member of the group. Are you sure you want to delete it?");
+            return confirmDelete; // Allow or prevent form submission based on user's choice
+        }
+    }
+</script>
 </body>
 <%@ include file="../include/footer.jsp" %>

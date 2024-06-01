@@ -21,15 +21,15 @@
                         <form action="addGroup" method="post" enctype="multipart/form-data">
                             <div class="form-group">
                                 <label for="groupName">Group Name</label>
-                                <input type="text" class="form-control" id="groupName" name="groupName" placeholder="Enter your group">
+                                <input type="text" class="form-control" id="groupName" name="groupName" placeholder="Enter your group" required>
                             </div>
                             <div class="form-group">
                                 <label for="groupDescription">Description</label>
-                                <textarea class="form-control" id="groupDescription" rows="3" name="groupDescription" placeholder="Enter your group description"></textarea>
+                                <textarea class="form-control" id="groupDescription" rows="3" name="groupDescription" placeholder="Enter your group description" required></textarea >
                             </div>
                             <div class="form-group">
                                 <label for="groupAvatar">Group Avatar</label>
-                                <input type="file" class="form-control-file" id="groupAvatar" name="groupAvatar">
+                                <input type="file" class="form-control-file" id="groupAvatar" name="groupAvatar" required>
                             </div>
                             <c:if test="${not empty message}">
                                 <div class="alert alert-info" role="alert">

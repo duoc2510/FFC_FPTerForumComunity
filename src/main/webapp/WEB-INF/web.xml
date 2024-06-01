@@ -124,6 +124,26 @@
         <servlet-name>User_groupEdit</servlet-name>
         <servlet-class>controller.User_groupEdit</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>User_groupOut</servlet-name>
+        <servlet-class>controller.User_groupOut</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>User_groupViewMember</servlet-name>
+        <servlet-class>controller.User_groupViewMember</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>User_GroupDelete</servlet-name>
+        <servlet-class>controller.User_groupDelete</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>User_groupViewPostMember</servlet-name>
+        <servlet-class>controller.User_groupViewPostMember</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>User_viewProfile</servlet-name>
+        <servlet-class>controller.User_viewProfile</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PostComment</servlet-name>
         <url-pattern>/comment</url-pattern>
@@ -223,6 +243,26 @@
     <servlet-mapping>
         <servlet-name>User_groupEdit</servlet-name>
         <url-pattern>/inGroup/groupEdit</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>User_groupOut</servlet-name>
+        <url-pattern>/groupOut</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>User_groupViewMember</servlet-name>
+        <url-pattern>/groupViewMember</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>User_GroupDelete</servlet-name>
+        <url-pattern>/GroupDelete</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>User_groupViewPostMember</servlet-name>
+        <url-pattern>/groupViewPostMember</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>User_viewProfile</servlet-name>
+        <url-pattern>/viewProfile</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>home</welcome-file>

@@ -4,26 +4,20 @@
  */
 package controller;
 
-import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.List;
 import model.DAO.Group_DB;
-import model.Group;
-import model.Group_member;
-import model.User;
 
 /**
  *
  * @author PC
  */
-public class User_groupSetting extends HttpServlet {
+public class User_groupDelete extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -42,10 +36,10 @@ public class User_groupSetting extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet User_inGroup</title>");
+            out.println("<title>Servlet User_GroupDelete</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet User_inGroup at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet User_GroupDelete at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -63,26 +57,6 @@ public class User_groupSetting extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Lấy userId và groupId từ request, bạn cần thay đổi phần này tùy vào cách bạn truyền dữ liệu từ client
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("USER");
-        int userId = user.getUserId();
-        int groupId = Integer.parseInt(request.getParameter("groupId"));
-        int postCount = Group_DB.countPostsInGroup(groupId);
-
-        // Gọi phương thức viewGroup để lấy thông tin nhóm từ cơ sở dữ liệu
-        Group group = Group_DB.viewGroup(groupId);
-
-        boolean isPending = Group_DB.isUserPendingApproval(userId, groupId);
-        group.setPending(isPending);
-        boolean isUserApproved = Group_DB.isUserApproved(userId, groupId);
-        boolean isUserBanned = Group_DB.isUserBan(userId, groupId);
-        session.setAttribute("isUserApproved", isUserApproved);
-         session.setAttribute("isUserBanned", isUserBanned);
-        session.setAttribute("group", group);
-        session.setAttribute("postCount", postCount);
-
-        request.getRequestDispatcher("/group/groupDetails.jsp").forward(request, response);
 
     }
 
@@ -97,6 +71,21 @@ public class User_groupSetting extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        int groupId = Integer.parseInt(request.getParameter("groupId"));
+        boolean deleteResult = Group_DB.deleteGroup(groupId);
+
+        // Kiểm tra kết quả và đặt message tương ứng
+        String message;
+        if (deleteResult) {
+            message = "The group has been successfully deleted.";
+        } else {
+            message = "Failed to delete the group. Please try again later.";
+        }
+        // Đặt message vào request để chuyển nó đến trang allGroup.jsp
+        request.setAttribute("message", message);
+
+        // Chuyển hướng đến trang allGroup.jsp
+     response.sendRedirect(request.getContextPath() + "/listGroup?groupId=" + groupId);
 
     }
 

@@ -4,25 +4,27 @@
  */
 package controller;
 
-import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import model.Comment;
+import model.DAO.Comment_DB;
 import model.DAO.Group_DB;
-import model.Group;
+import model.DAO.Post_DB;
+import model.DAO.User_DB;
+import model.Post;
 import model.User;
 
 /**
  *
  * @author PC
  */
-public class User_groupList extends HttpServlet {
+public class User_viewProfile extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +43,10 @@ public class User_groupList extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet User_group</title>");
+            out.println("<title>Servlet User_viewProfile</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet User_group at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet User_viewProfile at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -60,49 +62,44 @@ public class User_groupList extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-   protected void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-    User user = (User) request.getSession().getAttribute("USER");
-    int userId = user.getUserId();
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // Get userId and groupId from request parameters
+        
+        String userName = request.getParameter("username");
+     
+        
+        // Fetch the user
+        User user = User_DB.getUserByEmailorUsername(userName);
+        
+        // Fetch the posts of the user in the specified group
+        List<Post> userPosts =Post_DB.getPostsByUsername(userName);
+            
+        // Loop through the userPosts to fetch comments for each post
+        for (Post post : userPosts) {
+                // Lấy thông tin người đăng cho bài viết
+                User author = Post_DB.getUserByPostId(post.getPostId());
+                post.setUser(author); // Đặt thông tin người đăng vào thuộc tính user của bài viết
 
-    // Retrieve all groups and filter out inactive ones
-    List<Group> allGroups = Group_DB.getAllGroups();
-    List<Group> groups = allGroups.stream()
-                                  .filter(group -> !"inactive".equals(group.getStatus()))
-                                  .collect(Collectors.toList());
+                // Lấy danh sách comment cho bài viết
+                List<Comment> comments = Comment_DB.getCommentsByPostId(post.getPostId());
+                for (Comment comment : comments) {
+                    // Lấy thông tin người dùng cho comment
+                    User commentUser = User_DB.getUserById(comment.getUserId());
+                    if (commentUser != null) {
+                        comment.setUser(commentUser);
+                    }
+                }
+                post.setComments(comments); // Đặt danh sách comment vào bài viết
+            }
+        
+        // Set user and userPosts as request attributes
+        request.setAttribute("user", user);
+        request.setAttribute("userPosts", userPosts);
 
-    // Retrieve groups created by the user and filter out inactive ones
-    List<Group> allGroupsCreated = Group_DB.getAllGroupsCreated(userId);
-    List<Group> groupsCreated = allGroupsCreated.stream()
-                                                .filter(group -> !"inactive".equals(group.getStatus()))
-                                                .collect(Collectors.toList());
-
-    // Retrieve groups joined by the user and filter out inactive ones
-    List<Group> allGroupJoined = Group_DB.getAllGroupJoin(userId);
-    List<Group> groupJoined = allGroupJoined.stream()
-                                            .filter(group -> !"inactive".equals(group.getStatus()))
-                                            .collect(Collectors.toList());
-
-    // Filter out groups that the user has created or joined
-    List<Integer> joinedGroupIds = groupJoined.stream()
-                                              .map(Group::getGroupId)
-                                              .collect(Collectors.toList());
-    groups.removeIf(group -> group.getCreaterId() == userId || joinedGroupIds.contains(group.getGroupId()));
-
-    // Check the status of each remaining group
-    for (Group group : groups) {
-        boolean isPending = Group_DB.isUserPendingApproval(userId, group.getGroupId());
-        boolean isBanned = Group_DB.isUserBan(userId, group.getGroupId());
-        group.setPending(isPending);
-        group.setIsBanned(isBanned);
+        // Forward to the JSP page to display the posts
+        request.getRequestDispatcher("/user/anotherUserProfile.jsp").forward(request, response);
     }
-
-    // Set attributes to be passed to JSP
-    request.setAttribute("groupsJoined", groupJoined);
-    request.setAttribute("groups", groups);
-    request.setAttribute("groupsCreated", groupsCreated);
-    request.getRequestDispatcher("/group/index.jsp").forward(request, response);
-}
 
     /**
      * Handles the HTTP <code>POST</code> method.

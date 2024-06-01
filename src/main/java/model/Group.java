@@ -22,8 +22,10 @@ public class Group {
     private String image;
     private int memberCount;
     private boolean isPending;
+    private boolean isBanned;
+    private String status;
     
-    public Group(int groupId, int createrId, String groupName, String groupDescription, List<Group_member> groupMember, List<Post> post, List<Comment> comments, List<Upload> upload, String image, int memberCount) {
+    public Group(int groupId, int createrId, String groupName, String groupDescription, List<Group_member> groupMember, List<Post> post, List<Comment> comments, List<Upload> upload, String image, int memberCount, String status) {
         this.groupId = groupId;
         this.createrId = createrId;
         this.groupName = groupName;
@@ -34,6 +36,7 @@ public class Group {
         this.upload = upload;
         this.image = image;
         this.memberCount = memberCount;
+        this.status = status;
     }
 
     public Group(int createrId, String groupName, String groupDescription, String image) {
@@ -147,4 +150,22 @@ public class Group {
     public void setPending(boolean isPending) {
         this.isPending = isPending;
     }
+
+
+    public boolean isIsBanned() {
+        return isBanned;
+    }
+
+    public void setIsBanned(boolean isBanned) {
+        this.isBanned = isBanned;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String Status) {
+        this.status = Status;
+    }
+    
 }
