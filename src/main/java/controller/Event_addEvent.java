@@ -10,10 +10,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import java.io.File;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import model.DAO.Event_DB;
 import model.Upload;
 import model.User;
-import model.User_event;
+import model.Event;
 
 @MultipartConfig(
         maxFileSize = 1024 * 1024 * 10 // 10 MB
@@ -45,14 +47,31 @@ public class Event_addEvent extends HttpServlet {
     }
 
     private static final String UPLOAD_DIR = "Avatar_of_events";
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String title = request.getParameter("title");
         String description = request.getParameter("description");
-        Timestamp startDate = Timestamp.valueOf(request.getParameter("start_date"));
-        Timestamp endDate = Timestamp.valueOf(request.getParameter("end_date"));
+        String startDateString = request.getParameter("start_date");
+        String endDateString = request.getParameter("end_date");
+        String location = request.getParameter("location");
 
-        int userId = ((User) request.getSession().getAttribute("USER")).getUserId(); // Thay đổi từ "userID" sang "USER" và sử dụng phương thức getUserId()
+        Timestamp startDate = null;
+        Timestamp endDate = null;
+
+        // Sử dụng DateTimeFormatter để định dạng lại chuỗi datetime-local thành định dạng Timestamp yêu cầu
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+        if (startDateString != null && !startDateString.isEmpty()) {
+            LocalDateTime localDateTime = LocalDateTime.parse(startDateString, formatter);
+            startDate = Timestamp.valueOf(localDateTime);
+        }
+
+        if (endDateString != null && !endDateString.isEmpty()) {
+            LocalDateTime localDateTime = LocalDateTime.parse(endDateString, formatter);
+            endDate = Timestamp.valueOf(localDateTime);
+        }
+
+        int userId = ((User) request.getSession().getAttribute("USER")).getUserId();
 
         Part filePart = request.getPart("upload_path");
         String fileName = extractFileName(filePart);
@@ -71,8 +90,10 @@ public class Event_addEvent extends HttpServlet {
         // Đường dẫn lưu trong cơ sở dữ liệu
         String filePathForDatabase = UPLOAD_DIR + File.separator + fileName;
 
-        User_event event = new User_event(0, title, description, startDate, endDate, userId);
-        Upload upload = new Upload(0, 0, 0, 0, 0, 0, filePathForDatabase); // Thay đổi savePath thành filePathForDatabase
+        Timestamp createdAt = new Timestamp(System.currentTimeMillis());
+
+        Event event = new Event(0, title, description, startDate, endDate, userId, location, createdAt);
+        Upload upload = new Upload(0, 0, 0, 0, 0, 0, filePathForDatabase);
 
         Event_DB eventDB = new Event_DB();
         if (eventDB.addEvent(event, upload)) {

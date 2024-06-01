@@ -117,10 +117,6 @@
         <servlet-class>controller.User_groupPendingRequest</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>Topic_view</servlet-name>
-        <servlet-class>controller.Topic_view</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>User_groupEdit</servlet-name>
         <servlet-class>controller.User_groupEdit</servlet-class>
     </servlet>
@@ -147,6 +143,14 @@
     <servlet>
         <servlet-name>Event_eventList</servlet-name>
         <servlet-class>controller.Event_eventList</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>getEventDetails</servlet-name>
+        <servlet-class>controller.getEventDetails</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Event_updateEvent</servlet-name>
+        <servlet-class>controller.Event_updateEvent</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>PostComment</servlet-name>
@@ -267,6 +271,14 @@
     <servlet-mapping>
         <servlet-name>User_groupEdit</servlet-name>
         <url-pattern>/inGroup/groupEdit</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>getEventDetails</servlet-name>
+        <url-pattern>/getEventDetails</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Event_updateEvent</servlet-name>
+        <url-pattern>/updateEvent</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>home</welcome-file>
