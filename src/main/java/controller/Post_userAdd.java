@@ -15,9 +15,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Comment;
+import model.DAO.Comment_DB;
 import model.DAO.Post_DB;
+import model.DAO.User_DB;
 import model.Post;
 import model.User;
 
@@ -130,7 +134,20 @@ public class Post_userAdd extends HttpServlet {
                 post.setUploadPath(uploadPath);
                 Post_DB.addPostUser(post);
             }
-
+            List<Post> posts = Post_DB.getPostsWithUploadPath();
+            for (Post p : posts) {
+                User author = Post_DB.getUserByPostId(p.getPostId());
+                p.setUser(author);
+                List<Comment> comments = Comment_DB.getCommentsByPostId(p.getPostId());
+                for (Comment comment : comments) {
+                    User commentUser = User_DB.getUserById(comment.getUserId());
+                    if (commentUser != null) {
+                        comment.setUser(commentUser);
+                    }
+                }
+                p.setComments(comments);
+            }
+            session.setAttribute("posts", posts);
             // Chuyển hướng người dùng về trang trước đó sau khi đăng bài thành công
             String referer = request.getHeader("referer");
             response.sendRedirect(referer != null ? referer : "profile");

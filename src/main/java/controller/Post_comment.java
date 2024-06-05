@@ -17,6 +17,7 @@ import model.Comment;
 import model.DAO.Comment_DB;
 import model.DAO.Post_DB;
 import model.DAO.User_DB;
+import model.Post;
 import model.User;
 
 /**
@@ -71,13 +72,13 @@ public class Post_comment extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         String action = request.getParameter("action");
         String referer = request.getHeader("referer");
+        HttpSession session = request.getSession(false);
 
         if (null != action) {
             switch (action) {
                 case "addComment": {
                     // Thêm comment
                     int postId = Integer.parseInt(request.getParameter("postId"));
-                    HttpSession session = request.getSession(false);
                     if (session != null && session.getAttribute("USER") != null) {
                         User user = (User) session.getAttribute("USER");
                         int userId = user.getUserId(); // Lấy userId từ session
@@ -89,6 +90,20 @@ public class Post_comment extends HttpServlet {
                         if (success) {
                             User_DB.updateScore(userId);
                             // Nếu thành công, chuyển hướng đến trang trước đó
+                            List<Post> posts = Post_DB.getPostsWithUploadPath();
+                            for (Post p : posts) {
+                                User author = Post_DB.getUserByPostId(p.getPostId());
+                                p.setUser(author);
+                                List<Comment> comments = Comment_DB.getCommentsByPostId(p.getPostId());
+                                for (Comment comment : comments) {
+                                    User commentUser = User_DB.getUserById(comment.getUserId());
+                                    if (commentUser != null) {
+                                        comment.setUser(commentUser);
+                                    }
+                                }
+                                p.setComments(comments);
+                            }
+                            session.setAttribute("posts", posts);
                             response.sendRedirect(referer);
                         } else {
                             // Nếu thất bại, gửi mã lỗi 500
@@ -103,7 +118,6 @@ public class Post_comment extends HttpServlet {
                 case "deleteComment": {
                     // Xóa comment
                     int commentId = Integer.parseInt(request.getParameter("commentId"));
-                    HttpSession session = request.getSession(false);
                     if (session != null && session.getAttribute("USER") != null) {
                         User user = (User) session.getAttribute("USER");
                         int userId = user.getUserId(); // Lấy userId từ session
@@ -112,6 +126,20 @@ public class Post_comment extends HttpServlet {
 
                         if (success) {
                             // Nếu thành công, chuyển hướng đến trang trước đó
+                            List<Post> posts = Post_DB.getPostsWithUploadPath();
+                            for (Post p : posts) {
+                                User author = Post_DB.getUserByPostId(p.getPostId());
+                                p.setUser(author);
+                                List<Comment> comments = Comment_DB.getCommentsByPostId(p.getPostId());
+                                for (Comment comment : comments) {
+                                    User commentUser = User_DB.getUserById(comment.getUserId());
+                                    if (commentUser != null) {
+                                        comment.setUser(commentUser);
+                                    }
+                                }
+                                p.setComments(comments);
+                            }
+                            session.setAttribute("posts", posts);
                             response.sendRedirect(referer);
                         } else {
                             // Nếu thất bại, gửi mã lỗi 500
@@ -129,6 +157,20 @@ public class Post_comment extends HttpServlet {
                     String newContent = request.getParameter("newContent");
                     boolean success = Comment_DB.editComment(commentId, newContent);
                     if (success) {
+                        List<Post> posts = Post_DB.getPostsWithUploadPath();
+                        for (Post p : posts) {
+                            User author = Post_DB.getUserByPostId(p.getPostId());
+                            p.setUser(author);
+                            List<Comment> comments = Comment_DB.getCommentsByPostId(p.getPostId());
+                            for (Comment comment : comments) {
+                                User commentUser = User_DB.getUserById(comment.getUserId());
+                                if (commentUser != null) {
+                                    comment.setUser(commentUser);
+                                }
+                            }
+                            p.setComments(comments);
+                        }
+                        session.setAttribute("posts", posts);
                         // Nếu thành công, chuyển hướng đến trang trước đó
                         response.sendRedirect(referer);
                     } else {

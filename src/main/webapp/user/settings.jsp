@@ -22,7 +22,7 @@
                             </div>
                             <div class="bg-light pt-4 px-4 d-flex justify-content-between text-center ">
                                 <div class="media-body mb-5 text-white">
-                                    <h4 class="mt-0 mb-0">${USER.userFullName}</h4>
+                                    <h4 class="mt-0 mb-0">${USER.userFullName}</h4>     
                                 </div>
                                 <ul class="list-inline mb-0">
                                     <li class="list-inline-item">
@@ -43,8 +43,9 @@
                                 </ul>
                             </div>
                             <div class="px-4 py-3">
+                                <p class="font-italic mb-0"><i class="ti ti-calendar"></i>Ngày tham gia: ${USER.userCreateDate}</p>
                                 <div class="p-4 rounded shadow-sm">
-                                    <p class="font-italic mb-0">${USER.userStory}</p>
+                                    <p class="font-italic mb-0">${USER.userStory}<i class="ti ti-feather"></i></p>
                                 </div>
                             </div>
                         </div>

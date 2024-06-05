@@ -13,6 +13,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.sql.SQLException;
 import java.util.List;
+import model.Comment;
+import model.DAO.Comment_DB;
 import model.DAO.Post_DB;
 import model.DAO.Topic_DB;
 import model.DAO.User_DB;
@@ -64,32 +66,35 @@ public class home extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        HttpSession session = request.getSession();
 
-        // Fetch the list of topics from the database or any other data source
-        List<Topic> topics = Topic_DB.getAllTopics();
-        // Set the topics as a request attribute
-        request.setAttribute("topics", topics);
-
-        // Assuming 'user' is the attribute used to store user information in the session or request
-        User user = (User) request.getSession().getAttribute("USER");
-        if (user != null) {
-            String userEmail = user.getUserEmail();
-            User userInfo = User_DB.getUserByEmailorUsername(userEmail);
-            // Đặt danh sách người dùng vào thuộc tính của request
-            request.setAttribute("userInfo", userInfo);
-        }
-        // Lấy danh sách tất cả các bài viết
-        List<Post> posts = Post_DB.getPostsWithUploadPath();
-
-        for (Post post : posts) {
-            // Lấy thông tin người đăng cho bài viết
-            User author = Post_DB.getUserByPostId(post.getPostId());
-            post.setUser(author); // Đặt thông tin người đăng vào thuộc tính user của bài viết
+        // Kiểm tra nếu topics đã có trong session
+        List<Topic> topics = (List<Topic>) session.getAttribute("topics");
+        if (topics == null) {
+            topics = Topic_DB.getAllTopics();
+            session.setAttribute("topics", topics);
         }
 
-        request.setAttribute("posts", posts);
+        // Kiểm tra nếu posts đã có trong session
+        List<Post> posts = (List<Post>) session.getAttribute("posts");
+        if (posts == null) {
+            posts = Post_DB.getPostsWithUploadPath();
+            for (Post post : posts) {
+                User author = Post_DB.getUserByPostId(post.getPostId());
+                post.setUser(author);
 
-        // Forward the request to the determined JSP
+                List<Comment> comments = Comment_DB.getCommentsByPostId(post.getPostId());
+                for (Comment comment : comments) {
+                    User commentUser = User_DB.getUserById(comment.getUserId());
+                    if (commentUser != null) {
+                        comment.setUser(commentUser);
+                    }
+                }
+                post.setComments(comments);
+            }
+            session.setAttribute("posts", posts);
+        }
         request.getRequestDispatcher("index.jsp").forward(request, response);
     }
 
@@ -103,18 +108,20 @@ public class home extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Nhận dữ liệu từ form
-        response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("USER");
-
+        int userId = user.getUserId();
+        // Kiểm tra xem người dùng đã đăng nhập hay chưa
         if (user == null) {
             response.sendRedirect("login");
             return;
         }
-        int userId = user.getUserId();
-        int topicId = Integer.parseInt(request.getParameter("topicId"));
+
+        // Nhận dữ liệu từ form
+        String topicIdStr = request.getParameter("topicId");
         String content = request.getParameter("content");
+
+        int topicId = Integer.parseInt(topicIdStr);
 
         // Tạo đối tượng Post
         Post post = new Post();
@@ -125,11 +132,27 @@ public class home extends HttpServlet {
         // Gọi phương thức addPostTopic của DAO
         try {
             Post_DB.addPostTopic(post);
-            response.sendRedirect("home"); // Chuyển hướng sau khi thêm bài đăng thành công
+            session.setAttribute("msg", "Bài đăng đã được thêm thành công.");
+            // Làm mới danh sách posts trong session
+            List<Post> posts = Post_DB.getPostsWithUploadPath();
+            for (Post p : posts) {
+                User author = Post_DB.getUserByPostId(p.getPostId());
+                p.setUser(author);
+                List<Comment> comments = Comment_DB.getCommentsByPostId(p.getPostId());
+                for (Comment comment : comments) {
+                    User commentUser = User_DB.getUserById(comment.getUserId());
+                    if (commentUser != null) {
+                        comment.setUser(commentUser);
+                    }
+                }
+                p.setComments(comments);
+            }
+            session.setAttribute("posts", posts);
         } catch (SQLException e) {
             e.printStackTrace();
-            // Xử lý lỗi nếu cần thiết
+            session.setAttribute("msg", "Có lỗi xảy ra khi thêm bài đăng.");
         }
+        response.sendRedirect("home");
     }
 
     /**

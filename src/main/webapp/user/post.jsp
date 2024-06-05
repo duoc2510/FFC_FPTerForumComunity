@@ -1,4 +1,4 @@
-<div class="post-card post-active col-lg-12">
+<div class="col-lg-12">
     <div class="card w-100">
         <div class="card-body p-4">
             <div class="pb-3 d-flex row">

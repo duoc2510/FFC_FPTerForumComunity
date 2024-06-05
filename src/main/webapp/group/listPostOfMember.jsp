@@ -72,8 +72,7 @@
                                     <div class="profile mr-3 d-flex justify-content-between align-items-end">
                                         <img src="${pageContext.request.contextPath}/${user.userAvatar}" class="rounded-circle img-thumbnail" style="object-fit: cover;">
                                         <div>
-                
-                                            <a href="${pageContext.request.contextPath}/viewPersonalProfile&userId=${user.userId}" class="btn btn-outline-dark btn-sm btn-block edit-cover">View personal profile</a>
+                                            <a href="${pageContext.request.contextPath}/profile?username=${user.username}" class="btn btn-outline-dark btn-sm btn-block edit-cover">View personal profile</a>
                                         </div>
                                     </div>
                                 </div>
@@ -88,42 +87,39 @@
                                     </li>
                                     <li class="list-inline-item">
                                         <h5 class="font-weight-bold mb-0 d-block">${cmtInGroup}</h5><small class="text-muted"><i class="fas fa-user mr-1"></i>Comment in group</small>
-                                    </li>
-                                    
-                                    
+                                    </li>    
                                 </ul>
                             </div>
-                            
                         </div>
                     </div>
                 </div>
             </div>
-           
+
             <div class="container-fluid pt-0">
                 <div class="row form-settings bg-white shadow rounded py-4 px-4 d-flex justify-content-between ">
                     <div class="p0">
                         <h5 class="mb-2">Bài viết trong nhóm </h5>
                     </div>
-                     <c:if test="${empty userPosts}">
-                     <p>Người này không có bài post nào trong group.</p>
+                    <c:if test="${empty posts}">
+                        <p>Người này không có bài post nào trong group.</p>
                     </c:if>
                     <div>
-                        <c:forEach var="post" items="${userPosts}">
-                            <c:if test="${post.status eq 'Active' and post.postStatus eq 'Public'}">
+                        <c:forEach var="post" items="${posts}">
+                            <c:if test="${post.groupId == group.groupId}">
                                 <div class="col-lg-12">
                                     <div class="card w-100">
                                         <div class="card-body p-4">
                                             <div class="pb-3 d-flex row">
                                                 <div class="col-1 text-center mt-2">
                                                     <a class="nav-icon-hover" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown" aria-expanded="false">
-                                                        <img src="${pageContext.request.contextPath}/${post.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
+                                                        <img src="${pageContext.request.contextPath}/${user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
                                                     </a>
                                                 </div>
                                                 <div class="col-10">
-                                                    <h6 class="card-title fw-semibold mb-4 d-inline">${post.user.username}</h6>
+                                                    <h6 class="card-title fw-semibold mb-4 d-inline">${user.username}</h6>
                                                     <p class="s-4">${post.createDate}</p>
                                                 </div>
-                                                <c:if test="${post.user.userId == USER.userId}">
+                                                <c:if test="${post.userId == user.userId}">
                                                     <div class="dropdown col-1 px-2" style="text-align: right">
                                                         <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                             <span> <i class="ti-more-alt"></i></span>   
@@ -217,31 +213,7 @@
                                 </div>
                             </c:if>
                         </c:forEach>
-                        <!-- Modal for editing comment -->
-                        <div class="modal fade" id="editCommentModal" tabindex="-1" aria-labelledby="editCommentModalLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="editCommentModalLabel">Edit Comment</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <form id="editCommentForm" action="${pageContext.request.contextPath}/comment" method="post">
-                                        <div class="modal-body">
-                                            <input type="hidden" name="action" value="editComment">
-                                            <input type="hidden" id="editCommentId" name="commentId">
-                                            <div class="form-group">
-                                                <label for="editContent">Content:</label>
-                                                <textarea class="form-control" id="editContent" name="newContent" rows="3"></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            <button type="submit" class="btn btn-primary">Save changes</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
+                        <%@include file="modal.jsp" %>
                         <script>
                             function editComment(commentId, content) {
                                 document.getElementById('editCommentId').value = commentId;

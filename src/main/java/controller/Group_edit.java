@@ -4,7 +4,6 @@
  */
 package controller;
 
-import jakarta.servlet.http.HttpServlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -15,8 +14,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 import java.io.File;
+import java.util.List;
+import java.util.stream.Collectors;
 import model.DAO.Group_DB;
-import model.DAO.User_DB;
 import model.Group;
 import model.User;
 
@@ -28,7 +28,7 @@ import model.User;
         maxFileSize = 1024 * 1024 * 10 // 10 MB
 )
 
-public class User_groupEdit extends HttpServlet {
+public class Group_edit extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -68,13 +68,6 @@ public class User_groupEdit extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
-
-        int groupId = Integer.parseInt(request.getParameter("groupId"));
-        Group group = Group_DB.viewGroup(groupId);
-
-        session.setAttribute("group", group);
-
         // Chuyển hướng request đến trang JSP để hiển thị thông tin nhóm
         request.getRequestDispatcher("/group/groupEdit.jsp").forward(request, response);
     }
@@ -96,6 +89,7 @@ public class User_groupEdit extends HttpServlet {
         HttpSession session = request.getSession();
         // Kiểm tra xem người dùng đã đăng nhập chưa
         Group group = (Group) request.getSession().getAttribute("group");
+        User user = (User) request.getSession().getAttribute("USER");
         if (group != null) {
             // Lấy thông tin từ form
             int groupId = group.getGroupId();
@@ -128,6 +122,7 @@ public class User_groupEdit extends HttpServlet {
             boolean updateSuccess = Group_DB.updateGroup(groupId, nameGroup, description, avatar);
             if (updateSuccess) {
                 request.setAttribute("message", "Thông tin nhóm đã được cập nhật.");
+                updateSessionWithNewGroup(session, user.getUserId());
             } else {
                 request.setAttribute("message", "Cập nhật thông tin nhóm thất bại.");
             }
@@ -152,6 +147,44 @@ public class User_groupEdit extends HttpServlet {
             }
         }
         return "";
+    }
+
+    private void updateSessionWithNewGroup(HttpSession session, int creatorId) {
+        // Retrieve all groups and filter out inactive ones
+        List<Group> allGroups = Group_DB.getAllGroups();
+        List<Group> groups = allGroups.stream()
+                .filter(group -> !"inactive".equals(group.getStatus()))
+                .collect(Collectors.toList());
+
+        // Retrieve groups created by the user and filter out inactive ones
+        List<Group> allGroupsCreated = Group_DB.getAllGroupsCreated(creatorId);
+        List<Group> groupsCreated = allGroupsCreated.stream()
+                .filter(group -> !"inactive".equals(group.getStatus()))
+                .collect(Collectors.toList());
+
+        // Retrieve groups joined by the user and filter out inactive ones
+        List<Group> allGroupJoined = Group_DB.getAllGroupJoin(creatorId);
+        List<Group> groupJoined = allGroupJoined.stream()
+                .filter(group -> !"inactive".equals(group.getStatus()))
+                .collect(Collectors.toList());
+
+        // Filter out groups that the user has created or joined
+        List<Integer> joinedGroupIds = groupJoined.stream()
+                .map(Group::getGroupId)
+                .collect(Collectors.toList());
+        groups.removeIf(group -> group.getCreaterId() == creatorId || joinedGroupIds.contains(group.getGroupId()));
+
+        // Check the status of each remaining group
+        for (Group group : groups) {
+            boolean isPending = Group_DB.isUserPendingApproval(creatorId, group.getGroupId());
+            boolean isBanned = Group_DB.isUserBan(creatorId, group.getGroupId());
+            group.setPending(isPending);
+            group.setIsBanned(isBanned);
+        }
+        // Set attributes to be passed to JSP
+        session.setAttribute("groupsJoined", groupJoined);
+        session.setAttribute("groups", groups);
+        session.setAttribute("groupsCreated", groupsCreated);
     }
 
     /**

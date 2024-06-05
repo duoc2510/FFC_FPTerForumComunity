@@ -158,35 +158,8 @@ public class User_authLogin extends HttpServlet {
         String rememberMe = request.getParameter("rememberMe");
 
         User user = User.login(identify, password);
-        User userInfo = User_DB.getUserByEmailorUsername(identify);
         if (user != null) {
-            int userRole = user.getUserRole();
-            String role = null;
-            String message = null;
-            switch (userRole) {
-                case 0:
-                    message = "Your account has been banned.";
-                    request.setAttribute("message", message);
-                    request.getRequestDispatcher("/auth/login.jsp").forward(request, response);
-                    return;
-                case 1:
-                    role = "USER";
-                    message = "Welcome, User!";
-                    break;
-                case 2:
-                    role = "MANAGER";
-                    message = "Welcome, Manager!";
-                    break;
-                case 3:
-                    role = "ADMIN";
-                    message = "Welcome, Admin!";
-                    break;
-            }
             request.getSession().setAttribute("USER", user);
-            request.getSession().setAttribute("ROLE", role);
-            request.setAttribute("roleMessage", message);
-            request.setAttribute("userInfo", userInfo);
-
             if ("true".equals(rememberMe)) {
                 Cookie identifyCookie = new Cookie("identify", identify);
                 Cookie passwordCookie = new Cookie("password", password);
@@ -210,12 +183,17 @@ public class User_authLogin extends HttpServlet {
                 response.addCookie(rememberMeCookie);
             }
 
-            String redirectURL = (String) request.getSession().getAttribute("redirectURL");
-            if (redirectURL != null && !redirectURL.isEmpty()) {
-                request.getSession().removeAttribute("redirectURL");
-                response.sendRedirect(response.encodeRedirectURL(redirectURL));
+            // Kiểm tra nếu userFullName là null
+            if (user.getUserFullName() == null) {
+                response.sendRedirect(response.encodeRedirectURL(request.getContextPath() + "/profile/setting")); // Redirect đến trang cập nhật hồ sơ
             } else {
-                response.sendRedirect(response.encodeRedirectURL(request.getContextPath() + "/home"));
+                String redirectURL = (String) request.getSession().getAttribute("redirectURL");
+                if (redirectURL != null && !redirectURL.isEmpty()) {
+                    request.getSession().removeAttribute("redirectURL");
+                    response.sendRedirect(response.encodeRedirectURL(redirectURL));
+                } else {
+                    response.sendRedirect(response.encodeRedirectURL(request.getContextPath() + "/home"));
+                }
             }
         } else {
             String msg = "Invalid email or password";

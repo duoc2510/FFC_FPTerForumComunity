@@ -27,6 +27,7 @@
             <div class="container-fluid d-flex">
                 <div class="col-lg-12 w-100">
                     <%@ include file="topic/tabTopic.jsp" %>
+                    <%-- Hiển thị tin nhắn thành công nếu có --%>
                     <c:if test="${sessionScope.USER ne null}">
                         <%@ include file="topic/newPost.jsp" %>
                     </c:if>
