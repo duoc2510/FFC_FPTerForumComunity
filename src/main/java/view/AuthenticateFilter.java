@@ -30,17 +30,26 @@ public class AuthenticateFilter implements Filter {
         String uri = httpRequest.getRequestURI();
         String contextPath = httpRequest.getContextPath();
 
-        if (uri.startsWith(contextPath + "/rank/") || uri.startsWith(contextPath + "/profile")) {
-            if (user == null) {
-                // Lưu lại URL hiện tại
-                String referer = httpRequest.getHeader("referer");
-                if (referer != null && !referer.isEmpty()) {
-                    httpRequest.getSession(true).setAttribute("redirectURL", referer);
-                }
+        // Bỏ qua xác thực cho các đường dẫn cụ thể
+        if (!(uri.startsWith(contextPath + "/marketplace/allshop")
+                || uri.startsWith(contextPath + "/marketplace/allshop/shopdetail")
+                || uri.startsWith(contextPath + "/marketplace/allshop/shopdetail/productdetail"))) {
 
-                // Chuyển hướng đến trang đăng nhập
-                httpResponse.sendRedirect(httpResponse.encodeRedirectURL(contextPath + "/logingooglehandler?value=login"));
-                return;
+            if (uri.startsWith(contextPath + "/rank/")
+                    || uri.startsWith(contextPath + "/profile")
+                    || uri.startsWith(contextPath + "/marketplace/")) {
+
+                if (user == null) {
+                    // Lưu lại URL hiện tại
+                    String referer = httpRequest.getHeader("referer");
+                    if (referer != null && !referer.isEmpty()) {
+                        httpRequest.getSession(true).setAttribute("redirectURL", referer);
+                    }
+
+                    // Chuyển hướng đến trang đăng nhập
+                    httpResponse.sendRedirect(httpResponse.encodeRedirectURL(contextPath + "/logingooglehandler?value=login"));
+                    return;
+                }
             }
         }
 

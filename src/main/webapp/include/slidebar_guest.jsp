@@ -39,7 +39,7 @@
                      <li class="sidebar-item">
                     <a class="sidebar-link" href="${pageContext.request.contextPath}/marketplace" aria-expanded="false">
                         <span>
-                            <i class="ti ti-trophy"></i>
+                            <i class="ti ti-basket"></i>
                         </span>
                         <span class="hide-menu">Marketplace</span>
                     </a>

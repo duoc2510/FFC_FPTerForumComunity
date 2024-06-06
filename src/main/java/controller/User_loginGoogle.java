@@ -12,7 +12,11 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import model.DAO.Shop_DB;
 import model.DAO.User_DB;
+import model.Order;
+import model.OrderItem;
 import model.User;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.fluent.Request;
@@ -180,7 +184,11 @@ public class User_loginGoogle extends HttpServlet {
 
         User user = User.login(identify, password);
         User userInfo = User_DB.getUserByEmailorUsername(identify);
+        Shop_DB sdb = new Shop_DB();
+
         if (user != null) {
+            Order order = sdb.getOrderHasStatusIsNullByUserID(userInfo.getUserId());
+            ArrayList<OrderItem> orderitemlist = sdb.getAllOrderItemByOrderIdHasStatusIsNull(order.getOrder_ID());
             int userRole = user.getUserRole();
             String role = null;
             String message = null;
@@ -207,6 +215,8 @@ public class User_loginGoogle extends HttpServlet {
                     message = "Welcome, Admin!";
                     break;
             }
+            request.getSession().setAttribute("ORDER", order);
+            request.getSession().setAttribute("ORDERITEMLIST", orderitemlist);
             request.getSession().setAttribute("USER", user);
             request.getSession().setAttribute("ROLE", role);
             request.setAttribute("roleMessage", message);

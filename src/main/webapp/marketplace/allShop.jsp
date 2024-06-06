@@ -1,10 +1,4 @@
 <%-- 
-    Document   : allProduct
-    Created on : May 31, 2024, 8:00:58 AM
-    Author     : Admin
---%>
-
-<%-- 
     Document   : allShop
     Created on : May 27, 2024, 9:02:58 PM
     Author     : Admin
@@ -41,20 +35,46 @@
                                         <img class="card-img-top" src="${pageContext.request.contextPath}/static/${shop.getImage()}">
                                     </a>
                                     <div class="card-body">
-                                        <h5 class="card-title"><a href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?id=${shop.shopID}">${shop.getName()}</a></h5>
-                                        <p class="card-text"><a href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?id=${shop.shopID}">Phone : ${shop.getPhone()}</a></p>
-                                        <p class="card-text"><a href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?id=${shop.shopID}">Campus : ${shop.getCampus()}</a></p>
-                                        <p class="card-text"><a href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?id=${shop.shopID}">Giới Thiệu : ${shop.getDescription()}</a></p>
+                                        <h5 class="card-title"><a href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?shopid=${shop.shopID}">${shop.getName()}</a></h5>
+                                        <p class="card-text"><a href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?shopid=${shop.shopID}">Phone : ${shop.getPhone()}</a></p>
+                                        <p class="card-text"><a href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?shopid=${shop.shopID}">Campus : ${shop.getCampus()}</a></p>
+                                        <p class="card-text"><a href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?shopid=${shop.shopID}">Giới Thiệu : ${shop.getDescription()}</a></p>
                                         <a href="#" class="btn btn-primary mt-3 w-100">Message</a>
                                     </div>
 
                                 </div>
                             </div>
                         </c:forEach>
-
                     </div>
                 </div>
             </div>
         </div>
+        <script>
+            //      Message error
+            document.addEventListener("DOMContentLoaded", function (event) {
+                // Ensure your DOM is fully loaded before executing any code
+                var errorMessage = "${requestScope.message}";
+                // Kiểm tra nếu errorMessage không rỗng, hiển thị thông báo lỗi
+                if (errorMessage != "") {
+
+                    swal({
+                        title: "Thanks for your order!",
+                        text: errorMessage,
+                        icon: "success",
+                        button: "OK!",
+                    });
+
+                }
+
+
+
+
+            });
+        </script>     
+
+
 </body>
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
 <%@ include file="../include/footer.jsp" %>

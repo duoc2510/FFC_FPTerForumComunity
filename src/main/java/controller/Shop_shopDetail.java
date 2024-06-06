@@ -10,16 +10,16 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import model.DAO.Shop_DB;
-import model.DAO.User_DB;
-import model.Order;
-import model.User;
+import model.Product;
+import model.Shop;
 
 /**
  *
  * @author Admin
  */
-public class User_emailVerify extends HttpServlet {
+public class Shop_shopDetail extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -38,10 +38,10 @@ public class User_emailVerify extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet User_VerifyEmail</title>");
+            out.println("<title>Servlet Shop_shopDetail</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet User_VerifyEmail at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet Shop_shopDetail at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -59,8 +59,15 @@ public class User_emailVerify extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        request.getRequestDispatcher("/auth/verifyemail.jsp").forward(request, response);
+        String id = request.getParameter("shopid");
+        int shopid = Integer.parseInt(id);
+        Shop_DB sdb = new Shop_DB();
+        Shop sh = sdb.getShopByShopID(shopid);
+        ArrayList<Product> productlist = sdb.getAllProductByShopID(shopid);
+        request.setAttribute("shop", sh);
+        request.setAttribute("shopid", shopid);
+        request.setAttribute("productlist", productlist);
+        request.getRequestDispatcher("/marketplace/shopDetail.jsp").forward(request, response);
     }
 
     /**
@@ -74,49 +81,7 @@ public class User_emailVerify extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
-        String status = request.getParameter("status");
-        String email = request.getParameter("email");
-        String userName = request.getParameter("userName");
-        String password = request.getParameter("password");
-        String x = request.getParameter("x");
-        String number = request.getParameter("number");
-        User_DB userDB = new User_DB();
-        Shop_DB sdb = new Shop_DB();
-        String msg;
-        if (status.equals("lostaccount")) {
-            if (Integer.parseInt(x) == Integer.parseInt(number)) {
-                request.setAttribute("email", email);
-                request.getRequestDispatcher("/auth/newpass.jsp").forward(request, response);
-            } else {
-                msg = "Verify Code Is Wrong!";
-                request.setAttribute("message", msg);
-                request.setAttribute("x", x);
-                request.setAttribute("email", email);
-                request.getRequestDispatcher("/auth/verifyaccount.jsp").forward(request, response);
-            }
-        } else {
-            if (Integer.parseInt(x) == Integer.parseInt(number)) {
-                // Passwords match, proceed to add new staff
-                User newUser = new User(email, password, userName);
-                userDB.addUser(newUser);
-                User u = userDB.getUserByEmailorUsername(newUser.getUserEmail());
-                Order o = new Order(u.getUserId(), 1, null, "null", 0, 1, null, null, 5, null);
-                sdb.addOrder(o);
-                msg = "Registration Success";
-                request.setAttribute("message", msg);
-                request.getRequestDispatcher("/auth/login.jsp").forward(request, response);
-            } else {
-                msg = "Verify Code Is Wrong!";
-                request.setAttribute("message", msg);
-                request.setAttribute("x", x);
-                request.setAttribute("userName", userName);
-                request.setAttribute("email", email);
-                request.setAttribute("password", password);
-                request.getRequestDispatcher("/auth/verifyemail.jsp").forward(request, response);
-            }
-        }
-
+        processRequest(request, response);
     }
 
     /**
