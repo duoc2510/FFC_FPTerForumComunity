@@ -73,7 +73,7 @@
                                         <img src="${pageContext.request.contextPath}/${user.userAvatar}" class="rounded-circle img-thumbnail" style="object-fit: cover;">
                                         <div>
                 
-                                            <a href="${pageContext.request.contextPath}/viewPersonalProfile&userId=${user.userId}" class="btn btn-outline-dark btn-sm btn-block edit-cover">View personal profile</a>
+                                            <a href="${pageContext.request.contextPath}/viewProfile?username=${user.username}" class="btn btn-outline-dark btn-sm btn-block edit-cover">View personal profile</a>
                                         </div>
                                     </div>
                                 </div>

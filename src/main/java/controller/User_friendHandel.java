@@ -4,21 +4,22 @@
  */
 package controller;
 
-import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.DAO.Group_DB;
+import jakarta.servlet.http.HttpSession;
+import model.DAO.User_DB;
 import model.User;
 
 /**
  *
  * @author PC
  */
-public class User_groupOut extends HttpServlet {
+public class User_friendHandel extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,10 +38,10 @@ public class User_groupOut extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet User_groupOut</title>");            
+            out.println("<title>Servlet User_friendHandel</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet User_groupOut at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet User_friendHandel at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -58,6 +59,7 @@ public class User_groupOut extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        processRequest(request, response);
 
     }
 
@@ -70,56 +72,49 @@ public class User_groupOut extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-  protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-    String action = request.getParameter("action");
-    User user = (User) request.getSession().getAttribute("USER");
-    int userIdLeave = user.getUserId();
 
-    int groupId = Integer.parseInt(request.getParameter("groupId"));
-    
-    boolean success = false;
-    String message = "";
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action = request.getParameter("action");
+        HttpSession session = request.getSession(false);
+        User user = (User) session.getAttribute("USER");
+        int userId = user.getUserId();
+        int friendId = Integer.parseInt(request.getParameter("friendId"));
+        String friendName = request.getParameter("friendName");
+        boolean success = false;
+        String redirectUrl = "";
 
-    if ("leave".equals(action)) {
-        // Gọi phương thức leave group
-        success = Group_DB.leaveGroup(groupId, userIdLeave);
-        if (success) {
-            message = "You have successfully left the group.";
-        } else {
-            message = "Failed to leave the group. Please try again.";
+        switch (action) {
+            case "add":
+                success = User_DB.addFriendRequest(userId, friendId);
+                redirectUrl = request.getContextPath() + "/viewProfile?username=" + friendName;
+                break;
+            case "unfriendProfile":
+                success = User_DB.unFriend(userId, friendId);
+
+                redirectUrl = request.getContextPath() + "/viewProfile?username=" + friendName;
+                break;
+            case "unfriend":
+                success = User_DB.unFriend(userId, friendId);
+
+                redirectUrl = request.getContextPath() + "/friends";
+                break;
+            case "cancel":
+                success = User_DB.cancelFriendRequest(userId, friendId);
+                redirectUrl = request.getContextPath() + "/viewProfile?username=" + friendName;
+                break;
+            default:
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
+                return;
         }
-            response.sendRedirect(request.getContextPath() + "/inGroup?groupId=" + groupId);
-    } else if ("kick".equals(action)) {
-        // Gọi phương thức kick member
-            int userIdOut = Integer.parseInt(request.getParameter("userId"));
-        success = Group_DB.kickMember(groupId, userIdOut);
+
         if (success) {
-            message = "Member has been kicked out successfully.";
-        } else {
-            message = "Failed to kick member. Please try again.";
+        {
+            response.sendRedirect(redirectUrl); // Điều hướng đến trang thành công hoặc trang viewProfile
         }
-       response.sendRedirect(request.getContextPath() + "/groupViewMember?groupId=" + groupId);
-    } else if ("ban".equals(action)) {
-        // Gọi phương thức ban member
-            int userIdOut = Integer.parseInt(request.getParameter("userId"));
-        success = Group_DB.banMember(groupId, userIdOut);
-        if (success) {
-            message = "Member has been banned successfully.";
-            
-        } else {
-            message = "Failed to ban member. Please try again.";
-        }
-         response.sendRedirect(request.getContextPath() + "/groupViewMember?groupId=" + groupId);
+    } else {
+       request.getRequestDispatcher("/user/error.jsp").forward(request, response); // Điều hướng đến trang lỗi
     }
-
-    // Lưu thông điệp vào session
-    request.getSession().setAttribute("message", message);
-
-    // Chuyển hướng người dùng lại trang chi tiết nhóm
-
-}
-
+   }
 
     /**
      * Returns a short description of the servlet.

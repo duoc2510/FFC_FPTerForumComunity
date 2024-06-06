@@ -102,9 +102,11 @@ public class User_profile extends HttpServlet {
             }
             post.setComments(comments); // Đặt danh sách comment vào bài viết
         }
+        
+       
         request.getSession().setAttribute("USER", userInfo);
         // Đặt danh sách người dùng vào thuộc tính của request
-
+        
         request.setAttribute("posts", posts);
 
         // Chuyển tiếp yêu cầu tới trang profile.jsp
@@ -121,7 +123,9 @@ public class User_profile extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+   
+        
+        
     }
 
     /**

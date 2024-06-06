@@ -24,6 +24,7 @@ public class User {
     public User() {
     }
 
+    
     public User(int userId, String username, String userAvatar ) {
         this.userId = userId;
         this.username = username;

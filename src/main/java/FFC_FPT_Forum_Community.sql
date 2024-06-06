@@ -591,3 +591,5 @@ SELECT * FROM Upload;
 SELECT * FROM UserFollow
 
 SELECT * FROM GroupView
+
+INSERT INTO FriendShip (User_id, Friend_id, Request_status) VALUES (5, 4, 'pending')

@@ -13,19 +13,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
-import model.Comment;
-import model.DAO.Comment_DB;
-import model.DAO.Group_DB;
-import model.DAO.Post_DB;
 import model.DAO.User_DB;
-import model.Post;
 import model.User;
 
 /**
  *
  * @author PC
  */
-public class User_viewProfile extends HttpServlet {
+public class User_friends extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -44,10 +39,10 @@ public class User_viewProfile extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet User_viewProfile</title>");
+            out.println("<title>Servlet User_friends</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet User_viewProfile at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet User_friends at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -65,51 +60,16 @@ public class User_viewProfile extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false); // Không tự động tạo session mới
-        User userPersonal = (User) session.getAttribute("USER");
-        String userName = request.getParameter("username");
-        int userId = userPersonal.getUserId();
-        String friendStatus = User_DB.getFriendRequestStatus(userId, userName);
+       HttpSession session = request.getSession(false); // Không tự động tạo session mới
+        User user = (User) session.getAttribute("USER");
 
-        // Fetch the user
-        User user = User_DB.getUserByEmailorUsername(userName);
-
-        // Fetch the posts of the user in the specified group
-        List<Post> userPosts = Post_DB.getPostsByUsername(userName);
-
-        // Loop through the userPosts to fetch comments for each post
-        for (Post post : userPosts) {
-            // Lấy thông tin người đăng cho bài viết
-            User author = Post_DB.getUserByPostId(post.getPostId());
-            post.setUser(author); // Đặt thông tin người đăng vào thuộc tính user của bài viết
-
-            // Lấy danh sách comment cho bài viết
-            List<Comment> comments = Comment_DB.getCommentsByPostId(post.getPostId());
-            for (Comment comment : comments) {
-                // Lấy thông tin người dùng cho comment
-                User commentUser = User_DB.getUserById(comment.getUserId());
-                if (commentUser != null) {
-                    comment.setUser(commentUser);
-                }
-            }
-            post.setComments(comments); // Đặt danh sách comment vào bài viết
-        }
-        boolean areFriend = User_DB.areFriendsAccepted(userId, userName);
-        boolean isPendingRq= User_DB.hasFriendRequestFromUser(userId, userName);
-        int postCountofUser = User_DB.countPostByUserName(userName);
-
-        // Thiết lập các thuộc tính cho session và request
-        session.setAttribute("isPendingRq", isPendingRq);
-        session.setAttribute("areFriend", areFriend);
-        session.setAttribute("postCountofUser", postCountofUser);
-
-        // Set user and userPosts as request attributes
-        request.setAttribute("friendStatus", friendStatus);
-        request.setAttribute("user", user);
-        request.setAttribute("userPosts", userPosts);
-
-        // Forward to the JSP page to display the posts
-        request.getRequestDispatcher("/user/anotherUserProfile.jsp").forward(request, response);
+        // Ở đây không cần kiểm tra đăng nhập nữa do đã làm trong filter
+        int userId = user.getUserId();
+        List<User> pendingFriends = User_DB.getPendingFriendRequests(userId);
+        List<User> acceptedFriends = User_DB.getAcceptedFriends(userId);
+        request.setAttribute("pendingFriends", pendingFriends);
+        request.setAttribute("acceptedFriends", acceptedFriends);
+        request.getRequestDispatcher("/user/friends.jsp").forward(request, response);
     }
 
     /**
@@ -123,7 +83,44 @@ public class User_viewProfile extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        
+    String action = request.getParameter("action");
+    HttpSession session = request.getSession(false);
+    User user = (User) session.getAttribute("USER");
+    int userId = user.getUserId();
+    int friendId = Integer.parseInt(request.getParameter("friendId"));
+     
+    boolean success = false;
+    String redirectUrl = "";
+    
+    switch (action) {
+       
+        case "accept":
+            success = User_DB.acceptFriendRequest(userId, friendId);
+            redirectUrl = request.getContextPath() + "/friends";
+            break;
+        case "deny":
+            success = User_DB.rejectFriendRequest(userId, friendId);
+             redirectUrl = request.getContextPath() + "/friends";
+            break;
+        case "acceptFr":
+            success = User_DB.acceptFriendRequest(userId, friendId);
+            String friendName = request.getParameter("friendName");
+            redirectUrl = request.getContextPath() + "/viewProfile?username=" + friendName;
+            break;
+        default:
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
+            return;
+    }
+
+    if (success) {
+        response.sendRedirect(redirectUrl); // Điều hướng đến trang thành công hoặc trang viewProfile
+        
+    } else {
+        request.getRequestDispatcher("/user/error.jsp").forward(request, response); // Điều hướng đến trang lỗi
+    }
+        
+       
     }
 
     /**

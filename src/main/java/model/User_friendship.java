@@ -16,7 +16,7 @@ public class User_friendship {
 
     public User_friendship() {
     }
-
+    
     public User_friendship(int friendshipId, int userId, int friendId, String requestStatus) {
         this.friendshipId = friendshipId;
         this.userId = userId;

@@ -4,21 +4,29 @@
  */
 package controller;
 
-import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.text.Normalizer;
+import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import model.DAO.Group_DB;
+import model.DAO.User_DB;
+
+import model.Group;
 import model.User;
 
 /**
  *
  * @author PC
  */
-public class User_groupOut extends HttpServlet {
+public class User_search extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,10 +45,10 @@ public class User_groupOut extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet User_groupOut</title>");            
+            out.println("<title>Servlet User_search</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet User_groupOut at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet User_search at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -56,9 +64,34 @@ public class User_groupOut extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String query = request.getParameter("query");
+        if (query == null || query.trim().isEmpty()) {
+            query = "";
+        }
+        String lowercaseQuery = removeDiacritics(query.toLowerCase());
 
+        List<User> allUsers = User_DB.getAllUsers(); // Assume this method is implemented
+        List<Group> allGroups = Group_DB.getAllGroups(); // Assume this method is implemented
+
+        List<User> filteredUsers = allUsers.stream()
+                .filter(user -> removeDiacritics(user.getUserFullName().toLowerCase()).contains(lowercaseQuery))
+                .collect(Collectors.toList());
+
+        List<Group> filteredGroups = allGroups.stream()
+                .filter(group -> removeDiacritics(group.getGroupName().toLowerCase()).contains(lowercaseQuery) && !"inactive".equalsIgnoreCase(group.getStatus()))
+                .collect(Collectors.toList());
+
+        HttpSession session = request.getSession();
+        session.setAttribute("filteredUsers", filteredUsers);
+        session.setAttribute("filteredGroups", filteredGroups);
+
+        request.getRequestDispatcher("/user/searchResult.jsp").forward(request, response);
+    }
+     public static String removeDiacritics(String s) {
+        String normalized = Normalizer.normalize(s, Normalizer.Form.NFD);
+        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+        return pattern.matcher(normalized).replaceAll("");
     }
 
     /**
@@ -70,56 +103,10 @@ public class User_groupOut extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-  protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    String action = request.getParameter("action");
-    User user = (User) request.getSession().getAttribute("USER");
-    int userIdLeave = user.getUserId();
-
-    int groupId = Integer.parseInt(request.getParameter("groupId"));
-    
-    boolean success = false;
-    String message = "";
-
-    if ("leave".equals(action)) {
-        // Gọi phương thức leave group
-        success = Group_DB.leaveGroup(groupId, userIdLeave);
-        if (success) {
-            message = "You have successfully left the group.";
-        } else {
-            message = "Failed to leave the group. Please try again.";
-        }
-            response.sendRedirect(request.getContextPath() + "/inGroup?groupId=" + groupId);
-    } else if ("kick".equals(action)) {
-        // Gọi phương thức kick member
-            int userIdOut = Integer.parseInt(request.getParameter("userId"));
-        success = Group_DB.kickMember(groupId, userIdOut);
-        if (success) {
-            message = "Member has been kicked out successfully.";
-        } else {
-            message = "Failed to kick member. Please try again.";
-        }
-       response.sendRedirect(request.getContextPath() + "/groupViewMember?groupId=" + groupId);
-    } else if ("ban".equals(action)) {
-        // Gọi phương thức ban member
-            int userIdOut = Integer.parseInt(request.getParameter("userId"));
-        success = Group_DB.banMember(groupId, userIdOut);
-        if (success) {
-            message = "Member has been banned successfully.";
-            
-        } else {
-            message = "Failed to ban member. Please try again.";
-        }
-         response.sendRedirect(request.getContextPath() + "/groupViewMember?groupId=" + groupId);
+        processRequest(request, response);
     }
-
-    // Lưu thông điệp vào session
-    request.getSession().setAttribute("message", message);
-
-    // Chuyển hướng người dùng lại trang chi tiết nhóm
-
-}
-
 
     /**
      * Returns a short description of the servlet.

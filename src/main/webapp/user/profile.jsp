@@ -83,6 +83,14 @@
                                     <h4 class="mt-0 mb-0">${USER.userFullName}</h4>
                                 </div>
                                 <ul class="list-inline mb-0">
+
+
+                                    <li class="list-inline-item">
+                                        <a href="friends" class="btn btn-outline-dark btn-sm">Pending Friend Requests</a>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <a href="friends" class="btn btn-outline-dark btn-sm">Friends</a>
+                                    </li>
                                     <li class="list-inline-item">
                                         <h5 class="font-weight-bold mb-0 d-block">${postCount}</h5><small class="text-muted"><i class="fas fa-image mr-1"></i>Posts</small>
                                     </li>
