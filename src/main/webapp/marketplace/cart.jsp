@@ -196,7 +196,7 @@
             // Loop through options and remove those with condition <= totalPrice
             for (var i = options.length - 1; i >= 0; i--) {
                 var condition = parseFloat(options[i].getAttribute("data-condition"));
-                if (condition >= totalPrice) {
+                if (condition > totalPrice) {
                     select.remove(i);
                 }
             }
