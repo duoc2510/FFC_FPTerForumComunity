@@ -85,7 +85,7 @@
                                     <img src="${pageContext.request.contextPath}/${group.image}" class="card-img-top event-img" alt="...">
                                     <div class="card-body">
                                         <h5 class="card-title">
-                                            <a href="inGroup?groupId=${group.groupId}" class="group-link">
+                                            <a href="group/detail?groupId=${group.groupId}" class="group-link">
                                                 ${group.groupName}
                                             </a>
                                         </h5>
@@ -99,10 +99,10 @@
                                                 <button class="btn btn-danger w-100 mt-3" disabled>You have been banned</button>
                                             </c:when>
                                             <c:when test="${group.isApproved or group.createrId == USER.userId }">
-                                                <a href="inGroup?groupId=${group.groupId}" class="btn btn-info w-100 mt-3">Access Group</a>
+                                                <a href="group/detail?groupId=${group.groupId}" class="btn btn-info w-100 mt-3">Access Group</a>
                                             </c:when>
                                             <c:otherwise>
-                                                <a href="search?groupId=${group.groupId}" class="btn btn-primary w-100 mt-3">Join Group</a>
+                                                <a href="group/detail?groupId=${group.groupId}" class="btn btn-primary w-100 mt-3">Join Group</a>
                                             </c:otherwise>
                                         </c:choose>
                                     </div>
@@ -147,12 +147,26 @@
                                     <img src="${pageContext.request.contextPath}/${group.image}" class="card-img-top event-img" alt="...">
                                     <div class="card-body">
                                         <h5 class="card-title">
-                                            <a href="inGroup?groupId=${group.groupId}" class="group-link">
+                                            <a href="group/detail?groupId=${group.groupId}" class="group-link">
                                                 ${group.groupName}
                                             </a>
                                         </h5>
                                         <p class="card-text">${group.groupDescription}</p>
                                         <p class="card-text">Members: ${group.memberCount}</p>
+                                        <c:choose>
+                                            <c:when test="${group.pending}">
+                                                <button class="btn btn-secondary w-100 mt-3" disabled>Pending approval</button>
+                                            </c:when>
+                                            <c:when test="${group.isBanned}">
+                                                <button class="btn btn-danger w-100 mt-3" disabled>You have been banned</button>
+                                            </c:when>
+                                            <c:when test="${group.isApproved or group.createrId == USER.userId }">
+                                                <a href="group/detail?groupId=${group.groupId}" class="btn btn-info w-100 mt-3">Access Group</a>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <a href="group/detail?groupId=${group.groupId}" class="btn btn-primary w-100 mt-3">Join Group</a>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </div>
                                 </div>
                             </c:forEach>

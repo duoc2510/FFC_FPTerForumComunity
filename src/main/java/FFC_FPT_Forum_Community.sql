@@ -538,7 +538,7 @@ SELECT
     up.Event_id,
     up.UploadPath,
     up.Post_id AS Upload_post_id,
-    (SELECT COUNT(*) FROM MemberGroup mg WHERE mg.Group_id = g.Group_id AND mg.Status = 'approved') AS memberCount -- Đếm số thành viên nhóm
+   (SELECT COUNT(*) FROM MemberGroup mg WHERE mg.Group_id = g.Group_id AND mg.Status IN ('approved', 'host')) AS memberCount -- Đếm số thành viên nhóm
 FROM [Group] g
 LEFT JOIN MemberGroup mg ON g.Group_id = mg.Group_id
 LEFT JOIN Users u ON mg.User_id = u.User_id
