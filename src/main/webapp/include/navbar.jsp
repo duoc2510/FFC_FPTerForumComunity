@@ -12,7 +12,7 @@
 
 
         <ul class="navbar-nav w-100" style="max-width: 400px">
-            <form class="d-flex" action="${pageContext.request.contextPath}/search" method="get">
+            <form class="d-flex" action="${pageContext.request.contextPath}/search" method="post">
                 <input type="text" class="form-control me-2" name="query" placeholder="Search for user name or group name" aria-label="Search" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Search for user name or group name">
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>

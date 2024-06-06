@@ -340,7 +340,7 @@ SELECT
     g.Group_name,
     g.Group_description,
     g.Image,
-	g.Status,
+	g.Status 
     mg.MemberGroup_id,
 	mg.Status AS Group_status,
     u.User_id,

@@ -64,31 +64,21 @@ public class User_search extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String query = request.getParameter("query");
-        if (query == null || query.trim().isEmpty()) {
-            query = "";
-        }
-        String lowercaseQuery = removeDiacritics(query.toLowerCase());
-
-        List<User> allUsers = User_DB.getAllUsers(); // Assume this method is implemented
-        List<Group> allGroups = Group_DB.getAllGroups(); // Assume this method is implemented
-
-        List<User> filteredUsers = allUsers.stream()
-                .filter(user -> removeDiacritics(user.getUserFullName().toLowerCase()).contains(lowercaseQuery))
-                .collect(Collectors.toList());
-
-        List<Group> filteredGroups = allGroups.stream()
-                .filter(group -> removeDiacritics(group.getGroupName().toLowerCase()).contains(lowercaseQuery) && !"inactive".equalsIgnoreCase(group.getStatus()))
-                .collect(Collectors.toList());
-
-        HttpSession session = request.getSession();
-        session.setAttribute("filteredUsers", filteredUsers);
-        session.setAttribute("filteredGroups", filteredGroups);
-
-        request.getRequestDispatcher("/user/searchResult.jsp").forward(request, response);
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        //        int groupId = Integer.parseInt(request.getParameter("groupId"));
+//
+//        boolean success = Group_DB.joinGroup(userId, groupId);
+//
+//        if (success) {
+//            session.setAttribute("message", "You have successfully registered to join the group. Please wait for approval.");
+//            response.sendRedirect("search"); // Redirect to group details page
+//        } else {
+//            session.setAttribute("error", "Failed to join the group. Please try again.");
+//            response.sendRedirect("search"); // Redirect back to groups page with error
+//        }
     }
-     public static String removeDiacritics(String s) {
+
+    public static String removeDiacritics(String s) {
         String normalized = Normalizer.normalize(s, Normalizer.Form.NFD);
         Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
         return pattern.matcher(normalized).replaceAll("");
@@ -105,7 +95,45 @@ public class User_search extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+      String query = request.getParameter("query");
+        HttpSession session = request.getSession(false);
+        if (query == null || query.trim().isEmpty()) {
+            query = "";
+        }
+
+        User userPersonal = (User) request.getSession().getAttribute("USER");
+        int userId = userPersonal.getUserId();
+
+        
+        System.out.println("Original query: " + query);
+        String lowercaseQuery = removeDiacritics(query.toLowerCase());
+        System.out.println("Processed query: " + lowercaseQuery);
+
+        List<User> allUsers = User_DB.getAllUsers(); // Assume this method is implemented
+        List<Group> allGroups = Group_DB.getAllGroups(); // Assume this method is implemented
+
+        List<User> filteredUsers = allUsers.stream()
+                .filter(user -> removeDiacritics(user.getUserFullName().toLowerCase()).contains(lowercaseQuery))
+                .collect(Collectors.toList());
+
+        List<Group> filteredGroups = allGroups.stream()
+                .filter(group -> removeDiacritics(group.getGroupName().toLowerCase()).contains(lowercaseQuery) && !"inactive".equalsIgnoreCase(group.getStatus()))
+                .collect(Collectors.toList());
+        
+        for (Group group : filteredGroups) {
+            boolean isPending = Group_DB.isUserPendingApproval(userId, group.getGroupId());
+            boolean isBanned = Group_DB.isUserBan(userId, group.getGroupId());
+            boolean isApproved = Group_DB.isUserApproved(userId, group.getGroupId());
+            group.setPending(isPending);
+            group.setIsBanned(isBanned);
+            group.setIsApproved(isApproved);
+
+        }
+       
+        session.setAttribute("filteredUsers", filteredUsers);
+        session.setAttribute("filteredGroups", filteredGroups);
+
+        request.getRequestDispatcher("/user/searchResult.jsp").forward(request, response);
     }
 
     /**

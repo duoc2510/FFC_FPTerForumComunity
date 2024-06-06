@@ -23,6 +23,7 @@ public class Group {
     private int memberCount;
     private boolean isPending;
     private boolean isBanned;
+    private boolean isApproved;
     private String status;
     
     public Group(int groupId, int createrId, String groupName, String groupDescription, List<Group_member> groupMember, List<Post> post, List<Comment> comments, List<Upload> upload, String image, int memberCount, String status) {
@@ -159,6 +160,16 @@ public class Group {
     public void setIsBanned(boolean isBanned) {
         this.isBanned = isBanned;
     }
+
+
+    public boolean isIsApproved() {
+        return isApproved;
+    }
+
+    public void setIsApproved(boolean isApproved) {
+        this.isApproved = isApproved;
+    }
+    
 
     public String getStatus() {
         return status;
