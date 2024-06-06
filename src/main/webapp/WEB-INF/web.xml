@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="5.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd">
-    <!-- Context Parameters -->
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>/WEB-INF/applicationContext.xml</param-value>
     </context-param>
-    <!-- Listener -->
+    
     <filter>
         <filter-name>AuthenticateFilter</filter-name>
         <filter-class>view.AuthenticateFilter</filter-class>
@@ -16,85 +15,134 @@
     </filter-mapping>
     <filter-mapping>
         <filter-name>AuthenticateFilter</filter-name>
+        <url-pattern>/profile/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>AuthenticateFilter</filter-name>
         <url-pattern>/marketplace/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>AuthenticateFilter</filter-name>
-        <url-pattern>/profile/*</url-pattern>
+        <url-pattern>/*</url-pattern>
     </filter-mapping>
+    
     <listener>
         <description>ServletContextListener</description>
         <listener-class>model.DAO.DBListener</listener-class>
     </listener>
-    <!-- Servlets -->
+    
+    <!-- Các servlet -->
     <servlet>
-        <servlet-name>Post_comment</servlet-name>
+        <servlet-name>User_marketplace</servlet-name>
+        <servlet-class>controller.User_marketplace</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>PostComment</servlet-name>
         <servlet-class>controller.Post_comment</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>User_viewpost</servlet-name>
-        <servlet-class>controller.User_postView</servlet-class>
+        <servlet-name>UserViewPost</servlet-name>
+        <servlet-class>controller.Post_postView</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>User_register</servlet-name>
-        <servlet-class>controller.User_register</servlet-class>
+        <servlet-name>UserRegister</servlet-name>
+        <servlet-class>controller.User_authRegister</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>User_logout</servlet-name>
-        <servlet-class>controller.User_logout</servlet-class>
+        <servlet-name>UserLogout</servlet-name>
+        <servlet-class>controller.User_authLogout</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>User_profile</servlet-name>
+        <servlet-name>UserProfile</servlet-name>
         <servlet-class>controller.User_profile</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>User_profileSetting</servlet-name>
+        <servlet-name>UserProfileSetting</servlet-name>
         <servlet-class>controller.User_profileSetting</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>User_changePass</servlet-name>
+        <servlet-name>UserChangePass</servlet-name>
         <servlet-class>controller.User_passChange</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>User_VerifyEmail</servlet-name>
+        <servlet-name>UserVerifyEmail</servlet-name>
         <servlet-class>controller.User_emailVerify</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>home</servlet-name>
+        <servlet-name>Home</servlet-name>
         <servlet-class>view.home</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>User_LostAccount</servlet-name>
+        <servlet-name>UserLostAccount</servlet-name>
         <servlet-class>controller.User_lostAccount</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>User_NewPass</servlet-name>
+        <servlet-name>UserNewPass</servlet-name>
         <servlet-class>controller.User_NewPass</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>LoginGoogleHandler</servlet-name>
-        <servlet-class>controller.User_loginGoogle</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>User_Rank</servlet-name>
-        <servlet-class>controller.User_Rank</servlet-class>
+        <servlet-class>controller.User_authLogin</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>TopVip</servlet-name>
-        <servlet-class>controller.User_topVip</servlet-class>
+        <servlet-class>controller.User_rankViewTop</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>User_MyRank</servlet-name>
+        <servlet-name>UserMyRank</servlet-name>
         <servlet-class>controller.User_rankView</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>Post_addpost</servlet-name>
-        <servlet-class>controller.Post_addUser</servlet-class>
+        <servlet-name>PostAddPost</servlet-name>
+        <servlet-class>controller.Post_userAdd</servlet-class>
     </servlet>
-    <!-- Servlet Mappings -->
     <servlet>
-        <servlet-name>User_marketplace</servlet-name>
-        <servlet-class>controller.User_marketplace</servlet-class>
+        <servlet-name>UserInGroup</servlet-name>
+        <servlet-class>controller.Group_detail</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Post_managerAprrove</servlet-name>
+        <servlet-class>controller.Post_managerAprrove</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>User_rank</servlet-name>
+        <servlet-class>controller.User_rank</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>User_lostAccount</servlet-name>
+        <servlet-class>controller.User_lostAccount</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>User_groupEdit</servlet-name>
+        <servlet-class>controller.Group_edit</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>User_groupOut</servlet-name>
+        <servlet-class>controller.User_groupOut</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>User_groupViewPostMember</servlet-name>
+        <servlet-class>controller.Group_userProfile</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Topic_deleteTopic</servlet-name>
+        <servlet-class>controller.Topic_deleteTopic</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Topic_addTopic</servlet-name>
+        <servlet-class>controller.Topic_addTopic</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Event_addEvent</servlet-name>
+        <servlet-class>controller.Event_addEvent</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Event_eventList</servlet-name>
+        <servlet-class>controller.Event_eventList</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Group_list</servlet-name>
+        <servlet-class>controller.Group_list</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Shop_allshop</servlet-name>
@@ -128,48 +176,50 @@
         <servlet-name>Shop_history</servlet-name>
         <servlet-class>controller.Shop_history</servlet-class>
     </servlet>
+    
+    <!-- Mapping cho các servlet -->
     <servlet-mapping>
-        <servlet-name>Post_comment</servlet-name>
+        <servlet-name>PostComment</servlet-name>
         <url-pattern>/comment</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>User_viewpost</servlet-name>
+        <servlet-name>UserViewPost</servlet-name>
         <url-pattern>/post</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>User_register</servlet-name>
+        <servlet-name>UserRegister</servlet-name>
         <url-pattern>/register</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>User_logout</servlet-name>
+        <servlet-name>UserLogout</servlet-name>
         <url-pattern>/logout</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>User_profile</servlet-name>
+        <servlet-name>UserProfile</servlet-name>
         <url-pattern>/profile</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>User_profileSetting</servlet-name>
+        <servlet-name>UserProfileSetting</servlet-name>
         <url-pattern>/profile/setting</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>User_changePass</servlet-name>
+        <servlet-name>UserChangePass</servlet-name>
         <url-pattern>/profile/changepass</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>User_VerifyEmail</servlet-name>
+        <servlet-name>UserVerifyEmail</servlet-name>
         <url-pattern>/verifyemail</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>home</servlet-name>
+        <servlet-name>Home</servlet-name>
         <url-pattern>/home</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>User_LostAccount</servlet-name>
+        <servlet-name>UserLostAccount</servlet-name>
         <url-pattern>/lostaccount</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>User_NewPass</servlet-name>
+        <servlet-name>UserNewPass</servlet-name>
         <url-pattern>/newpass</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
@@ -177,22 +227,61 @@
         <url-pattern>/logingooglehandler</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>User_MyRank</servlet-name>
-        <url-pattern>/rank/userrank</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>User_Rank</servlet-name>
-        <url-pattern>/rank</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>TopVip</servlet-name>
         <url-pattern>/rank/topvip</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>Post_addpost</servlet-name>
+        <servlet-name>UserMyRank</servlet-name>
+        <url-pattern>/rank/userrank</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PostAddPost</servlet-name>
         <url-pattern>/addpost</url-pattern>
     </servlet-mapping>
-    <!-- Welcome File List -->
+    <servlet-mapping>
+        <servlet-name>UserInGroup</servlet-name>
+        <url-pattern>/group/detail</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Post_managerAprrove</servlet-name>
+        <url-pattern>/manager/postAprrove</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>User_rank</servlet-name>
+        <url-pattern>/rank</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>User_lostAccount</servlet-name>
+        <url-pattern>/lostAccount</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Topic_deleteTopic</servlet-name>
+        <url-pattern>/deleteTopic</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Topic_addTopic</servlet-name>
+        <url-pattern>/addTopic</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Event_addEvent</servlet-name>
+        <url-pattern>/addEvent</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Event_eventList</servlet-name>
+        <url-pattern>/listEvent</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>User_groupEdit</servlet-name>
+        <url-pattern>/group/edit</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Group_list</servlet-name>
+        <url-pattern>/group</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>User_groupViewPostMember</servlet-name>
+        <url-pattern>/group/profile</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>User_marketplace</servlet-name>
         <url-pattern>/marketplace</url-pattern>
@@ -229,6 +318,8 @@
         <servlet-name>Shop_history</servlet-name>
         <url-pattern>/marketplace/history</url-pattern>
     </servlet-mapping>
+    
+    <!-- Danh sách file chào mừng -->
     <welcome-file-list>
         <welcome-file>home</welcome-file>
     </welcome-file-list>

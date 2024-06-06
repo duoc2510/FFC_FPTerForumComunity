@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller;
 
 import com.google.gson.Gson;
@@ -24,21 +20,8 @@ import org.apache.http.client.fluent.Form;
 import util.Constants;
 import util.UserGoogleDto;
 
-/**
- *
- * @author Admin
- */
-public class User_loginGoogle extends HttpServlet {
+public class User_authLogin extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String code = request.getParameter("code");
@@ -78,7 +61,7 @@ public class User_loginGoogle extends HttpServlet {
             request.getSession().setAttribute("ROLE", role);
             request.setAttribute("roleMessage", message);
             request.setAttribute("userInfo", userInfo);
-            request.getRequestDispatcher("/auth/role.jsp").forward(request, response);
+            response.sendRedirect("home");
         } else {
             String msg = "Email account has not been created yet! ";
             request.setAttribute("message", msg);
@@ -146,10 +129,6 @@ public class User_loginGoogle extends HttpServlet {
                         message = "Welcome, Manager!";
                         break;
                     case 3:
-                        role = "HOST GROUP";
-                        message = "Welcome, User!";
-                        break;
-                    case 4:
                         role = "ADMIN";
                         message = "Welcome, Admin!";
                         break;
@@ -158,7 +137,7 @@ public class User_loginGoogle extends HttpServlet {
                 request.getSession().setAttribute("ROLE", role);
                 request.setAttribute("roleMessage", message);
                 request.setAttribute("userInfo", user);
-                request.getRequestDispatcher("/auth/role.jsp").forward(request, response);
+                response.sendRedirect("home");
 
             }
         } else {
@@ -181,47 +160,15 @@ public class User_loginGoogle extends HttpServlet {
         String identify = request.getParameter("identify");
         String password = request.getParameter("password");
         String rememberMe = request.getParameter("rememberMe");
-
         User user = User.login(identify, password);
         User userInfo = User_DB.getUserByEmailorUsername(identify);
         Shop_DB sdb = new Shop_DB();
-
         if (user != null) {
             Order order = sdb.getOrderHasStatusIsNullByUserID(userInfo.getUserId());
             ArrayList<OrderItem> orderitemlist = sdb.getAllOrderItemByOrderIdHasStatusIsNull(order.getOrder_ID());
-            int userRole = user.getUserRole();
-            String role = null;
-            String message = null;
-            switch (userRole) {
-                case 0:
-                    message = "Your account has been banned.";
-                    request.setAttribute("message", message);
-                    request.getRequestDispatcher("/auth/login.jsp").forward(request, response);
-                    return;
-                case 1:
-                    role = "USER";
-                    message = "Welcome, User!";
-                    break;
-                case 2:
-                    role = "MANAGER";
-                    message = "Welcome, Manager!";
-                    break;
-                case 3:
-                    role = "HOST GROUP";
-                    message = "Welcome, User!";
-                    break;
-                case 4:
-                    role = "ADMIN";
-                    message = "Welcome, Admin!";
-                    break;
-            }
+            request.getSession().setAttribute("USER", user);
             request.getSession().setAttribute("ORDER", order);
             request.getSession().setAttribute("ORDERITEMLIST", orderitemlist);
-            request.getSession().setAttribute("USER", user);
-            request.getSession().setAttribute("ROLE", role);
-            request.setAttribute("roleMessage", message);
-            request.setAttribute("userInfo", userInfo);
-
             if ("true".equals(rememberMe)) {
                 Cookie identifyCookie = new Cookie("identify", identify);
                 Cookie passwordCookie = new Cookie("password", password);
@@ -245,13 +192,17 @@ public class User_loginGoogle extends HttpServlet {
                 response.addCookie(rememberMeCookie);
             }
 
-            // Lấy đường dẫn trước đó từ session và xoá nó sau khi đã sử dụng
-            String redirectURL = (String) request.getSession().getAttribute("redirectURL");
-            if (redirectURL != null && !redirectURL.isEmpty()) {
-                request.getSession().removeAttribute("redirectURL");
-                response.sendRedirect(response.encodeRedirectURL(redirectURL));
+            // Kiểm tra nếu userFullName là null
+            if (user.getUserFullName() == null) {
+                response.sendRedirect(response.encodeRedirectURL(request.getContextPath() + "/profile/setting")); // Redirect đến trang cập nhật hồ sơ
             } else {
-                response.sendRedirect(response.encodeRedirectURL(request.getContextPath() + "/home"));
+                String redirectURL = (String) request.getSession().getAttribute("redirectURL");
+                if (redirectURL != null && !redirectURL.isEmpty()) {
+                    request.getSession().removeAttribute("redirectURL");
+                    response.sendRedirect(response.encodeRedirectURL(redirectURL));
+                } else {
+                    response.sendRedirect(response.encodeRedirectURL(request.getContextPath() + "/home"));
+                }
             }
         } else {
             String msg = "Invalid email or password";
@@ -260,14 +211,9 @@ public class User_loginGoogle extends HttpServlet {
         }
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
+    }
 
 }

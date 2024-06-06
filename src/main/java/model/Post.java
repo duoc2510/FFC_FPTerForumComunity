@@ -10,7 +10,7 @@ public class Post {
     private int groupId;
     private int topicId;
     private String content;
-    private Timestamp createDate;
+    private String createDate;
     private String status;
     private String postStatus;
     private String reason;
@@ -19,6 +19,28 @@ public class Post {
     private Timestamp commentDate; // Thêm trường commentDate
     private User user;
     private List<Comment> comments;
+
+    public Post() {
+    }
+
+    public Post(int postId, int userId, int groupId, String content, String createDate, String status) {
+        this.postId = postId;
+        this.userId = userId;
+        this.groupId = groupId;
+        this.content = content;
+        this.createDate = createDate;
+        this.status = status;
+    }
+
+    public Post(int userId, int groupId, String content, String createDate, String status, String postStatus, String uploadPath) {
+        this.userId = userId;
+        this.groupId = groupId;
+        this.content = content;
+        this.createDate = createDate;
+        this.status = status;
+        this.postStatus = postStatus;
+        this.uploadPath = uploadPath;
+    }
 
     // Constructors
     // Constructor cho trường hợp không có commentDate
@@ -41,7 +63,7 @@ public class Post {
     }
 
     // Constructor cho trường hợp có commentDate
-    public Post(int postId, int userId, int groupId, int topicId, String content, Timestamp createDate, String status, String postStatus, String reason, String uploadPath, String comment, Timestamp commentDate) {
+    public Post(int postId, int userId, int groupId, int topicId, String content, String createDate, String status, String postStatus, String reason, String uploadPath, String comment, Timestamp commentDate) {
         this.postId = postId;
         this.userId = userId;
         this.groupId = groupId;
@@ -56,7 +78,7 @@ public class Post {
         this.commentDate = commentDate;
     }
 
-    public Post(int postId, int userId, int groupId, int topicId, String content, Timestamp createDate, String status, String postStatus, String reason, String uploadPath) {
+    public Post(int postId, int userId, int groupId, int topicId, String content, String createDate, String status, String postStatus, String reason, String uploadPath) {
         this.postId = postId;
         this.userId = userId;
         this.groupId = groupId;
@@ -126,11 +148,11 @@ public class Post {
         this.content = content;
     }
 
-    public Timestamp getCreateDate() {
+    public String getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(Timestamp createDate) {
+    public void setCreateDate(String createDate) {
         this.createDate = createDate;
     }
 

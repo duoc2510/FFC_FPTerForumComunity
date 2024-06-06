@@ -4,23 +4,22 @@
  */
 package controller;
 
+import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import model.DAO.User_DB;
-import model.User;
+import java.util.List;
+import model.DAO.Topic_DB;
+import model.Topic;
 
 /**
  *
  * @author Admin
  */
-public class User_topVip extends HttpServlet {
+public class Topic_deleteTopic extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,10 +38,10 @@ public class User_topVip extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet TopVip</title>");
+            out.println("<title>Servlet Topic_deleteTopic</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet TopVip at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet Topic_deleteTopic at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -60,17 +59,19 @@ public class User_topVip extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        User_DB userDB = new User_DB();
-        ArrayList<User> userlist = userDB.getAllUsers();
-        userlist.removeIf(user -> user.getUserRole() == 0);
-        Collections.sort(userlist, new Comparator<User>() {
-            @Override
-            public int compare(User u1, User u2) {
-                return Integer.compare(u2.getUserScore(), u1.getUserScore()); // Sắp xếp giảm dần
-            }
-        });
-        request.setAttribute("userlist", userlist);
-        request.getRequestDispatcher("/rank/topvip.jsp").forward(request, response);
+        // Lấy topicId từ request
+        int topicId = Integer.parseInt(request.getParameter("topicId"));
+
+        // Gọi phương thức xóa từ lớp Topic_DB
+        boolean deleteSuccess = Topic_DB.deleteTopic(topicId);
+
+        if (deleteSuccess) {
+            // Nếu xóa thành công, chuyển hướng về trang danh sách chủ đề
+            response.sendRedirect("home?successMessage=Topic+deleted+successfully");
+        } else {
+            // Nếu xảy ra lỗi, chuyển hướng về trang danh sách chủ đề với thông báo lỗi
+            response.sendRedirect("home?errorMessage=Failed+to+delete+topic");
+        }
     }
 
     /**
@@ -84,7 +85,18 @@ public class User_topVip extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+
+    }
+
+    private static class Response {
+
+        boolean success;
+        String message;
+
+        Response(boolean success, String message) {
+            this.success = success;
+            this.message = message;
+        }
     }
 
     /**

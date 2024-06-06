@@ -16,7 +16,7 @@ import jakarta.servlet.http.HttpSession;
  *
  * @author ThanhDuoc
  */
-public class User_logout extends HttpServlet {
+public class User_authLogout extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>

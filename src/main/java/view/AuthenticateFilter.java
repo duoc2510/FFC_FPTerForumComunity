@@ -20,7 +20,6 @@ public class AuthenticateFilter implements Filter {
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
@@ -51,6 +50,12 @@ public class AuthenticateFilter implements Filter {
                     return;
                 }
             }
+        }
+        // Kiểm tra nếu người dùng đã đăng nhập và cố truy cập vào trang login hoặc register
+        if ((uri.equals(contextPath + "/login") || uri.equals(contextPath + "/register")) && user != null) {
+            // Chuyển hướng đến trang chủ
+            httpResponse.sendRedirect(contextPath + "/home");
+            return;
         }
 
         // Tiếp tục với các filter khác hoặc servlet đích

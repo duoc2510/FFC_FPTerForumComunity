@@ -4,23 +4,27 @@
  */
 package controller;
 
+import jakarta.servlet.http.HttpServlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.List;
+import model.Comment;
+import model.DAO.Comment_DB;
+import model.DAO.Group_DB;
+import model.DAO.Post_DB;
 import model.DAO.User_DB;
+import model.Post;
 import model.User;
-import static util.Email.sendEmail;
 
 /**
  *
- * @author Admin
+ * @author PC
  */
-public class User_LostAccount extends HttpServlet {
+public class Group_userProfile extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,10 +43,10 @@ public class User_LostAccount extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet User_LostAccount</title>");
+            out.println("<title>Servlet User_groupViewPostMember</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet User_LostAccount at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet User_groupViewPostMember at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -60,8 +64,34 @@ public class User_LostAccount extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        request.getRequestDispatcher("/auth/lost-account.jsp").forward(request, response);
+        // Get userId and groupId from request parameters
+        int userId = Integer.parseInt(request.getParameter("userId"));
+        int groupId = Integer.parseInt(request.getParameter("groupId"));
+        // Fetch the user
+        User user = User_DB.getUserById(userId);
+
+        // Fetch the posts of the user in the specified group
+        List<Post> posts = Group_DB.getUserPostsInGroup(userId, groupId);
+        for (Post post : posts) {
+            User author = Post_DB.getUserByPostId(post.getPostId());
+            post.setUser(author);
+
+            List<Comment> comments = Comment_DB.getCommentsByPostId(post.getPostId());
+            for (Comment comment : comments) {
+                User commentUser = User_DB.getUserById(comment.getUserId());
+                if (commentUser != null) {
+                    comment.setUser(commentUser);
+                }
+            }
+            post.setComments(comments);
+        }
+        request.setAttribute("posts", posts);
+
+        // Set user and userPosts as request attributes
+        request.setAttribute("user", user);
+
+        // Forward to the JSP page to display the posts
+        request.getRequestDispatcher("/group/listPostOfMember.jsp").forward(request, response);
     }
 
     /**
@@ -75,32 +105,7 @@ public class User_LostAccount extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
-        String email = request.getParameter("identify");
-        User_DB userDB = new User_DB();
-        String msg;
-        User u = null;
-        ArrayList<User> userlist = userDB.getAllUsers();
-        boolean checkMail = false;
-        for (User us : userlist) {
-            if (us.getUserEmail().equals(email)) {
-                u = us;
-                checkMail = true;
-                break;
-            }
-        }
-        if (checkMail == true) {
-            int x = new Random().nextInt(90000) + 10000;
-            sendEmail(email, x);
-            request.setAttribute("x", x);
-            request.setAttribute("email", email);
-            request.getRequestDispatcher("/auth/verifyaccount.jsp").forward(request, response);
-
-        } else {
-            msg = "Email not found!";
-            request.setAttribute("message", msg);
-            request.getRequestDispatcher("/auth/lost-account.jsp").forward(request, response);
-        }
+        processRequest(request, response);
     }
 
     /**

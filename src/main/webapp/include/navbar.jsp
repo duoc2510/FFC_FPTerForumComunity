@@ -1,10 +1,10 @@
 <style>
-     .avatar-cover{
+    .avatar-cover{
         width: 35px;
         height: 35px;
         object-fit: cover;
     }
-    </style>
+</style>
 
 <header class="app-header">
     <nav class="navbar navbar-expand-lg navbar-light">
@@ -31,43 +31,50 @@
                             <i class="ti ti-bell-ringing"></i>
                             <div class="notification bg-primary rounded-circle"></div>
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink" style="left: -10vw !important">
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink" >
                             <li><a class="dropdown-item" href="#">Notification 1</a></li>
                             <li><a class="dropdown-item" href="#">Notification 2</a></li>
                             <li><a class="dropdown-item" href="#">Notification 3</a></li>
                         </ul>
                     </li>
                 </div>
-                <!--loop to print all thong bao--> 
-                <%--<%@ include file="../user/notification.jsp" %>--%>
 
                 <li class="nav-item dropdown">
                     <a class="nav-link nav-icon-hover" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown"
                        aria-expanded="false">
                         <img src="${pageContext.request.contextPath}/${USER.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
-                     
                     </a>
                     <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
                         <div class="message-body">
-                            <a href="${pageContext.request.contextPath}/profile" class="d-flex align-items-center gap-2 dropdown-item">
-                                 <img src="${pageContext.request.contextPath}/${USER.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
-                                <p class="mb-0 fs-3">${USER.username}</p>
+                            <a href="${pageContext.request.contextPath}/profile?username=${USER.username}" class="d-flex align-items-center gap-2 dropdown-item">
+                                <img src="${pageContext.request.contextPath}/${USER.userAvatar}" alt="" width="40" class="rounded-circle avatar-cover">
+                                <p class="mb-0 fs-6">
+                                <c:choose>
+                                    <c:when test="${USER.userRole == 1}">
+                                        ${USER.username}
+                                    </c:when>
+                                    <c:when test="${USER.userRole == 2}">
+                                        Manager
+                                    </c:when>
+                                    <c:when test="${USER.userRole == 3}">
+                                        Admin
+                                    </c:when>
+                                </c:choose>
+                                </p>
                             </a>
-                            <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
-                                <i class="ti ti-mail fs-6"></i>
+                            <a href="${pageContext.request.contextPath}/profile/setting" class="d-flex align-items-center gap-2 dropdown-item">
+                                <i class="ti ti-user-circle fs-6"></i>
                                 <p class="mb-0 fs-3">My Account</p>
                             </a>
                             <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
-                                <i class="ti ti-list-check fs-6"></i>
-                                <p class="mb-0 fs-3">My Task</p>
+                                <i class="ti ti-wallet fs-6"></i>
+                                <p class="mb-0 fs-3">Wallet: ${USER.userWallet}</p>
                             </a>
-                            <a href="${pageContext.request.contextPath}/logout" class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a>
+                            <a href="${pageContext.request.contextPath}/logout" class="btn btn-outline-danger mx-3 mt-2 d-block">Logout</a>
                         </div>
                     </div>
                 </li>
-
             </ul>
-
         </div>
     </nav>
 </header>

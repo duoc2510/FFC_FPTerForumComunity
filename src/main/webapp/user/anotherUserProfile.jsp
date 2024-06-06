@@ -1,0 +1,210 @@
+
+<%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
+<%@ include file="../include/header.jsp" %>
+<body>
+    <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+         data-sidebar-position="fixed" data-header-position="fixed">
+        <%@ include file="../include/slidebar.jsp" %>
+        <div class="body-wrapper">
+            <%@ include file="../include/navbar.jsp" %>
+            <div class="container-fluid pb-2">
+                <div class="row ">
+                    <div id ="profile-wrapper" >
+                        <style>
+                            .post {
+                                border: 1px solid #ccc;
+                                border-radius: 8px;
+                                padding: 10px;
+                                margin-bottom: 20px;
+                            }
+
+                            .post-header {
+                                display: flex;
+                                align-items: center;
+                            }
+
+                            .avatar {
+                                width: 40px;
+                                height: 40px;
+                                border-radius: 50%;
+                                margin-right: 10px;
+                            }
+
+                            .user-info {
+                                display: flex;
+                                flex-direction: column;
+                            }
+
+                            .user-name {
+                                margin: 0;
+                            }
+
+                            .post-status {
+                                margin: 5px 0 0;
+                                color: #888;
+                                font-size: 14px;
+                            }
+
+                            .post-content {
+                                margin-top: 10px;
+                            }
+
+                            .post-content p {
+                                margin: 0;
+                            }
+
+                            .post-image {
+                                max-width: 100%;
+                                height: auto;
+                                margin-top: 10px;
+                            }
+                            .img-preview {
+                                margin-top: 20px;
+                            }
+                            .img-preview img {
+                                max-width: 100%;
+                                max-height: 300px;
+                            }
+                        </style>
+                        <div class="bg-white shadow rounded overflow-hidden ">
+                            <div class="px-4 py-4 cover cover " style="background: url(${pageContext.request.contextPath}/upload/deli-2.png)">
+                                <div class="media align-items-end profile-head">
+                                    <div class="profile mr-3 d-flex justify-content-between align-items-end">
+                                        <img src="${pageContext.request.contextPath}/${user.userAvatar}" class="rounded-circle img-thumbnail" style="object-fit: cover;">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-light pt-4 px-4 d-flex justify-content-between text-center ">
+                                <div class="media-body mb-5 text-white">
+                                    <h4 class="mt-0 mb-0">${user.userFullName}</h4>     
+                                </div>
+                                <ul class="list-inline mb-0">
+                                    <li class="list-inline-item">
+                                        <h5 class="font-weight-bold mb-0 d-block">${postCount}</h5><small class="text-muted"><i class="fas fa-image mr-1"></i>Posts</small>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <h5 class="font-weight-bold mb-0 d-block">745</h5><small class="text-muted"><i class="fas fa-user mr-1"></i>Followers</small>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <h5 class="font-weight-bold mb-0 d-block">340</h5><small class="text-muted"><i class="fas fa-user mr-1"></i>Following</small>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <h5 class="font-weight-bold mb-0 d-block">${user.userScore}</h5><small class="text-muted"><i class="fas fa-image mr-1"></i>Score</small>
+                                    </li>
+                                    <li class="list-inline-item">
+                                        <h5 class="font-weight-bold mb-0 d-block">${user.userRank}</h5><small class="text-muted"><i class="fas fa-user mr-1"></i>Rank</small>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="px-4 py-3">
+                                <p class="font-italic mb-0"><i class="ti ti-calendar"></i>Ngày tham gia: ${user.userCreateDate}</p>
+                                <p class="font-italic mb-0">Giới tính: ${user.userSex}</p>
+                                <div class="p-4 rounded shadow-sm">
+                                    <p class="font-italic mb-0">${user.userStory}<i class="ti ti-feather"></i></p>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container-fluid pt-0">
+                <div class="row form-settings bg-white shadow rounded py-4 px-4 d-flex justify-content-between ">
+                    <div class="p0">
+                        <h5 class="mb-2">Bài viết của ${user.userFullName}</h5>
+                    </div>
+                    <div>
+                        <c:forEach var="post" items="${posts}">
+                            <c:if test="${post.user.userId == user.userId}">
+                                <c:if test="${post.postStatus eq'Public'}">
+                                    <%@include file="post.jsp" %>
+                                </c:if>                                
+                            </c:if>
+                        </c:forEach>
+                        <%@include file="modalpost.jsp" %>
+                        <script>
+                            function editComment(commentId, content) {
+                                document.getElementById('editCommentId').value = commentId; // Thiết lập giá trị ID của bình luận vào input ẩn
+                                document.getElementById('editCommentContent').value = content; // Thiết lập nội dung bình luận vào textarea
+
+                                var editCommentModal = new bootstrap.Modal(document.getElementById('editCommentModal')); // Tạo modal sử dụng Bootstrap
+                                editCommentModal.show(); // Hiển thị modal chỉnh sửa bình luận
+                            }
+
+                            document.getElementById('postImage').addEventListener('change', handlePostImageChange);
+
+                            function handlePostImageChange(event) {
+                                const file = event.target.files[0];
+                                const previewContainer = document.getElementById('imgPreview');
+                                const previewDefaultText = previewContainer.querySelector('p');
+
+                                // Xóa ảnh hiện tại nếu có
+                                const existingPreviewImage = previewContainer.querySelector('img');
+                                if (existingPreviewImage) {
+                                    previewContainer.removeChild(existingPreviewImage);
+                                }
+
+                                if (file) {
+                                    const reader = new FileReader();
+                                    const previewImage = document.createElement('img');
+
+                                    previewDefaultText.style.display = 'none';
+                                    previewImage.style.display = 'block';
+
+                                    reader.addEventListener('load', function () {
+                                        previewImage.setAttribute('src', this.result);
+                                    });
+
+                                    reader.readAsDataURL(file);
+                                    previewContainer.appendChild(previewImage);
+                                } else {
+                                    previewDefaultText.style.display = null;
+                                }
+                            }
+
+                            function editPost(postId, content, status, uploadPath) {
+                                document.getElementById('editPostId').value = postId;
+                                document.getElementById('editPostContent').value = content;
+                                document.getElementById('editPostStatus').value = "Public";
+                                document.getElementById('existingUploadPath').value = uploadPath ? uploadPath : 'null';
+
+                                var currentUploadPathImg = document.getElementById('currentUploadPath');
+                                if (uploadPath && uploadPath !== 'null') {
+                                    currentUploadPathImg.src = uploadPath;
+                                    currentUploadPathImg.style.display = 'block';
+                                } else {
+                                    currentUploadPathImg.style.display = 'none';
+                                }
+
+                                var editPostModal = new bootstrap.Modal(document.getElementById('editPostModal'));
+                                editPostModal.show();
+
+                                const editPostImageInput = document.getElementById('editPostImage');
+                                editPostImageInput.removeEventListener('change', handleEditPostImageChange);
+                                editPostImageInput.addEventListener('change', handleEditPostImageChange);
+                            }
+
+                            function handleEditPostImageChange(event) {
+                                const file = event.target.files[0];
+                                const currentUploadPathImg = document.getElementById('currentUploadPath');
+
+                                if (file) {
+                                    const reader = new FileReader();
+                                    reader.addEventListener('load', function () {
+                                        currentUploadPathImg.src = this.result;
+                                        currentUploadPathImg.style.display = 'block';
+                                    });
+                                    reader.readAsDataURL(file);
+                                } else {
+                                    currentUploadPathImg.style.display = 'none';
+                                }
+                            }
+
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+</body>
+<%@ include file="../include/footer.jsp" %>

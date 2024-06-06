@@ -15,9 +15,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Comment;
+import model.DAO.Comment_DB;
 import model.DAO.Post_DB;
+import model.DAO.User_DB;
 import model.Post;
 import model.User;
 
@@ -28,7 +32,7 @@ import model.User;
 @MultipartConfig(
         maxFileSize = 1024 * 1024 * 10 // 10 MB
 )
-public class Post_addUser extends HttpServlet {
+public class Post_userAdd extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -94,8 +98,8 @@ public class Post_addUser extends HttpServlet {
         int userId = user.getUserId();
         String postStatus = request.getParameter("postStatus");
         String postContent = request.getParameter("postContent");
-
         String uploadPath = null;
+
         Part filePart = request.getPart("postImage");
         if (filePart != null && filePart.getSize() > 0) {
             String applicationPath = request.getServletContext().getRealPath("");
@@ -110,15 +114,45 @@ public class Post_addUser extends HttpServlet {
 
             uploadPath = uploadDirName + "/" + fileName;
         }
+        Post post = new Post();
 
         // Tạo bài đăng mới
-        Post post = new Post(userId, postContent, "Active", postStatus, uploadPath);
-
         try {
-            Post_DB.addPostUser(post);
-            response.sendRedirect("profile");
+            String groupIdStr = request.getParameter("groupId");
+            if (groupIdStr != null && !groupIdStr.isEmpty()) {
+                // Nếu groupId khác null, thêm bài đăng cho group
+                int groupId = Integer.parseInt(groupIdStr);
+                post.setUserId(userId);
+                post.setGroupId(groupId);
+                post.setContent(postContent);
+                post.setUploadPath(uploadPath);
+                Post_DB.addPostGroup(post);
+            } else {
+                post.setUserId(userId);
+                post.setContent(postContent);
+                post.setPostStatus(postStatus);
+                post.setUploadPath(uploadPath);
+                Post_DB.addPostUser(post);
+            }
+            List<Post> posts = Post_DB.getPostsWithUploadPath();
+            for (Post p : posts) {
+                User author = Post_DB.getUserByPostId(p.getPostId());
+                p.setUser(author);
+                List<Comment> comments = Comment_DB.getCommentsByPostId(p.getPostId());
+                for (Comment comment : comments) {
+                    User commentUser = User_DB.getUserById(comment.getUserId());
+                    if (commentUser != null) {
+                        comment.setUser(commentUser);
+                    }
+                }
+                p.setComments(comments);
+            }
+            session.setAttribute("posts", posts);
+            // Chuyển hướng người dùng về trang trước đó sau khi đăng bài thành công
+            String referer = request.getHeader("referer");
+            response.sendRedirect(referer != null ? referer : "profile");
         } catch (SQLException ex) {
-            Logger.getLogger(Post_addUser.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Post_userAdd.class.getName()).log(Level.SEVERE, null, ex);
             response.sendRedirect(request.getContextPath() + "/user/profile.jsp?errorMessage=Error adding post");
         }
     }

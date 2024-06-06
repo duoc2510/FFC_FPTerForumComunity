@@ -15,13 +15,12 @@ import java.util.Random;
 import model.DAO.User_DB;
 import model.User;
 import util.Email;
-import static util.Email.sendEmail;
 
 /**
  *
  * @author ThanhDuoc
  */
-public class User_register extends HttpServlet {
+public class User_authRegister extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>

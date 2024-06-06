@@ -9,14 +9,32 @@ package model;
  * @author ThanhDuoc
  */
 public class Group_member {
+
     private int memberGroupId;
     private int userId;
     private int groupId;
     private String status;
+    private User user;
 
     public Group_member() {
     }
-    
+
+    public Group_member(int memberGroupId, String status, User user) {
+        this.memberGroupId = memberGroupId;
+        this.status = status;
+        this.user = user;
+    }
+
+    public Group_member(int memberGroupId, User user) {
+        this.memberGroupId = memberGroupId;
+        this.user = user;
+    }
+
+    public Group_member(int memberGroupId, String status) {
+        this.memberGroupId = memberGroupId;
+        this.status = status;
+    }
+
     public Group_member(int memberGroupId, int userId, int groupId, String status) {
         this.memberGroupId = memberGroupId;
         this.userId = userId;
@@ -55,4 +73,13 @@ public class Group_member {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
 }
