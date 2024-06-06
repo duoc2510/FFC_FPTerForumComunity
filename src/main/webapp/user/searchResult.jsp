@@ -61,20 +61,16 @@
 
                                 <div class="card mb-3">
                                     <div class="card-body d-flex align-items-center">
-                                        <c:choose>
 
-                                            <c:when test="${user.userId == USER.userId}">
-                                                <a href="${pageContext.request.contextPath}/profile">
-                                                    <img src="${pageContext.request.contextPath}/${user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
-                                                </a>
-                                            </c:when>
 
-                                            <c:otherwise>
-                                                <a href="${pageContext.request.contextPath}/viewProfile?username=${user.username}">
-                                                    <img src="${pageContext.request.contextPath}/${user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
-                                                </a>
-                                            </c:otherwise>
-                                        </c:choose>
+
+
+
+                                        <a href="${pageContext.request.contextPath}/profile?username=${user.username}">
+                                            <img src="${pageContext.request.contextPath}/${user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
+                                        </a>
+
+
                                         <div>
                                             <h5 class="card-title mb-0">${user.userFullName}</h5>
                                         </div>
@@ -102,7 +98,7 @@
                                             <c:when test="${group.isBanned}">
                                                 <button class="btn btn-danger w-100 mt-3" disabled>You have been banned</button>
                                             </c:when>
-                                                <c:when test="${group.isApproved or group.createrId == USER.userId }">
+                                            <c:when test="${group.isApproved or group.createrId == USER.userId }">
                                                 <a href="inGroup?groupId=${group.groupId}" class="btn btn-info w-100 mt-3">Access Group</a>
                                             </c:when>
                                             <c:otherwise>
@@ -129,7 +125,7 @@
                                             </c:when>
 
                                             <c:otherwise>
-                                                <a href="${pageContext.request.contextPath}/viewProfile?username=${user.username}">
+                                                <a href="${pageContext.request.contextPath}/profile?username=${user.username}">
                                                     <img src="${pageContext.request.contextPath}/${user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
                                                 </a>
                                             </c:otherwise>
