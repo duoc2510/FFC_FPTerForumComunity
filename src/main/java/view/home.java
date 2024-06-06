@@ -75,7 +75,6 @@ public class home extends HttpServlet {
             topics = Topic_DB.getAllTopics();
             session.setAttribute("topics", topics);
         }
-
         // Kiểm tra nếu posts đã có trong session
         List<Post> posts = (List<Post>) session.getAttribute("posts");
         if (posts == null) {
@@ -116,13 +115,10 @@ public class home extends HttpServlet {
             response.sendRedirect("login");
             return;
         }
-
         // Nhận dữ liệu từ form
         String topicIdStr = request.getParameter("topicId");
         String content = request.getParameter("content");
-
         int topicId = Integer.parseInt(topicIdStr);
-
         // Tạo đối tượng Post
         Post post = new Post();
         post.setUserId(userId);
@@ -133,21 +129,7 @@ public class home extends HttpServlet {
         try {
             Post_DB.addPostTopic(post);
             session.setAttribute("msg", "Bài đăng đã được thêm thành công.");
-            // Làm mới danh sách posts trong session
-            List<Post> posts = Post_DB.getPostsWithUploadPath();
-            for (Post p : posts) {
-                User author = Post_DB.getUserByPostId(p.getPostId());
-                p.setUser(author);
-                List<Comment> comments = Comment_DB.getCommentsByPostId(p.getPostId());
-                for (Comment comment : comments) {
-                    User commentUser = User_DB.getUserById(comment.getUserId());
-                    if (commentUser != null) {
-                        comment.setUser(commentUser);
-                    }
-                }
-                p.setComments(comments);
-            }
-            session.setAttribute("posts", posts);
+            session.removeAttribute("posts");
         } catch (SQLException e) {
             e.printStackTrace();
             session.setAttribute("msg", "Có lỗi xảy ra khi thêm bài đăng.");
