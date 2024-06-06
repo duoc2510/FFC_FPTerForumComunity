@@ -832,4 +832,30 @@ public class Shop_DB {
         }
         return discounts;
     }
+
+    public static void updateUsageLimit(int discountId, int newUsageLimit) {
+        String sql = "UPDATE Discount SET Usage_limit = ? WHERE Discount_id = ?";
+
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(sql)) {
+            pstmt.setInt(1, newUsageLimit);
+            pstmt.setInt(2, discountId);
+
+            pstmt.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public static void updateUsageCount(int discountId, int newUsageCount) {
+        String sql = "UPDATE Discount SET Usage_count = ? WHERE Discount_id = ?";
+
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(sql)) {
+            pstmt.setInt(1, newUsageCount);
+            pstmt.setInt(2, discountId);
+
+            pstmt.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

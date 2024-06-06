@@ -13,7 +13,7 @@
         <%@ include file="../include/slidebar.jsp" %>
         <div class="body-wrapper">
             <%@ include file="../include/navbar.jsp" %>
-            <div class="container-fluid">
+            <div class="container-fluid pb-1">
                 <div class="row">
                     <div id="profile-wrapper">
                         <style>
@@ -205,15 +205,14 @@
                                         </div>   
                                     </c:if>
                                 </div>   
-                                <div class="tab-pane fade my-3" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+                                <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
                                     <h2>List Members</h2>
                                     <c:if test="${empty allMembers}">
                                         <p>No members.</p>
                                     </c:if>
-                                        
+
                                     <c:if test="${not empty allMembers}">
-                                        <table class="table table-striped">
-                                            <!--<tbody>-->
+                                        <table class="table">
                                             <thead>
                                                 <tr>            
                                                     <th scope="col">#</th>
@@ -222,38 +221,36 @@
                                                 </tr>
                                             </thead>
                                             <c:set var="counter" value="1" />
-                                            <c:forEach var="member" items="${allMembers}">
-                                                <!--<table class="table table-hover">-->
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>${counter}</td>
-                                                            <td><img src="${pageContext.request.contextPath}/${member.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
-                                                                <a href="${pageContext.request.contextPath}/group/profile?userId=${member.user.userId}&groupId=${group.groupId}">
-                                                                    ${member.user.username}
-                                                                </a>
-                                                            </td>
-                                                            <td>
-                                                                <c:if test="${member.user.userId != USER.userId && member.user.userId != group.createrId}">
-                                                                    <form id="kickForm${member.user.userId}" action="${pageContext.request.contextPath}/group/detail?groupId=${group.groupId}" method="post" style="display:inline;">
-                                                                        <input type="hidden" name="groupId" value="${group.groupId}">
-                                                                        <input type="hidden" name="userId" value="${member.user.userId}">
-                                                                        <input type="hidden" name="action" value="kick"> 
-                                                                        <button id="kickButton${member.user.userId}" type="submit" class="btn btn-secondary btn-sm btn-block edit-cover mx-2" onclick="return confirmKick(this);">Kick</button>
-                                                                    </form>
-                                                                    <form id="banForm${member.user.userId}" action="${pageContext.request.contextPath}/group/detail?groupId=${group.groupId}" method="post" style="display:inline;">
-                                                                        <input type="hidden" name="groupId" value="${group.groupId}">
-                                                                        <input type="hidden" name="userId" value="${member.user.userId}">
-                                                                        <input type="hidden" name="action" value="ban"> 
-                                                                        <button id="banButton${member.user.userId}" type="submit" class="btn btn-danger btn-sm btn-block edit-cover" onclick="return confirmBan(this);">Ban</button>
-                                                                    </form>
-                                                                </c:if>
-                                                            </td>
-                                                        </tr>
-                                                        <c:set var="counter" value="${counter + 1}" />
-                                                    </tbody>
-                                                <!--</table>-->
-                                            </c:forEach>
-                                            <!--</tbody>-->
+                                            <tbody>
+
+                                                <c:forEach var="member" items="${allMembers}">
+                                                    <tr>
+                                                        <td>${counter}</td>
+                                                        <td><img src="${pageContext.request.contextPath}/${member.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
+                                                            <a href="${pageContext.request.contextPath}/group/profile?userId=${member.user.userId}&groupId=${group.groupId}">
+                                                                ${member.user.username}
+                                                            </a>
+                                                        </td>
+                                                        <td>
+                                                            <c:if test="${member.user.userId != USER.userId && member.user.userId != group.createrId}">
+                                                                <form id="kickForm${member.user.userId}" action="${pageContext.request.contextPath}/group/detail?groupId=${group.groupId}" method="post" style="display:inline;">
+                                                                    <input type="hidden" name="groupId" value="${group.groupId}">
+                                                                    <input type="hidden" name="userId" value="${member.user.userId}">
+                                                                    <input type="hidden" name="action" value="kick"> 
+                                                                    <button id="kickButton${member.user.userId}" type="submit" class="btn btn-secondary btn-sm btn-block edit-cover mx-2" onclick="return confirmKick(this);">Kick</button>
+                                                                </form>
+                                                                <form id="banForm${member.user.userId}" action="${pageContext.request.contextPath}/group/detail?groupId=${group.groupId}" method="post" style="display:inline;">
+                                                                    <input type="hidden" name="groupId" value="${group.groupId}">
+                                                                    <input type="hidden" name="userId" value="${member.user.userId}">
+                                                                    <input type="hidden" name="action" value="ban"> 
+                                                                    <button id="banButton${member.user.userId}" type="submit" class="btn btn-danger btn-sm btn-block edit-cover" onclick="return confirmBan(this);">Ban</button>
+                                                                </form>
+                                                            </c:if>
+                                                        </td>
+                                                    </tr>
+                                                    <c:set var="counter" value="${counter + 1}" />
+                                                </c:forEach>
+                                            </tbody>
                                         </table>
                                     </c:if>
                                 </div>
