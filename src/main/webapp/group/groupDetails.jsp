@@ -210,9 +210,10 @@
                                     <c:if test="${empty allMembers}">
                                         <p>No members.</p>
                                     </c:if>
+                                        
                                     <c:if test="${not empty allMembers}">
                                         <table class="table table-striped">
-                                            <tbody>
+                                            <!--<tbody>-->
                                             <thead>
                                                 <tr>            
                                                     <th scope="col">#</th>
@@ -222,7 +223,7 @@
                                             </thead>
                                             <c:set var="counter" value="1" />
                                             <c:forEach var="member" items="${allMembers}">
-                                                <table class="table table-hover">
+                                                <!--<table class="table table-hover">-->
                                                     <tbody>
                                                         <tr>
                                                             <td>${counter}</td>
@@ -250,9 +251,9 @@
                                                         </tr>
                                                         <c:set var="counter" value="${counter + 1}" />
                                                     </tbody>
-                                                </table>
+                                                <!--</table>-->
                                             </c:forEach>
-                                            </tbody>
+                                            <!--</tbody>-->
                                         </table>
                                     </c:if>
                                 </div>

@@ -551,7 +551,7 @@ public class Shop_DB {
 
     public static ArrayList<Order> getAllOrdersByUserID(int userID) {
         ArrayList<Order> orders = new ArrayList<>();
-        String query = "SELECT * FROM [Order] WHERE User_id = ?";
+        String query = "SELECT * FROM [Order] WHERE User_id = ? ORDER BY Order_ID DESC";
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
             pstmt.setInt(1, userID);
             ResultSet rs = pstmt.executeQuery();
@@ -831,14 +831,5 @@ public class Shop_DB {
             Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
         }
         return discounts;
-    }
-
-    public static void main(String[] args) {
-//        ArrayList<Order> discountlist = getOrdersByShopId(1);
-//        for (Order dis : discountlist) {
-//            System.out.println(dis);
-//        }
-        Order o = getOrderbyID(1);
-        System.out.println(o);
     }
 }

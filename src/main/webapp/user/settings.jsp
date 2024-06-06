@@ -53,39 +53,87 @@
                 </div>
             </div>
             <div class="container-fluid pt-0">
+
+
+
+
                 <div class="row form-settings bg-white shadow rounded py-4 px-4 d-flex justify-content-between ">
-                    <div class="p0">
-                        <h5 class="mb-2">Settings</h5>
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#main-setting" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Setting</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#changepass-setting" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Change Password</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane px-1 fade show active" id="main-setting" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+                            <div class="py-3">
+                                <h5 class="mb-2">Information</h5>
+                            </div>
+                            <form action="setting" method="post" enctype="multipart/form-data">
+                                <div class="form-group pb-3">
+                                    <label>Full Name:</label>
+                                    <input type="text" class="form-control" name="fullName" value="${USER.userFullName}">
+                                </div>
+                                <div class="form-group pb-3">
+                                    <label>Email:</label>
+                                    <input type="email" class="form-control" name="email" value="${USER.userEmail}" disabled>
+                                </div>
+                                <div class="form-group pb-3">
+                                    <label>About:</label>
+                                    <textarea class="form-control" name="story">${USER.userStory}</textarea>
+                                </div>
+                                <div class="form-group pb-3">
+                                    <label for="avatar">Avatar:</label>
+                                    <input type="file" class="form-control" id="avatar" name="avatar">
+                                </div>
+                                <input type="hidden" name="oldAvatar" value="${USER.userAvatar}">
+                                <div class="form-group pb-3">
+                                    <label>Gender:</label>
+                                    <select class="form-control" name="gender">
+                                        <option value="Male" ${USER.userSex == 'Male' ? 'selected' : ''}>Male</option>
+                                        <option value="Female" ${USER.userSex == 'Female' ? 'selected' : ''}>Female</option>
+                                        <option value="Other" ${USER.userSex == 'Other' ? 'selected' : ''}>Other</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Save changes</button>
+                                <a href="changepass" class="btn btn-primary">Change Password</a>
+                            </form>
+                        </div>
+
+                        <div class="tab-pane px-1 fade" id="changepass-setting" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+                            <div class="py-3">
+                                <h5 class="mb-2">Change Password</h5>
+                            </div>
+                            <form action="changepass" method="post" onsubmit="return validatePassword()">
+                                <div class="form-group pb-3">
+                                    <label>Email:</label>
+                                    <input type="email" class="form-control" name="email" value="${USER.userEmail}" disabled>
+                                </div>
+                                <div class="form-group pb-3">
+                                    <label>Old Password:</label>
+                                    <input type="password" class="form-control" name="oldPassword"/>
+                                </div>
+                                <div class="form-group pb-3">
+                                    <label>New Password:</label>
+                                    <input type="password" class="form-control" id="newPassword" name="newPassword" onkeyup="showPasswordHint()"/>
+                                    <div id="passwordHint" style="color: #666; font-size: 14px; margin-top: 5px;"></div>
+                                </div>
+                                <div class="form-group pb-3">
+                                    <label>Confirm Password:</label>
+                                    <input type="password" class="form-control" name="confirmPassword"/>
+
+                                </div>
+                                <c:if test="${not empty message}">
+                                    <div class="alert alert-info">${message}</div>
+                                </c:if>
+                                <button type="submit" class="btn btn-primary">Change Password</button>
+                            </form>
+                        </div>
                     </div>
-                    <form action="setting" method="post" enctype="multipart/form-data">
-                        <div class="form-group pb-3">
-                            <label>Full Name:</label>
-                            <input type="text" class="form-control" name="fullName" value="${USER.userFullName}">
-                        </div>
-                        <div class="form-group pb-3">
-                            <label>Email:</label>
-                            <input type="email" class="form-control" name="email" value="${USER.userEmail}" disabled>
-                        </div>
-                        <div class="form-group pb-3">
-                            <label>About:</label>
-                            <textarea class="form-control" name="story">${USER.userStory}</textarea>
-                        </div>
-                        <div class="form-group pb-3">
-                            <label for="avatar">Avatar:</label>
-                            <input type="file" class="form-control" id="avatar" name="avatar">
-                        </div>
-                        <input type="hidden" name="oldAvatar" value="${USER.userAvatar}">
-                        <div class="form-group pb-3">
-                            <label>Gender:</label>
-                            <select class="form-control" name="gender">
-                                <option value="Male" ${USER.userSex == 'Male' ? 'selected' : ''}>Male</option>
-                                <option value="Female" ${USER.userSex == 'Female' ? 'selected' : ''}>Female</option>
-                                <option value="Other" ${USER.userSex == 'Other' ? 'selected' : ''}>Other</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
-                        <a href="changepass" class="btn btn-primary">Change Password</a>
-                    </form>
+
                 </div>
             </div>
         </div>

@@ -90,7 +90,6 @@ public class Group_DB implements DBinfo {
                 List<Post> posts = new ArrayList<>();
                 List<Comment> comments = new ArrayList<>();
                 List<Upload> uploads = new ArrayList<>();
-
                 // Kiểm tra xem ResultSet có dữ liệu không
                 if (rs.next()) {
                     // Collect group member information
@@ -152,6 +151,7 @@ public class Group_DB implements DBinfo {
                             rs.getString("Group_status")
                     );
                 }
+                System.out.println("Xem duoc");
             }
         } catch (SQLException e) {
             // Xử lý lỗi SQLException

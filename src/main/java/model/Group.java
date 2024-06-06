@@ -11,6 +11,7 @@ import java.util.List;
  * @author ThanhDuoc
  */
 public class Group {
+
     private int groupId;
     private int createrId;
     private String groupName;
@@ -24,7 +25,7 @@ public class Group {
     private boolean isPending;
     private boolean isBanned;
     private String status;
-    
+
     public Group(int groupId, int createrId, String groupName, String groupDescription, List<Group_member> groupMember, List<Post> post, List<Comment> comments, List<Upload> upload, String image, int memberCount, String status) {
         this.groupId = groupId;
         this.createrId = createrId;
@@ -46,8 +47,6 @@ public class Group {
         this.image = image;
     }
 
-   
-         
     public Group() {
     }
 
@@ -143,14 +142,14 @@ public class Group {
     public void setUpload(List<Upload> upload) {
         this.upload = upload;
     }
-      public boolean isPending() {
+
+    public boolean isPending() {
         return isPending;
     }
 
     public void setPending(boolean isPending) {
         this.isPending = isPending;
     }
-
 
     public boolean isIsBanned() {
         return isBanned;
@@ -167,5 +166,5 @@ public class Group {
     public void setStatus(String Status) {
         this.status = Status;
     }
-    
+
 }
