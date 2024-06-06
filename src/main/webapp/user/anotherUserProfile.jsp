@@ -85,6 +85,58 @@
                                     <h4 class="mt-0 mb-0">${user.userFullName}</h4>     
                                 </div>
                                 <ul class="list-inline mb-0">
+                                    <c:choose>
+                                        <c:when test="${friendStatus == 'pending'}">
+                                            <div class="dropdown d-inline">
+                                                <button class="btn btn-warning btn-sm btn-block edit-cover mx-2 dropdown-toggle" type="button" id="friendDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    Request Sent
+                                                </button>
+                                                <ul class="dropdown-menu" aria-labelledby="friendDropdown">
+                                                    <li>
+                                                        <form id="unfriendRequestForm" action="${pageContext.request.contextPath}/friendHandel" method="post" class="d-inline" onsubmit="return confirmUnfriend()">
+                                                            <input type="hidden" name="friendId" value="${user.userId}">
+                                                            <input type="hidden" name="friendName" value="${user.username}">
+                                                            <input type="hidden" name="action" value="cancel">
+                                                            <button type="submit" class="dropdown-item">Hủy lời mời</button>
+                                                        </form>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </c:when>
+                                        <c:when test="${isPendingRq and friendStatus !='cancelled'}">
+                                            <form action="${pageContext.request.contextPath}/friends" method="post" class="d-inline">
+                                                <input type="hidden" name="friendId" value="${user.userId}">
+                                                <input type="hidden" name="friendName" value="${user.username}">
+                                                <input type="hidden" name="action" value="acceptFr"> 
+                                                <button type="submit" class="btn btn-success btn-sm btn-block edit-cover mx-2">Accept friend</button>
+                                            </form>
+                                        </c:when>
+                                        <c:when test="${areFriend}">
+                                            <div class="dropdown d-inline">
+                                                <button class="btn btn-warning btn-sm btn-block edit-cover mx-2 dropdown-toggle" type="button" id="friendDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    Bạn bè
+                                                </button>
+                                                <ul class="dropdown-menu" aria-labelledby="friendDropdown">
+                                                    <li>
+                                                        <form id="unfriendRequestForm" action="${pageContext.request.contextPath}/friendHandel" method="post" class="d-inline" onsubmit="return confirmUnfriend()">
+                                                            <input type="hidden" name="friendId" value="${user.userId}">
+                                                            <input type="hidden" name="friendName" value="${user.username}">
+                                                            <input type="hidden" name="action" value="unfriendProfile">
+                                                            <button type="submit" class="dropdown-item">Hủy kết bạn</button>
+                                                        </form>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </c:when>
+                                        <c:otherwise> 
+                                            <form id="addFriendForm" action="${pageContext.request.contextPath}/friendHandel" method="post" class="d-inline">
+                                                <input type="hidden" name="friendId" value="${user.userId}">
+                                                <input type="hidden" name="friendName" value="${user.username}">
+                                                <input type="hidden" name="action" value="add">
+                                                <button type="submit" class="btn btn-primary btn-sm btn-block edit-cover mx-2">Add Friend</button>
+                                            </form>
+                                        </c:otherwise>
+                                    </c:choose>
                                     <li class="list-inline-item">
                                         <h5 class="font-weight-bold mb-0 d-block">${postCount}</h5><small class="text-muted"><i class="fas fa-image mr-1"></i>Posts</small>
                                     </li>
@@ -205,7 +257,8 @@
                                 } else {
                                     currentUploadPathImg.style.display = 'none';
                                 }
-                            });
+                            }
+                            
                             function confirmCancel() {
                                 return confirm("Bạn có muốn hủy lời mời này không?");
                             }

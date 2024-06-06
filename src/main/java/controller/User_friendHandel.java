@@ -86,12 +86,12 @@ public class User_friendHandel extends HttpServlet {
         switch (action) {
             case "add":
                 success = User_DB.addFriendRequest(userId, friendId);
-                redirectUrl = request.getContextPath() + "/viewProfile?username=" + friendName;
+                redirectUrl = request.getContextPath() + "/profile?username=" + friendName;
                 break;
             case "unfriendProfile":
                 success = User_DB.unFriend(userId, friendId);
 
-                redirectUrl = request.getContextPath() + "/viewProfile?username=" + friendName;
+                redirectUrl = request.getContextPath() + "/profile?username=" + friendName;
                 break;
             case "unfriend":
                 success = User_DB.unFriend(userId, friendId);
@@ -100,7 +100,7 @@ public class User_friendHandel extends HttpServlet {
                 break;
             case "cancel":
                 success = User_DB.cancelFriendRequest(userId, friendId);
-                redirectUrl = request.getContextPath() + "/viewProfile?username=" + friendName;
+                redirectUrl = request.getContextPath() + "/profile?username=" + friendName;
                 break;
             default:
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");

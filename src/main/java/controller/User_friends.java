@@ -106,7 +106,7 @@ public class User_friends extends HttpServlet {
         case "acceptFr":
             success = User_DB.acceptFriendRequest(userId, friendId);
             String friendName = request.getParameter("friendName");
-            redirectUrl = request.getContextPath() + "/viewProfile?username=" + friendName;
+            redirectUrl = request.getContextPath() + "/profile?username=" + friendName;
             break;
         default:
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");

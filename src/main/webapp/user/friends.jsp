@@ -140,7 +140,7 @@
                                                             <c:forEach var="pendingFriend" items="${pendingFriends}">
                                                                 <tr>
                                                                     <td>
-                                                                        <a href="${pageContext.request.contextPath}/viewProfile?username=${pendingFriend.username}">
+                                                                        <a href="${pageContext.request.contextPath}/profile?username=${pendingFriend.username}">
                                                                             <img src="${pageContext.request.contextPath}/${pendingFriend.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
                                                                         </a>
                                                                     </td>
@@ -176,7 +176,7 @@
                                                                 <img src="${pageContext.request.contextPath}/${acceptedFriend.userAvatar}" class="card-img-top rounded-circle avatar-cover mx-auto" alt="${acceptedFriend.username}" width="100">
                                                                 <div class="card-body text-center">
                                                                     <h5 class="card-title">${acceptedFriend.username}</h5>
-                                                                    <a href="${pageContext.request.contextPath}/viewProfile?username=${acceptedFriend.username}" class="btn btn-outline-dark btn-sm">View Profile</a>
+                                                                    <a href="${pageContext.request.contextPath}/profile?username=${acceptedFriend.username}" class="btn btn-outline-dark btn-sm">View Profile</a>
                                                                     <form id="unfriendRequestForm" action="${pageContext.request.contextPath}/friendHandel" method="post" class="d-inline"  onsubmit="return confirmUnfriend()">
                                                                         <input type="hidden" name="friendId" value="${acceptedFriend.userId}">
                                                                         <input type="hidden" name="friendName" value="${acceptedFriend.username}">

@@ -100,11 +100,15 @@ public class User_profile extends HttpServlet {
                 // Đang xem hồ sơ của người khác
                 // Lấy thông tin của người dùng từ cơ sở dữ liệu
                 User userInfo = User_DB.getUserByEmailorUsername(requestedUsername);
+
                 // Kiểm tra xem người dùng có tồn tại không
                 if (userInfo == null) {
                     response.sendRedirect(request.getContextPath() + "/auth/login.jsp?errorMessage=User not found");
                     return;
                 }
+               
+                int userId = currentUser.getUserId();
+                String friendStatus = User_DB.getFriendRequestStatus(userId, requestedUsername);
                 // Lấy số bài đăng của người dùng từ cơ sở dữ liệu
                 int postCount = User_DB.countPost(userInfo.getUserEmail());
 
@@ -130,7 +134,17 @@ public class User_profile extends HttpServlet {
                     }
                     post.setComments(comments); // Đặt danh sách comment vào bài viết
                 }
+                boolean areFriend = User_DB.areFriendsAccepted(userId, requestedUsername);
+                boolean isPendingRq = User_DB.hasFriendRequestFromUser(userId, requestedUsername);
+                int postCountofUser = User_DB.countPostByUserName(requestedUsername);
 
+                // Thiết lập các thuộc tính cho session và request
+                session.setAttribute("isPendingRq", isPendingRq);
+                session.setAttribute("areFriend", areFriend);
+                session.setAttribute("postCountofUser", postCountofUser);
+
+                // Set user and userPosts as request attributes
+                request.setAttribute("friendStatus", friendStatus);
                 // Set user and userPosts as request attributes
                 request.setAttribute("user", userInfo);
                 request.setAttribute("userPosts", userPosts);
@@ -153,9 +167,7 @@ public class User_profile extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-   
-        
-        
+
     }
 
     /**
