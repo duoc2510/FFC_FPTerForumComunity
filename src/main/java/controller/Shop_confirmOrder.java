@@ -14,8 +14,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import model.DAO.Shop_DB;
+import model.Discount;
 import model.Order;
 import model.OrderItem;
+import model.Product;
 import model.User;
 
 /**
@@ -107,6 +109,18 @@ public class Shop_confirmOrder extends HttpServlet {
                 break;
             case "confirm2":
                 Order order = sdb.getOrderHasStatusIsNullByUserID(user.getUserId());
+                ArrayList<OrderItem> orderitemlist1 = sdb.getAllOrderItemByOrderIdHasStatusIsNull(order.getOrder_ID());
+                for (OrderItem ot : orderitemlist1) {
+                    Product p = sdb.getProductByID(ot.getProductID());
+                    p.setQuantity(p.getQuantity() - 1);
+                    sdb.updateProduct(p);
+
+                }
+                if (discountId != 0) {
+                    Discount d = sdb.getDiscountByID(discountId);
+                    sdb.updateUsageLimit(discountId, d.getUsageLimit() - 1);
+                    sdb.updateUsageCount(discountId, d.getUsageCount() + 1);
+                }
                 order.setReceiverPhone(phone);
                 order.setDiscountid(discountId);
                 order.setNote(note);
