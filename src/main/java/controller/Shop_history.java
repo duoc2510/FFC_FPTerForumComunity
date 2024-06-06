@@ -4,20 +4,18 @@
  */
 package controller;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.DAO.Group_DB;
 
 /**
  *
- * @author PC
+ * @author Admin
  */
-public class User_groupDelete extends HttpServlet {
+public class Shop_history extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -36,10 +34,10 @@ public class User_groupDelete extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet User_GroupDelete</title>");
+            out.println("<title>Servlet Shop_history</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet User_GroupDelete at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet Shop_history at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -57,6 +55,14 @@ public class User_groupDelete extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String orderid = request.getParameter("orderid");
+        if (orderid != null) {
+            int orderid1 = Integer.parseInt(orderid);
+            request.setAttribute("orderid", orderid1);
+            request.getRequestDispatcher("/marketplace/evaluate.jsp").forward(request, response);
+        } else {
+            request.getRequestDispatcher("/marketplace/history.jsp").forward(request, response);
+        }
 
     }
 
@@ -71,22 +77,7 @@ public class User_groupDelete extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int groupId = Integer.parseInt(request.getParameter("groupId"));
-        boolean deleteResult = Group_DB.deleteGroup(groupId);
-
-        // Kiểm tra kết quả và đặt message tương ứng
-        String message;
-        if (deleteResult) {
-            message = "The group has been successfully deleted.";
-        } else {
-            message = "Failed to delete the group. Please try again later.";
-        }
-        // Đặt message vào request để chuyển nó đến trang allGroup.jsp
-        request.setAttribute("message", message);
-
-        // Chuyển hướng đến trang allGroup.jsp
-     response.sendRedirect(request.getContextPath() + "/listGroup?groupId=" + groupId);
-
+        processRequest(request, response);
     }
 
     /**

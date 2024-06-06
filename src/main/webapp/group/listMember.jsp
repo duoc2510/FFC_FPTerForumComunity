@@ -8,13 +8,16 @@
             <div class="container-fluid pb-2">
                 <div class="row">
                     <div id="profile-wrapper">
-                        <div class="bg-white shadow rounded overflow-hidden">
-                            <div class="px-4 py-4 cover" style="height: 300px !important; object-fit: cover; background: url(${pageContext.request.contextPath}/${group.image})">
-                                <div class="profile mr-3 d-flex justify-content-between align-items-end">
-                                    <div>
-                                        <c:if test="${group.createrId == USER.userId}">
-                                            <a href="${pageContext.request.contextPath}/inGroup/groupEdit?groupId=${group.groupId}" class="btn btn-outline-dark btn-sm btn-block edit-cover mx-2">Edit Group</a>
-                                        </c:if>
+                        <div class="bg-white shadow rounded overflow-hidden ">
+                            <div class="px-4 py-4 cover" style="height: 200px !important; background-image: url('${pageContext.request.contextPath}/${group.image}'); background-size: cover; background-position: top; background-repeat: no-repeat;">
+                                <div class="media align-items-end profile-head">
+                                    <div class="profile mr-3 d-flex justify-content-between align-items-end">
+                                        <div>
+                                            <c:if test="${group.createrId == USER.userId}">
+                                                <a href="${pageContext.request.contextPath}/inGroup/groupEdit?groupId=${group.groupId}" class="btn btn-outline-dark btn-sm btn-block edit-cover mx-2">Edit Group</a>
+                                                <a href="${pageContext.request.contextPath}/inGroup?groupId=${group.groupId}" class="btn btn-outline-dark btn-sm btn-block edit-cover mx-2">View Group</a>
+                                            </c:if>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -22,21 +25,26 @@
                                 <div class="media-body mb-5 text-white">
                                     <h4 class="mt-0 mb-0">${group.groupName}</h4>
                                 </div>
-
                                 <ul class="list-inline mb-0">
                                     <c:choose>
                                         <c:when test="${group.pending}">
+                                            <li class="list-inline-item">
+                                                <h5 class="font-weight-bold mb-0 d-block">${postCount}</h5><small class="text-muted"><i class="fas fa-image mr-1"></i>Posts</small>
+                                            </li>
                                             <button class="btn btn-secondary btn-sm btn-block edit-cover mx-2" disabled>Pending Approval</button>
                                         </c:when>
-                                        <c:when test="${isUserApproved && group.createrId != USER.userId}">
+                                        <c:when test="${isUserApproved and group.createrId != USER.userId}">
                                             <button class="btn btn-primary btn-sm btn-block edit-cover mx-2" disabled>Joined Group</button>
                                             <form action="${pageContext.request.contextPath}/groupOut?groupId=${group.groupId}&action=leave" method="post" style="display:inline;" onsubmit="return confirmLeaveGroup(this);">
                                                 <input type="hidden" name="groupId" value="${group.groupId}">
-                                                <button type="submit" class="btn btn-secondary btn-sm btn-block edit-cover mx-2">Out Group</button>
+                                                <button type="submit" class="btn btn-danger btn-sm btn-block edit-cover mx-2">Out Group</button>
                                             </form>
                                         </c:when>
+                                        <c:when test="${isUserBanned}">
+                                            <a class="btn btn-outline-dark btn-sm btn-block edit-cover mx-2">You are banned!!!</a>
+                                        </c:when>
                                         <c:when test="${group.createrId == USER.userId}">
-                                            <button class="btn btn-info btn-sm btn-block edit-cover mx-2" disabled>Welcome Host Group</button>
+                                            <a class="btn btn-outline-dark btn-sm btn-block edit-cover mx-2">Welcome Host Group</a>
                                         </c:when>
                                         <c:otherwise>
                                             <a href="${pageContext.request.contextPath}/joinGroup?groupId=${group.groupId}" class="btn btn-primary btn-sm btn-block edit-cover mx-2">Join Group</a>
@@ -44,9 +52,9 @@
                                     </c:choose>
                                     <li class="list-inline-item">
                                         <h5 class="font-weight-bold mb-0 d-block">${postCount}</h5><small class="text-muted"><i class="fas fa-image mr-1"></i>Posts</small>
-                                    </li>
+                                    </li>       
                                     <li class="list-inline-item">
-                                        <h5 class="font-weight-bold mb-0 d-block">${group.memberCount}</h5><small class="text-muted"><i class="fas fa-user mr-1"></i>Member</small>
+                                        <h5 class="font-weight-bold mb-0 d-block">${group.memberCount}</h5><small class="text-muted"><i class="fas fa-user mr-1"></i>Members</small>
                                     </li>
                                 </ul>
                             </div>
@@ -57,44 +65,60 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="member-group" id="memberGroup">
-                            <h2>List Members</h2>
-                            <c:if test="${empty approvedMembers}">
-                                <p>No members.</p>
-                            </c:if>
-                            <c:if test="${not empty approvedMembers}">
-                                <table class="table table-striped">
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid pt-0">
+                <div class="row form-settings bg-white shadow rounded py-4 px-4 d-flex justify-content-between ">
+                    <h2>List Members</h2>
+                    <c:if test="${empty approvedMembers}">
+                        <p>No members.</p>
+                    </c:if>
+                    <c:if test="${not empty approvedMembers}">
+                        <table class="table table-striped">
+                            <tbody>
+                            <thead>
+                                <tr>            
+                                    <th scope="col">#</th>
+                                    <th scope="col">User</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <c:set var="counter" value="1" />
+                            <c:forEach var="member" items="${approvedMembers}">
+                                <table class="table table-hover">
                                     <tbody>
-                                        <c:forEach var="member" items="${approvedMembers}">
-                                            <tr>
-                                                <td>
-                                                    <img src="${pageContext.request.contextPath}/${member.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
-                                                    <a href="${pageContext.request.contextPath}/groupViewPostMember?userId=${member.user.userId}&groupId=${group.groupId}">
-                                                        ${member.user.username}
-                                                    </a>
-                                                    <c:if test="${member.user.userId != USER.userId && member.user.userId != group.createrId}">
-                                                        <form id="kickForm${member.user.userId}" action="${pageContext.request.contextPath}/groupOut" method="post" style="display:inline;">
-                                                            <input type="hidden" name="groupId" value="${group.groupId}">
-                                                            <input type="hidden" name="userId" value="${member.user.userId}">
-                                                            <input type="hidden" name="action" value="kick"> 
-                                                            <button id="kickButton${member.user.userId}" type="submit" class="btn btn-secondary btn-sm btn-block edit-cover mx-2" onclick="return confirmKick(this);">Kick</button>
-                                                        </form>
-
-                                                        <form id="banForm${member.user.userId}" action="${pageContext.request.contextPath}/groupOut" method="post" style="display:inline;">
-                                                            <input type="hidden" name="groupId" value="${group.groupId}">
-                                                            <input type="hidden" name="userId" value="${member.user.userId}">
-                                                            <input type="hidden" name="action" value="ban"> 
-                                                            <button id="banButton${member.user.userId}" type="submit" class="btn btn-danger btn-sm btn-block edit-cover mx-2" onclick="return confirmBan(this);">Ban</button>
-                                                        </form>
-                                                    </c:if>
-                                                </td>
-                                            </tr>
-                                        </c:forEach>
+                                        <tr>
+                                            <td>${counter}</td>
+                                            <td><img src="${pageContext.request.contextPath}/${member.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
+                                                <a href="${pageContext.request.contextPath}/groupViewPostMember?userId=${member.user.userId}&groupId=${group.groupId}">
+                                                    ${member.user.username}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <c:if test="${member.user.userId != USER.userId && member.user.userId != group.createrId}">
+                                                    <form id="kickForm${member.user.userId}" action="${pageContext.request.contextPath}/groupOut" method="post" style="display:inline;">
+                                                        <input type="hidden" name="groupId" value="${group.groupId}">
+                                                        <input type="hidden" name="userId" value="${member.user.userId}">
+                                                        <input type="hidden" name="action" value="kick"> 
+                                                        <button id="kickButton${member.user.userId}" type="submit" class="btn btn-secondary btn-sm btn-block edit-cover mx-2" onclick="return confirmKick(this);">Kick</button>
+                                                    </form>
+                                                    <form id="banForm${member.user.userId}" action="${pageContext.request.contextPath}/groupOut" method="post" style="display:inline;">
+                                                        <input type="hidden" name="groupId" value="${group.groupId}">
+                                                        <input type="hidden" name="userId" value="${member.user.userId}">
+                                                        <input type="hidden" name="action" value="ban"> 
+                                                        <button id="banButton${member.user.userId}" type="submit" class="btn btn-danger btn-sm btn-block edit-cover" onclick="return confirmBan(this);">Ban</button>
+                                                    </form>
+                                                </c:if>
+                                            </td>
+                                        </tr>
+                                        <c:set var="counter" value="${counter + 1}" />
                                     </tbody>
                                 </table>
-                            </c:if>
-                        </div>
-                    </div>
+                            </c:forEach>
+                            </tbody>
+                        </table>
+                    </c:if>
                 </div>
             </div>
         </div>

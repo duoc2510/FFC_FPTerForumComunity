@@ -45,6 +45,7 @@ public class Event_addEvent extends HttpServlet {
     }
 
     private static final String UPLOAD_DIR = "Avatar_of_events";
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String title = request.getParameter("title");
@@ -72,7 +73,7 @@ public class Event_addEvent extends HttpServlet {
         String filePathForDatabase = UPLOAD_DIR + File.separator + fileName;
 
         User_event event = new User_event(0, title, description, startDate, endDate, userId);
-        Upload upload = new Upload(0, 0, 0, 0, 0, 0, filePathForDatabase); // Thay đổi savePath thành filePathForDatabase
+        Upload upload = new Upload(0, 0, 0, 0, filePathForDatabase); // Thay đổi savePath thành filePathForDatabase
 
         Event_DB eventDB = new Event_DB();
         if (eventDB.addEvent(event, upload)) {

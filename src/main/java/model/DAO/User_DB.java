@@ -336,6 +336,18 @@ public class User_DB implements DBinfo {
         return userId;
     }
 
+    public static boolean updateWalletByEmail(String email, double wallet) {
+        String query = "UPDATE Users SET User_wallet = ? WHERE User_email = ?";
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setDouble(1, wallet);
+            pstmt.setString(2, email);
+            int rowsUpdated = pstmt.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(User_DB.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
    public static boolean addFriendRequest(int userId, int friendId) {
     String checkQuery = "SELECT COUNT(*) FROM FriendShip WHERE (User_id = ? AND Friend_id = ?) OR (User_id = ? AND Friend_id = ?)";
     String insertQuery = "INSERT INTO FriendShip (User_id, Friend_id, Request_status) VALUES (?, ?, 'pending'), (?, ?, 'pending')";

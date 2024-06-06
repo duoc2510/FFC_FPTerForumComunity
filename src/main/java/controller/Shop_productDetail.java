@@ -4,25 +4,18 @@
  */
 package controller;
 
-import jakarta.servlet.http.HttpServlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.List;
-import model.DAO.Group_DB;
-import model.Group_member;
-import model.User;
 
 /**
  *
- * @author PC
+ * @author Admin
  */
-public class User_groupViewMember extends HttpServlet {
+public class Shop_productDetail extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +34,10 @@ public class User_groupViewMember extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet User_groupViewMember</title>");
+            out.println("<title>Servlet Shop_shopProduct</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet User_groupViewMember at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet Shop_shopProduct at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -62,21 +55,13 @@ public class User_groupViewMember extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("USER");
-        int userId = user.getUserId();
-        int groupId = Integer.parseInt(request.getParameter("groupId"));
-        List<Group_member> approvedMembers = new ArrayList<>();
-
-        // Duyệt qua tất cả các thành viên và thêm những thành viên có trạng thái "approved" vào danh sách mới
-        List<Group_member> allMembers = Group_DB.getAllMembersByGroupId(groupId);
-        for (Group_member member : allMembers) {
-            if ("approved".equalsIgnoreCase(member.getStatus()) || "host".equalsIgnoreCase(member.getStatus())) {
-                approvedMembers.add(member);
-            }
-        }
-        session.setAttribute("approvedMembers", approvedMembers);
-        request.getRequestDispatcher("/group/listMember.jsp").forward(request, response);
+        String id = request.getParameter("shopid");
+        int shopid = Integer.parseInt(id);
+        String id1 = request.getParameter("productid");
+        int productid = Integer.parseInt(id1);
+        request.setAttribute("shopid", shopid);
+        request.setAttribute("productid", productid);
+        request.getRequestDispatcher("/marketplace/productDetail.jsp").forward(request, response);
     }
 
     /**

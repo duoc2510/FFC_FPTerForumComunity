@@ -4,26 +4,22 @@
  */
 package controller;
 
-import jakarta.servlet.http.HttpServlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
-import model.Comment;
-import model.DAO.Comment_DB;
-import model.DAO.Group_DB;
-import model.DAO.User_DB;
-import model.Post;
-import model.User;
+import java.util.ArrayList;
+import model.DAO.Shop_DB;
+import model.Product;
+import model.Shop;
 
 /**
  *
- * @author PC
+ * @author Admin
  */
-public class User_groupViewPostMember extends HttpServlet {
+public class Shop_shopDetail extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -42,10 +38,10 @@ public class User_groupViewPostMember extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet User_groupViewPostMember</title>");            
+            out.println("<title>Servlet Shop_shopDetail</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet User_groupViewPostMember at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet Shop_shopDetail at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -61,41 +57,17 @@ public class User_groupViewPostMember extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-   protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Get userId and groupId from request parameters
-        int userId = Integer.parseInt(request.getParameter("userId"));
-        int groupId = Integer.parseInt(request.getParameter("groupId"));
-        
-        // Fetch the user
-        User user = User_DB.getUserById(userId);
-        
-        // Fetch the posts of the user in the specified group
-        List<Post> userPosts = Group_DB.getUserPostsInGroup(userId, groupId);
-        
-        // Loop through the userPosts to fetch comments for each post
-        for (Post post : userPosts) {
-            // Fetch comments for the current post
-            List<Comment> comments = Comment_DB.getCommentsByPostId(post.getPostId());
-            
-            // Fetch user information for each comment
-            for (Comment comment : comments) {
-                User commentUser = User_DB.getUserById(comment.getUserId());
-                if (commentUser != null) {
-                    comment.setUser(commentUser);
-                }
-            }
-            
-            // Set comments for the current post
-            post.setComments(comments);
-        }
-        
-        // Set user and userPosts as request attributes
-        request.setAttribute("user", user);
-        request.setAttribute("userPosts", userPosts);
-
-        // Forward to the JSP page to display the posts
-        request.getRequestDispatcher("/group/listPostOfMember.jsp").forward(request, response);
+        String id = request.getParameter("shopid");
+        int shopid = Integer.parseInt(id);
+        Shop_DB sdb = new Shop_DB();
+        Shop sh = sdb.getShopByShopID(shopid);
+        ArrayList<Product> productlist = sdb.getAllProductByShopID(shopid);
+        request.setAttribute("shop", sh);
+        request.setAttribute("shopid", shopid);
+        request.setAttribute("productlist", productlist);
+        request.getRequestDispatcher("/marketplace/shopDetail.jsp").forward(request, response);
     }
 
     /**

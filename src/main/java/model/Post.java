@@ -23,7 +23,6 @@ public class Post {
     public Post() {
     }
 
-    
     public Post(int postId, int userId, int groupId, String content, String createDate, String status) {
         this.postId = postId;
         this.userId = userId;
@@ -31,6 +30,16 @@ public class Post {
         this.content = content;
         this.createDate = createDate;
         this.status = status;
+    }
+
+    public Post(int userId, int groupId, String content, String createDate, String status, String postStatus, String uploadPath) {
+        this.userId = userId;
+        this.groupId = groupId;
+        this.content = content;
+        this.createDate = createDate;
+        this.status = status;
+        this.postStatus = postStatus;
+        this.uploadPath = uploadPath;
     }
 
     // Constructors
@@ -146,8 +155,6 @@ public class Post {
     public void setCreateDate(String createDate) {
         this.createDate = createDate;
     }
-
-
 
     public String getStatus() {
         return status;

@@ -7,16 +7,20 @@
             </div>
             <div class="col-3 d-inline mx-2">
                 <form action="home" method="post"> <!-- Thêm action và method -->
-                    <select class="form-select" name="topicId"> <!-- Thêm name cho select -->
-                        <option selected>Select topic</option>
+                    <select class="form-select" name="topicId" required> <!-- Thêm name cho select -->
+                        <option value="" disabled selected>Select topic</option>
                         <c:forEach var="topic" items="${topics}">
                             <option value="${topic.topicId}">${topic.topicName}</option>
                         </c:forEach>
                     </select>
+                    <c:if test="${not empty msg}">
+                        <div>${msg}</div>
+                        <% session.removeAttribute("msg"); %>
+                    </c:if>
             </div>
             <div class="col-6 d-inline">
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Hi user, how are you today?" name="content"> <!-- Thêm name cho input -->
+                    <input type="text" class="form-control" placeholder="Hi user, how are you today?" name="content" required> <!-- Thêm name cho input -->
                 </div>
             </div>
             <div class="col-2 d-inline text-center">

@@ -13,7 +13,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.DAO.Shop_DB;
 import model.DAO.User_DB;
+import model.Order;
 import model.User;
 
 /**
@@ -83,6 +85,7 @@ public class User_emailVerify extends HttpServlet {
         String x = request.getParameter("x");
         String number = request.getParameter("number");
         User_DB userDB = new User_DB();
+        Shop_DB sdb = new Shop_DB();
         String msg;
         if (status.equals("lostaccount")) {
             if (Integer.parseInt(x) == Integer.parseInt(number)) {
@@ -104,6 +107,9 @@ public class User_emailVerify extends HttpServlet {
                 } catch (ParseException ex) {
                     Logger.getLogger(User_emailVerify.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                User u = userDB.getUserByEmailorUsername(newUser.getUserEmail());
+                Order o = new Order(u.getUserId(), 1, null, "null", 0, 1, null, null, 5, null);
+                sdb.addOrder(o);
                 msg = "Registration Success";
                 request.setAttribute("message", msg);
                 request.getRequestDispatcher("/auth/login.jsp").forward(request, response);

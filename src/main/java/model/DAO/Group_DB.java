@@ -90,7 +90,6 @@ public class Group_DB implements DBinfo {
                 List<Post> posts = new ArrayList<>();
                 List<Comment> comments = new ArrayList<>();
                 List<Upload> uploads = new ArrayList<>();
-
                 // Kiểm tra xem ResultSet có dữ liệu không
                 if (rs.next()) {
                     // Collect group member information
@@ -152,6 +151,7 @@ public class Group_DB implements DBinfo {
                             rs.getString("Group_status")
                     );
                 }
+                System.out.println("Xem duoc");
             }
         } catch (SQLException e) {
             // Xử lý lỗi SQLException
@@ -186,6 +186,7 @@ public class Group_DB implements DBinfo {
                 );
                 groups.add(group);
             }
+            System.out.println("Query executed successfully!"); // Thông báo thành công
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -304,6 +305,7 @@ public class Group_DB implements DBinfo {
                     );
                     groups.add(group);
                 }
+                System.out.println("getAllGroupsCreated: Query executed successfully.");
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -369,15 +371,12 @@ public class Group_DB implements DBinfo {
 
     public static List<Group> getAllGroupJoin(int userId) {
         List<Group> groups = new ArrayList<>();
-       String sql = "SELECT g.Group_id, g.Creater_id, g.Group_name, g.Group_description, g.image, g.Status, " +
-             "(SELECT COUNT(DISTINCT mg2.MemberGroup_id) " +
-             " FROM MemberGroup mg2 " +
-             " WHERE mg2.Group_id = g.Group_id AND mg2.Status IN ('approved', 'host')) AS memberCount " +
-             "FROM [Group] g " +
-             "JOIN MemberGroup mg ON g.Group_id = mg.Group_id " +
-             "WHERE mg.User_id = ? AND mg.Status = 'approved' " +
-             "GROUP BY g.Group_id, g.Creater_id, g.Group_name, g.Group_description, g.image, g.Status";
-
+        String sql = "SELECT g.Group_id, g.Creater_id, g.Group_name, g.Group_description, g.image, g.Status, "
+                + "COUNT(DISTINCT CASE WHEN mg.Status IN ('approved', 'host') THEN mg.MemberGroup_id END) AS memberCount "
+                + "FROM [Group] g "
+                + "JOIN MemberGroup mg ON g.Group_id = mg.Group_id "
+                + "WHERE mg.User_id = ? AND mg.Status = 'approved' "
+                + "GROUP BY g.Group_id, g.Creater_id, g.Group_name, g.Group_description, g.image, g.Status";
         try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, userId);
@@ -515,29 +514,37 @@ public class Group_DB implements DBinfo {
 
     public static List<Post> getUserPostsInGroup(int userId, int groupId) {
         List<Post> posts = new ArrayList<>();
-        String sql = "SELECT p.*, u.UploadPath FROM Post p LEFT JOIN Upload u ON p.Post_id = u.Post_id WHERE p.User_id = ? AND p.Group_id = ? AND p.Status = 'Active'";
+        String query
+                = "SELECT p.*, u.UploadPath "
+                + "FROM Post p "
+                + "LEFT JOIN Upload u ON p.Post_id = u.Post_id "
+                + "WHERE p.User_id = ? AND p.Group_id = ? "
+                + "ORDER BY p.Post_id DESC";
 
-        try (Connection connection = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (Connection connection = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, userId);
             statement.setInt(2, groupId);
             ResultSet rs = statement.executeQuery();
-
             while (rs.next()) {
+
                 int postId = rs.getInt("Post_id");
+                int topicId = rs.getInt("Topic_id");
                 String content = rs.getString("Content");
                 String createDate = rs.getString("createDate");
                 String status = rs.getString("Status");
-                String uploadPath = rs.getString("UploadPath"); // Get upload path
+                String postStatus = rs.getString("postStatus");
+                String reason = rs.getString("Reason");
+                String uploadPath = rs.getString("UploadPath");
 
-                // Create a Post object with upload path
-                Post post = new Post(postId, userId, groupId, content, createDate, status, uploadPath);
+                Post post = new Post(postId, userId, groupId, topicId, content, createDate, status, postStatus, reason, uploadPath);
                 posts.add(post);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("getPostsWithUploadPath: Query executed successfully.");
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            System.out.println("getPostsWithUploadPath: Query execution failed.");
         }
-
         return posts;
-    }
 
+    }
 }

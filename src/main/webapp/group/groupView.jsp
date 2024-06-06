@@ -6,12 +6,12 @@
     <title>Group Page</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-     
+
     </style>
 </head>
 <body>
     <%@ include file="../include/slidebar.jsp" %>
-    
+
     <div class="container">
         <%@ include file="../include/navbar.jsp" %>
         <div class="row">
@@ -21,7 +21,6 @@
                         <h4>Group Name</h4>
                     </div>
                     <div class="card-body">
-                      
                     </div>
                 </div>
             </div>

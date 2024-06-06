@@ -10,7 +10,7 @@ package util;
  */
 public class Constants {
 
-public static String GOOGLE_CLIENT_ID = "244022125519-87q2unlgmf45kmgam5707eda4480fr4s.apps.googleusercontent.com";
+    public static String GOOGLE_CLIENT_ID = "244022125519-87q2unlgmf45kmgam5707eda4480fr4s.apps.googleusercontent.com";
 
     public static String GOOGLE_CLIENT_SECRET = "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";
 

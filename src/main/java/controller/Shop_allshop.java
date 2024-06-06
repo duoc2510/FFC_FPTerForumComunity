@@ -4,22 +4,21 @@
  */
 package controller;
 
-import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
-import model.DAO.Topic_DB;
-import model.Topic;
+import java.util.ArrayList;
+import model.DAO.Shop_DB;
+import model.Shop;
 
 /**
  *
- * @author ThanhDuoc
+ * @author Admin
  */
-public class Topic_list extends HttpServlet {
+public class Shop_allshop extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -38,10 +37,10 @@ public class Topic_list extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Topic_list</title>");
+            out.println("<title>Servlet Shop_allshop</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Topic_list at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet Shop_allshop at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -59,15 +58,16 @@ public class Topic_list extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Fetch the list of topics from the database or any other data source
-        List<Topic> topics = Topic_DB.getAllTopics();
+        Shop_DB sdb = new Shop_DB();
+        String message = request.getParameter("message");
+        ArrayList<Shop> shoplist = sdb.getAllShop();
 
-        // Set the topics as a request attribute
-        request.setAttribute("topics", topics);
+        // Loại bỏ những shop có status là 0
+        shoplist.removeIf(shop -> shop.getStatus() == 0);
 
-        // Forward the request to topicContent.jsp
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/topic/topicContent.jsp");
-        dispatcher.forward(request, response);
+        request.setAttribute("shoplist", shoplist);
+        request.setAttribute("message", message);
+        request.getRequestDispatcher("/marketplace/allShop.jsp").forward(request, response);
     }
 
     /**

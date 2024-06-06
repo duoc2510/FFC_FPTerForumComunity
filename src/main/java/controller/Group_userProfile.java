@@ -4,14 +4,13 @@
  */
 package controller;
 
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import model.Comment;
 import model.DAO.Comment_DB;
@@ -25,7 +24,7 @@ import model.User;
  *
  * @author PC
  */
-public class User_viewProfile extends HttpServlet {
+public class Group_userProfile extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -44,10 +43,10 @@ public class User_viewProfile extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet User_viewProfile</title>");
+            out.println("<title>Servlet User_groupViewPostMember</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet User_viewProfile at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet User_groupViewPostMember at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -65,51 +64,34 @@ public class User_viewProfile extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false); // Không tự động tạo session mới
-        User userPersonal = (User) session.getAttribute("USER");
-        String userName = request.getParameter("username");
-        int userId = userPersonal.getUserId();
-        String friendStatus = User_DB.getFriendRequestStatus(userId, userName);
-
+        // Get userId and groupId from request parameters
+        int userId = Integer.parseInt(request.getParameter("userId"));
+        int groupId = Integer.parseInt(request.getParameter("groupId"));
         // Fetch the user
-        User user = User_DB.getUserByEmailorUsername(userName);
+        User user = User_DB.getUserById(userId);
 
         // Fetch the posts of the user in the specified group
-        List<Post> userPosts = Post_DB.getPostsByUsername(userName);
-
-        // Loop through the userPosts to fetch comments for each post
-        for (Post post : userPosts) {
-            // Lấy thông tin người đăng cho bài viết
+        List<Post> posts = Group_DB.getUserPostsInGroup(userId, groupId);
+        for (Post post : posts) {
             User author = Post_DB.getUserByPostId(post.getPostId());
-            post.setUser(author); // Đặt thông tin người đăng vào thuộc tính user của bài viết
+            post.setUser(author);
 
-            // Lấy danh sách comment cho bài viết
             List<Comment> comments = Comment_DB.getCommentsByPostId(post.getPostId());
             for (Comment comment : comments) {
-                // Lấy thông tin người dùng cho comment
                 User commentUser = User_DB.getUserById(comment.getUserId());
                 if (commentUser != null) {
                     comment.setUser(commentUser);
                 }
             }
-            post.setComments(comments); // Đặt danh sách comment vào bài viết
+            post.setComments(comments);
         }
-        boolean areFriend = User_DB.areFriendsAccepted(userId, userName);
-        boolean isPendingRq= User_DB.hasFriendRequestFromUser(userId, userName);
-        int postCountofUser = User_DB.countPostByUserName(userName);
-
-        // Thiết lập các thuộc tính cho session và request
-        session.setAttribute("isPendingRq", isPendingRq);
-        session.setAttribute("areFriend", areFriend);
-        session.setAttribute("postCountofUser", postCountofUser);
+        request.setAttribute("posts", posts);
 
         // Set user and userPosts as request attributes
-        request.setAttribute("friendStatus", friendStatus);
         request.setAttribute("user", user);
-        request.setAttribute("userPosts", userPosts);
 
         // Forward to the JSP page to display the posts
-        request.getRequestDispatcher("/user/anotherUserProfile.jsp").forward(request, response);
+        request.getRequestDispatcher("/group/listPostOfMember.jsp").forward(request, response);
     }
 
     /**

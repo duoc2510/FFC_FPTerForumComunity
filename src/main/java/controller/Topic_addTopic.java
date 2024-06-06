@@ -4,6 +4,7 @@
  */
 package controller;
 
+import jakarta.mail.Session;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -11,6 +12,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import model.DAO.Topic_DB;
 import model.Topic;
 
@@ -56,30 +58,32 @@ public class Topic_addTopic extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     private static final long serialVersionUID = 1L;
-
+    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
     }
-
+    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String topicName = request.getParameter("topicName");
         String description = request.getParameter("description");
-
+        HttpSession session = request.getSession();
+        
         Topic newTopic = new Topic();
         newTopic.setTopicName(topicName);
         newTopic.setDescription(description);
-
+        
         boolean isAdded = Topic_DB.addTopic(newTopic);
-
+        
         if (isAdded) {
+            session.removeAttribute("topics");
             request.setAttribute("successMessage", "Topic added successfully!");
         } else {
             request.setAttribute("errorMessage", "Failed to add topic!");
         }
-
+        
         response.sendRedirect("home");
     }
 

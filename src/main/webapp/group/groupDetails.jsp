@@ -14,107 +14,111 @@
         <div class="body-wrapper">
             <%@ include file="../include/navbar.jsp" %>
             <div class="container-fluid">
-                <style>
-                    .post {
-                        border: 1px solid #ccc;
-                        border-radius: 8px;
-                        padding: 10px;
-                        margin-bottom: 20px;
-                    }
-
-                    .post-header {
-                        display: flex;
-                        align-items: center;
-                    }
-
-                    .avatar {
-                        width: 40px;
-                        height: 40px;
-                        border-radius: 50%;
-                        margin-right: 10px;
-                    }
-
-                    .user-info {
-                        display: flex;
-                        flex-direction: column;
-                    }
-
-                    .user-name {
-                        margin: 0;
-                    }
-
-                    .post-status {
-                        margin: 5px 0 0;
-                        color: #888;
-                        font-size: 14px;
-                    }
-
-                    .post-content {
-                        margin-top: 10px;
-                    }
-
-                    .post-content p {
-                        margin: 0;
-                    }
-
-                    .post-image {
-                        max-width: 100%;
-                        height: auto;
-                        margin-top: 10px;
-                    }
-                    .img-preview {
-                        margin-top: 20px;
-                    }
-                    .img-preview img {
-                        max-width: 100%;
-                        max-height: 300px;
-                    }
-                </style>
                 <div class="row">
                     <div id="profile-wrapper">
-                        <div class="bg-white shadow rounded overflow-hidden">
-                            <div class="px-4 py-4 cover" style="height: 300px !important; object-fit: cover; background: url(${pageContext.request.contextPath}/${group.image}">
+                        <style>
+                            .post {
+                                border: 1px solid #ccc;
+                                border-radius: 8px;
+                                padding: 10px;
+                                margin-bottom: 20px;
+                            }
+
+                            .post-header {
+                                display: flex;
+                                align-items: center;
+                            }
+
+                            .avatar {
+                                width: 40px;
+                                height: 40px;
+                                border-radius: 50%;
+                                margin-right: 10px;
+                            }
+
+                            .user-info {
+                                display: flex;
+                                flex-direction: column;
+                            }
+
+                            .user-name {
+                                margin: 0;
+                            }
+
+                            .post-status {
+                                margin: 5px 0 0;
+                                color: #888;
+                                font-size: 14px;
+                            }
+
+                            .post-content {
+                                margin-top: 10px;
+                            }
+
+                            .post-content p {
+                                margin: 0;
+                            }
+
+                            .post-image {
+                                max-width: 100%;
+                                height: auto;
+                                margin-top: 10px;
+                            }
+                            .img-preview {
+                                margin-top: 20px;
+                            }
+                            .img-preview img {
+                                max-width: 100%;
+                                max-height: 300px;
+                            }
+                        </style>
+                        <div class="bg-white shadow rounded overflow-hidden ">
+                            <div class="px-4 py-4 cover" style="height: 300px !important; background-image: url('${pageContext.request.contextPath}/${group.image}'); background-size: cover; background-position: top; background-repeat: no-repeat;">
                                 <div class="media align-items-end profile-head">
                                     <div class="profile mr-3 d-flex justify-content-between align-items-end">
                                         <div>
                                             <c:if test="${group.createrId == USER.userId}">
-                                                <a href="${pageContext.request.contextPath}/inGroup/groupEdit?groupId=${group.groupId}" class="btn btn-outline-dark btn-sm btn-block edit-cover mx-2">Edit Group</a>
-                                            </c:if>
-
-                                        </div>
+                                                <a href="${pageContext.request.contextPath}/group/edit?groupId=${group.groupId}" class="btn btn-outline-dark btn-sm btn-block edit-cover mx-2">Edit Group</a>
+                                                <a href="${pageContext.request.contextPath}/group/detail?groupId=${group.groupId}" class="btn btn-outline-dark btn-sm btn-block edit-cover mx-2">View Group</a>
+                                            </c:if></div>
                                     </div>
-
                                 </div>
                             </div>
                             <div class="bg-light pt-4 px-4 d-flex justify-content-between text-center">
-                                <div class="media-body mb-5 text-white">
-                                    <h4 class="mt-0 mb-0">${group.groupName}</h4>
-                                    <p class="font-italic mb-0">${group.groupDescription}</p>
-                                </div>                    
-                                <ul class="list-inline mb-0">
-
+                                <div class="media-body mb-2 text-white">
+                                    <h4 class="mt-0 mb-0" style="text-align:left;">${group.groupName}</h4>
                                     <c:choose>
                                         <c:when test="${group.pending}">
-                                            <button class="btn btn-secondary btn-sm btn-block edit-cover mx-2" disabled>Pending Approval</button>
+                                            <button class="btn btn-secondary btn-sm btn-block edit-cover my-2" disabled>Pending Approval</button>
                                         </c:when>
                                         <c:when test="${isUserApproved and group.createrId != USER.userId}">
-                                            <button class="btn btn-primary btn-sm btn-block edit-cover mx-2" disabled>Joined Group</button>
-                                            <form action="${pageContext.request.contextPath}/groupOut?groupId=${group.groupId}&action=leave" method="post" style="display:inline;" onsubmit="return confirmLeaveGroup(this);">
+                                            <button class="btn btn-primary btn-sm btn-block edit-cover my-2" disabled>Joined Group</button>
+                                            <form action="${pageContext.request.contextPath}/group/detail?groupId=${group.groupId}&action=leave" method="post" style="display:inline;" onsubmit="return confirmLeaveGroup(this);">
                                                 <input type="hidden" name="groupId" value="${group.groupId}">
-                                                <button type="submit" class="btn btn-secondary btn-sm btn-block edit-cover mx-2">Out Group</button>
+                                                <button type="submit" class="btn btn-secondary btn-sm btn-block edit-cover my-2">Out Group</button>
                                             </form>
                                         </c:when>
                                         <c:when test="${isUserBanned}">
-                                            <button class="btn btn-info btn-danger btn-block edit-cover mx-2" disabled>You have been banned</button>
+                                            <button class="btn btn-info btn-danger btn-block edit-cover my-2" disabled>You have been banned</button>
                                         </c:when>
                                         <c:when test="${group.createrId == USER.userId}">
-                                            <button class="btn btn-info btn-sm btn-block edit-cover mx-2" disabled>Welcome Host Group</button>
+                                            <button class="btn btn-info btn-sm btn-block edit-cover my-2" disabled>Welcome Host Group</button>
+                                            <form action="${pageContext.request.contextPath}/group" method="post" style="display:inline;" onsubmit="return confirmDeleteGroup()">
+                                                <input type="hidden" name="action" value="deleteGroup">
+                                                <input type="hidden" name="groupId" value="${group.groupId}">
+                                                <button type="submit" class="btn btn-secondary btn-sm btn-block edit-cover mx-2">Delete Group</button>
+                                            </form>
                                         </c:when>
                                         <c:otherwise>
-                                            <a href="${pageContext.request.contextPath}/joinGroup?groupId=${group.groupId}" class="btn btn-primary btn-sm btn-block edit-cover mx-2">Join Group</a>
+                                            <form action="${pageContext.request.contextPath}/group" method="post">
+                                                <input type="hidden" name="groupId" value="${group.groupId}">
+                                                <input type="hidden" name="action" value="joinGroup"> <!-- Thêm tham số ẩn để xác định hành động -->
+                                                <button type="submit" class="btn btn-primary w-100 mt-3">Join Group</button>
+                                            </form>                                       
                                         </c:otherwise>
                                     </c:choose>
-
+                                </div>                    
+                                <ul class="list-inline mb-0">
                                     <li class="list-inline-item">
                                         <h5 class="font-weight-bold mb-0 d-block">${postCount}</h5><small class="text-muted"><i class="fas fa-image mr-1"></i>Posts</small>
                                     </li>       
@@ -129,264 +133,338 @@
                                     <p class="font-italic mb-0">${group.groupDescription}</p>
                                 </div>
                             </div>
-                            <div class="container-fluid pt-0">
-                                <c:if test="${isUserApproved or group.createrId == USER.userId}">
-                                    <div class="row form-settings bg-white shadow rounded py-4 px-4 d-flex justify-content-between ">
-
-                                        <a href="${pageContext.request.contextPath}/groupViewMember?groupId=${group.groupId}" id="memberGroupBtn" class="btn btn-primary btn-small" >Group Members</a>
-
-
-                                        <c:if test="${group.createrId == USER.userId}">
-                                            <a href="${pageContext.request.contextPath}/groupPendingRequest?groupId=${group.groupId}" id="pendingRequestBtn" class="btn btn-primary btn-small" >Pending Requests</a>
-                                            <div class="pending-request" id="pendingRequest">
-                                                <h2>Pending Members</h2>
-                                                <c:if test="${empty pendingMembers}">
-                                                    <p>No pending members.</p>
-                                                </c:if>
-                                                <c:if test="${not empty pendingMembers}">
-                                                    <table class="table table-striped">
-                                                        <thead>
-                                                            <tr>
-
-                                                                <th>User Name</th>
-                                                                <th>Status</th>
-                                                                <th>Actions</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <c:if test="${not empty messageOfApprove}">
-                                                            <div class="alert alert-info" role="alert">
-                                                                ${messageOfApprove}
-                                                            </div>
-                                                        </c:if>
-                                                        <c:forEach var="member" items="${pendingMembers}">
-                                                            <tr>
-
-                                                                <td> 
-                                                                    <img src="${pageContext.request.contextPath}/${member.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
-                                                                    <a href="${pageContext.request.contextPath}/profileAnotherUser?userId=${member.user.userId}">
-                                                                        ${member.user.username}
-                                                                    </a>
-                                                                </td>
-                                                                <td>${member.status}</td>
-                                                                <td>
-
-                                                                    <form action="${pageContext.request.contextPath}/groupPendingRequest" method="post" style="display: inline;">
-                                                                        <input type="hidden" name="memberId" value="${member.memberGroupId}">
-                                                                        <input type="hidden" name="groupId" value="${group.groupId}">
-                                                                        <input type="hidden" name="action" value="accept">
-                                                                        <button type="submit" class="btn btn-success">Approve</button>
-                                                                    </form>
-                                                                    <form action="${pageContext.request.contextPath}/groupPendingRequest" method="post" style="display: inline;">
-                                                                        <input type="hidden" name="memberId" value="${member.memberGroupId}">
-                                                                        <input type="hidden" name="groupId" value="${group.groupId}">
-                                                                        <input type="hidden" name="action" value="deny">
-                                                                        <button type="submit" class="btn btn-danger">Reject</button>
-                                                                    </form>
-                                                                </td>
-                                                            </tr>
-                                                        </c:forEach>
-                                                        </tbody>
-                                                    </table>
-                                                </c:if>
-                                            </div>   
-                                        </c:if>
-                                    </c:if>   
-                                </div>
-                                <c:if test="${isUserApproved or group.createrId == USER.userId}">
-                                    <form id="postForm" action="${pageContext.request.contextPath}/group/addPost" method="post" enctype="multipart/form-data">
-                                        <input type="hidden" name="groupId" value="${group.groupId}">
-                                        <div class="form-group pb-3">
-                                            <label for="postContent">What's on your mind?</label>
-                                            <textarea class="form-control" id="postContent" name="postContent" rows="3"></textarea>
-                                        </div>
-                                        <div class="form-group pb-3">
-                                            <label for="postImage">Upload Image</label>
-                                            <input type="file" class="form-control" id="postImage" name="postImage">
-                                        </div>
-                                        <button type="submit" class="btn btn-primary">Add Post</button>
-                                    </form>
-                                </div>
-                            </div>
-
-                            <c:forEach var="post" items="${group.post}">
-                                <div class="col-lg-12">
-                                    <div class="card w-100">
-                                        <div class="card-body p-4">
-                                            <div class="pb-3 d-flex row">
-                                                <div class="col-1 text-center mt-2">
-                                                    <a class="nav-icon-hover" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown" aria-expanded="false">
-                                                        <img src="${pageContext.request.contextPath}/${post.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
-                                                    </a>
-                                                </div>
-                                                <div class="col-10">
-                                                    <h6 class="card-title fw-semibold mb-4 d-inline">
-                                                        <a href="${pageContext.request.contextPath}/groupViewPostMember?userId=${post.user.userId}&groupId=${groupId}">
-                                                            ${post.user.username}
-                                                        </a>
-                                                    </h6>
-                                                    <p class="s-4">${post.createDate}</p>
-                                                </div>
-                                                <c:if test="${post.user.userId == USER.userId}">
-                                                    <div class="dropdown col-1 px-2" style="text-align: right">
-                                                        <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                            <span><i class="ti-more-alt"></i></span>
-                                                        </a>
-                                                        <ul class="dropdown-menu">
-                                                            <li>
-                                                                <a class="dropdown-item" href="#">Edit</a>
-                                                            </li>
-                                                            <li>
-                                                                <form class="dropdown-item mt-3" onsubmit="return confirm('Are you sure you want to delete this post?');" action="${pageContext.request.contextPath}/group/post" method="post">
-                                                                    <input type="hidden" name="action" value="deletePost">
-                                                                    <input type="hidden" name="postId" value="${post.postId}">
-                                                                    <button type="submit" class="dropdown-item">Delete Post</button>
-                                                                </form>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </c:if>
-                                            </div>
-                                            <div class="mt-3">
-                                                <p class="fs-6">${post.content}</p>
-                                                <c:if test="${not empty post.uploadPath}">
-                                                    <img src="${pageContext.request.contextPath}/${post.uploadPath}" alt="Post Image" class="post-image">
-                                                </c:if>
-                                            </div>
-                                            <div class="row p-3 d-flex justify-content-center text-center">
-                                                <a class="col nav-link nav-icon-hover" href="javascript:void(0)">
-                                                    <span><i class="ti ti-heart"></i></span>
-                                                    <span class="hide-menu">Like</span>
-                                                </a>
-                                                <a class="col nav-link nav-icon-hover">
-                                                    <span><i class="ti ti-message-plus"></i></span>
-                                                    <span class="hide-menu">Comment</span>
-                                                </a>
-                                                <a class="col nav-link nav-icon-hover" href="javascript:void(0)">
-                                                    <span><i class="ti ti-share"></i></span>
-                                                    <span class="hide-menu">Share</span>
-                                                </a>
-                                            </div>
-                                            <!-- Add comment form -->
-                                            <form action="${pageContext.request.contextPath}/group/comment" method="post" class="input-group">
-                                                <input type="hidden" name="action" value="addComment">
-                                                <input type="hidden" name="postId" value="${post.postId}">
-                                                <input type="hidden" name="userId" value="${user.userId}">
-                                                <input type="text" class="form-control" name="content" placeholder="Write a comment" required>
-                                                <button type="submit" class="btn btn-primary">Submit</button>
-                                            </form>
-                                            <!-- Display comments -->
-                                            <div class="comments mt-3">
-                                                <c:forEach var="comment" items="${post.comments}">
-                                                    <div class="comment">
-                                                        <div class="d-flex justify-content-between align-items-center pb-3">
-                                                            <div class="d-flex align-items-center">
-                                                                <div class="text-center mt-2">
-                                                                    <img src="${pageContext.request.contextPath}/${comment.user.userAvatar}" alt="" width="30" class="rounded-circle avatar-cover">
-                                                                </div>
-                                                                <div class="ms-2">
-                                                                    <h6 class="card-title fw-semibold mb-0">${comment.user.username}: ${comment.content}</h6>
-                                                                    <p class="s-4">${comment.date}</p>
-                                                                </div>
-                                                            </div>
-                                                            <c:if test="${comment.user.userId == USER.userId}">
-                                                                <div class="dropdown">
-                                                                    <button class="btn btn-link dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                                                        <i class="ti ti-more"></i>
-                                                                    </button>
-                                                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                                                                        <li>
-                                                                            <button class="dropdown-item" type="button" onclick="editComment(${comment.commentId}, '${comment.content}')">Edit</button>
-                                                                        </li>
-                                                                        <li>
-                                                                            <form class="dropdown-item p-0 m-0" onsubmit="return confirm('Are you sure you want to delete this comment?');" action="${pageContext.request.contextPath}/group/comment" method="post">
-                                                                                <input type="hidden" name="action" value="deleteComment">
-                                                                                <input type="hidden" name="commentId" value="${comment.commentId}">
-                                                                                <button type="submit" class="dropdown-item">Delete</button>
-                                                                            </form>
-                                                                        </li>
-                                                                    </ul>
-                                                                </div>
-                                                            </c:if>
-                                                        </div>
-                                                    </div>
-                                                </c:forEach>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </c:forEach>
-
-
-                            <!-- Modal for editing comment -->
-                            <div class="modal fade" id="editCommentModal" tabindex="-1" aria-labelledby="editCommentModalLabel" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="editCommentModalLabel">Edit Comment</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <form id="editCommentForm" action="${pageContext.request.contextPath}/group/comment" method="post">
-                                            <div class="modal-body">
-                                                <input type="hidden" name="action" value="editComment">
-                                                <input type="hidden" id="editCommentId" name="commentId">
-                                                <div class="form-group">
-                                                    <label for="editContent">Content:</label>
-                                                    <textarea class="form-control" id="editContent" name="newContent" rows="3"></textarea>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                <button type="submit" class="btn btn-primary">Save changes</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </c:if>    
-                        <c:if test="${not isUserApproved and group.createrId != USER.userId and !isUserBanned}">
-                            <div class="container mt-3">
-                                <h3>You must join the group to view posts and comments.</h3>
-                            </div>
-                        </c:if>
+                        </div>
                     </div>
                 </div>
             </div>
+            <c:if test="${isUserApproved or group.createrId == USER.userId}">
+                <div class="container-fluid pt-0">
+                    <div class="row form-settings bg-white shadow rounded py-4 px-4 d-flex justify-content-between ">
+                        <c:if test="${isUserApproved or group.createrId == USER.userId}">
+                            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                <c:if test="${group.createrId == USER.userId}">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Pending member</button>
+                                    </li>
+                                </c:if>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Group Members</button>
+                                </li>
+                            </ul>
+                            <div class="tab-content my-3" id="myTabContent">
+                                <div class="tab-pane fad show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+                                    <c:if test="${group.createrId == USER.userId}">
+                                        <div class="pending-request" id="pendingRequest">
+                                            <h2>Pending Members</h2>
+                                            <c:if test="${empty pendingMembers}">
+                                                <p>No pending members.</p>
+                                            </c:if>
+                                            <c:if test="${not empty pendingMembers}">
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>User Name</th>
+                                                            <th>Status</th>
+                                                            <th>Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <c:if test="${not empty messageOfApprove}">
+                                                        <div class="alert alert-info" role="alert">
+                                                            ${messageOfApprove}
+                                                        </div>
+                                                    </c:if>
+                                                    <c:forEach var="member" items="${pendingMembers}">
+                                                        <tr>
+                                                            <td> 
+                                                                <img src="${pageContext.request.contextPath}/${member.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
+                                                                <a href="${pageContext.request.contextPath}/group/profile?userId=${member.user.userId}">
+                                                                    ${member.user.username}
+                                                                </a>
+                                                            </td>
+                                                            <td>${member.status}</td>
+                                                            <td>
+                                                                <form action="${pageContext.request.contextPath}/group/detail?groupId=${group.groupId}" method="post" style="display: inline;">
+                                                                    <input type="hidden" name="memberId" value="${member.memberGroupId}">
+                                                                    <input type="hidden" name="groupId" value="${group.groupId}">
+                                                                    <input type="hidden" name="action" value="accept">
+                                                                    <button type="submit" class="btn btn-success">Approve</button>
+                                                                </form>
+                                                                <form action="${pageContext.request.contextPath}/group/detail?groupId=${group.groupId}" method="post" style="display: inline;">
+                                                                    <input type="hidden" name="memberId" value="${member.memberGroupId}">
+                                                                    <input type="hidden" name="groupId" value="${group.groupId}">
+                                                                    <input type="hidden" name="action" value="deny">
+                                                                    <button type="submit" class="btn btn-danger">Reject</button>
+                                                                </form>
+                                                            </td>
+                                                        </tr>
+                                                    </c:forEach>
+                                                    </tbody>
+                                                </table>
+                                            </c:if>
+                                        </div>   
+                                    </c:if>
+                                </div>   
+                                <div class="tab-pane fade my-3" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+                                    <h2>List Members</h2>
+                                    <c:if test="${empty allMembers}">
+                                        <p>No members.</p>
+                                    </c:if>
+                                        
+                                    <c:if test="${not empty allMembers}">
+                                        <table class="table table-striped">
+                                            <!--<tbody>-->
+                                            <thead>
+                                                <tr>            
+                                                    <th scope="col">#</th>
+                                                    <th scope="col">User</th>
+                                                    <th scope="col">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <c:set var="counter" value="1" />
+                                            <c:forEach var="member" items="${allMembers}">
+                                                <!--<table class="table table-hover">-->
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>${counter}</td>
+                                                            <td><img src="${pageContext.request.contextPath}/${member.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
+                                                                <a href="${pageContext.request.contextPath}/group/profile?userId=${member.user.userId}&groupId=${group.groupId}">
+                                                                    ${member.user.username}
+                                                                </a>
+                                                            </td>
+                                                            <td>
+                                                                <c:if test="${member.user.userId != USER.userId && member.user.userId != group.createrId}">
+                                                                    <form id="kickForm${member.user.userId}" action="${pageContext.request.contextPath}/group/detail?groupId=${group.groupId}" method="post" style="display:inline;">
+                                                                        <input type="hidden" name="groupId" value="${group.groupId}">
+                                                                        <input type="hidden" name="userId" value="${member.user.userId}">
+                                                                        <input type="hidden" name="action" value="kick"> 
+                                                                        <button id="kickButton${member.user.userId}" type="submit" class="btn btn-secondary btn-sm btn-block edit-cover mx-2" onclick="return confirmKick(this);">Kick</button>
+                                                                    </form>
+                                                                    <form id="banForm${member.user.userId}" action="${pageContext.request.contextPath}/group/detail?groupId=${group.groupId}" method="post" style="display:inline;">
+                                                                        <input type="hidden" name="groupId" value="${group.groupId}">
+                                                                        <input type="hidden" name="userId" value="${member.user.userId}">
+                                                                        <input type="hidden" name="action" value="ban"> 
+                                                                        <button id="banButton${member.user.userId}" type="submit" class="btn btn-danger btn-sm btn-block edit-cover" onclick="return confirmBan(this);">Ban</button>
+                                                                    </form>
+                                                                </c:if>
+                                                            </td>
+                                                        </tr>
+                                                        <c:set var="counter" value="${counter + 1}" />
+                                                    </tbody>
+                                                <!--</table>-->
+                                            </c:forEach>
+                                            <!--</tbody>-->
+                                        </table>
+                                    </c:if>
+                                </div>
+                            </div>   
+                        </c:if>  
+                    </div>
+                </div>
+            </c:if>
 
+            <c:if test="${isUserApproved or group.createrId == USER.userId}">
+                <div class="container-fluid pt-0">
+                    <div class="row form-settings bg-white shadow rounded py-4 px-4 d-flex justify-content-between ">
+                        <div class="p0">
+                            <h5 class="mb-2">Có gì mới không nà ${USER.userFullName} ơi</h5>
+                        </div>
+                        <div>
+                            <form id="postForm" action="${pageContext.request.contextPath}/addpost" method="post" enctype="multipart/form-data">
+                                <div class="form-group pb-3">
+                                    <textarea class="form-control" id="postContent" name="postContent" rows="3" placeholder="Có chuyện gì vui vậy :>"></textarea>
+                                </div>
+                                <div class="form-group pb-3">
+                                    <label for="postImage">Upload Image</label>
+                                    <input type="file" class="form-control" id="postImage" name="postImage" accept="image/*">
+                                    <div class="img-preview" id="imgPreview">
+                                        <p>No image selected</p>
+                                    </div>
+                                </div>
+                                <c:if test="${not empty group.groupId}">
+                                    <input type="hidden" name="groupId" value="${group.groupId}" />
+                                </c:if>
+                                <button type="submit" class="btn btn-primary">Add Post</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </c:if>
+            <c:if test="${isUserApproved or group.createrId == USER.userId}">
+                <div class="container-fluid pt-0">
+                    <div class="row form-settings bg-white shadow rounded py-4 px-4 d-flex justify-content-between ">
+                        <div class="p0">
+                            <h5 class="mb-2">Bài viết của Group ${group.groupName}</h5>
+                        </div>
+                        <!-- Add buttons to filter posts by status -->
+                        <c:if test="${group.createrId == USER.userId}">
+                            <div class="btn-group" role="group" aria-label="Filter posts">
+                                <a type="button" class="btn btn-primary" id="btnActive">Active Posts</a>
+                                <a type="button" class="btn btn-secondary" id="btnPending">Pending Posts</a>
+                            </div>
+                        </c:if>
 
+                        <div id="postsContainer">
+                            <c:forEach var="post" items="${posts}">
+                                <c:if test="${post.groupId == group.groupId && post.status eq 'Active'}">
+                                    <%@ include file="postactive.jsp" %>
+                                </c:if>
+                                <c:if test="${post.groupId == group.groupId && group.createrId == USER.userId && post.status eq 'Pending'}">
+                                    <%@ include file="postpending.jsp" %>
+                                </c:if>
+                            </c:forEach>
+                        </div>
+                    </div>
+                </div>
+            </c:if>
+
+            <c:if test="${not isUserApproved and group.createrId != USER.userId and !isUserBanned}">
+                <div class="container-fluid pt-0">
+                    <div class="row form-settings bg-white shadow rounded py-4 px-4 d-flex justify-content-between ">
+                        <div class="p0">
+                            <h5 class="mb-2">Bạn chưa tham gia group ${USER.userFullName} ơi</h5>
+                        </div>
+                    </div>
+                </div>
+            </c:if>
+
+            <%@include file="modal.jsp" %>
         </div>
-
     </div>
-    <%@ include file="../include/footer.jsp" %>
-    <script>
-        function editComment(commentId, content) {
-            document.getElementById('editCommentId').value = commentId;
-            document.getElementById('editContent').value = content;
-            var editCommentModal = new bootstrap.Modal(document.getElementById('editCommentModal'));
-            editCommentModal.show();
-        }
-        function showMemberGroup() {
-            document.getElementById('pendingRequest').style.display = 'none';
-            document.getElementById('memberGroup').style.display = 'block';
-        }
-
-        // Function cho sự kiện khi click vào nút hiển thị yêu cầu chờ
-        function showPendingRequest() {
-            document.getElementById('memberGroup').style.display = 'none';
-            document.getElementById('pendingRequest').style.display = 'block';
-        }
-
-        // Gắn sự kiện cho nút hiển thị danh sách thành viên nhóm
-        document.getElementById('memberGroupBtn').addEventListener('click', showMemberGroup);
-
-        // Gắn sự kiện cho nút hiển thị yêu cầu chờ
-        document.getElementById('pendingRequestBtn').addEventListener('click', showPendingRequest);
-
-        function confirmLeaveGroup(form) {
-            return confirm('Are you sure you want to leave this group?');
-        }
-
-    </script>
 </body>
-</html>
+<%@ include file="../include/footer.jsp" %>
+<script>
+    function editComment(commentId, content) {
+        document.getElementById('editCommentId').value = commentId; // Thiết lập giá trị ID của bình luận vào input ẩn
+        document.getElementById('editCommentContent').value = content; // Thiết lập nội dung bình luận vào textarea
+
+        var editCommentModal = new bootstrap.Modal(document.getElementById('editCommentModal')); // Tạo modal sử dụng Bootstrap
+        editCommentModal.show(); // Hiển thị modal chỉnh sửa bình luận
+    }
+
+    document.getElementById('postImage').addEventListener('change', handlePostImageChange);
+
+    function handlePostImageChange(event) {
+        const file = event.target.files[0];
+        const previewContainer = document.getElementById('imgPreview');
+        const previewDefaultText = previewContainer.querySelector('p');
+
+        // Xóa ảnh hiện tại nếu có
+        const existingPreviewImage = previewContainer.querySelector('img');
+        if (existingPreviewImage) {
+            previewContainer.removeChild(existingPreviewImage);
+        }
+
+        if (file) {
+            const reader = new FileReader();
+            const previewImage = document.createElement('img');
+
+            previewDefaultText.style.display = 'none';
+            previewImage.style.display = 'block';
+
+            reader.addEventListener('load', function () {
+                previewImage.setAttribute('src', this.result);
+            });
+
+            reader.readAsDataURL(file);
+            previewContainer.appendChild(previewImage);
+        } else {
+            previewDefaultText.style.display = null;
+        }
+    }
+
+    function editPost(postId, content, status, uploadPath) {
+        document.getElementById('editPostId').value = postId;
+        document.getElementById('editPostContent').value = content;
+        document.getElementById('editPostStatus').value = "Public";
+        document.getElementById('existingUploadPath').value = uploadPath ? uploadPath : 'null';
+
+        var currentUploadPathImg = document.getElementById('currentUploadPath');
+        if (uploadPath && uploadPath !== 'null') {
+            currentUploadPathImg.src = uploadPath;
+            currentUploadPathImg.style.display = 'block';
+        } else {
+            currentUploadPathImg.style.display = 'none';
+        }
+
+        var editPostModal = new bootstrap.Modal(document.getElementById('editPostModal'));
+        editPostModal.show();
+
+        const editPostImageInput = document.getElementById('editPostImage');
+        editPostImageInput.removeEventListener('change', handleEditPostImageChange);
+        editPostImageInput.addEventListener('change', handleEditPostImageChange);
+    }
+
+    function handleEditPostImageChange(event) {
+        const file = event.target.files[0];
+        const currentUploadPathImg = document.getElementById('currentUploadPath');
+
+        if (file) {
+            const reader = new FileReader();
+            reader.addEventListener('load', function () {
+                currentUploadPathImg.src = this.result;
+                currentUploadPathImg.style.display = 'block';
+            });
+            reader.readAsDataURL(file);
+        } else {
+            currentUploadPathImg.style.display = 'none';
+        }
+    }
+
+    function showMemberGroup() {
+        document.getElementById('pendingRequest').style.display = 'none';
+        document.getElementById('memberGroup').style.display = 'block';
+    }
+
+    function showPendingRequest() {
+        document.getElementById('memberGroup').style.display = 'none';
+        document.getElementById('pendingRequest').style.display = 'block';
+    }
+
+
+
+    function confirmLeaveGroup(form) {
+        return confirm('Are you sure you want to leave this group?');
+    }
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        var btnActive = document.getElementById("btnActive");
+        var btnPending = document.getElementById("btnPending");
+
+        btnActive.addEventListener("click", function () {
+            togglePosts("post-active", "post-pending", "block", "none");
+        });
+
+        btnPending.addEventListener("click", function () {
+            togglePosts("post-active", "post-pending", "none", "block");
+        });
+
+        function togglePosts(activeClass, pendingClass, activeDisplay, pendingDisplay) {
+            var activePosts = document.getElementsByClassName(activeClass);
+            var pendingPosts = document.getElementsByClassName(pendingClass);
+
+            for (var i = 0; i < activePosts.length; i++) {
+                activePosts[i].style.display = activeDisplay;
+            }
+            for (var i = 0; i < pendingPosts.length; i++) {
+                pendingPosts[i].style.display = pendingDisplay;
+            }
+        }
+    });
+    function confirmDeleteGroup() {
+        // Get the number of members from the JSP
+        var memberCount = <c:out value="${group.memberCount}" />;
+
+        // Check the number of members
+        if (memberCount > 1) {
+            // Show alert if there are more than 1 member
+            alert("Your group has more than 1 member. To delete the group, you need to remove all members.");
+            return false; // Prevent form submission
+        } else {
+            // Show confirmation alert if there is only 1 member
+            var confirmDelete = confirm("You are the last member of the group. Are you sure you want to delete it?");
+            return confirmDelete; // Allow or prevent form submission based on user's choice
+        }
+    }
+</script>

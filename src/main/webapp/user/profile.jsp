@@ -80,7 +80,7 @@
                             </div>
                             <div class="bg-light pt-4 px-4 d-flex justify-content-between text-center ">
                                 <div class="media-body mb-5 text-white">
-                                    <h4 class="mt-0 mb-0">${USER.userFullName}</h4>
+                                    <h4 class="mt-0 mb-0">${USER.userFullName}</h4>     
                                 </div>
                                 <ul class="list-inline mb-0">
 
@@ -109,16 +109,19 @@
                                 </ul>
                             </div>
                             <div class="px-4 py-3">
+                                <p class="font-italic mb-0"><i class="ti ti-calendar"></i>Ngày tham gia: ${USER.userCreateDate}</p>
+                                <p class="font-italic mb-0">Giới tính: ${USER.userSex}</p>
                                 <div class="p-4 rounded shadow-sm">
-                                    <p class="font-italic mb-0">${USER.userStory}</p>
+                                    <p class="font-italic mb-0">${USER.userStory}<i class="ti ti-feather"></i></p>
                                 </div>
+
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="container-fluid pt-0">
-                <div class="row form-settings bg-white shadow rounded py-4 px-4 d-flex justify-content-between ">
+                <div class="row form-settings bg-white shadow rounded py-4 px-4 d-flex justify-content-between">
                     <div class="p0">
                         <h5 class="mb-2">Có gì mới không nà ${USER.userFullName} ơi</h5>
                     </div>
@@ -147,6 +150,8 @@
                     </div>
                 </div>
             </div>
+
+
             <div class="container-fluid pt-0">
                 <div class="row form-settings bg-white shadow rounded py-4 px-4 d-flex justify-content-between ">
                     <div class="p0">
@@ -154,152 +159,37 @@
                     </div>
                     <div>
                         <c:forEach var="post" items="${posts}">
-                            <div class="col-lg-12">
-                                <div class="card w-100">
-                                    <div class="card-body p-4">
-                                        <div class="pb-3 d-flex row">
-                                            <div class="col-1 text-center mt-2">
-                                                <a class="nav-icon-hover" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown" aria-expanded="false">
-                                                    <img src="${pageContext.request.contextPath}/${post.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
-                                                </a>
-                                            </div>
-                                            <div class="col-10">
-                                                <h6 class="card-title fw-semibold mb-4 d-inline">${post.user.username}</h6>
-                                                <p class="s-4">${post.createDate}</p>
-                                            </div>
-                                            <c:if test="${post.user.userId == USER.userId}">
-                                                <div class="dropdown col-1 px-2" style="text-align: right">
-                                                    <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                        <span> <i class="ti-more-alt"></i></span>   
-                                                    </a>
-                                                    <ul class="dropdown-menu">
-                                                        <li>
-                                                            <a class="dropdown-item" type="button" href="#">Edit</a>
-                                                        </li>
-                                                        <li>
-                                                            <form class="dropdown-item p-0 m-0" onsubmit="return confirm('Are you sure you want to delete this post?');" action="${pageContext.request.contextPath}/post" method="post">
-                                                                <input type="hidden" name="action" value="deletePost">
-                                                                <input type="hidden" name="postId" value="${post.postId}">
-                                                                <button type="submit" class="dropdown-item">Delete Post</button>
-                                                            </form>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-
-                                            <!-- Option to delete post for the post author -->
-                                            <div class="mt-0 fs-6">
-                                                <p>${post.content}</p>
-                                                <c:if test="${not empty post.uploadPath}">
-                                                    <img src="${pageContext.request.contextPath}/${post.uploadPath}" alt="Post Image" class="post-image">
-                                                </c:if>
-                                            </div>
-                                            <div class="">
-                                                <div class="row p-3 d-flex justify-content-center text-center">
-                                                    <a class="col nav-link nav-icon-hover" href="javascript:void(0)">
-                                                        <span><i class="ti ti-heart"></i></span>
-                                                        <span class="hide-menu">Like</span>
-                                                    </a>
-                                                    <a class="col nav-link nav-icon-hover">
-                                                        <span><i class="ti ti-message-plus"></i></span>
-                                                        <span class="hide-menu">Comment</span>
-                                                    </a>
-                                                    <a class="col nav-link nav-icon-hover" href="javascript:void(0)">
-                                                        <span><i class="ti ti-share"></i></span>
-                                                        <span class="hide-menu">Share</span>
-                                                    </a>
-                                                </div>
-                                                <!-- Add comment form -->
-                                                <form action="${pageContext.request.contextPath}/comment" method="post" class="input-group">
-                                                    <input type="hidden" name="action" value="addComment">
-                                                    <input type="hidden" name="postId" value="${post.postId}">
-                                                    <input type="hidden" name="userId" value="${user.userId}">
-                                                    <input type="text" class="form-control" name="content" placeholder="Write a comment" required>
-                                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                                </form>
-                                                <!-- Display comments -->
-                                                <div class="comments mt-3">
-                                                    <c:forEach var="comment" items="${post.comments}">
-                                                        <div class="comment">
-                                                            <div class="d-flex justify-content-between align-items-center pb-3">
-                                                                <div class="d-flex align-items-center">
-                                                                    <div class="text-center mt-2">
-                                                                        <img src="${pageContext.request.contextPath}/${comment.user.userAvatar}" alt="" width="30" class="rounded-circle avatar-cover">
-                                                                    </div>
-                                                                    <div class="ms-2">
-                                                                        <h6 class="card-title fw-semibold mb-0">${comment.user.username}:${comment.content}</h6>
-                                                                        <p class="s-4">${comment.date}</p>
-                                                                    </div>
-                                                                </div>
-                                                                <c:if test="${comment.user.userId == USER.userId}">
-                                                                    <div class="dropdown">
-                                                                        <button class="btn btn-link dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                                                            <i class="ti ti-more"></i>
-                                                                        </button>
-                                                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                                                                            <li>
-                                                                                <button class="dropdown-item" type="button" onclick="editComment(${comment.commentId}, '${comment.content}')">Edit</button>
-                                                                            </li>
-                                                                            <li>
-                                                                                <form class="dropdown-item p-0 m-0" onsubmit="return confirm('Are you sure you want to delete this comment?');" action="${pageContext.request.contextPath}/comment" method="post">
-                                                                                    <input type="hidden" name="action" value="deleteComment">
-                                                                                    <input type="hidden" name="commentId" value="${comment.commentId}">
-                                                                                    <button type="submit" class="dropdown-item">Delete</button>
-                                                                                </form>
-                                                                            </li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </c:if>
-                                                            </div>
-                                                        </div>
-                                                    </c:forEach>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                            <c:if test="${post.user.userId == USER.userId && post.status eq null}">
+                                <%@include file="post.jsp" %>
                             </c:if>
                         </c:forEach>
-                        <!-- Modal for editing comment -->
-                        <div class="modal fade" id="editCommentModal" tabindex="-1" aria-labelledby="editCommentModalLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="editCommentModalLabel">Edit Comment</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <form id="editCommentForm" action="${pageContext.request.contextPath}/comment" method="post">
-                                        <div class="modal-body">
-                                            <input type="hidden" name="action" value="editComment">
-                                            <input type="hidden" id="editCommentId" name="commentId">
-                                            <div class="form-group">
-                                                <label for="editContent">Content:</label>
-                                                <textarea class="form-control" id="editContent" name="newContent" rows="3"></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            <button type="submit" class="btn btn-primary">Save changes</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
+
+                        <%@include file="modalpost.jsp" %>
                         <script>
                             function editComment(commentId, content) {
-                                document.getElementById('editCommentId').value = commentId;
-                                document.getElementById('editContent').value = content;
-                                var editCommentModal = new bootstrap.Modal(document.getElementById('editCommentModal'));
-                                editCommentModal.show();
+                                document.getElementById('editCommentId').value = commentId; // Thiết lập giá trị ID của bình luận vào input ẩn
+                                document.getElementById('editCommentContent').value = content; // Thiết lập nội dung bình luận vào textarea
+
+                                var editCommentModal = new bootstrap.Modal(document.getElementById('editCommentModal')); // Tạo modal sử dụng Bootstrap
+                                editCommentModal.show(); // Hiển thị modal chỉnh sửa bình luận
                             }
-                            document.getElementById('postImage').addEventListener('change', function (event) {
+
+                            document.getElementById('postImage').addEventListener('change', handlePostImageChange);
+
+                            function handlePostImageChange(event) {
                                 const file = event.target.files[0];
                                 const previewContainer = document.getElementById('imgPreview');
-                                const previewImage = document.createElement('img');
                                 const previewDefaultText = previewContainer.querySelector('p');
+
+                                // Xóa ảnh hiện tại nếu có
+                                const existingPreviewImage = previewContainer.querySelector('img');
+                                if (existingPreviewImage) {
+                                    previewContainer.removeChild(existingPreviewImage);
+                                }
 
                                 if (file) {
                                     const reader = new FileReader();
+                                    const previewImage = document.createElement('img');
 
                                     previewDefaultText.style.display = 'none';
                                     previewImage.style.display = 'block';
@@ -312,9 +202,47 @@
                                     previewContainer.appendChild(previewImage);
                                 } else {
                                     previewDefaultText.style.display = null;
-                                    previewImage.style.display = null;
                                 }
-                            });
+                            }
+
+                            function editPost(postId, content, status, uploadPath) {
+                                document.getElementById('editPostId').value = postId;
+                                document.getElementById('editPostContent').value = content;
+                                document.getElementById('editPostStatus').value = "Public";
+                                document.getElementById('existingUploadPath').value = uploadPath ? uploadPath : 'null';
+
+                                var currentUploadPathImg = document.getElementById('currentUploadPath');
+                                if (uploadPath && uploadPath !== 'null') {
+                                    currentUploadPathImg.src = uploadPath;
+                                    currentUploadPathImg.style.display = 'block';
+                                } else {
+                                    currentUploadPathImg.style.display = 'none';
+                                }
+
+                                var editPostModal = new bootstrap.Modal(document.getElementById('editPostModal'));
+                                editPostModal.show();
+
+                                const editPostImageInput = document.getElementById('editPostImage');
+                                editPostImageInput.removeEventListener('change', handleEditPostImageChange);
+                                editPostImageInput.addEventListener('change', handleEditPostImageChange);
+                            }
+
+                            function handleEditPostImageChange(event) {
+                                const file = event.target.files[0];
+                                const currentUploadPathImg = document.getElementById('currentUploadPath');
+
+                                if (file) {
+                                    const reader = new FileReader();
+                                    reader.addEventListener('load', function () {
+                                        currentUploadPathImg.src = this.result;
+                                        currentUploadPathImg.style.display = 'block';
+                                    });
+                                    reader.readAsDataURL(file);
+                                } else {
+                                    currentUploadPathImg.style.display = 'none';
+                                }
+                            }
+
                         </script>
                     </div>
                 </div>

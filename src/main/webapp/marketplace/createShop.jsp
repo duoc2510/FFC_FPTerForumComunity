@@ -1,58 +1,90 @@
-<%-- 
-    Document   : createShop
-    Created on : May 26, 2024, 4:40:12â¯PM
-    Author     : mac
---%>
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
 
-<div class="w-100 row">
-    <div class="col-md-12 p-2">
-        <h2>Create Your Brand To Have More Income</h2>
-        <img class="w-100 rounded" src="${pageContext.request.contextPath}/static/images/bannerShop.jpg"/>
-    </div>
-</div>
-<div class="w-100 row">
-    <div class="col-md-12 p-2">
+<%@ include file="../include/header.jsp" %>
+<body>
+    <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+         data-sidebar-position="fixed" data-header-position="fixed">
+        <c:if test="${not empty sessionScope.USER}">
+            <%@ include file="../include/slidebar.jsp" %>
+        </c:if>
+        <c:if test="${empty sessionScope.USER}">
+            <%@ include file="../include/slidebar_guest.jsp" %>
+        </c:if>
+        <div class="body-wrapper">
+            <c:if test="${not empty sessionScope.USER}">
+                <%@ include file="../include/navbar.jsp" %>
+            </c:if>
+            <c:if test="${empty sessionScope.USER}">
+                <%@ include file="../include/navbar_guest.jsp" %>
+            </c:if>
+            <div class="container-fluid">
+                <!--Control panel-->
+                <%@ include file="panel.jsp" %>
 
-        <form method="POST">
-            <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Shop Name</label>
-                <input type="email" class="form-control" />
-            </div>
 
-            <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Shop Address</label>
-                <input type="email" class="form-control" />
-            </div>
-            <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Campus</label>
-                <select class="form-select form-control" aria-label="ConsciousSelect" id="consciousSelect" onchange="loadDistricts()">
-                    <option value="29">Ha Noi</option>
-                    <option value="29">Hoa Lac</option>
-                    <option value="29">Quy Nhon</option>
-                    <option value="43">Da Nang</option>
-                    <option value="51">TP. HCM</option>
-                </select>
-            </div>
+                <div class="col-lg-12">
 
-            <div class="mb-3" id="districtSelectDiv" style="display:none;">
-                <label class="form-label">District</label>
-                <select name="district" class="form-select form-control" aria-label="DistrictSelect" id="districtSelect">
-                    <!-- District options will be populated dynamically using JavaScript -->
-                </select>
-            </div>
+                    <div class="w-100 row">
+                        <div class="col-md-12 p-2">
+                            <h2>Create Your Brand To Have More Income</h2>
+                            <img class="w-100 rounded" src="${pageContext.request.contextPath}/static/images/bannerShop.jpg"/>
+                        </div>
+                    </div>
+                    <div class="w-100 row">
+                        <div class="col-md-12 p-2">
 
-            <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Shop Phone</label>
-                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-            </div>
+                            <form action="myshop" method="POST">
+                                <div class="mb-3">
+                                    <label for="shopName" class="form-label">Shop Name</label>
+                                    <input type="text" class="form-control" id="shopName" name="shopName" />
+                                </div>
 
-            <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Shop Description</label>
-                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-            </div>
+                                <div class="mb-3">
+                                    <label for="campus" class="form-label">Campus</label>
+                                    <select class="form-select form-control" aria-label="ConsciousSelect" id="campus" name="campus">
+                                        <option value="Campus Ha Noi">Ha Noi</option>
+                                        <option value="Campus Can Tho">Can Tho</option>
+                                        <option value="Campus Quy Nhon">Quy Nhon</option>
+                                        <option value="Campus Da Nang">Da Nang</option>
+                                        <option value="Campus Ho Chi Minh">TP. HCM</option>
+                                    </select>
+                                </div>
 
-            <button type="submit" class="btn btn-primary float-end">Create</button>
-        </form>
-    </div>
-</div>
+                                <div class="mb-3">
+                                    <label for="shopPhone" class="form-label">Shop Phone</label>
+                                    <input type="text" class="form-control" id="shopPhone" name="shopPhone">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="shopDescription" class="form-label">Shop Description</label>
+                                    <input type="text" class="form-control" id="shopDescription" name="shopDescription">
+                                </div>
+                                <button type="submit" class="btn btn-primary float-end">Create</button>
+                            </form>
+
+                        </div>
+                    </div>
+
+                    <script>
+                        //      Message error
+                        document.addEventListener("DOMContentLoaded", function (event) {
+                            // Ensure your DOM is fully loaded before executing any code
+                            var errorMessage = "${requestScope.message}";
+                            // Kiểm tra nếu errorMessage không rỗng, hiển thị thông báo lỗi
+                            if (errorMessage != "") {
+                                swal({
+                                    title: "Error!",
+                                    text: errorMessage,
+                                    icon: "error",
+                                    button: "OK",
+                                });
+                            }
+
+
+
+
+                        });
+                    </script>
+                    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+                    <%@ include file="../include/footer.jsp" %>
