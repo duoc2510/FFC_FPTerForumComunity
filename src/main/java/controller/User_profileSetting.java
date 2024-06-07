@@ -67,6 +67,10 @@ public class User_profileSetting extends HttpServlet {
         User user = (User) request.getSession().getAttribute("USER");
         String userEmail = user.getUserEmail();
         User userInfo = User_DB.getUserByEmailorUsername(userEmail);
+         int postCount = User_DB.countPost(user.getUserEmail());
+
+                // Đặt các thuộc tính vào request
+                request.setAttribute("postCount", postCount);
         request.getSession().setAttribute("USER", userInfo);
         // Đặt danh sách người dùng vào thuộc tính của request
         request.setAttribute("userInfo", userInfo);

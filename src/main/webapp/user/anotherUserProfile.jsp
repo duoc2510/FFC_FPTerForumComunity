@@ -88,7 +88,7 @@
                                     <c:choose>
                                         <c:when test="${friendStatus == 'pending'}">
                                             <div class="dropdown d-inline">
-                                                <button class="btn btn-warning btn-sm btn-block edit-cover mx-2 dropdown-toggle" type="button" id="friendDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <button class="btn btn-warning btn-sm btn-block edit-cover mx-2 dropdown-toggle" type="button" id="friendDropdown" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
                                                     Request Sent
                                                 </button>
                                                 <ul class="dropdown-menu" aria-labelledby="friendDropdown">
@@ -102,6 +102,7 @@
                                                     </li>
                                                 </ul>
                                             </div>
+
                                         </c:when>
                                         <c:when test="${isPendingRq and friendStatus !='cancelled'}">
                                             <form action="${pageContext.request.contextPath}/friends" method="post" class="d-inline">
@@ -112,8 +113,8 @@
                                             </form>
                                         </c:when>
                                         <c:when test="${areFriend}">
-                                            <div class="dropdown d-inline">
-                                                <button class="btn btn-warning btn-sm btn-block edit-cover mx-2 dropdown-toggle" type="button" id="friendDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <div class="dropdown d-inline dropup">
+                                                <button class="btn btn-warning btn-sm btn-block edit-cover mx-2 dropdown-toggle" type="button" id="friendDropdown" data-bs-toggle="dropdown"  data-bs-display="static"  aria-expanded="false">
                                                     Bạn bè
                                                 </button>
                                                 <ul class="dropdown-menu" aria-labelledby="friendDropdown">
@@ -258,13 +259,15 @@
                                     currentUploadPathImg.style.display = 'none';
                                 }
                             }
-                            
+
                             function confirmCancel() {
                                 return confirm("Bạn có muốn hủy lời mời này không?");
                             }
                             function confirmUnfriend() {
                                 return confirm("Bạn có chắc chắn muốn hủy kết bạn không?");
                             }
+
+                           
 
                         </script>
                     </div>

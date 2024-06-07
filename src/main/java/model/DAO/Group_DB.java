@@ -371,12 +371,12 @@ public class Group_DB implements DBinfo {
 
     public static List<Group> getAllGroupJoin(int userId) {
         List<Group> groups = new ArrayList<>();
-        String sql = "SELECT g.Group_id, g.Creater_id, g.Group_name, g.Group_description, g.image, g.Status, "
-                + "COUNT(DISTINCT CASE WHEN mg.Status IN ('approved', 'host') THEN mg.MemberGroup_id END) AS memberCount "
-                + "FROM [Group] g "
-                + "JOIN MemberGroup mg ON g.Group_id = mg.Group_id "
-                + "WHERE mg.User_id = ? AND mg.Status = 'approved' "
-                + "GROUP BY g.Group_id, g.Creater_id, g.Group_name, g.Group_description, g.image, g.Status";
+        String sql = "SELECT g.Group_id, g.Creater_id, g.Group_name, g.Group_description, g.image, g.Status, " +
+             "(SELECT COUNT(*) FROM MemberGroup WHERE Group_id = g.Group_id AND Status IN ('approved', 'host')) AS memberCount " +
+             "FROM [Group] g " +
+             "JOIN MemberGroup mg ON g.Group_id = mg.Group_id " +
+             "WHERE mg.User_id = ? AND mg.Status = 'approved' " +
+             "GROUP BY g.Group_id, g.Creater_id, g.Group_name, g.Group_description, g.image, g.Status";
         try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, userId);
