@@ -36,10 +36,9 @@
                                     </a>
                                     <div class="card-body">
                                         <h5 class="card-title"><a href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?shopid=${shop.shopID}">${shop.getName()}</a></h5>
-                                        <p class="card-text"><a href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?shopid=${shop.shopID}">Phone : ${shop.getPhone()}</a></p>
                                         <p class="card-text"><a href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?shopid=${shop.shopID}">Campus : ${shop.getCampus()}</a></p>
                                         <p class="card-text"><a href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?shopid=${shop.shopID}">Giới Thiệu : ${shop.getDescription()}</a></p>
-                                        <a href="#" class="btn btn-primary mt-3 w-100">Message</a>
+                                        <a href="#" class="btn btn-primary mt-3 w-100">Liên hệ: ${shop.getPhone()}</a>
                                     </div>
 
                                 </div>

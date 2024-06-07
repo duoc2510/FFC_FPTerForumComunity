@@ -59,7 +59,6 @@
                             <div class="col card-body">
                                 <h5 class="card-title">${product.name}</h5>
                                 <p class="card-text">${product.price}đ</p>
-                                <p class="card-text">Số lượng hiện có: ${product.quantity}</p>
                                 <p class="card-text">Giới thiệu: ${product.productDescription}</p>
                                 <form class="input-group mt-3" action="${pageContext.request.contextPath}/marketplace/cart" method="get">
                                     <input type="hidden" name="productid" value="${productid}">
@@ -88,22 +87,22 @@
 </body>
 <script>
     // Check if the message variable is set or not
-      document.addEventListener("DOMContentLoaded", (event) => {
-     var errorMessage = "${requestScope.message}";
-    // Kiểm tra nếu errorMessage không rỗng, hiển thị thông báo lỗi
-  if (errorMessage!= "") {
-        swal({
-            title: "Error!",
-            text: errorMessage,
-            icon: "error",
-            button: "OK",
-        });
-    }
-    
-    
-  });
-  
-    
+    document.addEventListener("DOMContentLoaded", (event) => {
+        var errorMessage = "${requestScope.message}";
+        // Kiểm tra nếu errorMessage không rỗng, hiển thị thông báo lỗi
+        if (errorMessage != "") {
+            swal({
+                title: "Error!",
+                text: errorMessage,
+                icon: "error",
+                button: "OK",
+            });
+        }
+
+
+    });
+
+
     function change_image(image, productId) {
         console.log("Changing main image to:", image.src);
         var container = document.getElementById("main-image-" + productId);
