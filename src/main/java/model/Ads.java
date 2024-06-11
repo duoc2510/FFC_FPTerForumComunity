@@ -14,6 +14,8 @@ public class Ads {
     private String content;
     private String image;
     private int userId;
+    private String URI;
+    
 
     public Ads() {
     }
@@ -66,4 +68,13 @@ public class Ads {
     public void setUserId(int userId) {
         this.userId = userId;
     }
+
+    public String getURI() {
+        return URI;
+    }
+
+    public void setURI(String URI) {
+        this.URI = URI;
+    }
+
 }

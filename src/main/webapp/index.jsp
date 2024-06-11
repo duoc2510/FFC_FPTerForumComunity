@@ -2,40 +2,33 @@
 <%@ include file="include/header.jsp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <body>
-    <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
-         data-sidebar-position="fixed" data-header-position="fixed">
 
-        <c:choose>
-            <c:when test="${empty sessionScope.USER}">
-                <%@ include file="include/slidebar_guest.jsp" %>
-            </c:when>
-            <c:otherwise>
+
+    <c:choose>
+        <c:when test="${empty sessionScope.USER}">
+            <%@ include file="index_guest.jsp" %>
+        </c:when>
+        <c:otherwise>
+            <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+                 data-sidebar-position="fixed" data-header-position="fixed">
                 <%@ include file="include/slidebar.jsp" %>
-            </c:otherwise>
-        </c:choose>
-
-        <div class="body-wrapper">
-            <c:choose>
-                <c:when test="${empty sessionScope.USER}">
-                    <%@ include file="include/navbar_guest.jsp" %>
-                </c:when>
-                <c:otherwise>
+                <div class="body-wrapper">
                     <%@ include file="include/navbar.jsp" %>
-                </c:otherwise>
-            </c:choose>
+                    <div class="container-fluid d-flex">
+                        <div class="col-lg-12 w-100">
+                            <%@ include file="topic/tabTopic.jsp" %>
+                            <%@ include file="topic/topicPostdetail.jsp" %>
 
-            <div class="container-fluid d-flex">
-                <div class="col-lg-12 w-100">
-                    <%@ include file="topic/tabTopic.jsp" %>
-                    <%@ include file="topic/topicPostdetail.jsp" %>
-
-                    <%-- Hiển thị tin nhắn thành công nếu có --%>
-                    <c:if test="${sessionScope.USER ne null}">
-                        <%@ include file="topic/newPost.jsp" %>
-                    </c:if>
+                            <%-- Hiển thị tin nhắn thành công nếu có --%>
+                            <c:if test="${sessionScope.USER ne null}">
+                                <%@ include file="topic/newPost.jsp" %>
+                            </c:if>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</body>
+        </body>
+    </c:otherwise>
+</c:choose>
+
 <%@ include file="include/footer.jsp" %>

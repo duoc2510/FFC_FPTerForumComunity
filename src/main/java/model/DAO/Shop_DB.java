@@ -679,6 +679,18 @@ public class Shop_DB {
         }
     }
 
+    public static void updateOrderItemQuantity(int orderItemId, int newQuantity) {
+        String updateQuery = "UPDATE OrderItem SET quantity = ? WHERE OrderItem_id = ?";
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(updateQuery)) {
+            pstmt.setInt(1, newQuantity);
+            pstmt.setInt(2, orderItemId);
+            int rowsAffected = pstmt.executeUpdate();
+            System.out.println("Number of order items updated: " + rowsAffected);
+        } catch (SQLException ex) {
+            Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     public static ArrayList<OrderItem> getAllOrderItemByOrderID(int orderId) {
         ArrayList<OrderItem> orderItems = new ArrayList<>();
         String query = "SELECT * FROM OrderItem WHERE Order_id = ?";
@@ -699,6 +711,25 @@ public class Shop_DB {
             Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
         }
         return orderItems;
+    }
+
+    public static OrderItem getOrderItemById(int orderItemId) {
+        String query = "SELECT * FROM OrderItem WHERE OrderItem_id = ?";
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setInt(1, orderItemId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                int orderID = rs.getInt("Order_id");
+                int productID = rs.getInt("Product_id");
+                int quantity = rs.getInt("Quantity");
+                double price = rs.getDouble("Unit_price");
+
+                return new OrderItem(orderItemId, orderID, productID, quantity, price);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null; // return null if not found
     }
 
     public void addNewDiscount(Discount discount) {

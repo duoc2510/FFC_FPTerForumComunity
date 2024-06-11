@@ -112,7 +112,7 @@ public class Shop_confirmOrder extends HttpServlet {
                 ArrayList<OrderItem> orderitemlist1 = sdb.getAllOrderItemByOrderIdHasStatusIsNull(order.getOrder_ID());
                 for (OrderItem ot : orderitemlist1) {
                     Product p = sdb.getProductByID(ot.getProductID());
-                    p.setQuantity(p.getQuantity() - 1);
+                    p.setQuantity(p.getQuantity() - ot.getQuantity()); // Trừ đi số lượng đặt hàng của OrderItem
                     sdb.updateProduct(p);
 
                 }
@@ -128,19 +128,20 @@ public class Shop_confirmOrder extends HttpServlet {
                 order.setStatus("Pending");
                 sdb.updateOrderbyID(order);
 
-                Order o = new Order(user.getUserId(), 1, null, "null", 0, 1, null, null, 5, null);
-                sdb.addOrder(o);
+                // Tạo một đơn hàng mới cho người dùng
+                Order newOrder = new Order(user.getUserId(), 1, null, "null", 0, 1, null, null, 5, null);
+                sdb.addOrder(newOrder);
 
+                // Lấy lại danh sách order mới và gán lại cho session
                 Order ordernew = sdb.getOrderHasStatusIsNullByUserID(user.getUserId());
                 ArrayList<OrderItem> orderitemlist = sdb.getAllOrderItemByOrderIdHasStatusIsNull(ordernew.getOrder_ID());
                 request.getSession().setAttribute("ORDER", ordernew);
                 request.getSession().setAttribute("ORDERITEMLIST", orderitemlist);
-//                request.setAttribute("message", "Order thành công!");
-//                request.getRequestDispatcher("/marketplace/allShop.jsp").forward(request, response);
+
+                // Redirect to the allshop page with a success message
                 response.sendRedirect("allshop?message=Thanks+for+your+order");
                 break;
         }
-
     }
 
     public static String getCurrentDate() {

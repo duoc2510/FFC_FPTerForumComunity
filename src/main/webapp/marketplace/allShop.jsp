@@ -6,6 +6,12 @@
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
 <%@ include file="../include/header.jsp" %>
 <body>
+    <style>
+        .container-fluid .card img{
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+        }
+        </style>
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
          data-sidebar-position="fixed" data-header-position="fixed">
         <c:if test="${not empty sessionScope.USER}">
@@ -30,7 +36,7 @@
                     <div class="w-100 row">
                         <c:forEach var="shop" items="${shoplist}" >
                             <div class="col-md-4">
-                                <div class="card mx-1">
+                                <div class="card mx-2">
                                     <a href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?shopid=${shop.shopID}" data-toggle="modal" data-target="#productID1">
                                         <img class="card-img-top" src="${pageContext.request.contextPath}/static/${shop.getImage()}">
                                     </a>

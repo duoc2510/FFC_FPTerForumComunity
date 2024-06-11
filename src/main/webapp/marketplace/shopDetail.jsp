@@ -12,6 +12,22 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <%@ include file="../include/header.jsp" %>
 <style>
+    #allProduct .card .card-img-top{
+        oject-fit: cover;
+        aspect-ratio: 1 / 1;
+        height: 300px !important;
+    }
+    .card .card-img-top {
+        height: 300px ;
+        oject-fit: cover;
+    }
+    .card-text{
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 1; /* number of lines to show */
+        line-clamp: 1;
+        -webkit-box-orient: vertical;
+    }
     .thumbnail img{
         width: 200px;
         height: 100px;
@@ -77,7 +93,7 @@
 
                 <div class="w-100 row container">
                     <div class="col-md">
-                        <div class="card mx-1">
+                        <div class="card mx-2">
                             <img class="card-img-top" src="${pageContext.request.contextPath}/static/${shop.image}" alt="Card image cap">
                             <div class="card-body">
                                 <c:set var="orderlist" value="${Shop_DB.getOrdersByShopIdHasStatusNotNullandNotCancel(shop.shopID)}" />
@@ -110,14 +126,15 @@
                         <c:set var="imagefirst" value="${Shop_DB.getUploadFirstByProductID(product.productId)}" />
                         <c:if test="${product.quantity != 0}">
                             <div class="col-md-4">
-                                <div class="card mx-1">
-                                    <a href="/FPTer/marketplace/allshop/shopdetail/productdetail?productid=${product.productId}&shopid=${shopid}" data-toggle="modal" data-target="#productID1">
+                                <div class="card mx-2">
+
+                                    <a href="/FPTer/marketplace/allshop/shopdetail/productdetail?productid=${product.productId}&shopid=${shopid}">
                                         <img class="card-img-top" src="${pageContext.request.contextPath}/static/${imagefirst.uploadPath}">
                                     </a>
                                     <div class="card-body">
-                                        <h5 class="card-title"><a href="/FPTer/marketplace/allshop/shopdetail/productdetail?productid=${product.productId}&shopid=${shopid}">Name: ${product.name}</a></h5>
-                                        <p class="card-text"><a href="/FPTer/marketplace/allshop/shopdetail/productdetail?productid=${product.productId}&shopid=${shopid}">Price: ${product.price}</a></p>
-                                        <p class="card-text"><a href="/FPTer/marketplace/allshop/shopdetail/productdetail?productid=${product.productId}&shopid=${shopid}">Giới Thiệu: ${product.productDescription}</a></p>
+                                        <h5 class="card-title">Name: ${product.name}</h5>
+                                        <p class="card-text">Price: ${product.price}</p>
+                                        <p class="card-text">Giới Thiệu: ${product.productDescription}</p>
                                         <a href="/FPTer/marketplace/allshop/shopdetail/productdetail?productid=${product.productId}&shopid=${shopid}" class="btn btn-primary mt-3 w-100">Buy now</a>
                                     </div>
                                 </div>
@@ -169,14 +186,17 @@
                                                 <img src="${pageContext.request.contextPath}/${userorder.userAvatar}" alt="" width="30" class="rounded-circle avatar-cover">
                                             </div>
                                             <div class="ms-2">
-                                                <h6 class="card-title fw-semibold mb-0">${userorder.userFullName}</h6>
+                                                <div class="w-100 d-flex">
+                                                    <h6 class="card-title fw-semibold mb-0 d-inline">${userorder.userFullName}</h6>
+
+                                                    <p class="s-4  d-inline mx-3 mb-1">
+                                                        <c:forEach var="i" begin="1" end="${order.star}">
+                                                            <i class="fas fa-star text-warning"></i>
+                                                        </c:forEach>
+                                                    </p>
+                                                </div>
                                                 <p class="s-4">${order.orderDate}</p>
-                                                <p class="s-4">
-                                                    <c:forEach var="i" begin="1" end="${order.star}">
-                                                        <i class="fas fa-star text-warning"></i>
-                                                    </c:forEach>
-                                                </p>
-                                                <p class="s-4">Đã mua:</p>
+
                                                 <c:set var="orderitemlistbyid" value="${Shop_DB.getAllOrderItemByOrderID(order.order_ID)}" />
                                                 <c:forEach var="orderitem" items="${orderitemlistbyid}">
                                                     <c:set var="productitem" value="${Shop_DB.getProductByID(orderitem.productID)}" />
@@ -186,6 +206,7 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <hr class="px-4">
                                 </c:forEach>
                             </div>
                         </div>
