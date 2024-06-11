@@ -62,7 +62,10 @@ public class User_friends extends HttpServlet {
             throws ServletException, IOException {
        HttpSession session = request.getSession(false); // Không tự động tạo session mới
         User user = (User) session.getAttribute("USER");
+         int postCount = User_DB.countPost(user.getUserEmail());
 
+                // Đặt các thuộc tính vào request
+                request.setAttribute("postCount", postCount);
         // Ở đây không cần kiểm tra đăng nhập nữa do đã làm trong filter
         int userId = user.getUserId();
         List<User> pendingFriends = User_DB.getPendingFriendRequests(userId);

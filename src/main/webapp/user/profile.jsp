@@ -73,7 +73,7 @@
                                         <img src="${pageContext.request.contextPath}/${USER.userAvatar}" class="rounded-circle img-thumbnail" style="object-fit: cover;">
                                         <div>
                                             <a href="${pageContext.request.contextPath}/profile/setting" class="btn btn-outline-dark btn-sm btn-block edit-cover mx-2">Edit profile</a>
-                                            <a href="${pageContext.request.contextPath}/profile" class="btn btn-outline-dark btn-sm btn-block edit-cover">View profile</a>
+                                            <a href="${pageContext.request.contextPath}/profile?username=${USER.username}" class="btn btn-outline-dark btn-sm btn-block edit-cover">View profile</a>
                                         </div>
                                     </div>
                                 </div>
@@ -85,9 +85,7 @@
                                 <ul class="list-inline mb-0">
 
 
-                                    <li class="list-inline-item">
-                                        <a href="friends" class="btn btn-outline-dark btn-sm">Pending Friend Requests</a>
-                                    </li>
+        
                                     <li class="list-inline-item">
                                         <a href="friends" class="btn btn-outline-dark btn-sm">Friends</a>
                                     </li>
