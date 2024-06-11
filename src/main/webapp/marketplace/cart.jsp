@@ -43,14 +43,17 @@
                                             </div>
                                             <div class="d-flex flex-row align-items-center">
                                                 <div class="mx-1" style="width: 70px;">
-                                                    <input type="number" name="quantity" class="form-control" value="${item.quantity}" min="1" readonly>
-                                                </div>
-                                                <c:set var="totalPrice1" value="${item.quantity * item.price}" />
+                                                    <input data-action="update" type="number" name="quantity" class="form-control" value="${item.quantity}" min="1" max="${product.quantity}" oninput="handleQuantityChange('${item.getOrderItem_id()}', this.value)">
+                                                    <c:if test="${item.quantity == product.quantity}">
+                                                        <input type="text" class="form-control" name="role" value="Số lượng sản phẩm đã tối đa!" readonly>
+                                                    </c:if>                                                </div>
+                                                    <c:set var="totalPrice1" value="${item.quantity * item.price}" />
                                                 <div class="mx-1" style="width: 80px;">
                                                     <h5 class="mb-0">${totalPrice1}</h5>
                                                 </div>
                                                 <c:set var="totalPrice" value="${totalPrice1 + totalPrice}" />
-                                                <a class="mx-1" onclick="moveOutProductFromCart('${item.getOrderItem_id()}')" style="color: #cecece;"><i class="fas fa-trash-alt"></i></a>
+                                                <a class="mx-1" onclick="moveOutProductFromCart('${item.getOrderItem_id()}')" style="color: #cecece;" data-action="delete"><i class="fas fa-trash-alt"></i></a>
+
                                             </div>
                                         </div>
                                     </div>
@@ -132,6 +135,56 @@
         </div>
     </div>
     <script>
+        // Function to handle quantity change
+        function handleQuantityChange(orderItemId, newQuantity) {
+            var data = {
+                action: "update",
+                orderItemId: orderItemId,
+                newQuantity: newQuantity
+            };
+
+            $.ajax({
+                url: 'cart',
+                type: 'POST',
+                data: data,
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success) {
+                        // Reload the page if the update is successful
+                        location.reload();
+                    } else {
+                        console.error("Lỗi khi cập nhật số lượng:", response.error);
+                        // Hiển thị thông báo lỗi nếu cần
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Lỗi AJAX:", status, error);
+                    // Hiển thị thông báo lỗi nếu cần
+                }
+            });
+        }
+
+
+
+// Function to listen for quantity change events
+        function listenForQuantityChange() {
+            // Select all input fields with name 'quantity'
+            var quantityInputs = document.querySelectorAll('input[name="quantity"]');
+
+            // Loop through each input field and attach change event listener
+            quantityInputs.forEach(function (input) {
+                input.addEventListener('change', function (event) {
+                    // Get the new quantity value
+                    var newQuantity = parseInt(event.target.value);
+
+                    // Get the order item ID associated with this input
+                    var orderItemId = input.dataset.orderItemId;
+
+                    // Call the function to handle quantity change
+                    handleQuantityChange(orderItemId, newQuantity);
+                });
+            });
+        }
         function moveOutProductFromCart(id) {
             console.log("OrderItem ID to be removed:", id); // Log the product ID
 
@@ -149,19 +202,16 @@
                             $.ajax({
                                 url: 'cart', // the URL to your server-side script that handles the removal
                                 type: 'POST', // or 'GET' depending on your server-side handling
-                                data: {id: id}, // the data to send to the server
+                                data: {id: id, action: 'delete'}, // Ensure 'action' is included
                                 dataType: 'json', // Expect a JSON response
                                 success: function (response) {
                                     console.log("Server response:", response); // Log the server response
 
-                                    // Handle the response from the server
-                                    // Assuming the server responds with a success status
                                     if (response.success) {
                                         swal("Success! Your item has been removed from the cart!", {
                                             icon: "success",
                                         })
                                                 .then(() => {
-                                                    // Optionally, you can reload the page or update the cart UI dynamically
                                                     location.reload(); // Reloads the page to reflect changes
                                                 });
                                     } else {
@@ -184,6 +234,7 @@
                         }
                     });
         }
+
 
         // Assuming totalPrice is available in the script scope
         var totalPrice = ${totalPrice};
@@ -220,6 +271,7 @@
 
         // Call filterDiscounts on page load to remove invalid discounts
         window.onload = function () {
+            listenForQuantityChange();
             filterDiscounts();
             updateDiscount(); // Update the discount fee after filtering
         }

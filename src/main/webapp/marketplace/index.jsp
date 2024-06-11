@@ -122,6 +122,26 @@
                             </div>
                         </div>
                     </div>
+                        
+                             <div class="w-100 row mt-5">
+                        <div class="col-md-7 p-2">
+                            <div class="imgs-grid">
+                                <div class="grid grid-1"><img src="/fastfood1/upload/shiper1.png"></div>
+                                <div class="grid grid-2"><img src="/fastfood1/upload/shipper2.png"></div>
+                                <div class="grid grid-3"><img src="/fastfood1/upload/shipper3.png"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-5 p-2">
+                            <h3>Hàng Ngàn Voucher Hấp Dẫn</h3>
+                            <ul class="list-unstyled custom-list my-4">
+                                <li>Nhận ưu đãi đặc biệt, dịch vụ chăm sóc tận tâm</li>
+                                <li>Tiết kiệm chi phí mua hàng và giao hàng</li>
+                                <li>An tâm mua sắm với dịch vụ chăm sóc</li>
+                                <li>Tiện lợi, an toàn, trả tiền khi nhận hàng</li>
+                            </ul>
+                            <button class="btn btn-primary mt-3">Join with us</button>
+                        </div>
+                    </div>
                 </div>
                 <div>
                     <!--Tao shop-->

@@ -6,6 +6,12 @@
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
 <%@ include file="../include/header.jsp" %>
 <body>
+    <style>
+        .container-fluid .card img{
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+        }
+        </style>
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
          data-sidebar-position="fixed" data-header-position="fixed">
         <c:if test="${not empty sessionScope.USER}">
@@ -30,16 +36,15 @@
                     <div class="w-100 row">
                         <c:forEach var="shop" items="${shoplist}" >
                             <div class="col-md-4">
-                                <div class="card mx-1">
+                                <div class="card mx-2">
                                     <a href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?shopid=${shop.shopID}" data-toggle="modal" data-target="#productID1">
                                         <img class="card-img-top" src="${pageContext.request.contextPath}/static/${shop.getImage()}">
                                     </a>
                                     <div class="card-body">
                                         <h5 class="card-title"><a href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?shopid=${shop.shopID}">${shop.getName()}</a></h5>
-                                        <p class="card-text"><a href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?shopid=${shop.shopID}">Phone : ${shop.getPhone()}</a></p>
                                         <p class="card-text"><a href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?shopid=${shop.shopID}">Campus : ${shop.getCampus()}</a></p>
                                         <p class="card-text"><a href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?shopid=${shop.shopID}">Giới Thiệu : ${shop.getDescription()}</a></p>
-                                        <a href="#" class="btn btn-primary mt-3 w-100">Message</a>
+                                        <a href="#" class="btn btn-primary mt-3 w-100">Liên hệ: ${shop.getPhone()}</a>
                                     </div>
 
                                 </div>

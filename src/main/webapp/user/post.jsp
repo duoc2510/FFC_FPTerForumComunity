@@ -11,7 +11,7 @@
                         </c:when>
 
                         <c:otherwise>
-                            <a href="${pageContext.request.contextPath}/viewProfile?username=${post.user.username}">
+                            <a href="${pageContext.request.contextPath}/profile?username=${post.user.username}">
                                 <img src="${pageContext.request.contextPath}/${post.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
                             </a>
                         </c:otherwise>
@@ -86,7 +86,7 @@
                                         </c:when>
 
                                         <c:otherwise>
-                                            <a href="${pageContext.request.contextPath}/viewProfile?username=${comment.user.username}">
+                                            <a href="${pageContext.request.contextPath}/profile?username=${comment.user.username}">
                                                 <img src="${pageContext.request.contextPath}/${comment.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
                                             </a>
                                         </c:otherwise>

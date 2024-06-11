@@ -488,6 +488,46 @@ public class Shop_DB {
         return orders;
     }
 
+    public static ArrayList<Order> getOrdersByShopIdHasStatusNotNullandNotCancel(int shopId) {
+        ArrayList<Order> orders = new ArrayList<>();
+        String query = "SELECT o.* "
+                + "FROM [Order] o "
+                + "JOIN OrderItem oi ON o.Order_id = oi.Order_id "
+                + "JOIN Product p ON oi.Product_id = p.Product_id "
+                + "WHERE p.Shop_id = ? AND o.Order_status IS NOT NULL AND o.Order_status != 'null' AND o.Order_status != 'Cancelled' "
+                + "GROUP BY o.Order_id, o.User_id, o.Order_date, o.Order_status, o.Total_amount, o.Note, o.Discount_id, o.Feedback, o.Star, o.Receiver_phone";
+
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setInt(1, shopId);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                // Create an Order object from the query result
+                Order order = new Order();
+                order.setOrder_ID(rs.getInt("Order_id"));
+                order.setUserID(rs.getInt("User_id"));
+                order.setOrderDate(rs.getDate("Order_date"));
+                order.setStatus(rs.getString("Order_status"));
+                order.setTotal(rs.getDouble("Total_amount"));
+                order.setNote(rs.getString("Note"));
+                order.setDiscountid(rs.getInt("Discount_id"));
+                order.setFeedback(rs.getString("Feedback"));
+                order.setStar(rs.getInt("Star"));
+                order.setReceiverPhone(rs.getString("Receiver_phone"));
+
+                // Add the Order object to the list
+                orders.add(order);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        // Sort the list by order date from newest to oldest
+        orders.sort((o1, o2) -> o2.getOrderDate().compareTo(o1.getOrderDate()));
+
+        return orders;
+    }
+
     public static Order getOrderbyID(int orderId) {
         Order order = null;
         String query = "SELECT * FROM [Order] WHERE Order_id = ?";
@@ -639,6 +679,18 @@ public class Shop_DB {
         }
     }
 
+    public static void updateOrderItemQuantity(int orderItemId, int newQuantity) {
+        String updateQuery = "UPDATE OrderItem SET quantity = ? WHERE OrderItem_id = ?";
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(updateQuery)) {
+            pstmt.setInt(1, newQuantity);
+            pstmt.setInt(2, orderItemId);
+            int rowsAffected = pstmt.executeUpdate();
+            System.out.println("Number of order items updated: " + rowsAffected);
+        } catch (SQLException ex) {
+            Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     public static ArrayList<OrderItem> getAllOrderItemByOrderID(int orderId) {
         ArrayList<OrderItem> orderItems = new ArrayList<>();
         String query = "SELECT * FROM OrderItem WHERE Order_id = ?";
@@ -659,6 +711,25 @@ public class Shop_DB {
             Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
         }
         return orderItems;
+    }
+
+    public static OrderItem getOrderItemById(int orderItemId) {
+        String query = "SELECT * FROM OrderItem WHERE OrderItem_id = ?";
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setInt(1, orderItemId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                int orderID = rs.getInt("Order_id");
+                int productID = rs.getInt("Product_id");
+                int quantity = rs.getInt("Quantity");
+                double price = rs.getDouble("Unit_price");
+
+                return new OrderItem(orderItemId, orderID, productID, quantity, price);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null; // return null if not found
     }
 
     public void addNewDiscount(Discount discount) {
@@ -857,5 +928,12 @@ public class Shop_DB {
         } catch (SQLException ex) {
             Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public static void main(String[] args) {
+        Order order = getOrderbyID(10);
+        System.out.println(order);
+        Discount dis = getDiscountByID(8);
+        System.out.println(dis);
     }
 }

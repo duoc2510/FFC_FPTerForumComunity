@@ -277,6 +277,11 @@
                                                                     <input type="text" class="form-control" name="role" value="Đơn hàng bị hủy" readonly>
                                                                 </td>
                                                             </c:if>
+                                                            <c:if test="${order.status eq 'Success'}">
+                                                                <td>
+                                                                    <input type="text" class="form-control" name="role" value="Success" readonly>
+                                                                </td>
+                                                            </c:if>
                                                         </c:if>
                                                         <c:if test="${order.total * 5 / 100 < USER.userWallet}">
                                                             <c:if test="${order.status eq 'Pending'}">
@@ -315,6 +320,11 @@
                                                             <c:if test="${order.status eq 'Cancelled'}">
                                                                 <td>
                                                                     <input type="text" class="form-control" name="role" value="Đơn hàng bị hủy" readonly>
+                                                                </td>
+                                                            </c:if>
+                                                            <c:if test="${order.status eq 'Success'}">
+                                                                <td>
+                                                                    <input type="text" class="form-control" name="role" value="Success" readonly>
                                                                 </td>
                                                             </c:if>
                                                         </c:if>

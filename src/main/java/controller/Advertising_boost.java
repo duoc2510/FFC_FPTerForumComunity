@@ -4,23 +4,30 @@
  */
 package controller;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import java.util.List;
-import model.DAO.User_DB;
+import jakarta.servlet.http.Part;
+import java.io.File;
+import java.sql.Timestamp;
+import model.DAO.Event_DB;
+import model.Upload;
 import model.User;
+import model.User_event;
+
+@MultipartConfig(
+        maxFileSize = 1024 * 1024 * 10 // 10 MB
+)
 
 /**
  *
- * @author PC
+ * @author Admin
  */
-public class User_friends extends HttpServlet {
+public class Advertising_boost extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,10 +46,10 @@ public class User_friends extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet User_friends</title>");            
+            out.println("<title>Servlet Advertising_boost</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet User_friends at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet Advertising_boost at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -60,19 +67,8 @@ public class User_friends extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       HttpSession session = request.getSession(false); // Không tự động tạo session mới
-        User user = (User) session.getAttribute("USER");
-         int postCount = User_DB.countPost(user.getUserEmail());
-
-                // Đặt các thuộc tính vào request
-                request.setAttribute("postCount", postCount);
-        // Ở đây không cần kiểm tra đăng nhập nữa do đã làm trong filter
-        int userId = user.getUserId();
-        List<User> pendingFriends = User_DB.getPendingFriendRequests(userId);
-        List<User> acceptedFriends = User_DB.getAcceptedFriends(userId);
-        request.setAttribute("pendingFriends", pendingFriends);
-        request.setAttribute("acceptedFriends", acceptedFriends);
-        request.getRequestDispatcher("/user/friends.jsp").forward(request, response);
+        response.setContentType("text/html;charset=UTF-8");
+                request.getRequestDispatcher("/advertising/boost.jsp").forward(request, response);
     }
 
     /**
@@ -83,47 +79,46 @@ public class User_friends extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    private static final String UPLOAD_DIR = "Advertising_Upload";
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-    String action = request.getParameter("action");
-    HttpSession session = request.getSession(false);
-    User user = (User) session.getAttribute("USER");
-    int userId = user.getUserId();
-    int friendId = Integer.parseInt(request.getParameter("friendId"));
-     
-    boolean success = false;
-    String redirectUrl = "";
-    
-    switch (action) {
-       
-        case "accept":
-            success = User_DB.acceptFriendRequest(userId, friendId);
-            redirectUrl = request.getContextPath() + "/friends";
-            break;
-        case "deny":
-            success = User_DB.rejectFriendRequest(userId, friendId);
-             redirectUrl = request.getContextPath() + "/friends";
-            break;
-        case "acceptFr":
-            success = User_DB.acceptFriendRequest(userId, friendId);
-            String friendName = request.getParameter("friendName");
-            redirectUrl = request.getContextPath() + "/profile?username=" + friendName;
-            break;
-        default:
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
-            return;
-    }
+           String title = request.getParameter("title");
+        String description = request.getParameter("description");
+        Timestamp startDate = Timestamp.valueOf(request.getParameter("start_date"));
+        Timestamp endDate = Timestamp.valueOf(request.getParameter("end_date"));
 
-    if (success) {
-        response.sendRedirect(redirectUrl); // Điều hướng đến trang thành công hoặc trang viewProfile
-        
-    } else {
-        request.getRequestDispatcher("/user/error.jsp").forward(request, response); // Điều hướng đến trang lỗi
-    }
-        
-       
+        int userId = ((User) request.getSession().getAttribute("USER")).getUserId(); // Thay đổi từ "userID" sang "USER" và sử dụng phương thức getUserId()
+
+        Part filePart = request.getPart("upload_path");
+//        String fileName = extractFileName(filePart);
+
+        // Tạo thư mục lưu trữ nếu chưa tồn tại
+        String applicationPath = request.getServletContext().getRealPath("");
+        String uploadFilePath = applicationPath + File.separator + UPLOAD_DIR;
+        File uploadFolder = new File(uploadFilePath);
+        if (!uploadFolder.exists()) {
+            uploadFolder.mkdirs();
+        }
+
+//        String savePath = uploadFilePath + File.separator + fileName;
+//        filePart.write(savePath);
+
+        // Đường dẫn lưu trong cơ sở dữ liệu
+//        String filePathForDatabase = UPLOAD_DIR + File.separator + fileName;
+
+        User_event event = new User_event(0, title, description, startDate, endDate, userId);
+//        Upload upload = new Upload(0, 0, 0, 0, filePathForDatabase); // Thay đổi savePath thành filePathForDatabase
+
+        Event_DB eventDB = new Event_DB();
+//        if (eventDB.addEvent(event, upload)) {
+//            request.setAttribute("message", "Event added successfully!");
+//        } else {
+//            request.setAttribute("message", "Error adding event.");
+//        }
+        request.getRequestDispatcher("/advertising/boost.jsp").forward(request, response);
+
     }
 
     /**

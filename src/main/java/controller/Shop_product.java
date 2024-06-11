@@ -24,8 +24,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import model.DAO.Shop_DB;
+import model.DAO.User_DB;
 import model.Discount;
 import model.Order;
+import model.OrderItem;
 import model.Product;
 import model.Shop;
 import model.Upload;
@@ -408,8 +410,27 @@ public class Shop_product extends HttpServlet {
                 sdb.updateOrderStatus(orderid2, "Cancelled");
                 response.sendRedirect("myshop");
                 break;
-            case "thanhcong":  ///////shop chấp nhận đơn
+            case "thanhcong":  ///////shop đã giao hàng thành công
+                User_DB udb = new User_DB();
                 int orderid3 = Integer.parseInt(orderid);
+                Order order = sdb.getOrderbyID(orderid3);
+                ArrayList<OrderItem> orderitemlist1 = sdb.getAllOrderItemByOrderID(orderid3);
+                double total1 = 0;
+                for (OrderItem o : orderitemlist1) {
+                    total1 = total1 + (o.getPrice() * o.getQuantity());
+                }
+                if (order.getDiscountid() > 0) {
+                    Discount dis = sdb.getDiscountByID(order.getDiscountid());
+                    if (dis.getShopId() == 0) {
+                        boolean check = udb.updateWalletByEmail(user.getUserEmail(), user.getUserWallet() + (total1 - order.getTotal()) - (total1 * 5 / 100));
+                    } else {
+                        boolean check = udb.updateWalletByEmail(user.getUserEmail(), user.getUserWallet() - (total1 * 5 / 100));
+
+                    }
+                }
+
+                User updatedUser = User_DB.getUserByEmailorUsername(user.getUserEmail());
+                request.getSession().setAttribute("USER", updatedUser);
                 sdb.updateOrderStatus(orderid3, "Completed");
                 response.sendRedirect("myshop");
                 break;
