@@ -15,9 +15,10 @@ import jakarta.servlet.http.Part;
 import java.io.File;
 import java.sql.Timestamp;
 import model.DAO.Event_DB;
+import model.Event;
 import model.Upload;
 import model.User;
-import model.User_event;
+
 
 @MultipartConfig(
         maxFileSize = 1024 * 1024 * 10 // 10 MB
@@ -108,7 +109,7 @@ public class Advertising_boost extends HttpServlet {
         // Đường dẫn lưu trong cơ sở dữ liệu
 //        String filePathForDatabase = UPLOAD_DIR + File.separator + fileName;
 
-        User_event event = new User_event(0, title, description, startDate, endDate, userId);
+        Event event = new Event(0, title, description, startDate, endDate, userId);
 //        Upload upload = new Upload(0, 0, 0, 0, filePathForDatabase); // Thay đổi savePath thành filePathForDatabase
 
         Event_DB eventDB = new Event_DB();

@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model.DAO;
 
 import java.sql.Connection;
@@ -9,13 +5,14 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import model.DAO.DBinfo;
 import model.Upload;
-import model.User_event;
+import model.Event;
 
-public class Event_DB implements DBinfo {
+public class Event_DB {
 
     public Event_DB() {
         try {
@@ -25,17 +22,21 @@ public class Event_DB implements DBinfo {
         }
     }
 
-    public boolean addEvent(User_event event, Upload upload) {
-        String insertEventQuery = "INSERT INTO User_event (title, description, start_date, end_date, user_id) VALUES (?, ?, ?, ?, ?)";
-        String insertUploadQuery = "INSERT INTO Upload (event_id, uploadPath) VALUES (?, ?)";
+    public boolean addEvent(Event event, Upload upload) {
+        String INSERT_EVENT_QUERY = "INSERT INTO Event (title, description, start_date, end_date, location, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String INSERT_UPLOAD_QUERY = "INSERT INTO Upload (event_id, uploadPath) VALUES (?, ?)";
 
-        try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement pstmtEvent = con.prepareStatement(insertEventQuery, PreparedStatement.RETURN_GENERATED_KEYS); PreparedStatement pstmtUpload = con.prepareStatement(insertUploadQuery)) {
+        try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement pstmtEvent = con.prepareStatement(INSERT_EVENT_QUERY, PreparedStatement.RETURN_GENERATED_KEYS); PreparedStatement pstmtUpload = con.prepareStatement(INSERT_UPLOAD_QUERY)) {
+
             con.setAutoCommit(false);
+
             pstmtEvent.setString(1, event.getTitle());
             pstmtEvent.setString(2, event.getDescription());
             pstmtEvent.setTimestamp(3, event.getStartDate());
             pstmtEvent.setTimestamp(4, event.getEndDate());
-            pstmtEvent.setInt(5, event.getUserId());
+            pstmtEvent.setString(5, event.getLocation());
+            pstmtEvent.setInt(6, event.getUserId()); // Đặt userId (created_by) vào cột created_by
+            pstmtEvent.setTimestamp(7, event.getCreatedAt());
 
             int affectedRows = pstmtEvent.executeUpdate();
             if (affectedRows == 0) {
@@ -58,56 +59,158 @@ public class Event_DB implements DBinfo {
 
             con.commit();
             return true;
+
         } catch (SQLException ex) {
             ex.printStackTrace();
             return false;
         }
     }
 
-    public static List<User_event> getAllEvents() {
-        List<User_event> events = new ArrayList<>();
-        String query = "SELECT event_id, title, description, start_date, end_date, user_id FROM User_event";
-
-        try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement pstmt = con.prepareStatement(query); ResultSet rs = pstmt.executeQuery()) {
-
+    public List<Event> getAllEvents() {
+        String SELECT_ALL_EVENTS_QUERY = "SELECT e.*, u.uploadPath FROM Event e LEFT JOIN Upload u ON e.Event_id = u.event_id";
+        List<Event> eventList = new ArrayList<>();
+        try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement pstmt = con.prepareStatement(SELECT_ALL_EVENTS_QUERY)) {
+            ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
-                User_event event = new User_event();
-                event.setEventId(rs.getInt("event_id"));
-                event.setTitle(rs.getString("title"));
-                event.setDescription(rs.getString("description"));
-                event.setStartDate(rs.getTimestamp("start_date"));
-                event.setEndDate(rs.getTimestamp("end_date"));
-                event.setUserId(rs.getInt("user_id"));
-
-                // Fetch image paths for the event
-                List<String> imagePaths = getImagePathsForEvent(event.getEventId());
-                event.setImagePaths(imagePaths);
-
-                events.add(event);
+                Event event = new Event(
+                        rs.getInt("Event_id"),
+                        rs.getString("Title"),
+                        rs.getString("Description"),
+                        rs.getTimestamp("Start_date"),
+                        rs.getTimestamp("End_date"),
+                        rs.getInt("Created_by"),
+                        rs.getString("Location"),
+                        rs.getTimestamp("Created_at"),
+                        rs.getString("uploadPath")
+                );
+                eventList.add(event);
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        return events;
+        return eventList;
     }
 
-    // Helper method to fetch image paths for a specific event
-    public static List<String> getImagePathsForEvent(int eventId) {
-        List<String> imagePaths = new ArrayList<>();
-        String query = "SELECT uploadPath FROM Upload WHERE event_id = ?";
+    public static boolean updateEvent(Event event, String newUploadPath) {
+        boolean success = false;
+        String updateEventQuery = "UPDATE Event SET title = ?, description = ?, start_date = ?, end_date = ?, location = ?, created_by = ?, created_at = ? WHERE Event_id = ?";
+        String updateUploadQuery = "UPDATE Upload SET uploadPath = ? WHERE event_id = ?";
 
-        try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
+        try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass)) {
+            try {
+                // Start transaction
+                conn.setAutoCommit(false);
+
+                // Update event details
+                try (PreparedStatement updateEventStmt = conn.prepareStatement(updateEventQuery)) {
+                    updateEventStmt.setString(1, event.getTitle());
+                    updateEventStmt.setString(2, event.getDescription());
+                    updateEventStmt.setTimestamp(3, event.getStartDate());
+                    updateEventStmt.setTimestamp(4, event.getEndDate());
+                    updateEventStmt.setString(5, event.getLocation());
+                    updateEventStmt.setInt(6, event.getUserId());
+
+                    // Get the current timestamp and set it for created_at
+                    Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+                    updateEventStmt.setTimestamp(7, currentTimestamp);
+
+                    updateEventStmt.setInt(8, event.getEventId());
+
+                    int rowsUpdatedEvent = updateEventStmt.executeUpdate();
+                    success = (rowsUpdatedEvent > 0);
+                }
+
+                // If newUploadPath is not null, update the upload path
+                if (newUploadPath != null) {
+                    try (PreparedStatement updateUploadStmt = conn.prepareStatement(updateUploadQuery)) {
+                        updateUploadStmt.setString(1, newUploadPath);
+                        updateUploadStmt.setInt(2, event.getEventId());
+
+                        int rowsUpdatedUpload = updateUploadStmt.executeUpdate();
+                        success = success && (rowsUpdatedUpload > 0);
+                    }
+                }
+
+                // Commit transaction if both updates are successful
+                if (success) {
+                    conn.commit();
+                    System.out.println("Event with ID " + event.getEventId() + " was successfully updated.");
+                } else {
+                    conn.rollback();
+                    System.out.println("Failed to update event with ID " + event.getEventId() + ".");
+                }
+            } catch (SQLException ex) {
+                conn.rollback();
+                ex.printStackTrace();
+                System.out.println("Failed to update event with ID " + event.getEventId() + ".");
+            } finally {
+                conn.setAutoCommit(true);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            System.out.println("Failed to update event with ID " + event.getEventId() + ".");
+        }
+
+        return success;
+    }
+
+    public static Event getEventById(int eventId) {
+        String SELECT_EVENT_BY_ID_QUERY = "SELECT e.*, u.uploadPath FROM Event e LEFT JOIN Upload u ON e.Event_id = u.event_id WHERE e.Event_id = ?";
+        Event event = null;
+        try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement pstmt = con.prepareStatement(SELECT_EVENT_BY_ID_QUERY)) {
 
             pstmt.setInt(1, eventId);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    imagePaths.add(rs.getString("uploadPath"));
-                }
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                event = new Event(
+                        rs.getInt("Event_id"),
+                        rs.getString("Title"),
+                        rs.getString("Description"),
+                        rs.getTimestamp("Start_date"),
+                        rs.getTimestamp("End_date"),
+                        rs.getInt("Created_by"),
+                        rs.getString("Location"),
+                        rs.getTimestamp("Created_at"),
+                        rs.getString("uploadPath")
+                );
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        return imagePaths;
+        return event;
     }
+
+   public boolean deleteEvent(int eventId) {
+    String DELETE_UPLOAD_QUERY = "DELETE FROM Upload WHERE event_id = ?";
+    String DELETE_EVENT_QUERY = "DELETE FROM Event WHERE Event_id = ?";
+
+    try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); 
+            PreparedStatement pstmtUpload = con.prepareStatement(DELETE_UPLOAD_QUERY); 
+            PreparedStatement pstmtEvent = con.prepareStatement(DELETE_EVENT_QUERY)) {
+
+        con.setAutoCommit(false);
+
+        // Delete from Upload table first
+        pstmtUpload.setInt(1, eventId);
+        pstmtUpload.executeUpdate();
+
+        // Delete from Event table
+        pstmtEvent.setInt(1, eventId);
+        int affectedRows = pstmtEvent.executeUpdate();
+
+        if (affectedRows > 0) {
+            con.commit();
+            return true;
+        } else {
+            con.rollback();
+            return false;
+        }
+
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+        return false;
+    }
+}
 
 }

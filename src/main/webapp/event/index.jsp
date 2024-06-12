@@ -7,13 +7,14 @@
         <div class="body-wrapper">
             <%@ include file="../include/navbar.jsp" %>
             <div class="container-fluid" >
-                <c:if test="${not empty message}">
-                    <div class="alert alert-info" role="alert">
-                        <c:out value="${message}" />
+                <!-- Message Display -->
+                <c:if test="${not empty sessionScope.message}">
+                    <div id="message" class="alert alert-info">
+                        ${sessionScope.message}
                     </div>
+                    <c:remove var="message" scope="session"/>
                 </c:if>
-
-                    <%@ include file="allEvent.jsp" %>
+                <%@ include file="allEvent.jsp" %>
             </div>
         </div>
         <%@ include file="../include/right-slidebar.jsp" %>

@@ -4,25 +4,20 @@
  */
 package controller;
 
-import jakarta.servlet.http.HttpServlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
 import model.DAO.Event_DB;
-import model.Event;
-import model.User;
-import model.Event;
 
 /**
  *
  * @author Admin
  */
-public class Event_eventList extends HttpServlet {
-
+public class Event_deleteEvent extends HttpServlet {
+    private static final long serialVersionUID = 1L;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -40,10 +35,10 @@ public class Event_eventList extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Event_eventList</title>");
+            out.println("<title>Servlet Event_deleteEvent</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Event_eventList at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet Event_deleteEvent at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -59,12 +54,28 @@ public class Event_eventList extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        Event_DB eventDB = new Event_DB();
-        List<Event> eventList = eventDB.getAllEvents();
-        request.setAttribute("eventList", eventList);
-        request.getRequestDispatcher("/event/index.jsp").forward(request, response);
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String eventIdStr = request.getParameter("eventId");
+        if (eventIdStr != null && !eventIdStr.isEmpty()) {
+            int eventId = Integer.parseInt(eventIdStr);
+            Event_DB eventDB = new Event_DB();
+            boolean success = eventDB.deleteEvent(eventId);
+
+            if (success) {
+                request.getSession().setAttribute("message", "Event deleted successfully.");
+            } else {
+                // Log the error message
+                System.out.println("Failed to delete event with ID: " + eventId);
+                // You can log more details if needed
+                // e.g., System.out.println("Error details: " + e.getMessage());
+                request.getSession().setAttribute("message", "Failed to delete event.");
+            }
+        } else {
+            // Log the error message
+            System.out.println("No event ID provided for deletion.");
+            request.getSession().setAttribute("message", "Failed to delete event. No event ID provided.");
+        }
+        response.sendRedirect(request.getContextPath() + "/listEvent");
     }
 
     /**

@@ -112,7 +112,7 @@
 </div>
 <%@include file="modal.jsp" %>
 <script>
-    function toggleCreatedGroups() {
+     function toggleCreatedGroups() {
     var createdGroupsSection = document.getElementById("createdGroupsSection");
     var joinedGroupsSection = document.getElementById("joinedGroupsSection");
     var groupListSection = document.getElementById("groupListSection");
@@ -141,5 +141,6 @@ function toggleGroupList() {
     createdGroupsSection.classList.add("hidden");
     joinedGroupsSection.classList.add("hidden");
 }
+
 
 </script>
