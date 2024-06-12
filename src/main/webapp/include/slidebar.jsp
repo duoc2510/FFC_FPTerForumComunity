@@ -32,7 +32,7 @@
                     </a>
                 </li>
 
-                <c:if test="${USER.userRole == 2}">
+                <c:if test="${USER.userRole > 1}">
                     <li class="sidebar-item">
                         <a class="sidebar-link has-arrow" href="javascript:void(0)" aria-expanded="false">
                             <span>
