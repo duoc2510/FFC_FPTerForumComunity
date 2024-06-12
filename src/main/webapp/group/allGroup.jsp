@@ -112,7 +112,7 @@
 </div>
 <%@include file="modal.jsp" %>
 <script>
-    function toggleCreatedGroups() {
+    function  {
     var createdGroupsSection = document.getElementById("createdGroupsSection");
     var joinedGroupsSection = document.getElementById("joinedGroupsSection");
     var groupListSection = document.getElementById("groupListSection");
