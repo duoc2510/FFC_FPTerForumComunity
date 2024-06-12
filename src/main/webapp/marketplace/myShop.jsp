@@ -12,6 +12,13 @@
         height: 100px;
         object-fit: cover;
     }
+    .table thead th{
+        font-size: 14px;
+    }
+    .table-bordered td{
+        font-size: 14px;
+    }
+    
 </style>
 <body>
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
@@ -66,43 +73,40 @@
                         </div>
                         <div class="col-md">
                             <div class="card mx-1">
-                                <div class="card-body">
-                                    <div class="row">
+                                <ul class="list-group list-group-flush rounded-3">
+                                    <li class="list-group-item d-flex p-3">
                                         <div class="col-sm-3">
                                             <p class="mb-0">Full Name</p>
                                         </div>
                                         <div class="col-sm-9">
                                             <p class="text-muted mb-0">${USER.userFullName}</p>
                                         </div>
-                                    </div>
-                                    <hr>
-                                    <div class="row">
+                                    </li>
+                                    <li class="list-group-item d-flex p-3">
                                         <div class="col-sm-3">
                                             <p class="mb-0">Email</p>
                                         </div>
                                         <div class="col-sm-9">
                                             <p class="text-muted mb-0">${USER.userEmail}</p>
                                         </div>
-                                    </div>
-                                    <hr>
-                                    <div class="row">
+                                    </li>
+                                    <li class="list-group-item d-flex p-3">
                                         <div class="col-sm-3">
                                             <p class="mb-0">Wallet</p>
                                         </div>
                                         <div class="col-sm-9">
-                                            <p class="text-muted mb-0">${USER.userWallet}đ</p>
+                                            <p class="text-muted mb-0">${USER.userWallet} VNĐ</p>
                                         </div>
-                                    </div>
-                                    <hr>
-                                    <div class="row">
+                                    </li>
+                                    <li class="list-group-item d-flex p-3">
                                         <div class="col-sm-3">
                                             <p class="mb-0">Score</p>
                                         </div>
                                         <div class="col-sm-9">
                                             <p class="text-muted mb-0">${USER.userScore}</p>
                                         </div>
-                                    </div>
-                                </div>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -161,7 +165,7 @@
                                                                 </td>
                                                                 <td>
                                                                     <input type="hidden" name="name" value="${discount.code}">
-                                                                    <a class="btn btn-primary" data-toggle="modal" data-target="#editDiscount${discount.discountId}">Edit</a>
+                                                                    <a class="btn btn-secondary" data-toggle="modal" data-target="#editDiscount${discount.discountId}">Edit</a>
                                                                 </td>
                                                             </tr>
                                                         </c:forEach>
@@ -192,7 +196,7 @@
                                                 <c:forEach var="product" items="${products}">
                                                     <tr>
                                                         <td>${product.name}</td>
-                                                        <td>${product.price}</td>
+                                                        <td>${product.price} VNĐ</td>
                                                         <td>${product.quantity}</td>
 
                                                         <td>
@@ -201,7 +205,7 @@
                                                         </td>
                                                         <td>
                                                             <input type="hidden" name="name" value="${product.name}">
-                                                            <a class="btn btn-primary" data-toggle="modal" data-target="#editProduct${product.productId}">Edit</a>
+                                                            <a class="btn btn-secondary" data-toggle="modal" data-target="#editProduct${product.productId}">Edit</a>
                                                         </td>
 
                                                     </tr>
@@ -245,12 +249,12 @@
                                                                 - ${productitem.name} : ${orderitem.quantity} <br> 
                                                             </c:forEach>
                                                         </td>
-                                                        <td>${order.total}</td>
+                                                        <td>${order.total} VNĐ</td>
 
                                                         <c:if test="${order.total * 5 / 100 >= USER.userWallet}">
                                                             <c:if test="${order.status eq 'Pending'}">
                                                                 <td>
-                                                                    <input type="text" class="form-control" name="role" value="Ví bạn không đủ tiền để thanh toán thuế!" readonly>
+                                                                    <p class="text-danger"> Ví bạn không đủ tiền để thanh toán thuế!</p>
                                                                 </td>
                                                             </c:if>
                                                             <c:if test="${order.status eq 'Accept'}">
@@ -258,28 +262,28 @@
                                                                     <form action="product" method="post">
                                                                         <input type="text" name="orderid" value="${order.order_ID}" hidden/>
                                                                         <input type="text" name="action" value="thanhcong" hidden/>
-                                                                        <button type="submit" class="btn btn-primary">Giao hang thanh cong</button>
+                                                                        <button type="submit" class="btn btn-primary my-1">Giao hang thanh cong</button>
                                                                     </form>
                                                                     <form action="product" method="post">
                                                                         <input type="text" name="orderid" value="${order.order_ID}" hidden/>
                                                                         <input type="text" name="action" value="thatbai" hidden/>
-                                                                        <button type="submit" class="btn btn-secondary">Giao hang that bai</button>
+                                                                        <button type="submit" class="btn btn-danger my-1">Giao hang that bai</button>
                                                                     </form>
                                                                 </td>
                                                             </c:if>
                                                             <c:if test="${order.status eq 'Completed'}">
                                                                 <td>
-                                                                    <input type="text" class="form-control" name="role" value="Đã giao hàng" readonly>
+                                                                    <p class="text-success">Đã giao hàng</p>
                                                                 </td>
                                                             </c:if>
                                                             <c:if test="${order.status eq 'Cancelled'}">
                                                                 <td>
-                                                                    <input type="text" class="form-control" name="role" value="Đơn hàng bị hủy" readonly>
+                                                                    <p class="text-danger">Đơn hàng bị hủy</p>
                                                                 </td>
                                                             </c:if>
                                                             <c:if test="${order.status eq 'Success'}">
                                                                 <td>
-                                                                    <input type="text" class="form-control" name="role" value="Success" readonly>
+                                                                    <p class="text-success">Success</p>
                                                                 </td>
                                                             </c:if>
                                                         </c:if>
@@ -289,12 +293,12 @@
                                                                     <form action="product" method="post">
                                                                         <input type="text" name="orderid" value="${order.order_ID}" hidden/>
                                                                         <input type="text" name="action" value="chapnhan" hidden/>
-                                                                        <button type="submit" class="btn btn-primary">Chap Nhan Don Hang</button>
+                                                                        <button type="submit" class="btn btn-primary my-1">Chap Nhan Don Hang</button>
                                                                     </form>
                                                                     <form action="product" method="post">
                                                                         <input type="text" name="orderid" value="${order.order_ID}" hidden/>
                                                                         <input type="text" name="action" value="thatbai" hidden/>
-                                                                        <button type="submit" class="btn btn-secondary">Khong Nhan Don Hang</button>
+                                                                        <button type="submit" class="btn btn-danger my-1">Khong Nhan Don Hang</button>
                                                                     </form>
                                                                 </td>
                                                             </c:if>
@@ -303,34 +307,31 @@
                                                                     <form action="product" method="post">
                                                                         <input type="text" name="orderid" value="${order.order_ID}" hidden/>
                                                                         <input type="text" name="action" value="thanhcong" hidden/>
-                                                                        <button type="submit" class="btn btn-primary">Giao hang thanh cong</button>
+                                                                        <button type="submit" class="btn btn-primary my-1">Giao hang thanh cong</button>
                                                                     </form>
                                                                     <form action="product" method="post">
                                                                         <input type="text" name="orderid" value="${order.order_ID}" hidden/>
                                                                         <input type="text" name="action" value="thatbai" hidden/>
-                                                                        <button type="submit" class="btn btn-secondary">Giao hang that bai</button>
+                                                                        <button type="submit" class="btn btn-danger my-1">Giao hang that bai</button>
                                                                     </form>
                                                                 </td>
                                                             </c:if>
                                                             <c:if test="${order.status eq 'Completed'}">
                                                                 <td>
-                                                                    <input type="text" class="form-control" name="role" value="Đã giao hàng" readonly>
+                                                                    <p class="text-success">Đã giao hàng</p>
                                                                 </td>
                                                             </c:if>
                                                             <c:if test="${order.status eq 'Cancelled'}">
                                                                 <td>
-                                                                    <input type="text" class="form-control" name="role" value="Đơn hàng bị hủy" readonly>
+                                                                    <p class="text-danger">Đơn hàng bị hủy</p>
                                                                 </td>
                                                             </c:if>
                                                             <c:if test="${order.status eq 'Success'}">
                                                                 <td>
-                                                                    <input type="text" class="form-control" name="role" value="Success" readonly>
+                                                                    <p class="text-success">Success</p>
                                                                 </td>
                                                             </c:if>
                                                         </c:if>
-
-
-
                                                     </tr>
                                                 </c:forEach>
                                             </tbody>
@@ -338,13 +339,6 @@
 
                                     </div>
                                 </div>
-
-
-
-
-
-
-
                             </div>
                         </div>
                     </div>

@@ -216,8 +216,8 @@
                                                         <input type="hidden" name="discountSelect" value="${discountId}">
                                                         <input type="hidden" name="total" value="${total}">
                                                         <input type="hidden" name="action" value="confirm2">
+                                                        <button type="button" class="btn btn-danger mx-2" onclick="javascript:history.go(-1);">Back</button>
                                                         <input type="submit" value="Confirm" class="btn btn-primary">
-                                                        <button type="button" class="btn btn-secondary" onclick="javascript:history.go(-1);">Back</button>
                                                     </form>
                                                 </div>
 

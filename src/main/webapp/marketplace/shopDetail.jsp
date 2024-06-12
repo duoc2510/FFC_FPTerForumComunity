@@ -132,9 +132,9 @@
                                         <img class="card-img-top" src="${pageContext.request.contextPath}/static/${imagefirst.uploadPath}">
                                     </a>
                                     <div class="card-body">
-                                        <h5 class="card-title">Name: ${product.name}</h5>
-                                        <p class="card-text">Price: ${product.price}</p>
-                                        <p class="card-text">Giới Thiệu: ${product.productDescription}</p>
+                                        <h5 class="card-title">${product.name}</h5>
+                                        <p class="card-text">Price: ${product.price} VNĐ</p>
+                                        <p class="card-text">${product.productDescription}</p>
                                         <a href="/FPTer/marketplace/allshop/shopdetail/productdetail?productid=${product.productId}&shopid=${shopid}" class="btn btn-primary mt-3 w-100">Buy now</a>
                                     </div>
                                 </div>
@@ -148,10 +148,10 @@
                                         <img class="sold-out-overlay" src="${pageContext.request.contextPath}/static/images/soldout.jpg">
                                     </div>
                                     <div class="card-body">
-                                        <h5 class="card-title"><a>Name: ${product.name}</a></h5>
-                                        <p class="card-text"><a>Price: ${product.price}</a></p>
-                                        <p class="card-text"><a>Giới Thiệu: ${product.productDescription}</a></p>
-                                        <a class="btn btn-danger mt-3 w-100">Sold out</a>
+                                        <h5 class="card-title"><a> ${product.name}</a></h5>
+                                        <p class="card-text"><a>${product.price} VNĐ</a></p>
+                                        <p class="card-text"><a>${product.productDescription}</a></p>
+                                        <button class="btn btn-danger mt-3 w-100" disabled>Sold out</button>
                                     </div>
                                 </div>
                             </div>

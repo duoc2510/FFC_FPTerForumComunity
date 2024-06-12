@@ -21,12 +21,22 @@
             <div class="container-fluid">
                 <!--Control panel-->
                 <%@ include file="panel.jsp" %>
+                <!--loop this-->
 
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class=" mx-2">
-                            <!--loop this-->
-                            <c:forEach var="item" items="${ORDERITEMLIST}">
+                <!--check bag is empty-->
+                <c:if test="${empty ORDERITEMLIST}">
+                    <div class='row mt-5'>
+                        <div class='col-12 mx-auto text-center'>
+                            <img src="${pageContext.request.contextPath}/static/images/bag-empty.jpg" alt="alt" width='200px'/>
+                            <h1 class="text-uppercase text-bold my-3">bag is empty</h1>
+                        </div>
+                    </div>
+                </c:if>
+                <c:forEach var="item" items="${ORDERITEMLIST}">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class=" mx-2">
+
                                 <c:set var="imagefirst" value="${Shop_DB.getUploadFirstByProductID(item.getProductID())}" />
                                 <c:set var="product" value="${Shop_DB.getProductByID(item.getProductID())}" />
 
@@ -41,15 +51,23 @@
                                                     <h5>${product.name}</h5>
                                                 </div>
                                             </div>
-                                            <div class="d-flex flex-row align-items-center">
-                                                <div class="mx-1" style="width: 70px;">
-                                                    <input data-action="update" type="number" name="quantity" class="form-control" value="${item.quantity}" min="1" max="${product.quantity}" oninput="handleQuantityChange('${item.getOrderItem_id()}', this.value)">
-                                                    <c:if test="${item.quantity == product.quantity}">
-                                                        <input type="text" class="form-control" name="role" value="Số lượng sản phẩm đã tối đa!" readonly>
-                                                    </c:if>                                                </div>
-                                                    <c:set var="totalPrice1" value="${item.quantity * item.price}" />
-                                                <div class="mx-1" style="width: 80px;">
-                                                    <h5 class="mb-0">${totalPrice1}</h5>
+                                            <div class="d-flex flex-row align-items-center mx-2">
+                                                <div class="mx-1" >
+                                                    <c:if test="${ product.quantity > 0}">
+                                                        <input data-action="update" type="number" name="quantity" class="form-control" value="${item.quantity}" min="1" max="${product.quantity}" oninput="handleQuantityChange('${item.getOrderItem_id()}', this.value)">
+                                                        <c:if test="${item.quantity == product.quantity}">
+                                                            <p class="text-danger position-absolute">Quantity was maximum</p>
+                                                        </c:if>    
+                                                    </c:if>  
+                                                    <c:if test="${ product.quantity == 0}">
+                                                        <input type="number" class="form-control" name="quantity" value="0" readonly>
+                                                        <p class="text-danger position-absolute">This product had sold out! Please delete!</p>
+
+                                                    </c:if>
+                                                </div>
+                                                <c:set var="totalPrice1" value="${item.quantity * item.price}" />
+                                                <div class="mx-1">
+                                                    <P class="mb-0">${totalPrice1} VNĐ</P>
                                                 </div>
                                                 <c:set var="totalPrice" value="${totalPrice1 + totalPrice}" />
                                                 <a class="mx-1" onclick="moveOutProductFromCart('${item.getOrderItem_id()}')" style="color: #cecece;" data-action="delete"><i class="fas fa-trash-alt"></i></a>
@@ -58,79 +76,81 @@
                                         </div>
                                     </div>
                                 </div>
-                            </c:forEach>
-                            <!--loop this-->
+
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="card ">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center mb-4">
-                                    <h5 class="mb-0">Billing</h5>
-                                </div>
-                                <form action="confirmorder" method="post">
-                                    <div class="col-md-12">
-                                        <div class="form-outline form-white">
-                                            <label class="form-label" for="typeText">Full Name </label>
-                                            <input name="fullname" class="form-control form-control" placeholder="Full Name" value="${USER.userFullName}" readonly> 
 
-                                            <label class="form-label mt-3" for="typeText">Phone</label>
-                                            <input name="phone" class="form-control form-control" placeholder="Phone" required>
+                        <div class="col-md-6">
+                            <div class="card ">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-4">
+                                        <h5 class="mb-0">Billing</h5>
+                                    </div>
+                                    <form action="confirmorder" method="post">
+                                        <div class="col-md-12">
+                                            <div class="form-outline form-white">
+                                                <label class="form-label" for="typeText">Full Name </label>
+                                                <input name="fullname" class="form-control form-control" placeholder="Full Name" value="${USER.userFullName}" readonly> 
 
-                                            <c:set var="shop" value="${Shop_DB.getShopHaveStatusIs1ByShopID(product.getShopId())}" />
-                                            <label hidden class="form-label mt-3" for="typeText">Shop</label>
-                                            <input name="shopid" class="form-control form-control" placeholder="shopid" value="${shop.shopID}" hidden>
+                                                <label class="form-label mt-3" for="typeText">Phone</label>
+                                                <input name="phone" class="form-control form-control" placeholder="Phone" required>
+
+                                                <c:set var="shop" value="${Shop_DB.getShopHaveStatusIs1ByShopID(product.getShopId())}" />
+                                                <label hidden class="form-label mt-3" for="typeText">Shop</label>
+                                                <input name="shopid" class="form-control form-control" placeholder="shopid" value="${shop.shopID}" hidden>
 
 
-                                            <label class="form-label mt-3" for="typeText">Campus</label>
-                                            <input name="campus" class="form-control form-control" placeholder="Campus" value="${shop.campus}" readonly>
+                                                <label class="form-label mt-3" for="typeText">Campus</label>
+                                                <input name="campus" class="form-control form-control" placeholder="Campus" value="${shop.campus}" readonly>
 
-                                            <c:set var="discountlist" value="${Shop_DB.getAllDiscountOrder(USER.userId, product.getShopId())}" />
-                                            <label class="form-label mt-3" for="typeText">Discount</label>
-                                            <select id="discountSelect" class="form-control" name="discountSelect" onchange="updateDiscount()">
-                                                <c:forEach var="discount" items="${discountlist}">
-                                                    <option value="${discount.discountId}" data-percent="${discount.discountPercent}" data-condition="${discount.condition}">Giảm ${discount.discountPercent}% đơn từ ${discount.condition}VNĐ</option>
-                                                </c:forEach>
-                                            </select>
+                                                <c:set var="discountlist" value="${Shop_DB.getAllDiscountOrder(USER.userId, product.getShopId())}" />
+                                                <label class="form-label mt-3" for="typeText">Discount</label>
+                                                <select id="discountSelect" class="form-control" name="discountSelect" onchange="updateDiscount()">
+                                                    <c:forEach var="discount" items="${discountlist}">
+                                                        <option value="${discount.discountId}" data-percent="${discount.discountPercent}" data-condition="${discount.condition}">Giảm ${discount.discountPercent}% đơn từ ${discount.condition}VNĐ</option>
+                                                    </c:forEach>
+                                                </select>
 
-                                            <input type="hidden" id="selectedPercent" name="percent" value="0" />
+                                                <input type="hidden" id="selectedPercent" name="percent" value="0" />
 
-                                            <label class="form-label mt-3" for="typeText">Note</label>
-                                            <input name="note" class="form-control" placeholder="Note" rows="4">
+                                                <label class="form-label mt-3" for="typeText">Note</label>
+                                                <input name="note" class="form-control" placeholder="Note" rows="4">
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div class="d-flex justify-content-between mt-3">
-                                        <p class="mb-2">Sub total</p>
-                                        <p class="mb-2">${totalPrice} VND</p>
-                                    </div>
+                                        <div class="d-flex justify-content-between mt-3">
+                                            <p class="mb-2">Sub total</p>
+                                            <p class="mb-2">${totalPrice} VND</p>
+                                        </div>
 
-                                    <div class="d-flex justify-content-between">
-                                        <p class="mb-2">Discount fee</p>
-                                        <p class="mb-2" id="discountFee">-0 VND</p>
-                                    </div>
+                                        <div class="d-flex justify-content-between">
+                                            <p class="mb-2">Discount fee</p>
+                                            <p class="mb-2" id="discountFee">-0 VND</p>
+                                        </div>
 
-                                    <div class="d-flex justify-content-between mb-4">
-                                        <p class="mb-2">Total</p>
-                                        <p class="mb-2" id="totalFee">${totalPrice} VND</p>
-                                    </div>
+                                        <div class="d-flex justify-content-between mb-4">
+                                            <p class="mb-2">Total</p>
+                                            <p class="mb-2" id="totalFee">${totalPrice} VND</p>
+                                        </div>
 
-                                    <div class="mb-3" hidden="">
-                                        <label class="form-label">Total</label>
-                                        <input type="text" class="form-control" id="totalInput" name="total" value="${totalPrice}">
-                                    </div>
-                                    <input type="hidden" name="action" value="confirm1">
-                                    <div class="d-flex justify-content-between">
-                                        <button type="submit" class="btn btn-info btn-block btn-lg">
-                                            <span id="checkoutTotal">${totalPrice} VND</span>
-                                            <span>Checkout <i class="fas fa-long-arrow-alt-right ms-2"></i></span>
-                                        </button>                                                    
-                                    </div>
-                                </form>
+                                        <div class="mb-3" hidden="">
+                                            <label class="form-label">Total</label>
+                                            <input type="text" class="form-control" id="totalInput" name="total" value="${totalPrice}">
+                                        </div>
+                                        <input type="hidden" name="action" value="confirm1">
+                                        <div class="d-flex justify-content-between">
+                                            <button type="submit" class="btn btn-info btn-block btn-lg">
+                                                <span id="checkoutTotal">${totalPrice} VND</span>
+                                                <span>Checkout <i class="fas fa-long-arrow-alt-right ms-2"></i></span>
+                                            </button>                                                    
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </c:forEach>
+                <!--loop this-->
             </div>
         </div>
     </div>
@@ -268,6 +288,21 @@
             document.getElementById("checkoutTotal").textContent = newTotal.toFixed(2) + ' VND';
             document.getElementById("totalInput").value = newTotal.toFixed(2);
         }
+
+        // Check if the message variable is set or not
+        document.addEventListener("DOMContentLoaded", (event) => {
+            var errorParam = "${param.error}";
+            if (errorParam) {
+                var errorMessage = decodeURIComponent(errorParam.replace(/\+/g, " "));
+                swal({
+                    title: "Error!",
+                    text: errorMessage,
+                    icon: "error",
+                    button: "OK",
+                });
+            }
+        });
+
 
         // Call filterDiscounts on page load to remove invalid discounts
         window.onload = function () {

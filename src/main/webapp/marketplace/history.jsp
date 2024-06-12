@@ -58,38 +58,38 @@
 
                                                 <c:if test="${order.status eq 'Pending'}">
                                                     <td>
-                                                        <input type="text" class="form-control" name="role" value="Đang chờ Shop xác nhận." readonly>
+                                                        <p>Đang chờ Shop xác nhận..</p>
 
-                                                        <form action="product" method="post">
+                                                        <form class="my-1" action="product" method="post">
                                                             <input type="text" name="orderid" value="${order.order_ID}" hidden/>
                                                             <input type="text" name="action" value="huydon" hidden/>
-                                                            <button type="submit" class="btn btn-secondary">Hủy Đơn Hàng</button>
+                                                            <button type="submit" class="btn btn-danger w-100 mt-2">Hủy Đơn Hàng</button>
                                                         </form>
                                                     </td>
                                                 </c:if>
                                                 <c:if test="${order.status eq 'Accept'}">
                                                     <td>
-                                                        <input type="text" class="form-control" name="role" value="Đơn đã được xác nhận và sẽ sớm gửi đến bạn." readonly>
+                                                        <p>Đơn đã được xác nhận và sẽ sớm gửi đến bạn.</p>
                                                     </td>
                                                 </c:if>
                                                 <c:if test="${order.status eq 'Completed'}">
                                                     <td>
-                                                        <form action="product" method="post">
+                                                        <form class="my-1" action="product" method="post">
                                                             <input type="text" name="orderid" value="${order.order_ID}" hidden/>
                                                             <input type="text" name="action" value="danhanhang" hidden/>
-                                                            <button type="submit" class="btn btn-primary">Vui lòng bấm đã nhận hàng.</button>
+                                                            <button type="submit" class="btn btn-primary w-100 mt-2">Vui lòng bấm đã nhận hàng.</button>
                                                         </form>
 
                                                     </td>
                                                 </c:if>
                                                 <c:if test="${order.status eq 'Cancelled'}">
                                                     <td>
-                                                        <input type="text" class="form-control" name="role" value="Đơn hàng bị hủy" readonly>
+                                                        <p>Đơn hàng bị hủy.</p>
                                                     </td>
                                                 </c:if>
                                                 <c:if test="${order.status eq 'Success'}">
                                                     <td>
-                                                        <input type="text" class="form-control" name="role" value="Success" readonly>
+                                                        <p>Success.</p>
                                                     </td>
                                                 </c:if>
                                             </tr>

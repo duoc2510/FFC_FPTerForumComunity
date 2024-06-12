@@ -106,10 +106,21 @@ public class Shop_cart extends HttpServlet {
                         boolean check = false;
                         for (OrderItem item : orderitemlist) {
                             if (item.getProductID() == product.getProductId()) {
-                                item.setQuantity(item.getQuantity() + quantity);
-                                sdb.updateOrderItem(item);
-                                check = true;
+                                // Check if the quantity does not exceed the available quantity of the product
+                                if (item.getQuantity() + quantity <= product.getQuantity()) {
+                                    item.setQuantity(item.getQuantity() + quantity);
+                                    sdb.updateOrderItem(item);
+                                    check = true;
+                                } else {
+                                    // If quantity exceeds available quantity, set an error message
+                                    request.setAttribute("shopid", shopid);
+                                    request.setAttribute("productid", id);
+                                    request.setAttribute("message", "The quantity of this product is now maximum.");
+                                    request.getRequestDispatcher("/marketplace/productDetail.jsp").forward(request, response);
+                                    return;
+                                }
                             }
+
                         }
                         if (!check) {
                             OrderItem item = new OrderItem(1, order.getOrder_ID(), product.getProductId(), quantity, product.getPrice());
