@@ -43,7 +43,7 @@ public class Event_addEvent extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/event/allEvent.jsp").forward(request, response);
+        request.getRequestDispatcher("/event/index.jsp").forward(request, response);
     }
 
     private static final String UPLOAD_DIR = "Avatar_of_events";
@@ -71,7 +71,13 @@ public class Event_addEvent extends HttpServlet {
             endDate = Timestamp.valueOf(localDateTime);
         }
 
-        int userId = ((User) request.getSession().getAttribute("USER")).getUserId();
+        User user = (User) request.getSession().getAttribute("USER");
+        if (user == null) {
+            // Xử lý khi người dùng không được xác định
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
+        int userId = user.getUserId();
 
         Part filePart = request.getPart("upload_path");
         String fileName = extractFileName(filePart);
@@ -96,12 +102,17 @@ public class Event_addEvent extends HttpServlet {
         Upload upload = new Upload(0, 0, 0, 0, 0, 0, filePathForDatabase);
 
         Event_DB eventDB = new Event_DB();
+        String message;
         if (eventDB.addEvent(event, upload)) {
-            request.setAttribute("message", "Event added successfully!");
+            message = "Event added successfully!";
         } else {
-            request.setAttribute("message", "Error adding event.");
+            message = "Error adding event.";
         }
-        request.getRequestDispatcher("/event/allEvent.jsp").forward(request, response);
+         // Set the message in the session
+        request.getSession().setAttribute("message", message);
+        
+        // Redirect to the events page
+        response.sendRedirect(request.getContextPath() + "/listEvent");
     }
 
     private String extractFileName(Part part) {

@@ -70,113 +70,78 @@
                             <div class="px-4 py-4 cover cover " style="background: url(${pageContext.request.contextPath}/upload/deli-2.png)">
                                 <div class="media align-items-end profile-head">
                                     <div class="profile mr-3 d-flex justify-content-between align-items-end">
-                                        <img src="${pageContext.request.contextPath}/${USER.userAvatar}" class="rounded-circle img-thumbnail" style="object-fit: cover;">
+                                        <img src="${pageContext.request.contextPath}/${user.userAvatar}" class="rounded-circle img-thumbnail" style="object-fit: cover;">
                                         <div>
-                                            <a href="${pageContext.request.contextPath}/profile/setting" class="btn btn-outline-dark btn-sm btn-block edit-cover mx-2">Edit profile</a>
-                                            <a href="${pageContext.request.contextPath}/profile" class="btn btn-outline-dark btn-sm btn-block edit-cover">View profile</a>
+                
+                                            <a href="${pageContext.request.contextPath}/viewPersonalProfile&userId=${user.userId}" class="btn btn-outline-dark btn-sm btn-block edit-cover">View personal profile</a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="bg-light pt-4 px-4 d-flex justify-content-between text-center ">
                                 <div class="media-body mb-5 text-white">
-                                    <h4 class="mt-0 mb-0">${USER.userFullName}</h4>
+                                    <h4 class="mt-0 mb-0">${user.userFullName}</h4>
                                 </div>
                                 <ul class="list-inline mb-0">
                                     <li class="list-inline-item">
-                                        <h5 class="font-weight-bold mb-0 d-block">${postCount}</h5><small class="text-muted"><i class="fas fa-image mr-1"></i>Posts</small>
+                                        <h5 class="font-weight-bold mb-0 d-block">${postCountGroup}</h5><small class="text-muted"><i class="fas fa-image mr-1"></i>Post in group</small>
                                     </li>
                                     <li class="list-inline-item">
-                                        <h5 class="font-weight-bold mb-0 d-block">745</h5><small class="text-muted"><i class="fas fa-user mr-1"></i>Followers</small>
+                                        <h5 class="font-weight-bold mb-0 d-block">${cmtInGroup}</h5><small class="text-muted"><i class="fas fa-user mr-1"></i>Comment in group</small>
                                     </li>
-                                    <li class="list-inline-item">
-                                        <h5 class="font-weight-bold mb-0 d-block">340</h5><small class="text-muted"><i class="fas fa-user mr-1"></i>Following</small>
-                                    </li>
-                                    <li class="list-inline-item">
-                                        <h5 class="font-weight-bold mb-0 d-block">${USER.userScore}</h5><small class="text-muted"><i class="fas fa-image mr-1"></i>Score</small>
-                                    </li>
-                                    <li class="list-inline-item">
-                                        <h5 class="font-weight-bold mb-0 d-block">${USER.userRank}</h5><small class="text-muted"><i class="fas fa-user mr-1"></i>Rank</small>
-                                    </li>
+                                    
+                                    
                                 </ul>
                             </div>
-                            <div class="px-4 py-3">
-                                <div class="p-4 rounded shadow-sm">
-                                    <p class="font-italic mb-0">${USER.userStory}</p>
-                                </div>
-                            </div>
+                            
                         </div>
                     </div>
                 </div>
             </div>
+           
             <div class="container-fluid pt-0">
                 <div class="row form-settings bg-white shadow rounded py-4 px-4 d-flex justify-content-between ">
                     <div class="p0">
-                        <h5 class="mb-2">Có gì mới không nà ${USER.userFullName} ơi</h5>
+                        <h5 class="mb-2">Bài viết trong nhóm </h5>
                     </div>
+                     <c:if test="${empty userPosts}">
+                     <p>Người này không có bài post nào trong group.</p>
+                    </c:if>
                     <div>
-                        <form id="postForm" action="addpost" method="post" enctype="multipart/form-data">
-                            <div class="form-group pb-3">
-                                <label for="postStatus">Status</label>
-                                <select class="form-control" id="postStatus" name="postStatus">
-                                    <option value="Public">Public</option>
-                                    <option value="Friends">Friends</option>
-                                    <option value="Only me">Only me</option>
-                                </select>
-                            </div>
-                            <div class="form-group pb-3">
-                                <textarea class="form-control" id="postContent" name="postContent" rows="3" placeholder="Có chuyện gì vui vậy :>"></textarea>
-                            </div>
-                            <div class="form-group pb-3">
-                                <label for="postImage">Upload Image</label>
-                                <input type="file" class="form-control" id="postImage" name="postImage" accept="image/*">
-                                <div class="img-preview" id="imgPreview">
-                                    <p>No image selected</p>
-                                </div>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Add Post</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <div class="container-fluid pt-0">
-                <div class="row form-settings bg-white shadow rounded py-4 px-4 d-flex justify-content-between ">
-                    <div class="p0">
-                        <h5 class="mb-2">Bài viết của bạn</h5>
-                    </div>
-                    <div>
-                        <c:forEach var="post" items="${posts}">
-                            <div class="col-lg-12">
-                                <div class="card w-100">
-                                    <div class="card-body p-4">
-                                        <div class="pb-3 d-flex row">
-                                            <div class="col-1 text-center mt-2">
-                                                <a class="nav-icon-hover" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown" aria-expanded="false">
-                                                    <img src="${pageContext.request.contextPath}/${post.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
-                                                </a>
-                                            </div>
-                                            <div class="col-10">
-                                                <h6 class="card-title fw-semibold mb-4 d-inline">${post.user.username}</h6>
-                                                <p class="s-4">${post.createDate}</p>
-                                            </div>
-                                            <c:if test="${post.user.userId == USER.userId}">
-                                                <div class="dropdown col-1 px-2" style="text-align: right">
-                                                    <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                        <span> <i class="ti-more-alt"></i></span>   
+                        <c:forEach var="post" items="${userPosts}">
+                            <c:if test="${post.status eq 'Active' and post.postStatus eq 'Public'}">
+                                <div class="col-lg-12">
+                                    <div class="card w-100">
+                                        <div class="card-body p-4">
+                                            <div class="pb-3 d-flex row">
+                                                <div class="col-1 text-center mt-2">
+                                                    <a class="nav-icon-hover" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <img src="${pageContext.request.contextPath}/${post.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
                                                     </a>
-                                                    <ul class="dropdown-menu">
-                                                        <li>
-                                                            <a class="dropdown-item" type="button" href="#">Edit</a>
-                                                        </li>
-                                                        <li>
-                                                            <form class="dropdown-item p-0 m-0" onsubmit="return confirm('Are you sure you want to delete this post?');" action="${pageContext.request.contextPath}/post" method="post">
-                                                                <input type="hidden" name="action" value="deletePost">
-                                                                <input type="hidden" name="postId" value="${post.postId}">
-                                                                <button type="submit" class="dropdown-item">Delete Post</button>
-                                                            </form>
-                                                        </li>
-                                                    </ul>
                                                 </div>
+                                                <div class="col-10">
+                                                    <h6 class="card-title fw-semibold mb-4 d-inline">${post.user.username}</h6>
+                                                    <p class="s-4">${post.createDate}</p>
+                                                </div>
+                                                <c:if test="${post.user.userId == USER.userId}">
+                                                    <div class="dropdown col-1 px-2" style="text-align: right">
+                                                        <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                            <span> <i class="ti-more-alt"></i></span>   
+                                                        </a>
+                                                        <ul class="dropdown-menu">
+                                                            <li>
+                                                                <a class="dropdown-item" type="button" href="#">Edit</a>
+                                                            </li>
+                                                            <li>
+                                                                <form class="dropdown-item p-0 m-0" onsubmit="return confirm('Are you sure you want to delete this post?');" action="${pageContext.request.contextPath}/post" method="post">
+                                                                    <input type="hidden" name="action" value="deletePost">
+                                                                    <input type="hidden" name="postId" value="${post.postId}">
+                                                                    <button type="submit" class="dropdown-item">Delete Post</button>
+                                                                </form>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </c:if>
                                             </div>
 
                                             <!-- Option to delete post for the post author -->

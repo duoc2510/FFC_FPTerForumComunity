@@ -74,7 +74,7 @@ public static int addGroup(Group group) {
 
     public static Group viewGroup(int groupId) {
         Group group = null;
-        String sql = "SELECT Group_id, Creater_id, Group_name, Group_description, image, memberCount, "
+        String sql = "SELECT Group_id, Creater_id, Group_name, Group_description, image, memberCount,Group_status, "
                 + "MemberGroup_id, Status, User_id, User_email, User_fullName, User_avatar, User_activeStatus, "
                 + "Post_id, Post_user_id, Post_group_id, Post_content, Post_createDate, Post_status, "
                 + "Comment_id, Comment_post_id, Comment_user_id, Comment_content, Comment_date, "
@@ -148,7 +148,8 @@ public static int addGroup(Group group) {
                             comments,
                             uploads,
                             rs.getString("image"),
-                            rs.getInt("memberCount")
+                            rs.getInt("memberCount"),
+                            rs.getString("Group_status")
                     );
                 }
             }
@@ -162,11 +163,11 @@ public static int addGroup(Group group) {
 
     public static List<Group> getAllGroups() {
         List<Group> groups = new ArrayList<>();
-        String sql = "SELECT g.Group_id, g.Creater_id, g.Group_name, g.Group_description, g.image, "
-                + "COUNT(DISTINCT CASE WHEN mg.Status = 'approved' THEN mg.MemberGroup_id END)  AS memberCount "
-                + "FROM [Group] g "
-                + "LEFT JOIN MemberGroup mg ON g.Group_id = mg.Group_id "
-                + "GROUP BY g.Group_id, g.Creater_id, g.Group_name, g.Group_description, g.image";
+     String sql = "SELECT g.Group_id, g.Creater_id, g.Group_name, g.Group_description, g.image, g.Status," +
+             "COUNT(DISTINCT CASE WHEN mg.Status IN ('approved', 'host') THEN mg.MemberGroup_id END) AS memberCount " +
+             "FROM [Group] g " +
+             "LEFT JOIN MemberGroup mg ON g.Group_id = mg.Group_id " +
+             "GROUP BY g.Group_id, g.Creater_id, g.Group_name, g.Group_description, g.image,g.Status";
         try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
@@ -180,7 +181,8 @@ public static int addGroup(Group group) {
                         null,
                         null,
                         rs.getString("image"),
-                        rs.getInt("memberCount")
+                        rs.getInt("memberCount"),
+                        rs.getString("Status")
                 );
                 groups.add(group);
             }
@@ -211,7 +213,7 @@ public static int addGroup(Group group) {
 
         // Xây dựng câu lệnh SQL phù hợp dựa vào trạng thái của người tham gia
         if (isCreator) {
-            sql = "INSERT INTO MemberGroup (User_id, Group_id, Status) VALUES (?, ?, 'approved')";
+            sql = "INSERT INTO MemberGroup (User_id, Group_id, Status) VALUES (?, ?, 'host')";
         } else {
             sql = "INSERT INTO MemberGroup (User_id, Group_id, Status) VALUES (?, ?, 'pending')";
         }
@@ -258,15 +260,28 @@ public static int addGroup(Group group) {
             return false;
         }
     }
+    public static boolean isUserBan(int userId, int groupId) {
+        String query = "SELECT * FROM MemberGroup WHERE User_id = ? AND Group_id = ? AND Status = 'banned'";
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, userId);
+            stmt.setInt(2, groupId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     public static List<Group> getAllGroupsCreated(int userId) {
         List<Group> groups = new ArrayList<>();
-        String sql = "SELECT g.Group_id, g.Creater_id, g.Group_name, g.Group_description, g.image, "
-                + "COUNT(DISTINCT CASE WHEN mg.Status = 'Approved' THEN mg.MemberGroup_id END) AS memberCount "
+        String sql = "SELECT g.Group_id, g.Creater_id, g.Group_name, g.Group_description, g.image, g.Status, "
+                + "COUNT(DISTINCT CASE WHEN mg.Status IN ('approved', 'host') THEN mg.MemberGroup_id END) AS memberCount " 
                 + "FROM [Group] g "
                 + "LEFT JOIN MemberGroup mg ON g.Group_id = mg.Group_id "
                 + "WHERE g.Creater_id = ? "
-                + "GROUP BY g.Group_id, g.Creater_id, g.Group_name, g.Group_description, g.image";
+                + "GROUP BY g.Group_id, g.Creater_id, g.Group_name, g.Group_description, g.image,g.Status";
         try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, userId);
@@ -283,7 +298,8 @@ public static int addGroup(Group group) {
                             null,
                             null,
                             rs.getString("image"),
-                            rs.getInt("memberCount")
+                            rs.getInt("memberCount"),
+                            rs.getString("Status")
                     );
                     groups.add(group);
                 }
@@ -351,12 +367,12 @@ public static List<Group_member> getAllMembersByGroupId(int groupId) {
     }
   public static List<Group> getAllGroupJoin(int userId) {
     List<Group> groups = new ArrayList<>();
-    String sql = "SELECT g.Group_id, g.Creater_id, g.Group_name, g.Group_description, g.image, "
-               + "COUNT(DISTINCT CASE WHEN mg.Status = 'approved' THEN mg.MemberGroup_id END) AS memberCount "
-               + "FROM [Group] g "
-               + "JOIN MemberGroup mg ON g.Group_id = mg.Group_id "
-               + "WHERE mg.User_id = ? AND mg.Status = 'approved' "
-               + "GROUP BY g.Group_id, g.Creater_id, g.Group_name, g.Group_description, g.image";
+    String sql = "SELECT g.Group_id, g.Creater_id, g.Group_name, g.Group_description, g.image, g.Status, " +
+                 "COUNT(DISTINCT CASE WHEN mg.Status IN ('approved', 'host') THEN mg.MemberGroup_id END) AS memberCount " +
+                 "FROM [Group] g " +
+                 "JOIN MemberGroup mg ON g.Group_id = mg.Group_id " +
+                 "WHERE mg.User_id = ? AND mg.Status = 'approved' " +
+                 "GROUP BY g.Group_id, g.Creater_id, g.Group_name, g.Group_description, g.image, g.Status";
     try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass);
          PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -374,7 +390,9 @@ public static List<Group_member> getAllMembersByGroupId(int groupId) {
                     null,
                     null,
                     rs.getString("image"),
-                    rs.getInt("memberCount")
+                    rs.getInt("memberCount"),
+                    rs.getString("Status")
+                    
                 );
                 groups.add(group);
             }
@@ -423,5 +441,100 @@ public static int countPostsInGroup(int groupId) {
 
     return postCount;
 }
+public static boolean leaveGroup(int groupId, int userId) {
+    String sql = "UPDATE MemberGroup SET Status = 'left' WHERE Group_id = ? AND User_id = ?";
+    try (Connection connection = DriverManager.getConnection(dbURL, dbUser, dbPass);
+         PreparedStatement statement = connection.prepareStatement(sql)) {
+        statement.setInt(1, groupId);
+        statement.setInt(2, userId);
+        int rowsUpdated = statement.executeUpdate();
+        return rowsUpdated > 0; // Trả về true nếu có hàng nào được cập nhật
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false; // Trả về false nếu có lỗi xảy ra
+    }
+}
+public static boolean kickMember(int groupId, int userId) {
+        String sql = "UPDATE MemberGroup SET Status = 'kicked' WHERE Group_id = ? AND User_id = ?";
+        
+        try (Connection connection = DriverManager.getConnection(dbURL, dbUser, dbPass);
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, groupId);
+            statement.setInt(2, userId);
+            int rowsAffected = statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+public static boolean banMember(int groupId, int userId) {
+        String sql = "UPDATE MemberGroup SET Status = 'banned' WHERE Group_id = ? AND User_id = ?";
+        
+        try (Connection connection = DriverManager.getConnection(dbURL, dbUser, dbPass);
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, groupId);
+            statement.setInt(2, userId);
+            int rowsAffected = statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+public static boolean removeAllMember(int groupId) {
+    String sql = "UPDATE MemberGroup SET Status = 'kicked' WHERE Group_id = ?";
+    
+    try (Connection connection = DriverManager.getConnection(dbURL, dbUser, dbPass);
+         PreparedStatement statement = connection.prepareStatement(sql)) {
+        statement.setInt(1, groupId);
+        int rowsAffected = statement.executeUpdate();
+        return rowsAffected > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;
+    }
+}
 
+public static boolean deleteGroup(int groupId) {
+    String sqlUpdateStatus = "UPDATE [Group] SET Status = 'inactive' WHERE Group_id = ?";
+    
+    try (Connection connection = DriverManager.getConnection(dbURL, dbUser, dbPass);
+         PreparedStatement statement = connection.prepareStatement(sqlUpdateStatus)) {
+        statement.setInt(1, groupId);
+  
+        int rowsAffected = statement.executeUpdate();
+        return rowsAffected > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;
+    }
+}
+public static List<Post> getUserPostsInGroup(int userId, int groupId) {
+    List<Post> posts = new ArrayList<>();
+    String sql = "SELECT p.*, u.UploadPath FROM Post p LEFT JOIN Upload u ON p.Post_id = u.Post_id WHERE p.User_id = ? AND p.Group_id = ?";
+    
+    try (Connection connection = DriverManager.getConnection(dbURL, dbUser, dbPass);
+         PreparedStatement statement = connection.prepareStatement(sql)) {
+        statement.setInt(1, userId);
+        statement.setInt(2, groupId);
+        ResultSet rs = statement.executeQuery();
+        
+        while (rs.next()) {
+            int postId = rs.getInt("Post_id");
+            String content = rs.getString("Content");
+            String createDate = rs.getString("createDate");
+            String status = rs.getString("Status");
+            String uploadPath = rs.getString("UploadPath"); // Get upload path
+            
+            // Create a Post object with upload path
+            Post post = new Post(postId, userId, groupId, content, createDate, status, uploadPath);
+            posts.add(post);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    
+    return posts;
+}
 }

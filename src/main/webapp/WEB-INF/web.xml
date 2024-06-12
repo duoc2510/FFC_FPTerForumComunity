@@ -121,12 +121,24 @@
         <servlet-class>controller.User_groupEdit</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>Topic_view</servlet-name>
-        <servlet-class>controller.Topic_view</servlet-class>
+        <servlet-name>User_groupOut</servlet-name>
+        <servlet-class>controller.User_groupOut</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>Topic_viewTopicAdmin</servlet-name>
-        <servlet-class>controller.Topic_viewTopicAdmin</servlet-class>
+        <servlet-name>User_groupViewMember</servlet-name>
+        <servlet-class>controller.User_groupViewMember</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>User_GroupDelete</servlet-name>
+        <servlet-class>controller.User_groupDelete</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>User_groupViewPostMember</servlet-name>
+        <servlet-class>controller.User_groupViewPostMember</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>User_viewProfile</servlet-name>
+        <servlet-class>controller.User_viewProfile</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Topic_deleteTopic</servlet-name>
@@ -145,12 +157,16 @@
         <servlet-class>controller.Event_eventList</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>getEventDetails</servlet-name>
-        <servlet-class>controller.getEventDetails</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>Event_updateEvent</servlet-name>
         <servlet-class>controller.Event_updateEvent</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Topic_list</servlet-name>
+        <servlet-class>controller.Topic_list</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Event_deleteEvent</servlet-name>
+        <servlet-class>controller.Event_deleteEvent</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>PostComment</servlet-name>
@@ -241,10 +257,6 @@
         <url-pattern>/lostAccount</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>Topic_viewTopicAdmin</servlet-name>
-        <url-pattern>/viewTopicAdmin</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>Topic_deleteTopic</servlet-name>
         <url-pattern>/deleteTopic</url-pattern>
     </servlet-mapping>
@@ -261,10 +273,6 @@
         <url-pattern>/listEvent</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>Topic_view</servlet-name>
-        <url-pattern>/topic/all</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>User_groupPendingRequest</servlet-name>
         <url-pattern>/groupPendingRequest</url-pattern>
     </servlet-mapping>
@@ -273,12 +281,36 @@
         <url-pattern>/inGroup/groupEdit</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>getEventDetails</servlet-name>
-        <url-pattern>/getEventDetails</url-pattern>
+        <servlet-name>User_groupOut</servlet-name>
+        <url-pattern>/groupOut</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>User_groupViewMember</servlet-name>
+        <url-pattern>/groupViewMember</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>User_GroupDelete</servlet-name>
+        <url-pattern>/GroupDelete</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>User_groupViewPostMember</servlet-name>
+        <url-pattern>/groupViewPostMember</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>User_viewProfile</servlet-name>
+        <url-pattern>/viewProfile</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Topic_list</servlet-name>
+        <url-pattern>/topic/list</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Event_updateEvent</servlet-name>
         <url-pattern>/updateEvent</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Event_deleteEvent</servlet-name>
+        <url-pattern>/deleteEvent</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>home</welcome-file>

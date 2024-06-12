@@ -4,23 +4,20 @@
  */
 package controller;
 
-import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.sql.SQLException;
-import java.util.List;
-import model.DAO.Topic_DB;
-import model.Topic;
+import model.DAO.Group_DB;
 
 /**
  *
- * @author ThanhDuoc
+ * @author PC
  */
-public class Topic_view extends HttpServlet {
+public class User_groupDelete extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,10 +36,10 @@ public class Topic_view extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Topic_view</title>");
+            out.println("<title>Servlet User_GroupDelete</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Topic_view at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet User_GroupDelete at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -58,16 +55,9 @@ public class Topic_view extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Fetch the list of topics from the database or any other data source
-        List<Topic> topics = Topic_DB.getAllTopics();
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-        // Set the topics as a request attribute
-        request.setAttribute("topics", topics);
-
-        // Forward the request to topicContent.jsp
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/user/topicContent.jsp");
-        dispatcher.forward(request, response);
     }
 
     /**
@@ -81,7 +71,22 @@ public class Topic_view extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        int groupId = Integer.parseInt(request.getParameter("groupId"));
+        boolean deleteResult = Group_DB.deleteGroup(groupId);
+
+        // Kiểm tra kết quả và đặt message tương ứng
+        String message;
+        if (deleteResult) {
+            message = "The group has been successfully deleted.";
+        } else {
+            message = "Failed to delete the group. Please try again later.";
+        }
+        // Đặt message vào request để chuyển nó đến trang allGroup.jsp
+        request.setAttribute("message", message);
+
+        // Chuyển hướng đến trang allGroup.jsp
+     response.sendRedirect(request.getContextPath() + "/listGroup?groupId=" + groupId);
+
     }
 
     /**

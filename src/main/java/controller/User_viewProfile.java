@@ -4,24 +4,27 @@
  */
 package controller;
 
-import com.google.gson.Gson;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.DAO.Event_DB;
-import model.Event;
+import java.util.List;
+import model.Comment;
+import model.DAO.Comment_DB;
+import model.DAO.Group_DB;
+import model.DAO.Post_DB;
+import model.DAO.User_DB;
+import model.Post;
+import model.User;
 
 /**
  *
- * @author Admin
+ * @author PC
  */
-public class getEventDetails extends HttpServlet {
-
-    private static final long serialVersionUID = 1L;
-    private Event_DB eventDb = new Event_DB();
+public class User_viewProfile extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -40,10 +43,10 @@ public class getEventDetails extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet getEventDetails</title>");
+            out.println("<title>Servlet User_viewProfile</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet getEventDetails at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet User_viewProfile at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -58,20 +61,44 @@ public class getEventDetails extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    public void init() {
-        eventDb = new Event_DB();
-    }
-
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String eventIdStr = request.getParameter("eventId");
-        int eventId = Integer.parseInt(eventIdStr);
-        Event event = eventDb.getEventById(eventId);
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        PrintWriter out = response.getWriter();
-        out.write(new Gson().toJson(event));
-        out.close();
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // Get userId and groupId from request parameters
+        
+        String userName = request.getParameter("username");
+     
+        
+        // Fetch the user
+        User user = User_DB.getUserByEmailorUsername(userName);
+        
+        // Fetch the posts of the user in the specified group
+        List<Post> userPosts =Post_DB.getPostsByUsername(userName);
+            
+        // Loop through the userPosts to fetch comments for each post
+        for (Post post : userPosts) {
+                // Lấy thông tin người đăng cho bài viết
+                User author = Post_DB.getUserByPostId(post.getPostId());
+                post.setUser(author); // Đặt thông tin người đăng vào thuộc tính user của bài viết
+
+                // Lấy danh sách comment cho bài viết
+                List<Comment> comments = Comment_DB.getCommentsByPostId(post.getPostId());
+                for (Comment comment : comments) {
+                    // Lấy thông tin người dùng cho comment
+                    User commentUser = User_DB.getUserById(comment.getUserId());
+                    if (commentUser != null) {
+                        comment.setUser(commentUser);
+                    }
+                }
+                post.setComments(comments); // Đặt danh sách comment vào bài viết
+            }
+        
+        // Set user and userPosts as request attributes
+        request.setAttribute("user", user);
+        request.setAttribute("userPosts", userPosts);
+
+        // Forward to the JSP page to display the posts
+        request.getRequestDispatcher("/user/anotherUserProfile.jsp").forward(request, response);
     }
 
     /**

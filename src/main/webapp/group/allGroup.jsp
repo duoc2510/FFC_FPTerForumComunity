@@ -98,6 +98,9 @@ function toggleGroupList() {
                     <c:when test="${group.pending}">
                         <button class="btn btn-secondary w-100 mt-3" disabled>Pending approval</button>
                     </c:when>
+                        <c:when test="${group.isBanned}">
+                        <button class="btn btn-danger w-100 mt-3" disabled>You have been banned</button>
+                    </c:when>
                     <c:otherwise>
                         <a href="joinGroup?groupId=${group.groupId}" class="btn btn-primary w-100 mt-3">Join Group</a>
                     </c:otherwise>

@@ -57,7 +57,7 @@ public class User_authLogin extends HttpServlet {
             request.getSession().setAttribute("ROLE", role);
             request.setAttribute("roleMessage", message);
             request.setAttribute("userInfo", userInfo);
-            request.getRequestDispatcher("/auth/role.jsp").forward(request, response);
+            response.sendRedirect("home");
         } else {
             String msg = "Email account has not been created yet! ";
             request.setAttribute("message", msg);
@@ -133,7 +133,7 @@ public class User_authLogin extends HttpServlet {
                 request.getSession().setAttribute("ROLE", role);
                 request.setAttribute("roleMessage", message);
                 request.setAttribute("userInfo", user);
-                request.getRequestDispatcher("/auth/role.jsp").forward(request, response);
+                response.sendRedirect("home");
 
             }
         } else {
@@ -210,16 +210,12 @@ public class User_authLogin extends HttpServlet {
                 response.addCookie(rememberMeCookie);
             }
 
-            if (userRole > 1) {
-                response.sendRedirect(response.encodeRedirectURL(request.getContextPath() + "/index_admin.jsp"));
+            String redirectURL = (String) request.getSession().getAttribute("redirectURL");
+            if (redirectURL != null && !redirectURL.isEmpty()) {
+                request.getSession().removeAttribute("redirectURL");
+                response.sendRedirect(response.encodeRedirectURL(redirectURL));
             } else {
-                String redirectURL = (String) request.getSession().getAttribute("redirectURL");
-                if (redirectURL != null && !redirectURL.isEmpty()) {
-                    request.getSession().removeAttribute("redirectURL");
-                    response.sendRedirect(response.encodeRedirectURL(redirectURL));
-                } else {
-                    response.sendRedirect(response.encodeRedirectURL(request.getContextPath() + "/home"));
-                }
+                response.sendRedirect(response.encodeRedirectURL(request.getContextPath() + "/home"));
             }
         } else {
             String msg = "Invalid email or password";

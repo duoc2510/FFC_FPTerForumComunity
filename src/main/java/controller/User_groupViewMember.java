@@ -1,28 +1,32 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
+ */
 package controller;
 
-import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
-import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.DAO.Topic_DB;
-import model.Topic;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import jakarta.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.List;
+import model.DAO.Group_DB;
+import model.Group_member;
+import model.User;
 
 /**
- * Servlet implementation class Topic_viewTopic
+ *
+ * @author PC
  */
-@WebServlet(name = "Topic_viewTopic", urlPatterns = {"/viewTopic"})
-public class Topic_viewTopicAdmin extends HttpServlet {
-    private static final long serialVersionUID = 1L;
-    private static final Logger LOGGER = Logger.getLogger(Topic_viewTopic.class.getName());
+public class User_groupViewMember extends HttpServlet {
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
      *
      * @param request servlet request
      * @param response servlet response
@@ -33,13 +37,14 @@ public class Topic_viewTopicAdmin extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Topic_viewTopic</title>");
+            out.println("<title>Servlet User_groupViewMember</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Topic_viewTopic at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet User_groupViewMember at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -57,12 +62,21 @@ public class Topic_viewTopicAdmin extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        List<Topic> topics = Topic_DB.getAllTopics();
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("USER");
+        int userId = user.getUserId();
+        int groupId = Integer.parseInt(request.getParameter("groupId"));
+        List<Group_member> approvedMembers = new ArrayList<>();
 
-
-        // Set the topics as a request attribute
-        request.setAttribute("topics", topics);
-        request.getRequestDispatcher("/user/topicContentAdmin.jsp").forward(request, response);
+        // Duyệt qua tất cả các thành viên và thêm những thành viên có trạng thái "approved" vào danh sách mới
+        List<Group_member> allMembers = Group_DB.getAllMembersByGroupId(groupId);
+        for (Group_member member : allMembers) {
+            if ("approved".equalsIgnoreCase(member.getStatus()) || "host".equalsIgnoreCase(member.getStatus())) {
+                approvedMembers.add(member);
+            }
+        }
+        session.setAttribute("approvedMembers", approvedMembers);
+        request.getRequestDispatcher("/group/listMember.jsp").forward(request, response);
     }
 
     /**
@@ -86,6 +100,7 @@ public class Topic_viewTopicAdmin extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "Servlet that handles viewing topics.";
+        return "Short description";
     }// </editor-fold>
+
 }

@@ -37,7 +37,7 @@ public class Topic_addTopic extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Topic_addTopic</title>");            
+            out.println("<title>Servlet Topic_addTopic</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet Topic_addTopic at " + request.getContextPath() + "</h1>");
@@ -56,12 +56,14 @@ public class Topic_addTopic extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     private static final long serialVersionUID = 1L;
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/index_admin.jsp").forward(request, response);
     }
-     protected void doPost(HttpServletRequest request, HttpServletResponse response)
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String topicName = request.getParameter("topicName");
         String description = request.getParameter("description");
@@ -78,10 +80,8 @@ public class Topic_addTopic extends HttpServlet {
             request.setAttribute("errorMessage", "Failed to add topic!");
         }
 
-        // Redirect back to the topic view page
-        request.getRequestDispatcher("/index_admin.jsp").forward(request, response);
+        response.sendRedirect("home");
     }
-
 
     /**
      * Returns a short description of the servlet.

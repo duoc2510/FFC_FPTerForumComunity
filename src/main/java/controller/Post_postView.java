@@ -4,10 +4,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Part;
+import java.io.File;
 import model.Comment;
 import model.DAO.Comment_DB;
 import model.DAO.Post_DB;
@@ -15,10 +18,9 @@ import model.DAO.User_DB;
 import model.Post;
 import model.User;
 
-/**
- *
- * @author Admin
- */
+@MultipartConfig(
+        maxFileSize = 1024 * 1024 * 10 // 10 MB
+)
 public class Post_postView extends HttpServlet {
 
     /**
@@ -59,38 +61,33 @@ public class Post_postView extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        HttpSession session = request.getSession(false); // Không tạo session mới nếu không tồn tại
+        HttpSession session = request.getSession(false);
 
         if (session != null && session.getAttribute("USER") != null) {
             User user = (User) session.getAttribute("USER");
 
-            // Lấy danh sách tất cả các bài viết
             List<Post> posts = Post_DB.getPostsWithUploadPath();
 
             for (Post post : posts) {
-                // Lấy thông tin người đăng cho bài viết
                 User author = Post_DB.getUserByPostId(post.getPostId());
-                post.setUser(author); // Đặt thông tin người đăng vào thuộc tính user của bài viết
+                post.setUser(author);
 
-                // Lấy danh sách comment cho bài viết
                 List<Comment> comments = Comment_DB.getCommentsByPostId(post.getPostId());
                 for (Comment comment : comments) {
-                    // Lấy thông tin người dùng cho comment
                     User commentUser = User_DB.getUserById(comment.getUserId());
                     if (commentUser != null) {
                         comment.setUser(commentUser);
                     }
                 }
-                post.setComments(comments); // Đặt danh sách comment vào bài viết
+                post.setComments(comments);
             }
 
             request.setAttribute("posts", posts);
             request.setAttribute("user", user);
 
-            // Chuyển hướng đến trang JSP để hiển thị thông tin
             request.getRequestDispatcher("/user/newsfeed.jsp").forward(request, response);
         } else {
-            response.sendRedirect("login"); // Chuyển hướng đến trang đăng nhập
+            response.sendRedirect("login");
         }
     }
 
@@ -99,32 +96,87 @@ public class Post_postView extends HttpServlet {
         String action = request.getParameter("action");
         response.setContentType("text/html;charset=UTF-8");
 
-        if ("deletePost".equals(action)) {
-            // Lưu lại URL của trang hiện tại
+        int postId;
+        boolean success = false;
+        String message = "";
 
-            // Xóa bài đăng
-            int postId = Integer.parseInt(request.getParameter("postId"));
-            boolean success = Post_DB.deletePost(postId);
+        if (action != null) {
+            postId = Integer.parseInt(request.getParameter("postId"));
 
-            if (success) {
-                // Nếu thành công, chuyển hướng người dùng đến trang hiện tại
-                String referer = request.getHeader("referer");
-                response.sendRedirect(referer);
-            } else {
-                // Nếu thất bại, gửi mã lỗi 500
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to delete post.");
+            if ("editPost".equals(action)) {
+                String newContent = request.getParameter("newContent");
+                String newStatus = request.getParameter("newStatus");
+                String existingUploadPath = request.getParameter("existingUploadPath");
+
+                // Kiểm tra xem có file mới được upload không
+                Part filePart = request.getPart("newUploadPath");
+                String newUploadPath = null;
+                if (filePart != null && filePart.getSize() > 0) {
+                    // Xử lý file upload
+                    newUploadPath = handleUpload(request);
+                } else {
+                    // Sử dụng đường dẫn cũ nếu không có file mới được upload
+                    newUploadPath = (existingUploadPath != null && !existingUploadPath.isEmpty()) ? existingUploadPath : null;
+                }
+
+                // Thực hiện chỉnh sửa bài đăng
+                success = Post_DB.editPost(postId, newContent, newStatus, newUploadPath);
+                message = success ? "Post edited successfully." : "Failed to edit post.";
+            } else if ("deletePost".equals(action)) {
+                success = Post_DB.deletePost(postId);
+                message = success ? "Post deleted successfully." : "Failed to delete post.";
             }
+        } else {
+            message = "Action is missing.";
+        }
+
+        if (success) {
+            String referer = request.getHeader("referer");
+            response.sendRedirect(referer);
+        } else {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
         }
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
+    private String handleUpload(HttpServletRequest request) throws IOException, ServletException {
+        Part filePart = request.getPart("newUploadPath");
+        if (filePart != null && filePart.getSize() > 0) {
+            // Xử lý file upload
+            String applicationPath = request.getServletContext().getRealPath("");
+            String uploadDirName = "imPost";
+            String uploadFilePath = applicationPath + File.separator + uploadDirName;
+            File uploadDir = new File(uploadFilePath);
+            if (!uploadDir.exists()) {
+                uploadDir.mkdirs();
+            }
+            String fileName = getFileName(filePart);
+            try {
+                filePart.write(uploadFilePath + File.separator + fileName);
+                return uploadDirName + "/" + fileName;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        } else {
+            // Không có file được upload
+            return null;
+        }
+    }
+
+    private String getFileName(Part part) {
+        String contentDisposition = part.getHeader("content-disposition");
+        String[] items = contentDisposition.split(";");
+        for (String item : items) {
+            if (item.trim().startsWith("filename")) {
+                return item.substring(item.indexOf("=") + 2, item.length() - 1);
+            }
+        }
+        return "";
+    }
+
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
+    }
 
 }

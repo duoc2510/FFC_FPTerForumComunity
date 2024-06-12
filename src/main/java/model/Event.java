@@ -1,7 +1,6 @@
 package model;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 public class Event {
 
@@ -13,7 +12,7 @@ public class Event {
     private int userId; // Đây là Created_by trong bảng Event
     private String location;
     private Timestamp createdAt;
-    private List<String> imagePaths;
+    private String uploadPath;
 
     // Constructors
     public Event() {
@@ -25,9 +24,23 @@ public class Event {
         this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.userId = userId;
+        this.location = location;
+        this.createdAt = createdAt;
+    }
+    
+    
+
+    public Event(int eventId, String title, String description, Timestamp startDate, Timestamp endDate, int userId, String location, Timestamp createdAt, String uploadPath) {
+        this.eventId = eventId;
+        this.title = title;
+        this.description = description;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.userId = userId; // Sử dụng userId để đại diện cho Created_by
         this.location = location;
         this.createdAt = createdAt;
+        this.uploadPath = uploadPath;
     }
 
     // Getters and Setters
@@ -95,11 +108,11 @@ public class Event {
         this.createdAt = createdAt;
     }
 
-    public List<String> getImagePaths() {
-        return imagePaths;
+    public String getUploadPath() {
+        return uploadPath;
     }
 
-    public void setImagePaths(List<String> imagePaths) {
-        this.imagePaths = imagePaths;
+    public void setUploadPath(String uploadPath) {
+        this.uploadPath = uploadPath;
     }
 }

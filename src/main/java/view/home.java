@@ -10,7 +10,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.sql.SQLException;
+import java.util.List;
+import model.DAO.Post_DB;
+import model.DAO.Topic_DB;
 import model.DAO.User_DB;
+import model.Post;
+import model.Topic;
 import model.User;
 
 /**
@@ -57,22 +64,33 @@ public class home extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        // Fetch the list of topics from the database or any other data source
+        List<Topic> topics = Topic_DB.getAllTopics();
+        // Set the topics as a request attribute
+        request.setAttribute("topics", topics);
+
         // Assuming 'user' is the attribute used to store user information in the session or request
         User user = (User) request.getSession().getAttribute("USER");
-        String targetPage;
-
         if (user != null) {
             String userEmail = user.getUserEmail();
             User userInfo = User_DB.getUserByEmailorUsername(userEmail);
             // Đặt danh sách người dùng vào thuộc tính của request
             request.setAttribute("userInfo", userInfo);
-            targetPage = "index_user.jsp";
-        } else {
-            targetPage = "index.jsp";
+        }
+        // Lấy danh sách tất cả các bài viết
+        List<Post> posts = Post_DB.getPostsWithUploadPath();
+
+        for (Post post : posts) {
+            // Lấy thông tin người đăng cho bài viết
+            User author = Post_DB.getUserByPostId(post.getPostId());
+            post.setUser(author); // Đặt thông tin người đăng vào thuộc tính user của bài viết
         }
 
+        request.setAttribute("posts", posts);
+
         // Forward the request to the determined JSP
-        request.getRequestDispatcher(targetPage).forward(request, response);
+        request.getRequestDispatcher("index.jsp").forward(request, response);
     }
 
     /**
@@ -84,9 +102,34 @@ public class home extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Nhận dữ liệu từ form
+        response.setContentType("text/html;charset=UTF-8");
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("USER");
+
+        if (user == null) {
+            response.sendRedirect("login");
+            return;
+        }
+        int userId = user.getUserId();
+        int topicId = Integer.parseInt(request.getParameter("topicId"));
+        String content = request.getParameter("content");
+
+        // Tạo đối tượng Post
+        Post post = new Post();
+        post.setUserId(userId);
+        post.setTopicId(topicId);
+        post.setContent(content);
+
+        // Gọi phương thức addPostTopic của DAO
+        try {
+            Post_DB.addPostTopic(post);
+            response.sendRedirect("home"); // Chuyển hướng sau khi thêm bài đăng thành công
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Xử lý lỗi nếu cần thiết
+        }
     }
 
     /**

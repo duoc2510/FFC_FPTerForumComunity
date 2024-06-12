@@ -1,4 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
 <%@ include file="../include/header.jsp" %>
 <body>
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full" data-sidebar-position="fixed" data-header-position="fixed">
@@ -56,6 +57,13 @@
                                 height: auto;
                                 margin-top: 10px;
                             }
+                            .img-preview {
+                                margin-top: 20px;
+                            }
+                            .img-preview img {
+                                max-width: 100%;
+                                max-height: 300px;
+                            }
                         </style>
                         <c:forEach var="post" items="${posts}">
                             <c:if test="${post.status eq 'Active' and post.postStatus eq 'Public'}">
@@ -64,9 +72,20 @@
                                         <div class="card-body p-4">
                                             <div class="pb-3 d-flex row">
                                                 <div class="col-1 text-center mt-2">
-                                                    <a class="nav-icon-hover" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown" aria-expanded="false">
-                                                        <img src="${pageContext.request.contextPath}/${post.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
-                                                    </a>
+                                                    <c:choose>
+
+                                                        <c:when test="${post.userId == USER.userId}">
+                                                            <a href="${pageContext.request.contextPath}/profile">
+                                                                <img src="${pageContext.request.contextPath}/${post.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
+                                                            </a>
+                                                        </c:when>
+
+                                                        <c:otherwise>
+                                                            <a href="${pageContext.request.contextPath}/viewProfile?username=${post.user.username}">
+                                                                <img src="${pageContext.request.contextPath}/${post.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
+                                                            </a>
+                                                        </c:otherwise>
+                                                    </c:choose>
                                                 </div>
                                                 <div class="col-10">
                                                     <h6 class="card-title fw-semibold mb-4 d-inline">${post.user.username}</h6>
@@ -79,7 +98,7 @@
                                                         </a>
                                                         <ul class="dropdown-menu">
                                                             <li>
-                                                                <a class="dropdown-item" type="button" href="#">Edit</a>
+                                                                <a class="dropdown-item" type="button" href="javascript:void(0)" onclick="editPost(${post.postId}, '${post.content}', '${post.status}', '${post.uploadPath}')">Edit</a>
                                                             </li>
                                                             <li>
                                                                 <form class="dropdown-item p-0 m-0" onsubmit="return confirm('Are you sure you want to delete this post?');" action="${pageContext.request.contextPath}/post" method="post">
@@ -129,9 +148,21 @@
                                                         <div class="comment">
                                                             <div class="d-flex justify-content-between align-items-center pb-3">
                                                                 <div class="d-flex align-items-center">
-                                                                    <div class="text-center mt-2">
-                                                                        <img src="${pageContext.request.contextPath}/${comment.user.userAvatar}" alt="" width="30" class="rounded-circle avatar-cover">
-                                                                    </div>
+                                                                    <c:choose>
+
+                                                                        <c:when test="${comment.userId == USER.userId}">
+                                                                            <a href="${pageContext.request.contextPath}/profile">
+                                                                                <img src="${pageContext.request.contextPath}/${comment.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
+                                                                            </a>
+                                                                        </c:when>
+
+                                                                        <c:otherwise>
+                                                                            <a href="${pageContext.request.contextPath}/viewProfile?username=${comment.user.username}">
+                                                                                <img src="${pageContext.request.contextPath}/${comment.user.userAvatar}" alt=""
+                                                                                     " width="35" class="rounded-circle avatar-cover">
+                                                                            </a>
+                                                                        </c:otherwise>
+                                                                    </c:choose>
                                                                     <div class="ms-2">
                                                                         <h6 class="card-title fw-semibold mb-0">${comment.user.username}: ${comment.content}</h6>
                                                                         <p class="s-4">${comment.date}</p>
@@ -179,8 +210,8 @@
                                             <input type="hidden" name="action" value="editComment">
                                             <input type="hidden" id="editCommentId" name="commentId">
                                             <div class="form-group">
-                                                <label for="editContent">Content:</label>
-                                                <textarea class="form-control" id="editContent" name="newContent" rows="3"></textarea>
+                                                <label for="editCommentContent">Content:</label>
+                                                <textarea class="form-control" id="editCommentContent" name="newContent" rows="3"></textarea>
                                             </div>
                                         </div>
                                         <div class="modal-footer">
@@ -191,14 +222,83 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- Modal for editing post -->
+                        <div class="modal fade" id="editPostModal" tabindex="-1" aria-labelledby="editPostModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="editPostModalLabel">Edit Post</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form id="editPostForm" action="${pageContext.request.contextPath}/post" method="post" enctype="multipart/form-data">
+                                        <div class="modal-body">
+                                            <input type="hidden" name="action" value="editPost">
+                                            <input type="hidden" id="editPostId" name="postId">
+                                            <input type="hidden" id="existingUploadPath" name="existingUploadPath">
+
+                                            <div class="form-group">
+                                                <label for="editPostContent">Content:</label>
+                                                <textarea class="form-control" id="editPostContent" name="newContent" rows="3"></textarea>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="editPostStatus">Status:</label>
+                                                <select class="form-control" id="editPostStatus" name="newStatus">
+                                                    <option value="Public" selected>Public</option>
+                                                    <option value="Friends">Friends</option>
+                                                    <option value="Only me">Only me</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="editPostUploadPath">Upload Image:</label>
+                                                <input type="file" class="form-control" id="editPostUploadPath" name="newUploadPath">
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Current Image:</label>
+                                                <img id="currentUploadPath" src="" alt="Current post image" style="max-width: 100%; height: auto;">
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Save changes</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
                         <script>
                             function editComment(commentId, content) {
                                 document.getElementById('editCommentId').value = commentId;
-                                document.getElementById('editContent').value = content;
+                                document.getElementById('editCommentContent').value = content;
                                 var editCommentModal = new bootstrap.Modal(document.getElementById('editCommentModal'));
                                 editCommentModal.show();
                             }
+                            function editPost(postId, content, status, uploadPath) {
+                                document.getElementById('editPostId').value = postId;
+                                document.getElementById('editPostContent').value = content;
+
+                                var editPostStatus = document.getElementById('editPostStatus');
+                                editPostStatus.value = "Public";
+
+                                document.getElementById('existingUploadPath').value = uploadPath;
+
+                                if (uploadPath && uploadPath !== 'null') {
+                                    document.getElementById('currentUploadPath').src = uploadPath;
+                                    document.getElementById('currentUploadPath').style.display = 'block';
+                                } else {
+                                    document.getElementById('currentUploadPath').style.display = 'none';
+                                }
+
+                                var editPostModal = new bootstrap.Modal(document.getElementById('editPostModal'));
+                                editPostModal.show();
+                            }
+
                         </script>
+
+
                     </div>
                 </div>
             </div>

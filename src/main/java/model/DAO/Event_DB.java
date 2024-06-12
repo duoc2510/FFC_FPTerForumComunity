@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model.DAO;
 
 import java.sql.Connection;
@@ -13,11 +9,10 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import model.DAO.DBinfo;
 import model.Upload;
 import model.Event;
 
-public class Event_DB implements DBinfo {
+public class Event_DB {
 
     public Event_DB() {
         try {
@@ -71,24 +66,6 @@ public class Event_DB implements DBinfo {
         }
     }
 
-    public static List<String> getImagePathsForEvent(int eventId) {
-        List<String> imagePaths = new ArrayList<>();
-        String query = "SELECT uploadPath FROM Upload WHERE event_id = ?";
-
-        try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
-
-            pstmt.setInt(1, eventId);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    imagePaths.add(rs.getString("uploadPath"));
-                }
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return imagePaths;
-    }
-
     public List<Event> getAllEvents() {
         String SELECT_ALL_EVENTS_QUERY = "SELECT e.*, u.uploadPath FROM Event e LEFT JOIN Upload u ON e.Event_id = u.event_id";
         List<Event> eventList = new ArrayList<>();
@@ -103,14 +80,9 @@ public class Event_DB implements DBinfo {
                         rs.getTimestamp("End_date"),
                         rs.getInt("Created_by"),
                         rs.getString("Location"),
-                        rs.getTimestamp("Created_at")
+                        rs.getTimestamp("Created_at"),
+                        rs.getString("uploadPath")
                 );
-                // Lấy đường dẫn ảnh từ ResultSet
-                String imagePath = rs.getString("uploadPath");
-                // Kiểm tra nếu đường dẫn ảnh không rỗng thì thêm vào danh sách đường dẫn của Event
-                if (imagePath != null && !imagePath.isEmpty()) {
-                    event.setImagePaths(Collections.singletonList(imagePath));
-                }
                 eventList.add(event);
             }
         } catch (SQLException ex) {
@@ -119,40 +91,67 @@ public class Event_DB implements DBinfo {
         return eventList;
     }
 
-    public static boolean updateEvent(Event event, Upload upload) {
-        String UPDATE_EVENT_QUERY = "UPDATE Event SET title=?, description=?, start_date=?, end_date=?, location=?, created_by=?, created_at=? WHERE Event_id=?";
-        String UPDATE_UPLOAD_QUERY = "UPDATE Upload SET uploadPath=? WHERE event_id=?";
+    public static boolean updateEvent(Event event, String newUploadPath) {
+        boolean success = false;
+        String updateEventQuery = "UPDATE Event SET title = ?, description = ?, start_date = ?, end_date = ?, location = ?, created_by = ?, created_at = ? WHERE Event_id = ?";
+        String updateUploadQuery = "UPDATE Upload SET uploadPath = ? WHERE event_id = ?";
 
-        try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement pstmtEvent = con.prepareStatement(UPDATE_EVENT_QUERY); PreparedStatement pstmtUpload = con.prepareStatement(UPDATE_UPLOAD_QUERY)) {
+        try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass)) {
+            try {
+                // Start transaction
+                conn.setAutoCommit(false);
 
-            con.setAutoCommit(false);
+                // Update event details
+                try (PreparedStatement updateEventStmt = conn.prepareStatement(updateEventQuery)) {
+                    updateEventStmt.setString(1, event.getTitle());
+                    updateEventStmt.setString(2, event.getDescription());
+                    updateEventStmt.setTimestamp(3, event.getStartDate());
+                    updateEventStmt.setTimestamp(4, event.getEndDate());
+                    updateEventStmt.setString(5, event.getLocation());
+                    updateEventStmt.setInt(6, event.getUserId());
 
-            pstmtEvent.setString(1, event.getTitle());
-            pstmtEvent.setString(2, event.getDescription());
-            pstmtEvent.setTimestamp(3, event.getStartDate());
-            pstmtEvent.setTimestamp(4, event.getEndDate());
-            pstmtEvent.setString(5, event.getLocation());
-            pstmtEvent.setInt(6, event.getUserId());
-            pstmtEvent.setTimestamp(7, event.getCreatedAt());
-            pstmtEvent.setInt(8, event.getEventId());
+                    // Get the current timestamp and set it for created_at
+                    Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+                    updateEventStmt.setTimestamp(7, currentTimestamp);
 
-            int affectedRows = pstmtEvent.executeUpdate();
-            if (affectedRows == 0) {
-                con.rollback();
-                return false;
+                    updateEventStmt.setInt(8, event.getEventId());
+
+                    int rowsUpdatedEvent = updateEventStmt.executeUpdate();
+                    success = (rowsUpdatedEvent > 0);
+                }
+
+                // If newUploadPath is not null, update the upload path
+                if (newUploadPath != null) {
+                    try (PreparedStatement updateUploadStmt = conn.prepareStatement(updateUploadQuery)) {
+                        updateUploadStmt.setString(1, newUploadPath);
+                        updateUploadStmt.setInt(2, event.getEventId());
+
+                        int rowsUpdatedUpload = updateUploadStmt.executeUpdate();
+                        success = success && (rowsUpdatedUpload > 0);
+                    }
+                }
+
+                // Commit transaction if both updates are successful
+                if (success) {
+                    conn.commit();
+                    System.out.println("Event with ID " + event.getEventId() + " was successfully updated.");
+                } else {
+                    conn.rollback();
+                    System.out.println("Failed to update event with ID " + event.getEventId() + ".");
+                }
+            } catch (SQLException ex) {
+                conn.rollback();
+                ex.printStackTrace();
+                System.out.println("Failed to update event with ID " + event.getEventId() + ".");
+            } finally {
+                conn.setAutoCommit(true);
             }
-
-            pstmtUpload.setString(1, upload.getUploadPath());
-            pstmtUpload.setInt(2, event.getEventId());
-            pstmtUpload.executeUpdate();
-
-            con.commit();
-            return true;
-
         } catch (SQLException ex) {
             ex.printStackTrace();
-            return false;
+            System.out.println("Failed to update event with ID " + event.getEventId() + ".");
         }
+
+        return success;
     }
 
     public static Event getEventById(int eventId) {
@@ -164,27 +163,54 @@ public class Event_DB implements DBinfo {
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                if (event == null) {
-                    event = new Event(
-                            rs.getInt("Event_id"),
-                            rs.getString("Title"),
-                            rs.getString("Description"),
-                            rs.getTimestamp("Start_date"),
-                            rs.getTimestamp("End_date"),
-                            rs.getInt("Created_by"),
-                            rs.getString("Location"),
-                            rs.getTimestamp("Created_at")
-                    );
-                    event.setImagePaths(new ArrayList<>());
-                }
-                String imagePath = rs.getString("uploadPath");
-                if (imagePath != null && !imagePath.isEmpty()) {
-                    event.getImagePaths().add(imagePath);
-                }
+                event = new Event(
+                        rs.getInt("Event_id"),
+                        rs.getString("Title"),
+                        rs.getString("Description"),
+                        rs.getTimestamp("Start_date"),
+                        rs.getTimestamp("End_date"),
+                        rs.getInt("Created_by"),
+                        rs.getString("Location"),
+                        rs.getTimestamp("Created_at"),
+                        rs.getString("uploadPath")
+                );
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
         return event;
     }
+
+   public boolean deleteEvent(int eventId) {
+    String DELETE_UPLOAD_QUERY = "DELETE FROM Upload WHERE event_id = ?";
+    String DELETE_EVENT_QUERY = "DELETE FROM Event WHERE Event_id = ?";
+
+    try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); 
+            PreparedStatement pstmtUpload = con.prepareStatement(DELETE_UPLOAD_QUERY); 
+            PreparedStatement pstmtEvent = con.prepareStatement(DELETE_EVENT_QUERY)) {
+
+        con.setAutoCommit(false);
+
+        // Delete from Upload table first
+        pstmtUpload.setInt(1, eventId);
+        pstmtUpload.executeUpdate();
+
+        // Delete from Event table
+        pstmtEvent.setInt(1, eventId);
+        int affectedRows = pstmtEvent.executeUpdate();
+
+        if (affectedRows > 0) {
+            con.commit();
+            return true;
+        } else {
+            con.rollback();
+            return false;
+        }
+
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+        return false;
+    }
+}
+
 }

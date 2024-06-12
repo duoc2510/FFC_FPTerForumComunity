@@ -4,7 +4,7 @@
  */
 package controller;
 
-import com.google.gson.Gson;
+import jakarta.servlet.http.HttpServlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,14 +12,18 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
-import model.DAO.Topic_DB;
-import model.Topic;
+import model.Comment;
+import model.DAO.Comment_DB;
+import model.DAO.Group_DB;
+import model.DAO.User_DB;
+import model.Post;
+import model.User;
 
 /**
  *
- * @author Admin
+ * @author PC
  */
-public class Topic_deleteTopic extends HttpServlet {
+public class User_groupViewPostMember extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -38,10 +42,10 @@ public class Topic_deleteTopic extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Topic_deleteTopic</title>");
+            out.println("<title>Servlet User_groupViewPostMember</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Topic_deleteTopic at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet User_groupViewPostMember at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -57,21 +61,41 @@ public class Topic_deleteTopic extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+   protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Lấy topicId từ request
-        int topicId = Integer.parseInt(request.getParameter("topicId"));
-
-        // Gọi phương thức xóa từ lớp Topic_DB
-        boolean deleteSuccess = Topic_DB.deleteTopic(topicId);
-
-        if (deleteSuccess) {
-            // Nếu xóa thành công, chuyển hướng về trang danh sách chủ đề
-            response.sendRedirect("home?successMessage=Topic+deleted+successfully");
-        } else {
-            // Nếu xảy ra lỗi, chuyển hướng về trang danh sách chủ đề với thông báo lỗi
-            response.sendRedirect("home?errorMessage=Failed+to+delete+topic");
+        // Get userId and groupId from request parameters
+        int userId = Integer.parseInt(request.getParameter("userId"));
+        int groupId = Integer.parseInt(request.getParameter("groupId"));
+        
+        // Fetch the user
+        User user = User_DB.getUserById(userId);
+        
+        // Fetch the posts of the user in the specified group
+        List<Post> userPosts = Group_DB.getUserPostsInGroup(userId, groupId);
+        
+        // Loop through the userPosts to fetch comments for each post
+        for (Post post : userPosts) {
+            // Fetch comments for the current post
+            List<Comment> comments = Comment_DB.getCommentsByPostId(post.getPostId());
+            
+            // Fetch user information for each comment
+            for (Comment comment : comments) {
+                User commentUser = User_DB.getUserById(comment.getUserId());
+                if (commentUser != null) {
+                    comment.setUser(commentUser);
+                }
+            }
+            
+            // Set comments for the current post
+            post.setComments(comments);
         }
+        
+        // Set user and userPosts as request attributes
+        request.setAttribute("user", user);
+        request.setAttribute("userPosts", userPosts);
+
+        // Forward to the JSP page to display the posts
+        request.getRequestDispatcher("/group/listPostOfMember.jsp").forward(request, response);
     }
 
     /**
@@ -85,18 +109,7 @@ public class Topic_deleteTopic extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-    }
-
-    private static class Response {
-
-        boolean success;
-        String message;
-
-        Response(boolean success, String message) {
-            this.success = success;
-            this.message = message;
-        }
+        processRequest(request, response);
     }
 
     /**

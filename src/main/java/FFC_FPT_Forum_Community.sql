@@ -213,6 +213,7 @@ CREATE TABLE [Group] (
     Group_description NVARCHAR(255), -- Mô tả nhóm
 	Image NVARCHAR(255),
 	memberCount INT DEFAULT 0,
+	Status NVARCHAR(25),
     FOREIGN KEY (Creater_id) REFERENCES Users(User_id) -- Khóa ngoại tham chiếu đến người tạo nhóm
 );
 GO
@@ -331,6 +332,45 @@ LEFT JOIN
     Upload u ON p.Post_id = u.Post_id
 LEFT JOIN 
     Comment c ON p.Post_id = c.Post_id;
+GO
+CREATE OR ALTER VIEW GroupView AS
+SELECT 
+    g.Group_id,
+    g.Creater_id,
+    g.Group_name,
+    g.Group_description,
+    g.Image,
+	g.Status,
+    mg.MemberGroup_id,
+	mg.Status AS Group_status,
+    u.User_id,
+    u.User_email,
+    u.User_fullName,
+    u.User_avatar,
+    u.User_activeStatus,
+    p.Post_id,
+    p.User_id AS Post_user_id,
+    p.Group_id AS Post_group_id,
+    p.Content AS Post_content,
+    p.createDate AS Post_createDate,
+    p.Status AS Post_status,
+    c.Comment_id,
+    c.Post_id AS Comment_post_id,
+    c.User_id AS Comment_user_id,
+    c.Content AS Comment_content,
+    c.Date AS Comment_date,
+    up.Upload_id,
+    up.Event_id,
+    up.UploadPath,
+    up.Post_id AS Upload_post_id,
+   (SELECT COUNT(*) FROM MemberGroup mg WHERE mg.Group_id = g.Group_id AND mg.Status IN ('approved', 'host')) AS memberCount  -- Đếm số thành viên nhóm
+FROM [Group] g
+LEFT JOIN MemberGroup mg ON g.Group_id = mg.Group_id
+LEFT JOIN Users u ON mg.User_id = u.User_id
+LEFT JOIN Post p ON g.Group_id = p.Group_id
+LEFT JOIN Comment c ON p.Post_id = c.Post_id
+LEFT JOIN Upload up ON p.Post_id = up.Post_id;
+
 GO
 -- Chèn dữ liệu mẫu vào bảng Users
 INSERT INTO Users (Username, User_email, User_password, User_role, User_fullName, User_wallet, User_avatar, User_story, User_rank, User_score, User_sex, User_activeStatus)
@@ -462,7 +502,10 @@ INSERT INTO Post (User_id, Group_id, Topic_id, Content, Status, postStatus)
 VALUES 
 (1, Null, Null, 'Excited to join this group!', 'Active', 'Friends'),
 (2, Null, Null, 'Looking for recommendations on good restaurants.', 'Active', 'Public'),
-(2, Null, Null,'Looking for recommendations on good restaurants.', 'Active', 'Public');
+(1, 1, NULL, 'Excited to join this group!', 'Active', 'Friends'),
+(2, Null, 1, 'Looking for recommendations on good restaurants.', 'Active', 'Public'),
+(2, Null, 2,'Looking for recommendations on good restaurants.', 'Active', 'Public');
+
 
 GO
 -- Chèn dữ liệu mẫu vào bảng Comment
@@ -546,44 +589,5 @@ SELECT * FROM GroupChatMessage;
 SELECT * FROM Upload;
 
 SELECT * FROM UserFollow
-
-
-
-CREATE OR ALTER VIEW GroupView AS
-SELECT 
-    g.Group_id,
-    g.Creater_id,
-    g.Group_name,
-    g.Group_description,
-    g.Image,
-    mg.MemberGroup_id,
-    mg.Status,
-    u.User_id,
-    u.User_email,
-    u.User_fullName,
-    u.User_avatar,
-    u.User_activeStatus,
-    p.Post_id,
-    p.User_id AS Post_user_id,
-    p.Group_id AS Post_group_id,
-    p.Content AS Post_content,
-    p.createDate AS Post_createDate,
-    p.Status AS Post_status,
-    c.Comment_id,
-    c.Post_id AS Comment_post_id,
-    c.User_id AS Comment_user_id,
-    c.Content AS Comment_content,
-    c.Date AS Comment_date,
-    up.Upload_id,
-    up.Event_id,
-    up.UploadPath,
-    up.Post_id AS Upload_post_id,
-    (SELECT COUNT(*) FROM MemberGroup WHERE Group_id = g.Group_id) AS memberCount -- Đếm số thành viên nhóm
-FROM [Group] g
-LEFT JOIN MemberGroup mg ON g.Group_id = mg.Group_id
-LEFT JOIN Users u ON mg.User_id = u.User_id
-LEFT JOIN Post p ON g.Group_id = p.Group_id
-LEFT JOIN Comment c ON p.Post_id = c.Post_id
-LEFT JOIN Upload up ON p.Post_id = up.Post_id;
 
 SELECT * FROM GroupView

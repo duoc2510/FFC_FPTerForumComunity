@@ -4,22 +4,21 @@
  */
 package controller;
 
-import com.google.gson.Gson;
+import jakarta.servlet.http.HttpServlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
-import model.DAO.Topic_DB;
-import model.Topic;
+import model.DAO.Group_DB;
+import model.User;
 
 /**
  *
- * @author Admin
+ * @author PC
  */
-public class Topic_deleteTopic extends HttpServlet {
+public class User_groupOut extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -38,10 +37,10 @@ public class Topic_deleteTopic extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Topic_deleteTopic</title>");
+            out.println("<title>Servlet User_groupOut</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Topic_deleteTopic at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet User_groupOut at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -59,19 +58,7 @@ public class Topic_deleteTopic extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Lấy topicId từ request
-        int topicId = Integer.parseInt(request.getParameter("topicId"));
 
-        // Gọi phương thức xóa từ lớp Topic_DB
-        boolean deleteSuccess = Topic_DB.deleteTopic(topicId);
-
-        if (deleteSuccess) {
-            // Nếu xóa thành công, chuyển hướng về trang danh sách chủ đề
-            response.sendRedirect("home?successMessage=Topic+deleted+successfully");
-        } else {
-            // Nếu xảy ra lỗi, chuyển hướng về trang danh sách chủ đề với thông báo lỗi
-            response.sendRedirect("home?errorMessage=Failed+to+delete+topic");
-        }
     }
 
     /**
@@ -83,21 +70,56 @@ public class Topic_deleteTopic extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+  protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    String action = request.getParameter("action");
+    User user = (User) request.getSession().getAttribute("USER");
+    int userIdLeave = user.getUserId();
+    int userIdOut = Integer.parseInt(request.getParameter("userId"));
+    int groupId = Integer.parseInt(request.getParameter("groupId"));
+    
+    boolean success = false;
+    String message = "";
 
-    }
-
-    private static class Response {
-
-        boolean success;
-        String message;
-
-        Response(boolean success, String message) {
-            this.success = success;
-            this.message = message;
+    if ("leave".equals(action)) {
+        // Gọi phương thức leave group
+        success = Group_DB.leaveGroup(groupId, userIdLeave);
+        if (success) {
+            message = "You have successfully left the group.";
+        } else {
+            message = "Failed to leave the group. Please try again.";
         }
+            response.sendRedirect(request.getContextPath() + "/inGroup?groupId=" + groupId);
+    } else if ("kick".equals(action)) {
+        // Gọi phương thức kick member
+        
+        success = Group_DB.kickMember(groupId, userIdOut);
+        if (success) {
+            message = "Member has been kicked out successfully.";
+        } else {
+            message = "Failed to kick member. Please try again.";
+        }
+       response.sendRedirect(request.getContextPath() + "/groupViewMember?groupId=" + groupId);
+    } else if ("ban".equals(action)) {
+        // Gọi phương thức ban member
+        
+        success = Group_DB.banMember(groupId, userIdOut);
+        if (success) {
+            message = "Member has been banned successfully.";
+            
+        } else {
+            message = "Failed to ban member. Please try again.";
+        }
+         response.sendRedirect(request.getContextPath() + "/groupViewMember?groupId=" + groupId);
     }
+
+    // Lưu thông điệp vào session
+    request.getSession().setAttribute("message", message);
+
+    // Chuyển hướng người dùng lại trang chi tiết nhóm
+
+}
+
 
     /**
      * Returns a short description of the servlet.

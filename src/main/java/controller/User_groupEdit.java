@@ -69,13 +69,11 @@ public class User_groupEdit extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-     
+
         int groupId = Integer.parseInt(request.getParameter("groupId"));
         Group group = Group_DB.viewGroup(groupId);
-       
+
         session.setAttribute("group", group);
-
-
 
         // Chuyển hướng request đến trang JSP để hiển thị thông tin nhóm
         request.getRequestDispatcher("/group/groupEdit.jsp").forward(request, response);
@@ -90,17 +88,18 @@ public class User_groupEdit extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     private static final String UPLOAD_DIR = "uploads";
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-         response.setContentType("text/html;charset=UTF-8");
-          HttpSession session = request.getSession();
+        response.setContentType("text/html;charset=UTF-8");
+        HttpSession session = request.getSession();
         // Kiểm tra xem người dùng đã đăng nhập chưa
         Group group = (Group) request.getSession().getAttribute("group");
         if (group != null) {
             // Lấy thông tin từ form
-           int groupId= group.getGroupId();
-            String nameGroup = request.getParameter("groupName");      
+            int groupId = group.getGroupId();
+            String nameGroup = request.getParameter("groupName");
             String description = request.getParameter("description");
 
             // Sử dụng lại avatar cũ mặc định
@@ -134,9 +133,9 @@ public class User_groupEdit extends HttpServlet {
             }
 
             // Lấy lại thông tin người dùng sau khi cập nhật
-           Group updateroup = Group_DB.viewGroup(groupId);
-           
-           session.setAttribute("group", updateroup);
+            Group updateroup = Group_DB.viewGroup(groupId);
+
+            session.setAttribute("group", updateroup);
             request.getRequestDispatcher("/group/groupEdit.jsp").forward(request, response);
         } else {
             // Nếu người dùng chưa đăng nhập, chuyển hướng đến trang đăng nhập
