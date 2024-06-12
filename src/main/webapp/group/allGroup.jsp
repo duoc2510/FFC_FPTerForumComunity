@@ -113,44 +113,33 @@
 <%@include file="modal.jsp" %>
 <script>
     function toggleCreatedGroups() {
-        var createdGroupsSection = document.getElementById("createdGroupsSection");
-        var joinedGroupsSection = document.getElementById("joinedGroupsSection");
-        var groupListSection = document.getElementById("groupListSection");
+    var createdGroupsSection = document.getElementById("createdGroupsSection");
+    var joinedGroupsSection = document.getElementById("joinedGroupsSection");
+    var groupListSection = document.getElementById("groupListSection");
 
-        if (createdGroupsSection.classList.contains("hidden")) {
-            createdGroupsSection.classList.remove("hidden");
-            joinedGroupsSection.classList.add("hidden");
-            groupListSection.classList.add("hidden");
-        } else {
-            createdGroupsSection.classList.add("hidden");
-        }
-    }
+    createdGroupsSection.classList.remove("hidden");
+    joinedGroupsSection.classList.add("hidden");
+    groupListSection.classList.add("hidden");
+}
 
-    function toggleJoinedGroups() {
-        var createdGroupsSection = document.getElementById("createdGroupsSection");
-        var joinedGroupsSection = document.getElementById("joinedGroupsSection");
-        var groupListSection = document.getElementById("groupListSection");
+function toggleJoinedGroups() {
+    var createdGroupsSection = document.getElementById("createdGroupsSection");
+    var joinedGroupsSection = document.getElementById("joinedGroupsSection");
+    var groupListSection = document.getElementById("groupListSection");
 
-        if (joinedGroupsSection.classList.contains("hidden")) {
-            joinedGroupsSection.classList.remove("hidden");
-            createdGroupsSection.classList.add("hidden");
-            groupListSection.classList.add("hidden");
-        } else {
-            joinedGroupsSection.classList.add("hidden");
-        }
-    }
+    joinedGroupsSection.classList.remove("hidden");
+    createdGroupsSection.classList.add("hidden");
+    groupListSection.classList.add("hidden");
+}
 
-    function toggleGroupList() {
-        var createdGroupsSection = document.getElementById("createdGroupsSection");
-        var joinedGroupsSection = document.getElementById("joinedGroupsSection");
-        var groupListSection = document.getElementById("groupListSection");
+function toggleGroupList() {
+    var createdGroupsSection = document.getElementById("createdGroupsSection");
+    var joinedGroupsSection = document.getElementById("joinedGroupsSection");
+    var groupListSection = document.getElementById("groupListSection");
 
-        if (groupListSection.classList.contains("hidden")) {
-            groupListSection.classList.remove("hidden");
-            createdGroupsSection.classList.add("hidden");
-            joinedGroupsSection.classList.add("hidden");
-        } else {
-            groupListSection.classList.add("hidden");
-        }
-    }
+    groupListSection.classList.remove("hidden");
+    createdGroupsSection.classList.add("hidden");
+    joinedGroupsSection.classList.add("hidden");
+}
+
 </script>
