@@ -1,23 +1,27 @@
-<%-- 
-    Document   : index
-    Created on : May 25, 2024, 9:43:06 PM
-    Author     : mac
---%>
-
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
 <%@ include file="../include/header.jsp" %>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/owl-carousel/1.3.3/owl.carousel.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/owl-carousel/1.3.3/owl.theme.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<!--<script src="${pageContext.request.contextPath}/static/libs/jquery/dist/jquery.min.js"></script>-->
 <style>
-    .card-img-top{
-        height:250px;
+    .item img {
+        width: 100%;
+        height: 500px;
         object-fit: cover;
     }
-    .card-text{
+    .card-img-top {
+        height: 250px;
+        object-fit: cover;
+    }
+    .card-text {
         text-overflow: ellipsis;
         white-space: nowrap;
         width: 200px;
         overflow: hidden;
     }
-    .imgs-grid{
+    .imgs-grid {
         display: grid;
         grid-template-columns: repeat(27, 1fr);
         position: relative;
@@ -53,6 +57,8 @@
         max-width: 100%;
     }
 </style>
+
+
 <body>
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
          data-sidebar-position="fixed" data-header-position="fixed">
@@ -73,11 +79,15 @@
                 <!--Control panel-->
                 <%@ include file="panel.jsp" %>
 
-
                 <div class="col-lg-12">
                     <div class="w-100 row">
                         <div class="col-md-12 p-2">
-                            <img class="w-100 rounded" src="${pageContext.request.contextPath}/static/images/bannerShop.jpg"/>
+                            <div class="owl-carousel">
+                                <div class="item"><img src="${pageContext.request.contextPath}/static/images/bannerShop.jpg" alt="Banner 1"/></div>
+                                <div class="item"><img src="${pageContext.request.contextPath}/static/images/bannerdangkishop.png" alt="Banner 2"/></div>
+                                <div class="item"><img src="${pageContext.request.contextPath}/static/images/bannermonan.png" alt="Banner 3"/></div>
+                                <div class="item"><img src="${pageContext.request.contextPath}/static/images/bannersale.png" alt="Banner 4"/></div>
+                            </div>
                         </div>
                     </div>
 
@@ -163,8 +173,35 @@
         </div>
     </div>
 
+    <script>
+        $(document).ready(function () {
+            var owl = $(".owl-carousel");
+            owl.owlCarousel({
+                items: 1,
+                nav: false,
+                dots: false,
+                loop: true,
+                mouseDrag: false,
+                autoplay: true,
+                autoplayHoverPause: true,
+                autoplayTimeout: 1000, // Set to 1000 milliseconds (1 second)
+                smartSpeed: 1000,
+                autoHeight: true,
+            });
+        });
 
-    <%@ include file="../include/footer.jsp" %>
 
-
-
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/owl-carousel/1.3.3/owl.carousel.min.js"></script>
+    <script src="${pageContext.request.contextPath}/static/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="${pageContext.request.contextPath}/static/js/sidebarmenu.js"></script>
+    <script src="${pageContext.request.contextPath}/static/js/app.min.js"></script>
+    <script src="${pageContext.request.contextPath}/static/libs/apexcharts/dist/apexcharts.min.js"></script>
+    <script src="${pageContext.request.contextPath}/static/assets/libs/simplebar/dist/simplebar.js"></script>
+    <script src="${pageContext.request.contextPath}/static/js/dashboard.js"></script>
+    <!--<script src="${pageContext.request.contextPath}/static/js/bootstrap.js"></script>-->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/js/bootstrap.min.js"></script>
+</html>
+</body>
