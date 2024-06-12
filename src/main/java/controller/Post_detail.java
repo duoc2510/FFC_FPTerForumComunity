@@ -10,13 +10,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 /**
  *
  * @author ThanhDuoc
  */
-public class Manager_report extends HttpServlet {
+public class Post_detail extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,14 +34,15 @@ public class Manager_report extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Manager_reportHandle</title>");
+            out.println("<title>Servlet Post_detail</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Manager_reportHandle at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet Post_detail at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
     }
+
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -55,7 +55,7 @@ public class Manager_report extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/manager/report.jsp").forward(request, response);
+        processRequest(request, response);
     }
 
     /**

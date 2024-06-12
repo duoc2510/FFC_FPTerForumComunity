@@ -124,6 +124,7 @@ public class Group_detail extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("USER");
         String action = request.getParameter("action");
+
         boolean redirectToReferer = false; // Biến trạng thái để kiểm soát việc gọi sendRedirect()
         boolean result = false;
         String messageOfApprove = "";
@@ -145,6 +146,7 @@ public class Group_detail extends HttpServlet {
                 }
                 session.setAttribute("messageOfApprove", messageOfApprove);
             } else if ("acceptPost".equals(action) || "denyPost".equals(action)) {
+                String reason = request.getParameter("reason");
                 int postId = 0;
                 try {
                     postId = Integer.parseInt(request.getParameter("postId"));
@@ -152,7 +154,7 @@ public class Group_detail extends HttpServlet {
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid postId parameter");
                     return;
                 }
-                result = ("acceptPost".equals(action)) ? Post_DB.updatePostStatus(postId, "Active") : Post_DB.updatePostStatus(postId, "Denied");
+                result = ("acceptPost".equals(action)) ? Post_DB.updatePostStatus(postId, "Active", "Oke") : Post_DB.updatePostStatus(postId, "Denied", reason);
             } else if ("leave".equals(action)) {
                 int groupId = Integer.parseInt(request.getParameter("groupId"));
                 boolean success = Group_DB.leaveGroup(groupId, user.getUserId());

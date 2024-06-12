@@ -148,8 +148,35 @@
                                     currentUploadPathImg.style.display = 'none';
                                 }
                             }
-
+                            $(document).ready(function () {
+                                // Bắt sự kiện gửi bình luận khi nhấn nút Submit
+                                $('form[action="${pageContext.request.contextPath}/comment"]').submit(function (event) {
+                                    // Ngăn chặn hành động mặc định của form
+                                    event.preventDefault();
+                                    // Lấy dữ liệu từ form
+                                    var formData = $(this).serialize();
+                                    // Gửi yêu cầu AJAX để thêm bình luận
+                                    $.ajax({
+                                        type: "POST",
+                                        url: $(this).attr('action'),
+                                        data: formData,
+                                        success: function (response) {
+                                            // Xử lý phản hồi từ máy chủ nếu cần
+                                            console.log(response);
+                                            // Ví dụ: làm mới trang để hiển thị bình luận mới
+                                            window.location.reload();
+                                        },
+                                        error: function (xhr, status, error) {
+                                            // Xử lý lỗi nếu có
+                                            console.error('Error:', error);
+                                            // Ví dụ: hiển thị thông báo lỗi cho người dùng
+                                            alert('Failed to add comment. Please try again later.');
+                                        }
+                                    });
+                                });
+                            });
                         </script>
+                      
                     </div>
                 </div>
             </div>

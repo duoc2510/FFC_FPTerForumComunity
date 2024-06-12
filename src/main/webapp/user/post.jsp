@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <div class="col-lg-12">
     <div class="card w-100">
         <div class="card-body p-4">
@@ -21,25 +22,42 @@
                     <h6 class="card-title fw-semibold mb-4 d-inline">${post.user.username}</h6>
                     <p class="s-4">${post.createDate}</p>
                 </div>
-                <c:if test="${post.user.userId == USER.userId}">
-                    <div class="dropdown col-1 px-2" style="text-align: right">
-                        <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <span> <i class="ti-more-alt"></i></span>   
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a class="dropdown-item" type="button" href="javascript:void(0)" onclick="editPost(${post.postId}, '${post.content}', '${post.status}', '${post.uploadPath}')">Edit</a>
-                            </li>
-                            <li>
-                                <form class="dropdown-item p-0 m-0" onsubmit="return confirm('Are you sure you want to delete this post?');" action="${pageContext.request.contextPath}/post" method="post">
-                                    <input type="hidden" name="action" value="deletePost">
-                                    <input type="hidden" name="postId" value="${post.postId}">
-                                    <button type="submit" class="dropdown-item">Delete Post</button>
-                                </form>
-                            </li>
-                        </ul>
-                    </div>
-                </c:if>
+                <c:choose>
+                    <c:when test="${post.user.userId == USER.userId}">
+                        <!-- Dropdown menu for the post owner -->
+                        <div class="dropdown col-1 px-2" style="text-align: right">
+                            <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span><i class="ti-more-alt"></i></span>   
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" type="button" href="javascript:void(0)" onclick="editPost(${post.postId}, '${post.content}', '${post.status}', '${post.uploadPath}')">Edit</a>
+                                </li>
+                                <li>
+                                    <form class="dropdown-item p-0 m-0" onsubmit="return confirm('Are you sure you want to delete this post?');" action="${pageContext.request.contextPath}/post" method="post">
+                                        <input type="hidden" name="action" value="deletePost">
+                                        <input type="hidden" name="postId" value="${post.postId}">
+                                        <button type="submit" class="dropdown-item">Delete Post</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <!-- Dropdown menu for the post owner -->
+                        <div class="dropdown col-1 px-2" style="text-align: right">
+                            <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span><i class="ti-more-alt"></i></span>   
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" type="button" href="javascript:void(0)" ">Report</a>
+                                </li>
+                                
+                            </ul>
+                        </div>
+                    </c:otherwise>
+                </c:choose>
             </div>
 
             <!-- Option to delete post for the post author -->

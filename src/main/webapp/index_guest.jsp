@@ -1,8 +1,3 @@
-<%-- 
-    Document   : index_guest
-    Created on : Jun 10, 2024, 7:20:33 AM
-    Author     : Admin
---%>
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
 <%@ include file="include/header.jsp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>

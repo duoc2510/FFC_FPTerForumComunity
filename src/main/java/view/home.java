@@ -170,7 +170,6 @@ public class home extends HttpServlet {
             e.printStackTrace();
             session.setAttribute("msg", "Có lỗi xảy ra khi thêm bài đăng.");
         }
-
         response.sendRedirect("home");
     }
 
