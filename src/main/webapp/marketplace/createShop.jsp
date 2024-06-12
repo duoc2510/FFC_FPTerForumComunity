@@ -27,7 +27,7 @@
                     <div class="w-100 row">
                         <div class="col-md-12 p-2">
                             <h2>Create Your Brand To Have More Income</h2>
-                            <img class="w-100 rounded" src="${pageContext.request.contextPath}/static/images/bannerShop.jpg"/>
+                            <img class="w-100 rounded" src="${pageContext.request.contextPath}/static/images/bannerdangkishop.png"/>
                         </div>
                     </div>
                     <div class="w-100 row">
