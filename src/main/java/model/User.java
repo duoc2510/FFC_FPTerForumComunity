@@ -20,17 +20,18 @@ public class User {
     private Date userCreateDate;
     private String userSex;
     private boolean userActiveStatus;
-
+    private boolean isPending;
+    private boolean isApproved;
+    private boolean isCancelled;
+    private boolean isPendingRq;
     public User() {
     }
 
-    public User(int userId, String username, String userAvatar ) {
+    public User(int userId, String username, String userAvatar) {
         this.userId = userId;
         this.username = username;
-        this.userAvatar= userAvatar;
+        this.userAvatar = userAvatar;
     }
-
-   
 
     // Constructor
     public User(int userId, String userEmail, String userPassword, int userRole, String username, String userFullName, double userWallet, String userAvatar, String userStory, int userRank, int userScore, Date userCreateDate, String userSex, boolean userActiveStatus) {
@@ -176,6 +177,39 @@ public class User {
         this.userActiveStatus = userActiveStatus;
     }
 
+    public boolean isIsPending() {
+        return isPending;
+    }
+
+    public void setIsPending(boolean isPending) {
+        this.isPending = isPending;
+    }
+
+    public boolean isIsApproved() {
+        return isApproved;
+    }
+
+    public void setIsApproved(boolean isApproved) {
+        this.isApproved = isApproved;
+    }
+
+    public boolean isIsCancelled() {
+        return isCancelled;
+    }
+
+    public void setIsCancelled(boolean isCancelled) {
+        this.isCancelled = isCancelled;
+    }
+
+    public boolean isIsPendingRq() {
+        return isPendingRq;
+    }
+
+    public void setIsPendingRq(boolean isPendingRq) {
+        this.isPendingRq = isPendingRq;
+    }
+
+    
     public static User login(String identify, String inputMatKhau) {
         User user = User_DB.getUserByEmailorUsername(identify);
         if (user != null) {

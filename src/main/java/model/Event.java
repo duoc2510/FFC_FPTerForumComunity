@@ -18,6 +18,15 @@ public class Event {
     public Event() {
     }
 
+    public Event(int eventId, String title, String description, Timestamp startDate, Timestamp endDate, int userId) {
+        this.eventId = eventId;
+        this.title = title;
+        this.description = description;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.userId = userId;
+    }
+
     public Event(int eventId, String title, String description, Timestamp startDate, Timestamp endDate, int userId, String location, Timestamp createdAt) {
         this.eventId = eventId;
         this.title = title;

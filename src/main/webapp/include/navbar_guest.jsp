@@ -3,9 +3,6 @@
 
 
 
-        <ul class="navbar-nav w-100" style="max-width: 400px">
-            <input type="text" class="form-control " placeholder="Search" >
-        </ul>
 
         <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
             <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">

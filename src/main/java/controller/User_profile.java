@@ -63,52 +63,98 @@ public class User_profile extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false); // Không tự động tạo session mới
-        User user = (User) session.getAttribute("USER");
+        // Kiểm tra xem người dùng đã đăng nhập chưa
+        if (session != null && session.getAttribute("USER") != null) {
+            User currentUser = (User) session.getAttribute("USER");
+            String requestedUsername = request.getParameter("username");
+            // Kiểm tra xem người dùng đang xem hồ sơ của mình hay của người khác
+            if (currentUser.getUsername().equals(requestedUsername)) {
+                // Đang xem hồ sơ của chính mình
+                // Lấy số bài đăng của người dùng từ cơ sở dữ liệu
+                int postCount = User_DB.countPost(currentUser.getUserEmail());
+                // Lấy bài đăng của người dùng từ cơ sở dữ liệu
+                List<Post> posts = Post_DB.getPostsByUsername(currentUser.getUsername());
+                // Lặp qua danh sách bài viết để lấy thông tin về người đăng và các comment
+                for (Post post : posts) {
+                    // Lấy thông tin người đăng cho bài viết
+                    User author = Post_DB.getUserByPostId(post.getPostId());
+                    post.setUser(author); // Đặt thông tin người đăng vào thuộc tính user của bài viết
 
-        // Ở đây không cần kiểm tra đăng nhập nữa do đã làm trong filter
-        String userEmail = user.getUserEmail();
-        int userId = user.getUserId();
-        User userInfo = User_DB.getUserByEmailorUsername(userEmail);
-
-        if (userInfo == null) {
-            response.sendRedirect(request.getContextPath() + "/auth/login.jsp?errorMessage=User not found");
-            return;
-        }
-
-        // Cập nhật điểm số và đếm số bài đăng của người dùng
-        int postCount = User_DB.countPost(userEmail);
-
-        // Thiết lập các thuộc tính cho session và request
-        session.setAttribute("postCount", postCount);
-
-        // Lấy bài đăng của người dùng từ cơ sở dữ liệu
-        String username = user.getUsername();
-        List<Post> posts = Post_DB.getPostsByUsername(username);
-
-        // Lặp qua danh sách bài viết để lấy thông tin về người đăng và các comment
-        for (Post post : posts) {
-            // Lấy thông tin người đăng cho bài viết
-            User author = Post_DB.getUserByPostId(post.getPostId());
-            post.setUser(author); // Đặt thông tin người đăng vào thuộc tính user của bài viết
-
-            // Lấy danh sách comment cho bài viết
-            List<Comment> comments = Comment_DB.getCommentsByPostId(post.getPostId());
-            for (Comment comment : comments) {
-                // Lấy thông tin người dùng cho comment
-                User commentUser = User_DB.getUserById(comment.getUserId());
-                if (commentUser != null) {
-                    comment.setUser(commentUser);
+                    // Lấy danh sách comment cho bài viết
+                    List<Comment> comments = Comment_DB.getCommentsByPostId(post.getPostId());
+                    for (Comment comment : comments) {
+                        // Lấy thông tin người dùng cho comment
+                        User commentUser = User_DB.getUserById(comment.getUserId());
+                        if (commentUser != null) {
+                            comment.setUser(commentUser);
+                        }
+                    }
+                    post.setComments(comments); // Đặt danh sách comment vào bài viết
                 }
+                // Đặt các thuộc tính vào request
+                request.setAttribute("postCount", postCount);
+                request.setAttribute("posts", posts);
+                // Chuyển hướng đến trang profile.jsp
+                request.getRequestDispatcher("/user/profile.jsp").forward(request, response);
+            } else {
+                // Đang xem hồ sơ của người khác
+                // Lấy thông tin của người dùng từ cơ sở dữ liệu
+                User userInfo = User_DB.getUserByEmailorUsername(requestedUsername);
+
+                // Kiểm tra xem người dùng có tồn tại không
+                if (userInfo == null) {
+                    response.sendRedirect(request.getContextPath() + "/auth/login.jsp?errorMessage=User not found");
+                    return;
+                }
+               
+                int userId = currentUser.getUserId();
+                String friendStatus = User_DB.getFriendRequestStatus(userId, requestedUsername);
+                // Lấy số bài đăng của người dùng từ cơ sở dữ liệu
+                int postCount = User_DB.countPost(userInfo.getUserEmail());
+
+                // Đặt các thuộc tính vào request
+                request.setAttribute("postCount", postCount);
+                // Chuyển hướng đến trang profile.jsp
+                List<Post> userPosts = Post_DB.getPostsByUsername(requestedUsername);
+
+                // Loop through the userPosts to fetch comments for each post
+                for (Post post : userPosts) {
+                    // Lấy thông tin người đăng cho bài viết
+                    User author = Post_DB.getUserByPostId(post.getPostId());
+                    post.setUser(author); // Đặt thông tin người đăng vào thuộc tính user của bài viết
+
+                    // Lấy danh sách comment cho bài viết
+                    List<Comment> comments = Comment_DB.getCommentsByPostId(post.getPostId());
+                    for (Comment comment : comments) {
+                        // Lấy thông tin người dùng cho comment
+                        User commentUser = User_DB.getUserById(comment.getUserId());
+                        if (commentUser != null) {
+                            comment.setUser(commentUser);
+                        }
+                    }
+                    post.setComments(comments); // Đặt danh sách comment vào bài viết
+                }
+                boolean areFriend = User_DB.areFriendsAccepted(userId, requestedUsername);
+                boolean isPendingRq = User_DB.hasFriendRequestFromUser(userId, requestedUsername);
+                int postCountofUser = User_DB.countPostByUserName(requestedUsername);
+
+                // Thiết lập các thuộc tính cho session và request
+                session.setAttribute("isPendingRq", isPendingRq);
+                session.setAttribute("areFriend", areFriend);
+                session.setAttribute("postCountofUser", postCountofUser);
+
+                // Set user and userPosts as request attributes
+                request.setAttribute("friendStatus", friendStatus);
+                // Set user and userPosts as request attributes
+                request.setAttribute("user", userInfo);
+                request.setAttribute("userPosts", userPosts);
+                // Chuyển hướng đến trang profile.jsp
+                request.getRequestDispatcher("/user/anotherUserProfile.jsp").forward(request, response);
             }
-            post.setComments(comments); // Đặt danh sách comment vào bài viết
+        } else {
+            // Người dùng chưa đăng nhập, chuyển hướng đến trang đăng nhập
+            response.sendRedirect(request.getContextPath() + "/auth/login.jsp");
         }
-        request.getSession().setAttribute("USER", userInfo);
-        // Đặt danh sách người dùng vào thuộc tính của request
-
-        request.setAttribute("posts", posts);
-
-        // Chuyển tiếp yêu cầu tới trang profile.jsp
-        request.getRequestDispatcher("/user/profile.jsp").forward(request, response);
     }
 
     /**

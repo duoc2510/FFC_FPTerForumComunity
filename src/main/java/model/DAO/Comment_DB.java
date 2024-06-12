@@ -45,7 +45,8 @@ public class Comment_DB {
 
     public static List<Comment> getCommentsByPostId(int postId) {
         List<Comment> comments = new ArrayList<>();
-        String query = "SELECT * FROM Comment WHERE Post_id = ?";
+        String query = "SELECT * FROM Comment WHERE Post_id = ?"
+                + "ORDER BY Date DESC";
         try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, postId);
             ResultSet rs = stmt.executeQuery();

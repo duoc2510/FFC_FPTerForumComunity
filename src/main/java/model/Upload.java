@@ -1,34 +1,22 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model;
 
-/**
- *
- * @author ThanhDuoc
- */
 public class Upload {
 
     private int uploadId;
     private int postId;
     private int eventId;
-    private int shopId;
-    private int commentId;
     private int productId;
     private String uploadPath;
 
     public Upload() {
     }
 
-    public Upload(int eventId, String uploadPath) {
-        this.eventId = eventId;
-        this.uploadPath = uploadPath;
-    }
-
-    public Upload(int uploadId, int postId) {
+    public Upload(int uploadId, int postId, int eventId, int productId, String uploadPath) {
         this.uploadId = uploadId;
         this.postId = postId;
+        this.eventId = eventId;
+        this.productId = productId;
+        this.uploadPath = uploadPath;
     }
 
     public Upload(int uploadId, int postId, String uploadPath) {
@@ -36,18 +24,8 @@ public class Upload {
         this.postId = postId;
         this.uploadPath = uploadPath;
     }
+    
 
-    public Upload(int uploadId, int postId, int eventId, int shopId, int commentId, int productId, String uploadPath) {
-        this.uploadId = uploadId;
-        this.postId = postId;
-        this.eventId = eventId;
-        this.shopId = shopId;
-        this.commentId = commentId;
-        this.productId = productId;
-        this.uploadPath = uploadPath;
-    }
-
-    // Getters and setters
     public int getUploadId() {
         return uploadId;
     }
@@ -72,22 +50,6 @@ public class Upload {
         this.eventId = eventId;
     }
 
-    public int getShopId() {
-        return shopId;
-    }
-
-    public void setShopId(int shopId) {
-        this.shopId = shopId;
-    }
-
-    public int getCommentId() {
-        return commentId;
-    }
-
-    public void setCommentId(int commentId) {
-        this.commentId = commentId;
-    }
-
     public int getProductId() {
         return productId;
     }
@@ -103,4 +65,10 @@ public class Upload {
     public void setUploadPath(String uploadPath) {
         this.uploadPath = uploadPath;
     }
+
+    @Override
+    public String toString() {
+        return "Upload{" + "uploadId=" + uploadId + ", postId=" + postId + ", eventId=" + eventId + ", productId=" + productId + ", uploadPath=" + uploadPath + '}';
+    }
+
 }

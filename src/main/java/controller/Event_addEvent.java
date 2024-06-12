@@ -99,8 +99,8 @@ public class Event_addEvent extends HttpServlet {
         Timestamp createdAt = new Timestamp(System.currentTimeMillis());
 
         Event event = new Event(0, title, description, startDate, endDate, userId, location, createdAt);
-        Upload upload = new Upload(0, 0, 0, 0, 0, 0, filePathForDatabase);
-
+        
+         Upload upload = new Upload(0, 0, 0, 0, filePathForDatabase);
         Event_DB eventDB = new Event_DB();
         String message;
         if (eventDB.addEvent(event, upload)) {

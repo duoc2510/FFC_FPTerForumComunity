@@ -12,9 +12,11 @@
 
 
         <ul class="navbar-nav w-100" style="max-width: 400px">
-            <input type="text" class="form-control " placeholder="Search" >
+            <form class="d-flex" action="${pageContext.request.contextPath}/search" method="post">
+                <input type="text" class="form-control me-2" name="query" placeholder="Search for user name or group name" aria-label="Search" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Search for user name or group name">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
         </ul>
-
         <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
             <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
                 <!--tim kiem--> 
@@ -46,7 +48,7 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
                         <div class="message-body">
-                            <a href="${pageContext.request.contextPath}/profile" class="d-flex align-items-center gap-2 dropdown-item">
+                            <a href="${pageContext.request.contextPath}/profile?username=${USER.username}" class="d-flex align-items-center gap-2 dropdown-item">
                                 <img src="${pageContext.request.contextPath}/${USER.userAvatar}" alt="" width="40" class="rounded-circle avatar-cover">
                                 <p class="mb-0 fs-6">
                                 <c:choose>
@@ -77,4 +79,11 @@
             </ul>
         </div>
     </nav>
+    <script>
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
 </header>

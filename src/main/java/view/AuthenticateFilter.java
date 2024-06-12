@@ -20,7 +20,6 @@ public class AuthenticateFilter implements Filter {
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
@@ -30,23 +29,31 @@ public class AuthenticateFilter implements Filter {
         String uri = httpRequest.getRequestURI();
         String contextPath = httpRequest.getContextPath();
 
+        // Bỏ qua xác thực cho các đường dẫn cụ thể
+        if (!(uri.startsWith(contextPath + "/marketplace/allshop")
+                || uri.startsWith(contextPath + "/marketplace/allshop/shopdetail")
+                || uri.startsWith(contextPath + "/marketplace/allshop/shopdetail/productdetail"))) {
+
+            if (uri.startsWith(contextPath + "/rank/")
+                    || uri.startsWith(contextPath + "/profile")
+                    || uri.startsWith(contextPath + "/marketplace/")
+                    || uri.startsWith(contextPath + "/manager/")) {
+                if (user == null) {
+                    // Lưu lại URL hiện tại
+                    String referer = httpRequest.getHeader("referer");
+                    if (referer != null && !referer.isEmpty()) {
+                        httpRequest.getSession(true).setAttribute("redirectURL", referer);
+                    }
+                    // Chuyển hướng đến trang đăng nhập
+                    httpResponse.sendRedirect(httpResponse.encodeRedirectURL(contextPath + "/logingooglehandler?value=login"));
+                    return;
+                }
+            }
+        }
         // Kiểm tra nếu người dùng đã đăng nhập và cố truy cập vào trang login hoặc register
         if ((uri.equals(contextPath + "/login") || uri.equals(contextPath + "/register")) && user != null) {
             // Chuyển hướng đến trang chủ
             httpResponse.sendRedirect(contextPath + "/home");
-            return;
-        }
-
-        // Kiểm tra nếu người dùng chưa đăng nhập và cố truy cập vào trang rank hoặc profile
-        if ((uri.startsWith(contextPath + "/rank/") || uri.startsWith(contextPath + "/profile")) && user == null) {
-            // Lưu lại URL hiện tại
-            String referer = httpRequest.getHeader("referer");
-            if (referer != null && !referer.isEmpty()) {
-                httpRequest.getSession(true).setAttribute("redirectURL", referer);
-            }
-
-            // Chuyển hướng đến trang đăng nhập
-            httpResponse.sendRedirect(httpResponse.encodeRedirectURL(contextPath + "/logingooglehandler?value=login"));
             return;
         }
 

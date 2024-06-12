@@ -15,7 +15,6 @@ import java.util.Random;
 import model.DAO.User_DB;
 import model.User;
 import util.Email;
-import static util.Email.sendEmail;
 
 /**
  *

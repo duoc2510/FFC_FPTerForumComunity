@@ -1,4 +1,4 @@
-﻿-- Tạo cơ sở dữ liệu
+-- Tạo cơ sở dữ liệu
 CREATE DATABASE FFCFPTerForumComunity;
 GO
 
@@ -8,6 +8,7 @@ GO
 -- Bảng Users
 CREATE TABLE Users (
     Username NVARCHAR(100) NOT NULL, -- Tên người dùng, bắt buộc
+    usernameVip NVARCHAR(100), -- Tên người dùng VIP
     User_id INT IDENTITY(1,1) PRIMARY KEY, -- ID tự động tăng cho người dùng
     User_email NVARCHAR(255) NOT NULL, -- Email người dùng, bắt buộc
     User_password NVARCHAR(255) NOT NULL, -- Mật khẩu người dùng, bắt buộc
@@ -36,17 +37,12 @@ CREATE TABLE Shop (
     Shop_campus NVARCHAR(255) NOT NULL, -- Cơ sở của shop, bắt buộc
     Description NVARCHAR(255), -- Mô tả về shop
     Image NVARCHAR(255), -- Ảnh bìa của shop
-    Status BIT DEFAULT 0, -- Trạng thái hoạt động của SHOP, mặc định là 0-off, 1-on
+    Status BIT DEFAULT 0, -- Trạng thái hoạt động của SHOP, mặc định là 0-on, 1-off
     CONSTRAINT fk_user_shop FOREIGN KEY (Owner_id) REFERENCES Users(User_id) -- Tham chiếu đến User_id trong bảng Users
 );
 GO
--- Bảng Category
-CREATE TABLE Category (
-    Category_id INT IDENTITY(1,1) PRIMARY KEY, -- ID tự động tăng cho danh mục
-    Category_name NVARCHAR(255) NOT NULL, -- Tên của danh mục, bắt buộc
-    Category_description NVARCHAR(255) -- Mô tả về danh mục
-);
--- Bảng Product (cập nhật thêm cột Category_id và khóa ngoại)
+
+-- Bảng Product
 CREATE TABLE Product (
     Shop_id INT NOT NULL, -- ID của shop, bắt buộc
     Description NVARCHAR(255), -- Mô tả về sản phẩm
@@ -54,9 +50,7 @@ CREATE TABLE Product (
     Product_name NVARCHAR(255) NOT NULL, -- Tên của sản phẩm, bắt buộc
     Product_price DECIMAL(10, 2) NOT NULL, -- Giá của sản phẩm, bắt buộc
     Stock_quantity INT NOT NULL, -- Số lượng tồn kho của sản phẩm, bắt buộc
-    Category_id INT, -- ID của danh mục sản phẩm
-    CONSTRAINT fk_shop_product FOREIGN KEY (Shop_id) REFERENCES Shop(Shop_id), -- Tham chiếu đến Shop_id trong bảng Shop
-    CONSTRAINT fk_category_product FOREIGN KEY (Category_id) REFERENCES Category(Category_id) -- Tham chiếu đến Category_id trong bảng Category
+	CONSTRAINT fk_shop_product FOREIGN KEY (Shop_id) REFERENCES Shop(Shop_id) -- Tham chiếu đến Shop_id trong bảng Shop
 );
 GO
 
@@ -66,6 +60,7 @@ CREATE TABLE Discount (
     Owner_id INT , -- ID của user
     Shop_id INT , -- ID của shop
     Discount_id INT IDENTITY(1,1) PRIMARY KEY, -- ID tự động tăng cho giảm giá
+	Condition DECIMAL(10, 2) NOT NULL DEFAULT 0, -- giá của đơn hàng cần đạt đến để dc áp dụng --thêm
     Discount_percent DECIMAL(5, 2) NOT NULL, -- Phần trăm giảm giá, bắt buộc
     Valid_from DATE NOT NULL, -- Ngày bắt đầu hiệu lực của giảm giá, bắt buộc
     Valid_to DATE NOT NULL, -- Ngày hết hạn của giảm giá, bắt buộc
@@ -81,10 +76,17 @@ CREATE TABLE [Order] (
     User_id INT NOT NULL, -- ID của người dùng, bắt buộc
     Order_id INT IDENTITY(1,1) PRIMARY KEY, -- ID tự động tăng cho đơn hàng
     Order_date DATETIME DEFAULT GETDATE(), -- Ngày đặt hàng, mặc định là ngày hiện tại
-    Order_status NVARCHAR(50) CHECK (Order_status IN ('Null','Pending','Accept','Completed','Cancelled')) NOT NULL, -- Trạng thái của đơn hàng
+    Order_status NVARCHAR(50) CHECK (Order_status IN ('null','Pending','Accept','Completed','Cancelled','Success')) NOT NULL, -- Trạng thái của đơn hàng
     Total_amount DECIMAL(10, 2) NOT NULL, -- Tổng số tiền của đơn hàng, bắt buộc
-    CONSTRAINT fk_user_order FOREIGN KEY (User_id) REFERENCES Users(User_id) -- Tham chiếu đến User_id trong bảng Users
+    Note NVARCHAR(MAX), -- Ghi chú
+    Discount_id INT, -- ID của mã giảm giá
+    Feedback NVARCHAR(MAX), -- Phản hồi từ người dùng -thêm
+	Star int default 5,--số sao đánh giá   -- thêm
+	Receiver_phone NVARCHAR(20),   --thêm
+    CONSTRAINT fk_user_order FOREIGN KEY (User_id) REFERENCES Users(User_id), -- Tham chiếu đến User_id trong bảng Users
+    CONSTRAINT fk_discount_order FOREIGN KEY (Discount_id) REFERENCES Discount(Discount_id) -- Tham chiếu đến Discount_id trong bảng Discount
 );
+
 GO
 
 -- Bảng OrderItem
@@ -95,7 +97,7 @@ CREATE TABLE OrderItem (
     Quantity INT NOT NULL, -- Số lượng sản phẩm, bắt buộc
     Unit_price DECIMAL(10, 2) NOT NULL, -- Giá mỗi đơn vị sản phẩm, bắt buộc
     CONSTRAINT fk_order_orderitem FOREIGN KEY (Order_id) REFERENCES [Order](Order_id), -- Tham chiếu đến Order_id trong bảng Order
-    CONSTRAINT fk_product_orderitem FOREIGN KEY (Product_id) REFERENCES Product(Product_id) -- Tham chiếu đến Product_id trong bảng Product
+	CONSTRAINT fk_product_orderitem FOREIGN KEY (Product_id) REFERENCES Product(Product_id) -- Tham chiếu đến Product_id trong bảng Product
 );
 GO
 
@@ -149,7 +151,7 @@ CREATE TABLE Event (
     Location NVARCHAR(255), -- Địa điểm tổ chức sự kiện
     Created_by INT NOT NULL, -- Người tạo sự kiện, không được null
     Created_at DATETIME DEFAULT GETDATE(), -- Ngày và giờ tạo sự kiện, mặc định là ngày và giờ hiện tại
-    FOREIGN KEY (Created_by) REFERENCES Users(User_id) -- Tham chiếu khóa ngoại tới bảng Users
+FOREIGN KEY (Created_by) REFERENCES Users(User_id) -- Tham chiếu khóa ngoại tới bảng Users
 );
 GO
 -- Tạo bảng Payment: lưu thông tin về thanh toán
@@ -202,9 +204,10 @@ GO
 CREATE TABLE Topic (
     Topic_id INT IDENTITY(1,1) PRIMARY KEY, -- id tự động tăng cho chủ đề
     Topic_name NVARCHAR(255) NOT NULL, -- Tên chủ đề, không được null
-    Description NVARCHAR(255) -- Mô tả chủ đề
+	Description NVARCHAR(255) -- Mô tả chủ đề
 );
 GO
+
 -- Tạo bảng Group: lưu thông tin về nhóm
 CREATE TABLE [Group] (
     Group_id INT IDENTITY(1,1) PRIMARY KEY, -- id tự động tăng cho nhóm
@@ -213,7 +216,7 @@ CREATE TABLE [Group] (
     Group_description NVARCHAR(255), -- Mô tả nhóm
 	Image NVARCHAR(255),
 	memberCount INT DEFAULT 0,
-	Status NVARCHAR(25),
+	Status NVARCHAR(255),
     FOREIGN KEY (Creater_id) REFERENCES Users(User_id) -- Khóa ngoại tham chiếu đến người tạo nhóm
 );
 GO
@@ -239,18 +242,18 @@ CREATE TABLE GroupChatMessage (
 GO
 -- Tạo bảng Post: lưu thông tin về bài viết
 CREATE TABLE Post (
-    Post_id INT IDENTITY(1,1) PRIMARY KEY,
-    User_id INT NOT NULL,
-    Group_id INT,
-    Topic_id INT,
-    Content NVARCHAR(255) NOT NULL,
-    createDate NVARCHAR(20), -- Đổi kiểu dữ liệu của createDate thành NVARCHAR
-    Status NVARCHAR(50),
-    postStatus NVARCHAR(50),
-    Reason NVARCHAR(255),
-    FOREIGN KEY (User_id) REFERENCES Users(User_id),
-    FOREIGN KEY (Group_id) REFERENCES [Group](Group_id),
-    FOREIGN KEY (Topic_id) REFERENCES Topic(Topic_id)
+    Post_id INT IDENTITY(1,1) PRIMARY KEY, -- id tự động tăng cho bài viết
+    User_id INT NOT NULL, -- id của người đăng bài viết
+    Group_id INT, -- id của nhóm mà bài viết thuộc về
+    Topic_id INT, -- id của chủ đề mà bài viết thuộc về
+    Content NVARCHAR(255) NOT NULL, -- Nội dung bài viết
+    createDate DATETIME DEFAULT GETDATE(), -- Ngày tạo bài viết, mặc định là ngày hiện tại
+    Status NVARCHAR(50), -- Trạng thái của bài viết
+	postStatus NVARCHAR(50), -- Trạng thái bài viết (duyệt, chưa duyệt)
+    Reason NVARCHAR(255), -- Lý do (nếu có) của trạng thái bài viết
+	FOREIGN KEY (User_id) REFERENCES Users(User_id), -- Khóa ngoại tham chiếu đến người đăng bài viết
+    FOREIGN KEY (Group_id) REFERENCES [Group](Group_id), -- Khóa ngoại tham chiếu đến nhóm
+    FOREIGN KEY (Topic_id) REFERENCES Topic(Topic_id) -- Khóa ngoại tham chiếu đến chủ đề
 );
 GO
 -- Tạo bảng Comment: lưu thông tin về bình luận của bài viết
@@ -296,7 +299,7 @@ CREATE TABLE UserFollow (
     Topic_id INT, -- id của chủ đề được theo dõi
     FOREIGN KEY (User_id) REFERENCES Users(User_id), -- Tham chiếu khóa ngoại tới bảng Users
     FOREIGN KEY (Event_id) REFERENCES Event(Event_id), -- Tham chiếu khóa ngoại tới bảng Event
-    FOREIGN KEY (Topic_id) REFERENCES Topic(Topic_id) -- Tham chiếu khóa ngoại tới bảng Topic
+	FOREIGN KEY (Topic_id) REFERENCES Topic(Topic_id) -- Tham chiếu khóa ngoại tới bảng Topic
 );
 GO
 CREATE TABLE Upload (
@@ -305,10 +308,48 @@ CREATE TABLE Upload (
 	Event_id INT,
 	Product_id INT,
     UploadPath NVARCHAR(255) NOT NULL, -- Đường dẫn hoặc tên file của ảnh
-    FOREIGN KEY (Product_id) REFERENCES Product(Product_id), -- Khóa ngoại tham chiếu đến bài viết
+	FOREIGN KEY (Product_id) REFERENCES Product(Product_id), -- Khóa ngoại tham chiếu đến bài viết
     FOREIGN KEY (Post_id) REFERENCES Post(Post_id), -- Khóa ngoại tham chiếu đến bài viết
     FOREIGN KEY (Event_id) REFERENCES Event(Event_id) -- Khóa ngoại tham chiếu đến bài viết
 );
+GO
+CREATE OR ALTER VIEW GroupView AS
+SELECT 
+    g.Group_id,
+    g.Creater_id,
+    g.Group_name,
+    g.Group_description,
+    g.Image,
+	g.Status as Group_status,
+    mg.MemberGroup_id,
+	mg.Status,
+    u.User_id,
+    u.User_email,
+    u.User_fullName,
+    u.User_avatar,
+    u.User_activeStatus,
+    p.Post_id,
+    p.User_id AS Post_user_id,
+    p.Group_id AS Post_group_id,
+    p.Content AS Post_content,
+    p.createDate AS Post_createDate,
+    p.Status AS Post_status,
+    c.Comment_id,
+    c.Post_id AS Comment_post_id,
+    c.User_id AS Comment_user_id,
+    c.Content AS Comment_content,
+    c.Date AS Comment_date,
+    up.Upload_id,
+    up.Event_id,
+    up.UploadPath,
+    up.Post_id AS Upload_post_id,
+   (SELECT COUNT(*) FROM MemberGroup mg WHERE mg.Group_id = g.Group_id AND mg.Status IN ('approved', 'host')) AS memberCount -- Đếm số thành viên nhóm
+FROM [Group] g
+LEFT JOIN MemberGroup mg ON g.Group_id = mg.Group_id
+LEFT JOIN Users u ON mg.User_id = u.User_id
+LEFT JOIN Post p ON g.Group_id = p.Group_id
+LEFT JOIN Comment c ON p.Post_id = c.Post_id
+LEFT JOIN Upload up ON p.Post_id = up.Post_id;
 GO
 CREATE VIEW PostWithUploadAndComment AS
 SELECT 
@@ -333,54 +374,15 @@ LEFT JOIN
 LEFT JOIN 
     Comment c ON p.Post_id = c.Post_id;
 GO
-CREATE OR ALTER VIEW GroupView AS
-SELECT 
-    g.Group_id,
-    g.Creater_id,
-    g.Group_name,
-    g.Group_description,
-    g.Image,
-	g.Status,
-    mg.MemberGroup_id,
-	mg.Status AS Group_status,
-    u.User_id,
-    u.User_email,
-    u.User_fullName,
-    u.User_avatar,
-    u.User_activeStatus,
-    p.Post_id,
-    p.User_id AS Post_user_id,
-    p.Group_id AS Post_group_id,
-    p.Content AS Post_content,
-    p.createDate AS Post_createDate,
-    p.Status AS Post_status,
-    c.Comment_id,
-    c.Post_id AS Comment_post_id,
-    c.User_id AS Comment_user_id,
-    c.Content AS Comment_content,
-    c.Date AS Comment_date,
-    up.Upload_id,
-    up.Event_id,
-    up.UploadPath,
-    up.Post_id AS Upload_post_id,
-   (SELECT COUNT(*) FROM MemberGroup mg WHERE mg.Group_id = g.Group_id AND mg.Status IN ('approved', 'host')) AS memberCount  -- Đếm số thành viên nhóm
-FROM [Group] g
-LEFT JOIN MemberGroup mg ON g.Group_id = mg.Group_id
-LEFT JOIN Users u ON mg.User_id = u.User_id
-LEFT JOIN Post p ON g.Group_id = p.Group_id
-LEFT JOIN Comment c ON p.Post_id = c.Post_id
-LEFT JOIN Upload up ON p.Post_id = up.Post_id;
-
-GO
 -- Chèn dữ liệu mẫu vào bảng Users
-INSERT INTO Users (Username, User_email, User_password, User_role, User_fullName, User_wallet, User_avatar, User_story, User_rank, User_score, User_sex, User_activeStatus)
+INSERT INTO Users (Username, usernameVip, User_email, User_password, User_role, User_fullName, User_wallet, User_avatar, User_story, User_rank, User_score, User_sex, User_activeStatus)
 VALUES 
-('ban', 'duoc1@fpt.edu.vn', '123', 0,N'Thành Được', 100.00, Null, Null, 1, 10, 'Male', 1),
-('swpduoc', 'duoc@fpt.edu.vn', '123', 1, N'Thành Được', 100.00, Null, Null, 1, 10, 'Male', 1),
-('swpdiem', 'diem@fe.edu.vn', '123', 1, N'Thị Diễm', 200.00, Null, Null, 2, 20, 'Female', 1),
-('swpphuc', 'phuc@fe.edu.vn', '123', 2, N'Hoàng Phúc', 200.00, Null, Null, 2, 20, 'Male', 1),
-('swptrung', 'trung@fe.edu.vn', '123', 3, N'Quốc Trung', 200.00, Null, Null, 2, 20, 'Male', 1),
-('vipswptruong', 'truong@fpt.edu.vn', '123', 3, N'Hải Trường', 500.00, Null, Null, 3, 30, 'Male', 1);
+('ban', NULL, 'duoc1@fpt.edu.vn', '123', 0,N'Thành Được', 100.00, Null, Null, 1, 10, 'Male', 1),
+('swpduoc', NULL, 'duoc@fpt.edu.vn', '123', 1, N'Thành Được', 100.00, Null, Null, 1, 10, 'Male', 1),
+('swpdiem', NULL, 'diem@fe.edu.vn', '123', 1, N'Thị Diễm', 200.00, Null, Null, 2, 20, 'Female', 1),
+('swpphuc', NULL, 'phuc@fe.edu.vn', '123', 2, N'Hoàng Phúc', 200.00, Null, Null, 2, 20, 'Male', 1),
+('swptrung', NULL, 'trung@fe.edu.vn', '123', 3, N'Quốc Trung', 200.00, Null, Null, 2, 20, 'Male', 1),
+('vipswptruong', 'truongvipprolugach', 'truong@fpt.edu.vn', '123', 3, N'Hải Trường', 500.00, Null, Null, 3, 30, 'Male', 1);
 
 -- Chèn dữ liệu mẫu vào bảng Shop
 INSERT INTO Shop (Owner_id, Shop_name, Shop_phone, Shop_campus, Description, Image, Status)
@@ -416,12 +418,12 @@ VALUES
 -- Chèn dữ liệu mẫu vào bảng Order
 INSERT INTO [Order] (User_id, Order_date, Order_status, Total_amount)
 VALUES 
-(1, '2024-05-15', 'Completed', 100.00),
-(2, '2024-05-16', 'Completed', 150.00),
-(3, '2024-05-17', 'Completed', 200.00),
-(4, '2024-05-18', 'Completed', 250.00),
-(5, '2024-05-19', 'Completed', 300.00),
-(6, '2024-05-20', 'Completed', 350.00);
+(1, '2024-05-15', 'null', 100.00),
+(2, '2024-05-16', 'null', 150.00),
+(3, '2024-05-17', 'null', 200.00),
+(4, '2024-05-18', 'null', 250.00),
+(5, '2024-05-19', 'null', 300.00),
+(6, '2024-05-20', 'null', 350.00);
 
 -- Chèn dữ liệu mẫu vào bảng OrderItem
 INSERT INTO OrderItem (Order_id, Product_id, Quantity, Unit_price)
@@ -470,13 +472,7 @@ INSERT INTO Topic (Topic_name, Description)
 VALUES 
 ('Technology', 'Discussions related to technology'),
 ('Food', 'Discussions related to food');
-GO
--- Chèn dữ liệu mẫu vào bảng UserTopic
-INSERT INTO UserTopic (User_id, Topic_id)
-VALUES 
-(1, 1),
-(2, 2),
-(3, 1);
+
 GO
 -- Chèn dữ liệu mẫu vào bảng Group
 INSERT INTO [Group] (Creater_id, Group_name, Group_description, Image, memberCount)
@@ -486,7 +482,7 @@ VALUES
 GO
 -- Chèn dữ liệu mẫu vào bảng MemberGroup
 INSERT INTO MemberGroup (User_id, Group_id, Status)
-VALUES 
+VALUES
 (1, 1, 'Active'),
 (2, 1, 'Active'),
 (3, 2, 'Active');
@@ -502,10 +498,7 @@ INSERT INTO Post (User_id, Group_id, Topic_id, Content, Status, postStatus)
 VALUES 
 (1, Null, Null, 'Excited to join this group!', 'Active', 'Friends'),
 (2, Null, Null, 'Looking for recommendations on good restaurants.', 'Active', 'Public'),
-(1, 1, NULL, 'Excited to join this group!', 'Active', 'Friends'),
-(2, Null, 1, 'Looking for recommendations on good restaurants.', 'Active', 'Public'),
-(2, Null, 2,'Looking for recommendations on good restaurants.', 'Active', 'Public');
-
+(2, Null, Null,'Looking for recommendations on good restaurants.', 'Active', 'Public');
 
 GO
 -- Chèn dữ liệu mẫu vào bảng Comment
@@ -533,10 +526,17 @@ VALUES
 (2, NULL, 2),
 (3, NULL, 1);
 GO
+INSERT INTO Discount (Code, Owner_id, Shop_id, Discount_percent, Valid_from, Valid_to, Usage_limit, Usage_count, Condition) 
+VALUES ('DISCOUNT2024', 1, Null, 15.00, '2024-06-01', '2024-12-31', 100, 0, 500.00);
+INSERT INTO Discount (Code, Owner_id, Shop_id, Discount_percent, Valid_from, Valid_to, Usage_limit, Usage_count, Condition) 
+VALUES ('DISCOUNT2025', Null, Null, 15.00, '2024-06-01', '2024-12-31', 100, 0, 500.00);
+INSERT INTO Discount (Code, Owner_id, Shop_id, Discount_percent, Valid_from, Valid_to, Usage_limit, Usage_count, Condition) 
+VALUES ('DISCOUNT2026', Null, 2, 15.00, '2024-06-01', '2024-12-31', 100, 0, 500.00);
 
 SELECT * FROM PostWithUploadAndComment;
 -- Xem thông tin từ bảng Users
 SELECT * FROM Users;
+SELECT * FROM GroupView;
 -- Xem thông tin từ bảng FriendShip
 SELECT * FROM FriendShip;
 -- Xem thông tin từ bảng Notification
@@ -589,5 +589,3 @@ SELECT * FROM GroupChatMessage;
 SELECT * FROM Upload;
 
 SELECT * FROM UserFollow
-
-SELECT * FROM GroupView
