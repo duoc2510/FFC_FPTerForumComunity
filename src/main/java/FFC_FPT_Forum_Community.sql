@@ -50,7 +50,7 @@ CREATE TABLE Product (
     Product_name NVARCHAR(255) NOT NULL, -- Tên của sản phẩm, bắt buộc
     Product_price DECIMAL(10, 2) NOT NULL, -- Giá của sản phẩm, bắt buộc
     Stock_quantity INT NOT NULL, -- Số lượng tồn kho của sản phẩm, bắt buộc
-CONSTRAINT fk_shop_product FOREIGN KEY (Shop_id) REFERENCES Shop(Shop_id) -- Tham chiếu đến Shop_id trong bảng Shop
+	CONSTRAINT fk_shop_product FOREIGN KEY (Shop_id) REFERENCES Shop(Shop_id) -- Tham chiếu đến Shop_id trong bảng Shop
 );
 GO
 
@@ -97,7 +97,7 @@ CREATE TABLE OrderItem (
     Quantity INT NOT NULL, -- Số lượng sản phẩm, bắt buộc
     Unit_price DECIMAL(10, 2) NOT NULL, -- Giá mỗi đơn vị sản phẩm, bắt buộc
     CONSTRAINT fk_order_orderitem FOREIGN KEY (Order_id) REFERENCES [Order](Order_id), -- Tham chiếu đến Order_id trong bảng Order
-CONSTRAINT fk_product_orderitem FOREIGN KEY (Product_id) REFERENCES Product(Product_id) -- Tham chiếu đến Product_id trong bảng Product
+	CONSTRAINT fk_product_orderitem FOREIGN KEY (Product_id) REFERENCES Product(Product_id) -- Tham chiếu đến Product_id trong bảng Product
 );
 GO
 
@@ -204,18 +204,10 @@ GO
 CREATE TABLE Topic (
     Topic_id INT IDENTITY(1,1) PRIMARY KEY, -- id tự động tăng cho chủ đề
     Topic_name NVARCHAR(255) NOT NULL, -- Tên chủ đề, không được null
-Description NVARCHAR(255) -- Mô tả chủ đề
+	Description NVARCHAR(255) -- Mô tả chủ đề
 );
 GO
--- Tạo bảng UserTopic: lưu thông tin về chủ đề của người dùng
-CREATE TABLE UserTopic (
-    UserTopic_id INT IDENTITY(1,1) PRIMARY KEY, -- id tự động tăng cho chủ đề của người dùng
-    User_id INT NOT NULL, -- id của người dùng, không được null
-    Topic_id INT NOT NULL, -- id của chủ đề, không được null
-    FOREIGN KEY (User_id) REFERENCES Users(User_id), -- Khóa ngoại tham chiếu đến người dùng
-    FOREIGN KEY (Topic_id) REFERENCES Topic(Topic_id) -- Khóa ngoại tham chiếu đến chủ đề
-);
-GO
+
 -- Tạo bảng Group: lưu thông tin về nhóm
 CREATE TABLE [Group] (
     Group_id INT IDENTITY(1,1) PRIMARY KEY, -- id tự động tăng cho nhóm
@@ -257,7 +249,7 @@ CREATE TABLE Post (
     Content NVARCHAR(255) NOT NULL, -- Nội dung bài viết
     createDate DATETIME DEFAULT GETDATE(), -- Ngày tạo bài viết, mặc định là ngày hiện tại
     Status NVARCHAR(50), -- Trạng thái của bài viết
-postStatus NVARCHAR(50), -- Trạng thái bài viết (duyệt, chưa duyệt)
+	postStatus NVARCHAR(50), -- Trạng thái bài viết (duyệt, chưa duyệt)
     Reason NVARCHAR(255), -- Lý do (nếu có) của trạng thái bài viết
 	FOREIGN KEY (User_id) REFERENCES Users(User_id), -- Khóa ngoại tham chiếu đến người đăng bài viết
     FOREIGN KEY (Group_id) REFERENCES [Group](Group_id), -- Khóa ngoại tham chiếu đến nhóm
@@ -307,7 +299,7 @@ CREATE TABLE UserFollow (
     Topic_id INT, -- id của chủ đề được theo dõi
     FOREIGN KEY (User_id) REFERENCES Users(User_id), -- Tham chiếu khóa ngoại tới bảng Users
     FOREIGN KEY (Event_id) REFERENCES Event(Event_id), -- Tham chiếu khóa ngoại tới bảng Event
-FOREIGN KEY (Topic_id) REFERENCES Topic(Topic_id) -- Tham chiếu khóa ngoại tới bảng Topic
+	FOREIGN KEY (Topic_id) REFERENCES Topic(Topic_id) -- Tham chiếu khóa ngoại tới bảng Topic
 );
 GO
 CREATE TABLE Upload (
@@ -316,10 +308,48 @@ CREATE TABLE Upload (
 	Event_id INT,
 	Product_id INT,
     UploadPath NVARCHAR(255) NOT NULL, -- Đường dẫn hoặc tên file của ảnh
-    FOREIGN KEY (Product_id) REFERENCES Product(Product_id), -- Khóa ngoại tham chiếu đến bài viết
+	FOREIGN KEY (Product_id) REFERENCES Product(Product_id), -- Khóa ngoại tham chiếu đến bài viết
     FOREIGN KEY (Post_id) REFERENCES Post(Post_id), -- Khóa ngoại tham chiếu đến bài viết
     FOREIGN KEY (Event_id) REFERENCES Event(Event_id) -- Khóa ngoại tham chiếu đến bài viết
 );
+GO
+CREATE OR ALTER VIEW GroupView AS
+SELECT 
+    g.Group_id,
+    g.Creater_id,
+    g.Group_name,
+    g.Group_description,
+    g.Image,
+	g.Status as Group_status,
+    mg.MemberGroup_id,
+	mg.Status,
+    u.User_id,
+    u.User_email,
+    u.User_fullName,
+    u.User_avatar,
+    u.User_activeStatus,
+    p.Post_id,
+    p.User_id AS Post_user_id,
+    p.Group_id AS Post_group_id,
+    p.Content AS Post_content,
+    p.createDate AS Post_createDate,
+    p.Status AS Post_status,
+    c.Comment_id,
+    c.Post_id AS Comment_post_id,
+    c.User_id AS Comment_user_id,
+    c.Content AS Comment_content,
+    c.Date AS Comment_date,
+    up.Upload_id,
+    up.Event_id,
+    up.UploadPath,
+    up.Post_id AS Upload_post_id,
+   (SELECT COUNT(*) FROM MemberGroup mg WHERE mg.Group_id = g.Group_id AND mg.Status IN ('approved', 'host')) AS memberCount -- Đếm số thành viên nhóm
+FROM [Group] g
+LEFT JOIN MemberGroup mg ON g.Group_id = mg.Group_id
+LEFT JOIN Users u ON mg.User_id = u.User_id
+LEFT JOIN Post p ON g.Group_id = p.Group_id
+LEFT JOIN Comment c ON p.Post_id = c.Post_id
+LEFT JOIN Upload up ON p.Post_id = up.Post_id;
 GO
 CREATE VIEW PostWithUploadAndComment AS
 SELECT 
@@ -442,13 +472,7 @@ INSERT INTO Topic (Topic_name, Description)
 VALUES 
 ('Technology', 'Discussions related to technology'),
 ('Food', 'Discussions related to food');
-GO
--- Chèn dữ liệu mẫu vào bảng UserTopic
-INSERT INTO UserTopic (User_id, Topic_id)
-VALUES 
-(1, 1),
-(2, 2),
-(3, 1);
+
 GO
 -- Chèn dữ liệu mẫu vào bảng Group
 INSERT INTO [Group] (Creater_id, Group_name, Group_description, Image, memberCount)
@@ -508,48 +532,11 @@ INSERT INTO Discount (Code, Owner_id, Shop_id, Discount_percent, Valid_from, Val
 VALUES ('DISCOUNT2025', Null, Null, 15.00, '2024-06-01', '2024-12-31', 100, 0, 500.00);
 INSERT INTO Discount (Code, Owner_id, Shop_id, Discount_percent, Valid_from, Valid_to, Usage_limit, Usage_count, Condition) 
 VALUES ('DISCOUNT2026', Null, 2, 15.00, '2024-06-01', '2024-12-31', 100, 0, 500.00);
-CREATE OR ALTER VIEW GroupView AS
-SELECT 
-    g.Group_id,
-    g.Creater_id,
-    g.Group_name,
-    g.Group_description,
-    g.Image,
-	g.Status as Group_status,
-    mg.MemberGroup_id,
-	mg.Status,
-    u.User_id,
-    u.User_email,
-    u.User_fullName,
-    u.User_avatar,
-    u.User_activeStatus,
-    p.Post_id,
-    p.User_id AS Post_user_id,
-    p.Group_id AS Post_group_id,
-    p.Content AS Post_content,
-    p.createDate AS Post_createDate,
-    p.Status AS Post_status,
-    c.Comment_id,
-    c.Post_id AS Comment_post_id,
-    c.User_id AS Comment_user_id,
-    c.Content AS Comment_content,
-    c.Date AS Comment_date,
-    up.Upload_id,
-    up.Event_id,
-    up.UploadPath,
-    up.Post_id AS Upload_post_id,
-   (SELECT COUNT(*) FROM MemberGroup mg WHERE mg.Group_id = g.Group_id AND mg.Status IN ('approved', 'host')) AS memberCount -- Đếm số thành viên nhóm
-FROM [Group] g
-LEFT JOIN MemberGroup mg ON g.Group_id = mg.Group_id
-LEFT JOIN Users u ON mg.User_id = u.User_id
-LEFT JOIN Post p ON g.Group_id = p.Group_id
-LEFT JOIN Comment c ON p.Post_id = c.Post_id
-LEFT JOIN Upload up ON p.Post_id = up.Post_id;
+
 SELECT * FROM PostWithUploadAndComment;
 -- Xem thông tin từ bảng Users
 SELECT * FROM Users;
 SELECT * FROM GroupView;
-
 -- Xem thông tin từ bảng FriendShip
 SELECT * FROM FriendShip;
 -- Xem thông tin từ bảng Notification

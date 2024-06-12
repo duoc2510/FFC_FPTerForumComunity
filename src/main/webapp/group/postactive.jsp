@@ -9,7 +9,6 @@
                                 <img src="${pageContext.request.contextPath}/${post.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
                             </a>
                         </c:when>
-
                         <c:otherwise>
                             <a href="${pageContext.request.contextPath}/group/profile?userId=${post.user.userId}&groupId=${group.groupId}">
                                 <img src="${pageContext.request.contextPath}/${post.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
@@ -18,7 +17,7 @@
                     </c:choose>
                 </div>
                 <div class="col-10">
-                    <h6 class="card-title fw-semibold mb-4 d-inline">${post.user.username}</h6>
+                    <h6 href="${pageContext.request.contextPath}/group/profile?userId=${member.user.userId}&groupId=${group.groupId} class="card-title fw-semibold mb-4 d-inline">${post.user.username}</h6>
                     <p class="s-4">${post.createDate}</p>
                 </div>
                 <c:if test="${post.user.userId == USER.userId}">

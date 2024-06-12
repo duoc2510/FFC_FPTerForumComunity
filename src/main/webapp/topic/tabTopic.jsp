@@ -29,12 +29,16 @@
             </li>
             <c:if test="${USER.userRole > 1}">
                 <li class="nav-item" role="presentation">
-                    <a href="#addTopicModal" data-bs-toggle="modal" class="nav-link">+</a>
+                    <a href="#addTopicModal" data-bs-toggle="modal" class="nav-link" id="addTopicButton">+</a>
                 </li>
             </c:if>
         </ul>
 
         <div class="tab-content">
+            <c:if test="${not empty msg}">
+                <div>${msg}</div>
+                <% session.removeAttribute("msg"); %>
+            </c:if>
             <c:forEach var="topic" items="${topics}">
                 <%@include file="postTopic.jsp"%>
             </c:forEach>
@@ -43,12 +47,10 @@
                 <%@include file="topicContent.jsp"%>
             </div>
             <%@include file="modal.jsp"%>
-
         </div>
     </div>
 </div>
 <script>
-
     let addTopicClickCount = 0; // Biến đếm số lần bấm nút "Add Topic"
 
     document.getElementById("add-topic-tab").addEventListener("click", function () {

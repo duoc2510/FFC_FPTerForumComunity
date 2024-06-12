@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -170,8 +171,10 @@ public class Post_DB implements DBinfo {
                             int groupId = rsPost.getInt("Group_id");
                             int topicId = rsPost.getInt("Topic_id");
                             String content = rsPost.getString("Content");
-                            // Thay đổi ở đây: Sử dụng getTimestamp() thay vì getString()
-                            String createDate = rsPost.getString("createDate");
+                            // Sử dụng getTimestamp() thay vì getString()
+                            Timestamp createDateTimestamp = rsPost.getTimestamp("createDate");
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                            String createDate = dateFormat.format(createDateTimestamp);
                             String status = rsPost.getString("Status");
                             String postStatus = rsPost.getString("postStatus");
                             String reason = rsPost.getString("Reason");
@@ -195,7 +198,6 @@ public class Post_DB implements DBinfo {
         Post post = null;
         String selectPostQuery = "SELECT Post_id, User_id, Group_id, Topic_id, Content, createDate, Status, postStatus, Reason, UploadPath "
                 + "FROM Post WHERE Post_id = ?";
-
         try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement pstmtPost = con.prepareStatement(selectPostQuery)) {
             pstmtPost.setInt(1, postId);
             try (ResultSet rsPost = pstmtPost.executeQuery()) {
@@ -234,8 +236,10 @@ public class Post_DB implements DBinfo {
                 int groupId = rs.getInt("Group_id");
                 int topicId = rs.getInt("Topic_id");
                 String content = rs.getString("Content");
-                String createDate = rs.getString("createDate");
                 // Sử dụng getTimestamp() thay vì getString()
+                Timestamp createDateTimestamp = rs.getTimestamp("createDate");
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                String createDate = dateFormat.format(createDateTimestamp);
                 String status = rs.getString("Status");
                 String postStatus = rs.getString("postStatus");
                 String reason = rs.getString("Reason");
@@ -408,14 +412,15 @@ public class Post_DB implements DBinfo {
         return success;
     }
 
-    public static boolean updatePostStatus(int postId, String newStatus) {
+    public static boolean updatePostStatus(int postId, String newStatus, String Reason) {
         boolean success = false;
-        String updateStatusQuery = "UPDATE Post SET Status = ? WHERE Post_id = ?";
+        String updateStatusQuery = "UPDATE Post SET Status = ?, Reason = ? WHERE Post_id = ?";
 
         try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass)) {
             try (PreparedStatement updateStatusStmt = conn.prepareStatement(updateStatusQuery)) {
                 updateStatusStmt.setString(1, newStatus);
-                updateStatusStmt.setInt(2, postId);
+                updateStatusStmt.setString(2, Reason);
+                updateStatusStmt.setInt(3, postId);
                 int rowsUpdated = updateStatusStmt.executeUpdate();
                 success = (rowsUpdated > 0);
 

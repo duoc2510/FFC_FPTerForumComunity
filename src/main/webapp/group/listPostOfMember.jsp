@@ -106,7 +106,7 @@
                     </c:if>
                     <div>
                         <c:forEach var="post" items="${posts}">
-                            <c:if test="${post.groupId == group.groupId}">
+                            <c:if test="${post.groupId == group.groupId && post.status eq 'Active'}">
                                 <div class="col-lg-12">
                                     <div class="card w-100">
                                         <div class="card-body p-4">

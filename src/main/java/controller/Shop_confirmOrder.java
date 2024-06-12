@@ -93,54 +93,87 @@ public class Shop_confirmOrder extends HttpServlet {
         if (discountSelect != null && !discountSelect.isEmpty()) {
             discountId = Integer.parseInt(discountSelect);
         }
+
         switch (action) {
             case "confirm1":
+                boolean check = false;
+                Order order1 = sdb.getOrderHasStatusIsNullByUserID(user.getUserId());
+                ArrayList<OrderItem> orderitemlist2 = sdb.getAllOrderItemByOrderIdHasStatusIsNull(order1.getOrder_ID());
+                for (OrderItem od : orderitemlist2) {
+                    Product p = sdb.getProductByID(od.getProductID());
+                    if (p.getQuantity() == 0) {
+                        check = true;
+                        break; // Stop the loop when a product is out of stock
+                    }
+                }
+                if (!check) {
+                    // If no products are out of stock, proceed to confirm the order
+                    request.setAttribute("fullname", fullname);
+                    request.setAttribute("phone", phone);
+                    request.setAttribute("campus", campus);
+                    request.setAttribute("note", note);
+                    request.setAttribute("discountId", discountId);
+                    request.setAttribute("total", total);
+                    request.setAttribute("date", getCurrentDate());
+                    request.setAttribute("shopid", shopid);
 
-                request.setAttribute("fullname", fullname);
-                request.setAttribute("phone", phone);
-                request.setAttribute("campus", campus);
-                request.setAttribute("note", note);
-                request.setAttribute("discountId", discountId);
-                request.setAttribute("total", total);
-                request.setAttribute("date", getCurrentDate());
-                request.setAttribute("shopid", shopid);
-
-                request.getRequestDispatcher("/marketplace/confirm.jsp").forward(request, response);
+                    request.getRequestDispatcher("/marketplace/confirm.jsp").forward(request, response);
+                } else {
+                    // If any products are out of stock, redirect to the cart page with an error message
+                    response.sendRedirect("cart?error=Your+Cart+Contains+Sold+Out+Product!");
+                    return;
+                }
                 break;
+
             case "confirm2":
+                boolean check2 = false;
                 Order order = sdb.getOrderHasStatusIsNullByUserID(user.getUserId());
                 ArrayList<OrderItem> orderitemlist1 = sdb.getAllOrderItemByOrderIdHasStatusIsNull(order.getOrder_ID());
                 for (OrderItem ot : orderitemlist1) {
                     Product p = sdb.getProductByID(ot.getProductID());
-                    p.setQuantity(p.getQuantity() - 1);
-                    sdb.updateProduct(p);
-
+                    if (p.getQuantity() == 0) {
+                        check2 = true;
+                        break; // Stop the loop when a product is out of stock
+                    }
                 }
-                if (discountId != 0) {
-                    Discount d = sdb.getDiscountByID(discountId);
-                    sdb.updateUsageLimit(discountId, d.getUsageLimit() - 1);
-                    sdb.updateUsageCount(discountId, d.getUsageCount() + 1);
+                if (!check2) {
+                    // If no products are out of stock, proceed to update the order
+                    for (OrderItem ot : orderitemlist1) {
+                        Product p = sdb.getProductByID(ot.getProductID());
+                        p.setQuantity(p.getQuantity() - ot.getQuantity()); // Reduce the quantity by the amount ordered
+                        sdb.updateProduct(p);
+                    }
+                    if (discountId != 0) {
+                        Discount d = sdb.getDiscountByID(discountId);
+                        sdb.updateUsageLimit(discountId, d.getUsageLimit() - 1);
+                        sdb.updateUsageCount(discountId, d.getUsageCount() + 1);
+                    }
+                    order.setReceiverPhone(phone);
+                    order.setDiscountid(discountId);
+                    order.setNote(note);
+                    order.setTotal(total);
+                    order.setStatus("Pending");
+                    sdb.updateOrderbyID(order);
+
+                    // Create a new order for the user
+                    Order newOrder = new Order(user.getUserId(), 1, null, "null", 0, 1, null, null, 5, null);
+                    sdb.addOrder(newOrder);
+
+                    // Retrieve the new order and set it in the session
+                    Order ordernew = sdb.getOrderHasStatusIsNullByUserID(user.getUserId());
+                    ArrayList<OrderItem> orderitemlist = sdb.getAllOrderItemByOrderIdHasStatusIsNull(ordernew.getOrder_ID());
+                    request.getSession().setAttribute("ORDER", ordernew);
+                    request.getSession().setAttribute("ORDERITEMLIST", orderitemlist);
+
+                    // Redirect to the allshop page with a success message
+                    response.sendRedirect("allshop?message=Thanks+for+your+order");
+                } else {
+                    // If any products are out of stock, redirect to the cart page with an error message
+                    response.sendRedirect("cart?error=Your+Cart+Contains+Sold+Out+Product!");
+                    return;
                 }
-                order.setReceiverPhone(phone);
-                order.setDiscountid(discountId);
-                order.setNote(note);
-                order.setTotal(total);
-                order.setStatus("Pending");
-                sdb.updateOrderbyID(order);
-
-                Order o = new Order(user.getUserId(), 1, null, "null", 0, 1, null, null, 5, null);
-                sdb.addOrder(o);
-
-                Order ordernew = sdb.getOrderHasStatusIsNullByUserID(user.getUserId());
-                ArrayList<OrderItem> orderitemlist = sdb.getAllOrderItemByOrderIdHasStatusIsNull(ordernew.getOrder_ID());
-                request.getSession().setAttribute("ORDER", ordernew);
-                request.getSession().setAttribute("ORDERITEMLIST", orderitemlist);
-//                request.setAttribute("message", "Order thành công!");
-//                request.getRequestDispatcher("/marketplace/allShop.jsp").forward(request, response);
-                response.sendRedirect("allshop?message=Thanks+for+your+order");
                 break;
         }
-
     }
 
     public static String getCurrentDate() {

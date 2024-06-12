@@ -106,10 +106,21 @@ public class Shop_cart extends HttpServlet {
                         boolean check = false;
                         for (OrderItem item : orderitemlist) {
                             if (item.getProductID() == product.getProductId()) {
-                                item.setQuantity(item.getQuantity() + quantity);
-                                sdb.updateOrderItem(item);
-                                check = true;
+                                // Check if the quantity does not exceed the available quantity of the product
+                                if (item.getQuantity() + quantity <= product.getQuantity()) {
+                                    item.setQuantity(item.getQuantity() + quantity);
+                                    sdb.updateOrderItem(item);
+                                    check = true;
+                                } else {
+                                    // If quantity exceeds available quantity, set an error message
+                                    request.setAttribute("shopid", shopid);
+                                    request.setAttribute("productid", id);
+                                    request.setAttribute("message", "The quantity of this product is now maximum.");
+                                    request.getRequestDispatcher("/marketplace/productDetail.jsp").forward(request, response);
+                                    return;
+                                }
                             }
+
                         }
                         if (!check) {
                             OrderItem item = new OrderItem(1, order.getOrder_ID(), product.getProductId(), quantity, product.getPrice());
@@ -153,23 +164,55 @@ public class Shop_cart extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //delete product move cart
-        String id1 = request.getParameter("id");
-        int orderitemid = Integer.parseInt(id1);
-        Shop_DB sdb = new Shop_DB();
-        HttpSession session = request.getSession();
-        sdb.deleteOrderItemByID(orderitemid);
-        Order order = (Order) session.getAttribute("ORDER");
-        ArrayList<OrderItem> orderitemlistnew = sdb.getAllOrderItemByOrderIdHasStatusIsNull(order.getOrder_ID());
-        session.setAttribute("ORDERITEMLIST", orderitemlistnew);
-        session.setAttribute("ORDER", order);
+        // Lấy action từ request để phân biệt các hành động
+        String action = request.getParameter("action");
+        System.out.println("Received action: " + action); // Debugging log
 
-        // Trả về phản hồi JSON
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        PrintWriter out = response.getWriter();
-        out.print("{\"success\": true}");
-        out.flush();
+        if (action != null && !action.isEmpty()) {
+            if (action.equals("delete")) {
+                String id1 = request.getParameter("id");
+                int orderitemid = Integer.parseInt(id1);
+                System.out.println("Deleting OrderItem ID: " + orderitemid); // Debugging log
+                Shop_DB sdb = new Shop_DB();
+                HttpSession session = request.getSession();
+                sdb.deleteOrderItemByID(orderitemid);
+                Order order = (Order) session.getAttribute("ORDER");
+                ArrayList<OrderItem> orderitemlistnew = sdb.getAllOrderItemByOrderIdHasStatusIsNull(order.getOrder_ID());
+                session.setAttribute("ORDERITEMLIST", orderitemlistnew);
+                session.setAttribute("ORDER", order);
+
+                // Trả về phản hồi JSON
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                PrintWriter out = response.getWriter();
+                out.print("{\"success\": true}");
+                out.flush();
+            } else if (action.equals("update")) {
+                String id = request.getParameter("orderItemId");
+                int orderItemId = Integer.parseInt(id);
+                int newQuantity = Integer.parseInt(request.getParameter("newQuantity"));
+                System.out.println("Updating OrderItem ID: " + orderItemId + " to quantity: " + newQuantity); // Debugging log
+
+                Shop_DB sdb = new Shop_DB();
+                HttpSession session = request.getSession();
+                sdb.updateOrderItemQuantity(orderItemId, newQuantity);
+                Order order = (Order) session.getAttribute("ORDER");
+                ArrayList<OrderItem> orderitemlistnew = sdb.getAllOrderItemByOrderIdHasStatusIsNull(order.getOrder_ID());
+                session.setAttribute("ORDERITEMLIST", orderitemlistnew);
+                session.setAttribute("ORDER", order);
+
+                // Trả về phản hồi JSON
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                PrintWriter out = response.getWriter();
+                out.print("{\"success\": true}");
+                out.flush();
+            } else {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
+            }
+        } else {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No action provided");
+        }
     }
 
     /**

@@ -9,11 +9,10 @@
     <c:if test="${USER.userRole > 1}">
         <th scope="col">Action</th>
     </c:if>
-</tr>
+</tr>   
 </thead>
 <!-- Table body -->
 <tbody>
-    <!-- Iterate over topics and display each topic as a row -->
 <c:forEach var="topic" items="${topics}" varStatus="loop">
     <tr id="topic-row-${topic.topicId}">
         <th scope="row">${loop.index + 1}</th>
@@ -21,9 +20,9 @@
         <td>${topic.description}</td>
     <c:if test="${USER.userRole > 1}">
         <td>
-            <!-- Delete form for each topic -->
-            <form action="deleteTopic" method="get">
+            <form action="home" method="post">
                 <input type="hidden" name="topicId" value="${topic.topicId}">
+                <input type="hidden" name="action" value="deletetopic">
                 <button type="submit" class="btn btn-danger">Delete</button>
             </form>
         </td>

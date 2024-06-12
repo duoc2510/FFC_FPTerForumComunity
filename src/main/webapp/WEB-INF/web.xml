@@ -4,7 +4,6 @@
         <param-name>contextConfigLocation</param-name>
         <param-value>/WEB-INF/applicationContext.xml</param-value>
     </context-param>
-    
     <filter>
         <filter-name>AuthenticateFilter</filter-name>
         <filter-class>view.AuthenticateFilter</filter-class>
@@ -23,14 +22,16 @@
     </filter-mapping>
     <filter-mapping>
         <filter-name>AuthenticateFilter</filter-name>
+        <url-pattern>/manager/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>AuthenticateFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-    
     <listener>
         <description>ServletContextListener</description>
         <listener-class>model.DAO.DBListener</listener-class>
     </listener>
-    
     <!-- Các servlet -->
     <servlet>
         <servlet-name>User_marketplace</servlet-name>
@@ -78,7 +79,7 @@
     </servlet>
     <servlet>
         <servlet-name>UserNewPass</servlet-name>
-<servlet-class>controller.User_NewPass</servlet-class>
+        <servlet-class>controller.User_NewPass</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>LoginGoogleHandler</servlet-name>
@@ -125,14 +126,6 @@
         <servlet-class>controller.Group_userProfile</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>Topic_deleteTopic</servlet-name>
-        <servlet-class>controller.Topic_deleteTopic</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>Topic_addTopic</servlet-name>
-        <servlet-class>controller.Topic_addTopic</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>Event_addEvent</servlet-name>
         <servlet-class>controller.Event_addEvent</servlet-class>
     </servlet>
@@ -161,7 +154,7 @@
         <servlet-class>controller.Shop_product</servlet-class>
     </servlet>
     <servlet>
-<servlet-name>Shop_shopDetail</servlet-name>
+        <servlet-name>Shop_shopDetail</servlet-name>
         <servlet-class>controller.Shop_shopDetail</servlet-class>
     </servlet>
     <servlet>
@@ -176,8 +169,27 @@
         <servlet-name>Shop_history</servlet-name>
         <servlet-class>controller.Shop_history</servlet-class>
     </servlet>
-    
     <!-- Mapping cho các servlet -->
+    <servlet>
+        <servlet-name>Advertising_allAds</servlet-name>
+        <servlet-class>controller.Advertising_allAds</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Advertising_boost</servlet-name>
+        <servlet-class>controller.Advertising_boost</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Manager_report</servlet-name>
+        <servlet-class>controller.Manager_report</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Manager_post</servlet-name>
+        <servlet-class>controller.Manager_post</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Post_detail</servlet-name>
+        <servlet-class>controller.Post_detail</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PostComment</servlet-name>
         <url-pattern>/comment</url-pattern>
@@ -244,7 +256,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Post_managerAprrove</servlet-name>
-<url-pattern>/manager/postAprrove</url-pattern>
+        <url-pattern>/manager/postAprrove</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>User_rank</servlet-name>
@@ -253,14 +265,6 @@
     <servlet-mapping>
         <servlet-name>User_lostAccount</servlet-name>
         <url-pattern>/lostAccount</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Topic_deleteTopic</servlet-name>
-        <url-pattern>/deleteTopic</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Topic_addTopic</servlet-name>
-        <url-pattern>/addTopic</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Event_addEvent</servlet-name>
@@ -343,12 +347,27 @@
         <url-pattern>/search</url-pattern>
     </servlet-mapping>
     <!-- Danh sách file chào mừng -->
+    <servlet-mapping>
+        <servlet-name>Advertising_allAds</servlet-name>
+        <url-pattern>/advertising</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Advertising_boost</servlet-name>
+        <url-pattern>/advertising/boost</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Manager_report</servlet-name>
+        <url-pattern>/manager/report</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Manager_post</servlet-name>
+        <url-pattern>/manager/post</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Post_detail</servlet-name>
+        <url-pattern>/post/detail</url-pattern>
+    </servlet-mapping>
     <welcome-file-list>
         <welcome-file>home</welcome-file>
     </welcome-file-list>
 </web-app>
-
-
-
-
-
