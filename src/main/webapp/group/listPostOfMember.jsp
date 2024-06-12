@@ -80,14 +80,15 @@
                             <div class="bg-light pt-4 px-4 d-flex justify-content-between text-center ">
                                 <div class="media-body mb-5 text-white">
                                     <h4 class="mt-0 mb-0">${user.userFullName}</h4>
+                                    <c:if test="${group.createrId == user.userId}">
+                                            <button class="btn btn-info btn-sm btn-block edit-cover my-2" disabled>Host Group</button>
+                                        </c:if>
                                 </div>
                                 <ul class="list-inline mb-0">
                                     <li class="list-inline-item">
-                                        <h5 class="font-weight-bold mb-0 d-block">${postCountGroup}</h5><small class="text-muted"><i class="fas fa-image mr-1"></i>Post in group</small>
+                                        <h5 class="font-weight-bold mb-0 d-block">${postCount}</h5><small class="text-muted"><i class="fas fa-image mr-1"></i>Post in group</small>
                                     </li>
-                                    <li class="list-inline-item">
-                                        <h5 class="font-weight-bold mb-0 d-block">${cmtInGroup}</h5><small class="text-muted"><i class="fas fa-user mr-1"></i>Comment in group</small>
-                                    </li>    
+              
                                 </ul>
                             </div>
                         </div>

@@ -425,7 +425,7 @@ public class Group_DB implements DBinfo {
     }
 
     public static int countPostsInGroup(int groupId) {
-        String countQuery = "SELECT COUNT(*) AS postCount FROM Post WHERE Group_id = ?";
+        String countQuery = "SELECT COUNT(*) AS postCount FROM Post WHERE Group_id = ? AND Status ='Active'";
         int postCount = 0;
 
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(countQuery)) {
@@ -547,4 +547,54 @@ public class Group_DB implements DBinfo {
         return posts;
 
     }
+    public static int countPostsInGroupByUser(int groupId, int userId) {
+    String postCountQuery = "SELECT COUNT(*) AS postCount " +
+                            "FROM Post " +
+                            "WHERE Group_id = ? AND User_id = ? AND Status = 'Active'";
+    
+    int postCount = 0;
+
+    try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass);
+         PreparedStatement postStmt = con.prepareStatement(postCountQuery)) {
+         
+        postStmt.setInt(1, groupId);
+        postStmt.setInt(2, userId);
+
+        try (ResultSet rs = postStmt.executeQuery()) {
+            if (rs.next()) {
+                postCount = rs.getInt("postCount");
+            }
+        }
+    } catch (SQLException ex) {
+        Logger.getLogger(Group_DB.class.getName()).log(Level.SEVERE, null, ex);
+    }
+
+    return postCount;
+}
+public static int countCommentsInGroupByUser(int groupId, int userId) {
+    String commentCountQuery = "SELECT COUNT(*) AS commentCount " +
+                               "FROM Comment " +
+                               "JOIN Post ON Comment.Post_id = Post.Post_id " +
+                               "WHERE Post.Group_id = ? AND Comment.User_id = ?";
+    
+    int commentCount = 0;
+
+    try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass);
+         PreparedStatement commentStmt = con.prepareStatement(commentCountQuery)) {
+         
+        commentStmt.setInt(1, groupId);
+        commentStmt.setInt(2, userId);
+
+        try (ResultSet rs = commentStmt.executeQuery()) {
+            if (rs.next()) {
+                commentCount = rs.getInt("commentCount");
+            }
+        }
+    } catch (SQLException ex) {
+        Logger.getLogger(Group_DB.class.getName()).log(Level.SEVERE, null, ex);
+    }
+
+    return commentCount;
+}
+
 }

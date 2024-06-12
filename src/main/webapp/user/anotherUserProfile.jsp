@@ -111,6 +111,12 @@
                                                 <input type="hidden" name="action" value="acceptFr"> 
                                                 <button type="submit" class="btn btn-success btn-sm btn-block edit-cover mx-2">Accept friend</button>
                                             </form>
+                                           <form action="${pageContext.request.contextPath}/friends" method="post" class="d-inline">
+                                                <input type="hidden" name="friendId" value="${user.userId}">
+                                                <input type="hidden" name="friendName" value="${user.username}">
+                                                <input type="hidden" name="action" value="denyFr"> 
+                                                <button type="submit" class="btn btn-danger btn-sm btn-block edit-cover mx-2">Deny friend</button>
+                                            </form>
                                         </c:when>
                                         <c:when test="${areFriend}">
                                             <div class="dropdown d-inline dropup">

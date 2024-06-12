@@ -65,17 +65,65 @@ public class User_search extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        //        int groupId = Integer.parseInt(request.getParameter("groupId"));
-//
-//        boolean success = Group_DB.joinGroup(userId, groupId);
-//
-//        if (success) {
-//            session.setAttribute("message", "You have successfully registered to join the group. Please wait for approval.");
-//            response.sendRedirect("search"); // Redirect to group details page
-//        } else {
-//            session.setAttribute("error", "Failed to join the group. Please try again.");
-//            response.sendRedirect("search"); // Redirect back to groups page with error
-//        }
+      HttpSession session = request.getSession();
+    String query = request.getParameter("query"); // Lấy query từ yêu cầu HTTP
+
+    if (query == null || query.trim().isEmpty()) {
+        query = (String) session.getAttribute("query"); // Nếu không có query trong request, lấy từ session
+        if (query == null || query.trim().isEmpty()) {
+            query = "";
+        }
+    }
+
+    User userPersonal = (User) session.getAttribute("USER");
+    if (userPersonal == null) {
+        // Chuyển hướng đến trang đăng nhập nếu người dùng chưa đăng nhập
+        response.sendRedirect("login.jsp");
+        return;
+    }
+    int userId = userPersonal.getUserId();
+
+    System.out.println("Original query: " + query);
+    String lowercaseQuery = removeDiacritics(query.toLowerCase());
+    System.out.println("Processed query: " + lowercaseQuery);
+
+    List<User> allUsers = User_DB.getAllUsers(); // Giả sử phương thức này được thực hiện
+    List<Group> allGroups = Group_DB.getAllGroups(); // Giả sử phương thức này được thực hiện
+
+    List<User> filteredUsers = allUsers.stream()
+            .filter(user -> removeDiacritics(user.getUserFullName().toLowerCase()).contains(lowercaseQuery))
+            .collect(Collectors.toList());
+
+    List<Group> filteredGroups = allGroups.stream()
+            .filter(group -> removeDiacritics(group.getGroupName().toLowerCase()).contains(lowercaseQuery) && !"inactive".equalsIgnoreCase(group.getStatus()))
+            .collect(Collectors.toList());
+
+    for (Group group : filteredGroups) {
+        boolean isPending = Group_DB.isUserPendingApproval(userId, group.getGroupId());
+        boolean isBanned = Group_DB.isUserBan(userId, group.getGroupId());
+        boolean isApproved = Group_DB.isUserApproved(userId, group.getGroupId());
+        group.setPending(isPending);
+        group.setIsBanned(isBanned);
+        group.setIsApproved(isApproved);
+    }
+
+    for (User user : filteredUsers) {
+        String requestStatus = User_DB.getFriendRequestStatus(userId, user.getUsername());
+        if (requestStatus != null) {
+            user.setIsPending(requestStatus.equals("pending"));
+            user.setIsApproved(requestStatus.equals("accepted"));
+            user.setIsCancelled(requestStatus.equals("cancelled"));
+            user.setIsPendingRq(User_DB.hasFriendRequestFromUser(userId, user.getUsername()));
+        }
+    }
+
+    session.setAttribute("query", query); // Lưu query vào session
+    session.setAttribute("filteredUsers", filteredUsers);
+    session.setAttribute("filteredGroups", filteredGroups);
+
+    request.getRequestDispatcher("/user/searchResult.jsp").forward(request, response);
+
+       
     }
 
     public static String removeDiacritics(String s) {
@@ -93,48 +141,69 @@ public class User_search extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-      String query = request.getParameter("query");
-        HttpSession session = request.getSession(false);
+  protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+
+    HttpSession session = request.getSession();
+    String query = request.getParameter("query"); // Lấy query từ yêu cầu HTTP
+
+    if (query == null || query.trim().isEmpty()) {
+        query = (String) session.getAttribute("query"); // Nếu không có query trong request, lấy từ session
         if (query == null || query.trim().isEmpty()) {
             query = "";
         }
-
-        User userPersonal = (User) request.getSession().getAttribute("USER");
-        int userId = userPersonal.getUserId();
-
-        
-        System.out.println("Original query: " + query);
-        String lowercaseQuery = removeDiacritics(query.toLowerCase());
-        System.out.println("Processed query: " + lowercaseQuery);
-
-        List<User> allUsers = User_DB.getAllUsers(); // Assume this method is implemented
-        List<Group> allGroups = Group_DB.getAllGroups(); // Assume this method is implemented
-
-        List<User> filteredUsers = allUsers.stream()
-                .filter(user -> removeDiacritics(user.getUserFullName().toLowerCase()).contains(lowercaseQuery))
-                .collect(Collectors.toList());
-
-        List<Group> filteredGroups = allGroups.stream()
-                .filter(group -> removeDiacritics(group.getGroupName().toLowerCase()).contains(lowercaseQuery) && !"inactive".equalsIgnoreCase(group.getStatus()))
-                .collect(Collectors.toList());
-        
-        for (Group group : filteredGroups) {
-            boolean isPending = Group_DB.isUserPendingApproval(userId, group.getGroupId());
-            boolean isBanned = Group_DB.isUserBan(userId, group.getGroupId());
-            boolean isApproved = Group_DB.isUserApproved(userId, group.getGroupId());
-            group.setPending(isPending);
-            group.setIsBanned(isBanned);
-            group.setIsApproved(isApproved);
-
-        }
-       
-        session.setAttribute("filteredUsers", filteredUsers);
-        session.setAttribute("filteredGroups", filteredGroups);
-
-        request.getRequestDispatcher("/user/searchResult.jsp").forward(request, response);
     }
+
+    User userPersonal = (User) session.getAttribute("USER");
+    if (userPersonal == null) {
+        // Chuyển hướng đến trang đăng nhập nếu người dùng chưa đăng nhập
+        response.sendRedirect("login.jsp");
+        return;
+    }
+    int userId = userPersonal.getUserId();
+
+    System.out.println("Original query: " + query);
+    String lowercaseQuery = removeDiacritics(query.toLowerCase());
+    System.out.println("Processed query: " + lowercaseQuery);
+
+    List<User> allUsers = User_DB.getAllUsers(); // Giả sử phương thức này được thực hiện
+    List<Group> allGroups = Group_DB.getAllGroups(); // Giả sử phương thức này được thực hiện
+
+    List<User> filteredUsers = allUsers.stream()
+            .filter(user -> removeDiacritics(user.getUserFullName().toLowerCase()).contains(lowercaseQuery))
+            .collect(Collectors.toList());
+
+    List<Group> filteredGroups = allGroups.stream()
+            .filter(group -> removeDiacritics(group.getGroupName().toLowerCase()).contains(lowercaseQuery) && !"inactive".equalsIgnoreCase(group.getStatus()))
+            .collect(Collectors.toList());
+
+    for (Group group : filteredGroups) {
+        boolean isPending = Group_DB.isUserPendingApproval(userId, group.getGroupId());
+        boolean isBanned = Group_DB.isUserBan(userId, group.getGroupId());
+        boolean isApproved = Group_DB.isUserApproved(userId, group.getGroupId());
+        group.setPending(isPending);
+        group.setIsBanned(isBanned);
+        group.setIsApproved(isApproved);
+    }
+
+    for (User user : filteredUsers) {
+        String requestStatus = User_DB.getFriendRequestStatus(userId, user.getUsername());
+        if (requestStatus != null) {
+            user.setIsPending(requestStatus.equals("pending"));
+            user.setIsApproved(requestStatus.equals("accepted"));
+            user.setIsCancelled(requestStatus.equals("cancelled"));
+            user.setIsPendingRq(User_DB.hasFriendRequestFromUser(userId, user.getUsername()));
+        }
+    }
+
+    session.setAttribute("query", query); // Lưu query vào session
+    session.setAttribute("filteredUsers", filteredUsers);
+    session.setAttribute("filteredGroups", filteredGroups);
+
+    request.getRequestDispatcher("/user/searchResult.jsp").forward(request, response);
+}
+
+
 
     /**
      * Returns a short description of the servlet.

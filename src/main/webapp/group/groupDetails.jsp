@@ -232,7 +232,7 @@
                                                             </a>
                                                         </td>
                                                         <td>
-                                                            <c:if test="${member.user.userId != USER.userId && member.user.userId != group.createrId}">
+                                                            <c:if test="${USER.userId == group.createrId && USER.userId != member.user.userId}">
                                                                 <form id="kickForm${member.user.userId}" action="${pageContext.request.contextPath}/group/detail?groupId=${group.groupId}" method="post" style="display:inline;">
                                                                     <input type="hidden" name="groupId" value="${group.groupId}">
                                                                     <input type="hidden" name="userId" value="${member.user.userId}">
@@ -463,5 +463,12 @@
             var confirmDelete = confirm("You are the last member of the group. Are you sure you want to delete it?");
             return confirmDelete; // Allow or prevent form submission based on user's choice
         }
+    }
+    function confirmKick(button) {
+        return confirm("Are you sure you want to kick this member?");
+    }
+
+    function confirmBan(button) {
+        return confirm("Are you sure you want to ban this member?");
     }
 </script>

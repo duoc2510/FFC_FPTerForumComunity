@@ -87,7 +87,7 @@
 
         
                                     <li class="list-inline-item">
-                                        <a href="friends" class="btn btn-outline-dark btn-sm">Friends</a>
+                                        <a href="friends" class="btn btn-outline-dark btn-sm">List friends</a>
                                     </li>
                                     <li class="list-inline-item">
                                         <h5 class="font-weight-bold mb-0 d-block">${postCount}</h5><small class="text-muted"><i class="fas fa-image mr-1"></i>Posts</small>

@@ -82,12 +82,15 @@ public class User_friendHandel extends HttpServlet {
         String friendName = request.getParameter("friendName");
         boolean success = false;
         String redirectUrl = "";
-
         switch (action) {
             case "add":
                 success = User_DB.addFriendRequest(userId, friendId);
                 redirectUrl = request.getContextPath() + "/profile?username=" + friendName;
                 break;
+             case "addFrSearch":
+                success = User_DB.addFriendRequest(userId, friendId);
+                redirectUrl = request.getContextPath() + "/search";
+                break;    
             case "unfriendProfile":
                 success = User_DB.unFriend(userId, friendId);
 
@@ -98,9 +101,17 @@ public class User_friendHandel extends HttpServlet {
 
                 redirectUrl = request.getContextPath() + "/friends";
                 break;
+            case "unfriendSearch":
+                success = User_DB.unFriend(userId, friendId);
+                redirectUrl = request.getContextPath() + "/search";
+                break;    
             case "cancel":
                 success = User_DB.cancelFriendRequest(userId, friendId);
                 redirectUrl = request.getContextPath() + "/profile?username=" + friendName;
+                break;
+            case "cancelFrSearch":
+                success = User_DB.cancelFriendRequest(userId, friendId);
+                redirectUrl = request.getContextPath() + "/search";
                 break;
             default:
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
@@ -108,13 +119,13 @@ public class User_friendHandel extends HttpServlet {
         }
 
         if (success) {
-        {
-            response.sendRedirect(redirectUrl); // Điều hướng đến trang thành công hoặc trang viewProfile
+            {
+                response.sendRedirect(redirectUrl); // Điều hướng đến trang thành công hoặc trang viewProfile
+            }
+        } else {
+            request.getRequestDispatcher("/user/error.jsp").forward(request, response); // Điều hướng đến trang lỗi
         }
-    } else {
-       request.getRequestDispatcher("/user/error.jsp").forward(request, response); // Điều hướng đến trang lỗi
     }
-   }
 
     /**
      * Returns a short description of the servlet.

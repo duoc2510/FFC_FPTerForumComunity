@@ -39,7 +39,7 @@ public class User_friends extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet User_friends</title>");            
+            out.println("<title>Servlet User_friends</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet User_friends at " + request.getContextPath() + "</h1>");
@@ -60,12 +60,12 @@ public class User_friends extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       HttpSession session = request.getSession(false); // Không tự động tạo session mới
+        HttpSession session = request.getSession(false); // Không tự động tạo session mới
         User user = (User) session.getAttribute("USER");
-         int postCount = User_DB.countPost(user.getUserEmail());
+        int postCount = User_DB.countPost(user.getUserEmail());
 
-                // Đặt các thuộc tính vào request
-                request.setAttribute("postCount", postCount);
+        // Đặt các thuộc tính vào request
+        request.setAttribute("postCount", postCount);
         // Ở đây không cần kiểm tra đăng nhập nữa do đã làm trong filter
         int userId = user.getUserId();
         List<User> pendingFriends = User_DB.getPendingFriendRequests(userId);
@@ -86,44 +86,57 @@ public class User_friends extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-    String action = request.getParameter("action");
-    HttpSession session = request.getSession(false);
-    User user = (User) session.getAttribute("USER");
-    int userId = user.getUserId();
-    int friendId = Integer.parseInt(request.getParameter("friendId"));
-     
-    boolean success = false;
-    String redirectUrl = "";
-    
-    switch (action) {
-       
-        case "accept":
-            success = User_DB.acceptFriendRequest(userId, friendId);
-            redirectUrl = request.getContextPath() + "/friends";
-            break;
-        case "deny":
-            success = User_DB.rejectFriendRequest(userId, friendId);
-             redirectUrl = request.getContextPath() + "/friends";
-            break;
-        case "acceptFr":
-            success = User_DB.acceptFriendRequest(userId, friendId);
-            String friendName = request.getParameter("friendName");
-            redirectUrl = request.getContextPath() + "/profile?username=" + friendName;
-            break;
-        default:
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
-            return;
-    }
 
-    if (success) {
-        response.sendRedirect(redirectUrl); // Điều hướng đến trang thành công hoặc trang viewProfile
-        
-    } else {
-        request.getRequestDispatcher("/user/error.jsp").forward(request, response); // Điều hướng đến trang lỗi
-    }
-        
-       
+        String action = request.getParameter("action");
+        HttpSession session = request.getSession(false);
+        User user = (User) session.getAttribute("USER");
+        int userId = user.getUserId();
+        int friendId = Integer.parseInt(request.getParameter("friendId"));
+
+        boolean success = false;
+        String redirectUrl = "";
+
+        switch (action) {
+
+            case "accept":
+                success = User_DB.acceptFriendRequest(userId, friendId);
+                redirectUrl = request.getContextPath() + "/friends";
+                break;
+            case "deny":
+                success = User_DB.rejectFriendRequest(userId, friendId);
+                redirectUrl = request.getContextPath() + "/friends";
+                break;
+            case "denyFr":
+                success = User_DB.rejectFriendRequest(userId, friendId);
+                String friendName = request.getParameter("friendName");
+                redirectUrl = request.getContextPath() + "/profile?username=" + friendName;
+                break;
+            case "denyFrSearch":
+                success = User_DB.rejectFriendRequest(userId, friendId);
+                redirectUrl = request.getContextPath() + "/search";
+                break;
+            case "acceptFr":
+                success = User_DB.acceptFriendRequest(userId, friendId);
+                String friendName2 = request.getParameter("friendName");
+                redirectUrl = request.getContextPath() + "/profile?username=" + friendName2;
+                break;
+            case "acceptFrSearch":
+                success = User_DB.acceptFriendRequest(userId, friendId);
+                redirectUrl = request.getContextPath() + "/search";
+                break;
+            default:
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action");
+                return;
+        }
+
+        if (success) {
+
+            response.sendRedirect(redirectUrl); // Điều hướng đến trang thành công 
+
+        } else {
+            request.getRequestDispatcher("/user/error.jsp").forward(request, response); // Điều hướng đến trang lỗi
+        }
+
     }
 
     /**

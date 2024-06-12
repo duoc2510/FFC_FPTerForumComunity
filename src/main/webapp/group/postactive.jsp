@@ -5,13 +5,13 @@
                 <div class="col-1 text-center mt-2">
                     <c:choose>
                         <c:when test="${post.userId == USER.userId}">
-                            <a href="${pageContext.request.contextPath}/profile">
+                            <a href="${pageContext.request.contextPath}/group/profile?userId=${post.user.userId}&groupId=${group.groupId}">
                                 <img src="${pageContext.request.contextPath}/${post.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
                             </a>
                         </c:when>
 
                         <c:otherwise>
-                            <a href="${pageContext.request.contextPath}/viewProfile?username=${post.user.username}">
+                            <a href="${pageContext.request.contextPath}/group/profile?userId=${post.user.userId}&groupId=${group.groupId}">
                                 <img src="${pageContext.request.contextPath}/${post.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
                             </a>
                         </c:otherwise>
