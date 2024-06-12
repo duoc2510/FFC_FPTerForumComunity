@@ -464,4 +464,11 @@
             return confirmDelete; // Allow or prevent form submission based on user's choice
         }
     }
+    function confirmKick(button) {
+        return confirm("Are you sure you want to kick this member?");
+    }
+
+    function confirmBan(button) {
+        return confirm("Are you sure you want to ban this member?");
+    }
 </script>

@@ -122,14 +122,6 @@
         <servlet-class>controller.Group_userProfile</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>Topic_deleteTopic</servlet-name>
-        <servlet-class>controller.Topic_deleteTopic</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>Topic_addTopic</servlet-name>
-        <servlet-class>controller.Topic_addTopic</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>Event_addEvent</servlet-name>
         <servlet-class>controller.Event_addEvent</servlet-class>
     </servlet>
@@ -181,6 +173,10 @@
     <servlet>
         <servlet-name>Advertising_boost</servlet-name>
         <servlet-class>controller.Advertising_boost</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Manager_report</servlet-name>
+        <servlet-class>controller.Manager_report</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>PostComment</servlet-name>
@@ -257,14 +253,6 @@
     <servlet-mapping>
         <servlet-name>User_lostAccount</servlet-name>
         <url-pattern>/lostAccount</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Topic_deleteTopic</servlet-name>
-        <url-pattern>/deleteTopic</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Topic_addTopic</servlet-name>
-        <url-pattern>/addTopic</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Event_addEvent</servlet-name>
@@ -354,6 +342,10 @@
     <servlet-mapping>
         <servlet-name>Advertising_boost</servlet-name>
         <url-pattern>/advertising/boost</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Manager_report</servlet-name>
+        <url-pattern>/manager/report</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>home</welcome-file>

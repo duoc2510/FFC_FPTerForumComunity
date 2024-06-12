@@ -109,16 +109,52 @@ public class home extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("USER");
-        int userId = user.getUserId();
+
         // Kiểm tra xem người dùng đã đăng nhập hay chưa
         if (user == null) {
             response.sendRedirect("login");
             return;
         }
-        // Nhận dữ liệu từ form
+
+        String action = request.getParameter("action");
+
+        if ("addtopic".equalsIgnoreCase(action)) {
+            addTopic(request, response, session);
+        } else if ("addpost".equalsIgnoreCase(action)) {
+            addPost(request, response, session, user);
+        } else if ("deletetopic".equalsIgnoreCase(action)) {
+            deleteTopic(request, response, session);
+        } else {
+            response.sendRedirect("home");
+        }
+    }
+
+    private void addTopic(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException {
+        String topicName = request.getParameter("topicName");
+        String description = request.getParameter("description");
+
+        Topic newTopic = new Topic();
+        newTopic.setTopicName(topicName);
+        newTopic.setDescription(description);
+
+        boolean isAdded = Topic_DB.addTopic(newTopic);
+
+        if (isAdded) {
+            session.setAttribute("msg", "Chủ đề đã được thêm thành công.");
+            session.removeAttribute("topics");
+        } else {
+            session.setAttribute("msg", "Có lỗi xảy ra khi thêm chủ đề.");
+        }
+        response.sendRedirect("home");
+    }
+
+    private void addPost(HttpServletRequest request, HttpServletResponse response, HttpSession session, User user) throws IOException {
+        int userId = user.getUserId();
         String topicIdStr = request.getParameter("topicId");
         String content = request.getParameter("content");
+
         int topicId = Integer.parseInt(topicIdStr);
+
         // Tạo đối tượng Post
         Post post = new Post();
         post.setUserId(userId);
@@ -134,6 +170,22 @@ public class home extends HttpServlet {
             e.printStackTrace();
             session.setAttribute("msg", "Có lỗi xảy ra khi thêm bài đăng.");
         }
+
+        response.sendRedirect("home");
+    }
+
+    private void deleteTopic(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws IOException {
+        int topicId = Integer.parseInt(request.getParameter("topicId"));
+        boolean deleteSuccess = Topic_DB.deleteTopic(topicId);
+
+        if (deleteSuccess) {
+            session.setAttribute("msg", "Chủ đề đã được xóa thành công.");
+            session.removeAttribute("topics");
+
+        } else {
+            session.setAttribute("msg", "Có lỗi xảy ra khi xóa chủ đề.");
+        }
+
         response.sendRedirect("home");
     }
 

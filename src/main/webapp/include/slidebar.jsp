@@ -1,5 +1,6 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <aside class="left-sidebar">
-    <!-- Sidebar scroll-->
+    <!-- Sidebar scroll-->  
     <div>
         <div class="brand-logo d-flex align-items-center justify-content-between">
             <a href="${pageContext.request.contextPath}/home" class="text-nowrap logo-img">
@@ -31,6 +32,30 @@
                     </a>
                 </li>
 
+                <c:if test="${USER.userRole == 2}">
+                    <li class="sidebar-item">
+                        <a class="sidebar-link has-arrow" href="javascript:void(0)" aria-expanded="false">
+                            <span>
+                                <i class="ti ti-users"></i>
+                            </span>
+                            <span class="hide-menu">Manager</span>
+                        </a>
+                        <ul aria-expanded="false" class="collapse  first-level">
+                            <li class="sidebar-item">
+                                <a href="${pageContext.request.contextPath}/manager/post" class="sidebar-link">
+                                    <span class="hide-menu">Approve Post</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a href="${pageContext.request.contextPath}/manager/report" class="sidebar-link">
+                                    <span class="hide-menu">Handle report</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </c:if>
+
+
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="${pageContext.request.contextPath}/listEvent" aria-expanded="false">
                         <span>
@@ -39,6 +64,7 @@
                         <span class="hide-menu">Event</span>
                     </a>
                 </li>
+
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="${pageContext.request.contextPath}/advertising" aria-expanded="false">
                         <span>
@@ -47,6 +73,7 @@
                         <span class="hide-menu">Advertising</span>
                     </a>
                 </li>
+
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="${pageContext.request.contextPath}/rank" aria-expanded="false">
                         <span>
@@ -55,7 +82,7 @@
                         <span class="hide-menu">Rank</span>
                     </a>
                 </li>
-                </li>
+
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="${pageContext.request.contextPath}/marketplace" aria-expanded="false">
                         <span>

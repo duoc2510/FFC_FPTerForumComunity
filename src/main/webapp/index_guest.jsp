@@ -7,7 +7,6 @@
 <%@ include file="include/header.jsp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/home.css" />
-<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>-->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
@@ -141,116 +140,116 @@
 
 
 
-<!-- Faq Section -->
-<section id="faq" class="faq section">
-    <!-- Section Title -->
-    <div class="container section-title" data-aos="fade-up">
-        <h2>F.A.Q</h2>
-        <p>Frequently Asked Questions</p>
-    </div><!-- End Section Title -->
+        <!-- Faq Section -->
+        <section id="faq" class="faq section">
+            <!-- Section Title -->
+            <div class="container section-title" data-aos="fade-up">
+                <h2>F.A.Q</h2>
+                <p>Frequently Asked Questions</p>
+            </div><!-- End Section Title -->
 
-    <div class="container">
-        <div class="row">
-            <div class="px-2 col-lg-6" data-aos="fade-up" data-aos-delay="100">
-                <div class="faq-container">
-                    <div class="accordion w-100" id="accordionLeft">
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingLeftOne">
-                                <button data-mdb-button-init data-mdb-collapse-init class="accordion-button collapsed" type="button"
-                                        data-mdb-target="#collapseLeftOne" aria-expanded="false" aria-controls="collapseLeftOne">
-                                    How do I create an account on FFC Forum and Social?
-                                </button>
-                            </h2>
-                            <div id="collapseLeftOne" class="accordion-collapse collapse" aria-labelledby="headingLeftOne"
-                                 data-mdb-parent="#accordionLeft">
-                                <div class="accordion-body">
-                                    <strong>To create an account,</strong> click on the 'Sign Up' button on the top right corner of the homepage. Fill in the required information, such as your name, email address, and a password. Once you've completed the form, click 'Submit' to create your account.
+            <div class="container">
+                <div class="row">
+                    <div class="px-2 col-lg-6" data-aos="fade-up" data-aos-delay="100">
+                        <div class="faq-container">
+                            <div class="accordion w-100" id="accordionLeft">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingLeftOne">
+                                        <button data-mdb-button-init data-mdb-collapse-init class="accordion-button collapsed" type="button"
+                                                data-mdb-target="#collapseLeftOne" aria-expanded="false" aria-controls="collapseLeftOne">
+                                            How do I create an account on FFC Forum and Social?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseLeftOne" class="accordion-collapse collapse" aria-labelledby="headingLeftOne"
+                                         data-mdb-parent="#accordionLeft">
+                                        <div class="accordion-body">
+                                            <strong>To create an account,</strong> click on the 'Sign Up' button on the top right corner of the homepage. Fill in the required information, such as your name, email address, and a password. Once you've completed the form, click 'Submit' to create your account.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingLeftTwo">
+                                        <button data-mdb-button-init data-mdb-collapse-init class="accordion-button collapsed" type="button"
+                                                data-mdb-target="#collapseLeftTwo" aria-expanded="false" aria-controls="collapseLeftTwo">
+                                            How can I reset my password?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseLeftTwo" class="accordion-collapse collapse" aria-labelledby="headingLeftTwo"
+                                         data-mdb-parent="#accordionLeft">
+                                        <div class="accordion-body">
+                                            <strong>If you’ve forgotten your password,</strong> click on the 'Forgot Password' link on the login page. Enter your email address, and we will send you instructions on how to reset your password.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingLeftThree">
+                                        <button data-mdb-button-init data-mdb-collapse-init class="accordion-button collapsed" type="button"
+                                                data-mdb-target="#collapseLeftThree" aria-expanded="false" aria-controls="collapseLeftThree">
+                                            How do I join a discussion group?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseLeftThree" class="accordion-collapse collapse" aria-labelledby="headingLeftThree"
+                                         data-mdb-parent="#accordionLeft">
+                                        <div class="accordion-body">
+                                            <strong>To join a discussion group,</strong> navigate to the 'Groups' section of the site. Browse or search for a group that interests you, and click 'Join Group'. If the group is private, you may need to wait for approval from the group moderator.
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingLeftTwo">
-                                <button data-mdb-button-init data-mdb-collapse-init class="accordion-button collapsed" type="button"
-                                        data-mdb-target="#collapseLeftTwo" aria-expanded="false" aria-controls="collapseLeftTwo">
-                                    How can I reset my password?
-                                </button>
-                            </h2>
-                            <div id="collapseLeftTwo" class="accordion-collapse collapse" aria-labelledby="headingLeftTwo"
-                                 data-mdb-parent="#accordionLeft">
-                                <div class="accordion-body">
-                                    <strong>If you’ve forgotten your password,</strong> click on the 'Forgot Password' link on the login page. Enter your email address, and we will send you instructions on how to reset your password.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingLeftThree">
-                                <button data-mdb-button-init data-mdb-collapse-init class="accordion-button collapsed" type="button"
-                                        data-mdb-target="#collapseLeftThree" aria-expanded="false" aria-controls="collapseLeftThree">
-                                    How do I join a discussion group?
-                                </button>
-                            </h2>
-                            <div id="collapseLeftThree" class="accordion-collapse collapse" aria-labelledby="headingLeftThree"
-                                 data-mdb-parent="#accordionLeft">
-                                <div class="accordion-body">
-                                    <strong>To join a discussion group,</strong> navigate to the 'Groups' section of the site. Browse or search for a group that interests you, and click 'Join Group'. If the group is private, you may need to wait for approval from the group moderator.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div><!-- End Faq Column -->
+                    </div><!-- End Faq Column -->
 
-            <div class="px-2 col-lg-6" data-aos="fade-up" data-aos-delay="200">
-                <div class="faq-container">
-                    <div class="accordion w-100" id="accordionRight">
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingRightOne">
-                                <button data-mdb-button-init data-mdb-collapse-init class="accordion-button collapsed" type="button"
-                                        data-mdb-target="#collapseRightOne" aria-expanded="false" aria-controls="collapseRightOne">
-                                    What should I do if I encounter inappropriate content?
-                                </button>
-                            </h2>
-                            <div id="collapseRightOne" class="accordion-collapse collapse" aria-labelledby="headingRightOne"
-                                 data-mdb-parent="#accordionRight">
-                                <div class="accordion-body">
-                                    <strong>If you come across content that violates our community guidelines,</strong> click the 'Report' button next to the post. Our moderation team will review the report and take appropriate action.
+                    <div class="px-2 col-lg-6" data-aos="fade-up" data-aos-delay="200">
+                        <div class="faq-container">
+                            <div class="accordion w-100" id="accordionRight">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingRightOne">
+                                        <button data-mdb-button-init data-mdb-collapse-init class="accordion-button collapsed" type="button"
+                                                data-mdb-target="#collapseRightOne" aria-expanded="false" aria-controls="collapseRightOne">
+                                            What should I do if I encounter inappropriate content?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseRightOne" class="accordion-collapse collapse" aria-labelledby="headingRightOne"
+                                         data-mdb-parent="#accordionRight">
+                                        <div class="accordion-body">
+                                            <strong>If you come across content that violates our community guidelines,</strong> click the 'Report' button next to the post. Our moderation team will review the report and take appropriate action.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingRightTwo">
+                                        <button data-mdb-button-init data-mdb-collapse-init class="accordion-button collapsed" type="button"
+                                                data-mdb-target="#collapseRightTwo" aria-expanded="false" aria-controls="collapseRightTwo">
+                                            How do I customize my profile?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseRightTwo" class="accordion-collapse collapse" aria-labelledby="headingRightTwo"
+                                         data-mdb-parent="#accordionRight">
+                                        <div class="accordion-body">
+                                            <strong>To customize your profile,</strong> click on your profile picture or username at the top of the page to go to your profile. From there, you can update your profile picture, bio, and other personal details by clicking the 'Edit Profile' button.
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingRightThree">
+                                        <button data-mdb-button-init data-mdb-collapse-init class="accordion-button collapsed" type="button"
+                                                data-mdb-target="#collapseRightThree" aria-expanded="false" aria-controls="collapseRightThree">
+                                            Can I make my profile private?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseRightThree" class="accordion-collapse collapse" aria-labelledby="headingRightThree"
+                                         data-mdb-parent="#accordionRight">
+                                        <div class="accordion-body">
+                                            <strong>Yes, you can make your profile private.</strong> Go to the 'Settings' section of your profile and adjust the privacy settings to control who can see your posts, profile information, and activities.
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingRightTwo">
-                                <button data-mdb-button-init data-mdb-collapse-init class="accordion-button collapsed" type="button"
-                                        data-mdb-target="#collapseRightTwo" aria-expanded="false" aria-controls="collapseRightTwo">
-                                    How do I customize my profile?
-                                </button>
-                            </h2>
-                            <div id="collapseRightTwo" class="accordion-collapse collapse" aria-labelledby="headingRightTwo"
-                                 data-mdb-parent="#accordionRight">
-                                <div class="accordion-body">
-                                    <strong>To customize your profile,</strong> click on your profile picture or username at the top of the page to go to your profile. From there, you can update your profile picture, bio, and other personal details by clicking the 'Edit Profile' button.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="headingRightThree">
-                                <button data-mdb-button-init data-mdb-collapse-init class="accordion-button collapsed" type="button"
-                                        data-mdb-target="#collapseRightThree" aria-expanded="false" aria-controls="collapseRightThree">
-                                    Can I make my profile private?
-                                </button>
-                            </h2>
-                            <div id="collapseRightThree" class="accordion-collapse collapse" aria-labelledby="headingRightThree"
-                                 data-mdb-parent="#accordionRight">
-                                <div class="accordion-body">
-                                    <strong>Yes, you can make your profile private.</strong> Go to the 'Settings' section of your profile and adjust the privacy settings to control who can see your posts, profile information, and activities.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    </div><!-- End Faq Column -->
                 </div>
-            </div><!-- End Faq Column -->
-        </div>
-    </div>
-</section><!-- /Faq Section -->
+            </div>
+        </section><!-- /Faq Section -->
 
 
     </main>
@@ -274,7 +273,6 @@
                 </div>
             </div>
         </div>
-
         <div class="container footer-top">
             <div class="row gy-4">
                 <div class="col-lg-4 col-md-12">

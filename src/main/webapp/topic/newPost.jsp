@@ -13,6 +13,7 @@
                             <option value="${topic.topicId}">${topic.topicName}</option>
                         </c:forEach>
                     </select>
+                    <input type="hidden" name="action" value="addpost">
                     <c:if test="${not empty msg}">
                         <div>${msg}</div>
                         <% session.removeAttribute("msg"); %>

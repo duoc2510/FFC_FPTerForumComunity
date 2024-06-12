@@ -4,22 +4,18 @@
  */
 package controller;
 
-import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
-import model.DAO.Topic_DB;
-import model.Topic;
 
 /**
  *
- * @author Admin
+ * @author ThanhDuoc
  */
-public class Topic_deleteTopic extends HttpServlet {
+public class Manager_report extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -38,10 +34,10 @@ public class Topic_deleteTopic extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Topic_deleteTopic</title>");
+            out.println("<title>Servlet Manager_reportHandle</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Topic_deleteTopic at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet Manager_reportHandle at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -59,19 +55,7 @@ public class Topic_deleteTopic extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Lấy topicId từ request
-        int topicId = Integer.parseInt(request.getParameter("topicId"));
-
-        // Gọi phương thức xóa từ lớp Topic_DB
-        boolean deleteSuccess = Topic_DB.deleteTopic(topicId);
-
-        if (deleteSuccess) {
-            // Nếu xóa thành công, chuyển hướng về trang danh sách chủ đề
-            response.sendRedirect("home?successMessage=Topic+deleted+successfully");
-        } else {
-            // Nếu xảy ra lỗi, chuyển hướng về trang danh sách chủ đề với thông báo lỗi
-            response.sendRedirect("home?errorMessage=Failed+to+delete+topic");
-        }
+        request.getRequestDispatcher("/user/manager/report.jsp").forward(request, response);
     }
 
     /**
@@ -85,18 +69,7 @@ public class Topic_deleteTopic extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-    }
-
-    private static class Response {
-
-        boolean success;
-        String message;
-
-        Response(boolean success, String message) {
-            this.success = success;
-            this.message = message;
-        }
+        processRequest(request, response);
     }
 
     /**
