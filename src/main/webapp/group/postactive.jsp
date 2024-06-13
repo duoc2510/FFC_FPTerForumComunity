@@ -79,13 +79,13 @@
                                 <div class="d-flex align-items-center">
                                     <c:choose>
                                         <c:when test="${comment.userId == USER.userId}">
-                                            <a href="${pageContext.request.contextPath}/profile">
+                                           <a href="${pageContext.request.contextPath}/group/profile?userId=${post.user.userId}&groupId=${group.groupId}">
                                                 <img src="${pageContext.request.contextPath}/${comment.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
                                             </a>
                                         </c:when>
 
                                         <c:otherwise>
-                                            <a href="${pageContext.request.contextPath}/viewProfile?username=${comment.user.username}">
+                                             <a href="${pageContext.request.contextPath}/group/profile?userId=${post.user.userId}&groupId=${group.groupId}">
                                                 <img src="${pageContext.request.contextPath}/${comment.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
                                             </a>
                                         </c:otherwise>
