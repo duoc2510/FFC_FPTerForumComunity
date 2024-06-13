@@ -11,6 +11,7 @@ import java.sql.Timestamp;
  * @author ThanhDuoc
  */
 public class User_message {
+
     private int messageId;
     private int fromId;
     private int toId;

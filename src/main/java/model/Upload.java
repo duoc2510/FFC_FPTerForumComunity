@@ -24,7 +24,6 @@ public class Upload {
         this.postId = postId;
         this.uploadPath = uploadPath;
     }
-    
 
     public int getUploadId() {
         return uploadId;

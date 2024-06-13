@@ -53,8 +53,9 @@
                             }
 
                             .post-image {
-                                max-width: 100%;
-                                height: auto;
+                                width: 100%;
+                                height: 500px;
+                                object-fit: cover;
                                 margin-top: 10px;
                             }
                             .img-preview {
@@ -176,7 +177,7 @@
                                 });
                             });
                         </script>
-                      
+
                     </div>
                 </div>
             </div>

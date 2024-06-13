@@ -9,7 +9,8 @@ package model;
  * @author ThanhDuoc
  */
 public class Post_report {
-       private int reportId;     // id tự động tăng cho báo cáo
+
+    private int reportId;     // id tự động tăng cho báo cáo
     private int reporterId;   // id của người báo cáo
     private int postId;       // id của bài viết bị báo cáo
     private String reason;    // Lý do báo cáo

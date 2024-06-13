@@ -1,5 +1,12 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <aside class="left-sidebar">
+    <style>
+        .sub-item{
+            font-size: 13px;
+            padding-left: 20px;
+        }
+        
+        </style>
     <!-- Sidebar scroll-->  
     <div>
         <div class="brand-logo d-flex align-items-center justify-content-between">
@@ -38,17 +45,17 @@
                             <span>
                                 <i class="ti ti-users"></i>
                             </span>
-                            <span class="hide-menu">Manager</span>
+                            <span class="hide-menu">Manager <i style="font-size: 13px" class="ti ti-arrow-down"></i></span>
                         </a>
                         <ul aria-expanded="false" class="collapse  first-level">
-                            <li class="sidebar-item">
+                            <li class="sidebar-item sub-item">
                                 <a href="${pageContext.request.contextPath}/manager/post" class="sidebar-link">
-                                    <span class="hide-menu">Approve Post</span>
+                                    <span class="hide-menu">- Approve Post</span>
                                 </a>
                             </li>
-                            <li class="sidebar-item">
+                            <li class="sidebar-item sub-item">
                                 <a href="${pageContext.request.contextPath}/manager/report" class="sidebar-link">
-                                    <span class="hide-menu">Handle report</span>
+                                    <span class="hide-menu">- Handle report</span>
                                 </a>
                             </li>
                         </ul>

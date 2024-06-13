@@ -523,8 +523,7 @@ public class Shop_DB {
         }
 
         // Sort the list by order date from newest to oldest
-        orders.sort((o1, o2) -> o2.getOrderDate().compareTo(o1.getOrderDate()));
-
+        orders.sort((o1, o2) -> Integer.compare(o2.getOrder_ID(), o1.getOrder_ID()));
         return orders;
     }
 

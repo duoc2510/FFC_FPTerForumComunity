@@ -9,13 +9,14 @@ package model;
  * @author ThanhDuoc
  */
 public class Topic_user {
+
     private int userTopicId;
     private int userId;
     private int topicId;
 
     public Topic_user() {
     }
-    
+
     public Topic_user(int userTopicId, int userId, int topicId) {
         this.userTopicId = userTopicId;
         this.userId = userId;

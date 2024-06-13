@@ -61,13 +61,8 @@ public class Post_postView extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        HttpSession session = request.getSession(false);
-        if (session != null && session.getAttribute("USER") != null) {
-            request.getRequestDispatcher("/user/newsfeed.jsp").forward(request, response);
-        } else {
-            response.sendRedirect("login");
-        }
+        request.getRequestDispatcher("/user/newsfeed.jsp").forward(request, response);
+
     }
 
     @Override

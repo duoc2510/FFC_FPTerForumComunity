@@ -9,5 +9,5 @@ package model.DAO;
  * @author ThanhDuoc
  */
 public class Ads_DB {
-    
+
 }

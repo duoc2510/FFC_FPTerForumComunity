@@ -106,7 +106,7 @@ public class User_profile extends HttpServlet {
                     response.sendRedirect(request.getContextPath() + "/auth/login.jsp?errorMessage=User not found");
                     return;
                 }
-               
+
                 int userId = currentUser.getUserId();
                 String friendStatus = User_DB.getFriendRequestStatus(userId, requestedUsername);
                 // Lấy số bài đăng của người dùng từ cơ sở dữ liệu

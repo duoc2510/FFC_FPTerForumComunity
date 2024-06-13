@@ -10,25 +10,25 @@
             </tr>
         </thead>
         <tbody>
-        <c:set var="counter" value="1" />
-        <c:set var="hasPosts" value="false" />
-        <c:forEach var="post" items="${posts}">
-            <c:if test="${post.topicId == topic.topicId && post.status eq 'Active'}">
+            <c:set var="counter" value="1" />
+            <c:set var="hasPosts" value="false" />
+            <c:forEach var="post" items="${posts}">
+                <c:if test="${post.topicId == topic.topicId && post.status eq 'Active'}">
+                    <tr>
+                        <td>${counter}</td>
+                        <td><a href="${pageContext.request.contextPath}/topic/${topic.topicId}">${topic.topicName}</a></td>
+                        <td><a href="${pageContext.request.contextPath}/post/${post.postId}">${post.content}</a></td>
+                        <td><a href="${pageContext.request.contextPath}/profile?username=${post.user.username}">${post.user.username}</a></td>
+                    </tr>
+                    <c:set var="counter" value="${counter + 1}" />
+                    <c:set var="hasPosts" value="true" />
+                </c:if>
+            </c:forEach>
+            <c:if test="${not hasPosts}">
                 <tr>
-                    <td>${counter}</td>
-                    <td><a href="${pageContext.request.contextPath}/topic/${topic.topicId}">${topic.topicName}</a></td>
-                    <td><a href="${pageContext.request.contextPath}/post/${post.postId}">${post.content}</a></td>
-                    <td><a href="${pageContext.request.contextPath}/profile?username=${post.user.username}">${post.user.username}</a></td>
+                    <td colspan="4">Không có bài viết nào cho chủ đề này.</td>
                 </tr>
-                <c:set var="counter" value="${counter + 1}" />
-                <c:set var="hasPosts" value="true" />
             </c:if>
-        </c:forEach>
-        <c:if test="${not hasPosts}">
-            <tr>
-                <td colspan="4">Không có bài viết nào cho chủ đề này.</td>
-            </tr>
-        </c:if>
         </tbody>
     </table>
 </div>

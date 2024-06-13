@@ -91,7 +91,7 @@
                                                 <button class="btn btn-warning btn-sm btn-block edit-cover mx-2 dropdown-toggle" type="button" id="friendDropdown" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
                                                     Request Sent
                                                 </button>
-                                                <ul class="dropdown-menu" aria-labelledby="friendDropdown">
+                                                <ul class="dropdown-menu" aria-labelledby="friendDropdown" style="    top: -1em;    margin-left: 9em;">
                                                     <li>
                                                         <form id="unfriendRequestForm" action="${pageContext.request.contextPath}/friendHandel" method="post" class="d-inline" onsubmit="return confirmUnfriend()">
                                                             <input type="hidden" name="friendId" value="${user.userId}">
@@ -111,7 +111,7 @@
                                                 <input type="hidden" name="action" value="acceptFr"> 
                                                 <button type="submit" class="btn btn-success btn-sm btn-block edit-cover mx-2">Accept friend</button>
                                             </form>
-                                           <form action="${pageContext.request.contextPath}/friends" method="post" class="d-inline">
+                                            <form action="${pageContext.request.contextPath}/friends" method="post" class="d-inline">
                                                 <input type="hidden" name="friendId" value="${user.userId}">
                                                 <input type="hidden" name="friendName" value="${user.username}">
                                                 <input type="hidden" name="action" value="denyFr"> 
@@ -161,125 +161,124 @@
                                     </li>
                                 </ul>
                             </div>
-                            <div class="px-4 py-3">
-                                <p class="font-italic mb-0"><i class="ti ti-calendar"></i>Ngày tham gia: ${user.userCreateDate}</p>
-                                <p class="font-italic mb-0">Giới tính: ${user.userSex}</p>
-                                <div class="p-4 rounded shadow-sm">
-                                    <p class="font-italic mb-0">${user.userStory}<i class="ti ti-feather"></i></p>
-                                </div>
-
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
             <div class="container-fluid pt-0">
-                <div class="row form-settings bg-white shadow rounded py-4 px-4 d-flex justify-content-between ">
-                    <div class="p0">
-                        <h5 class="mb-2">Bài viết của ${user.userFullName}</h5>
+                <div class="row form-settings d-flex justify-content-between">
+                    <div class="col-12 col-sm-5 px-2">
+                        <div class=" bg-white shadow rounded p-4 ">
+                            <p class="font-italic mb-2"><i class="ti ti-calendar"></i>Ngày tham gia: ${user.userCreateDate}</p>
+                            <p class="font-italic mb-2">Giới tính: ${user.userSex}</p>
+                            <p class="font-italic mb-2"><i class="ti ti-feather"></i>${user.userStory}</p>
+                        </div>
                     </div>
-                    <div>
-                        <c:forEach var="post" items="${posts}">
-                            <c:if test="${post.user.userId == user.userId}">
-                                <c:if test="${post.postStatus eq'Public'}">
-                                    <%@include file="post.jsp" %>
-                                </c:if>                                
-                            </c:if>
-                        </c:forEach>
+                    <div class="col-12 col-sm-7 px-2">
+                        <!--<div class=" bg-white shadow rounded p-4 ">-->
+                            <div class="p0">
+                                <h5 class="mb-2">Bài viết của bạn</h5>
+                            </div>
+                            <div>
+                                <c:forEach var="post" items="${posts}">
+                                    <c:if test="${post.user.userId == user.userId}">
+                                        <c:if test="${post.postStatus eq'Public'}">
+                                            <%@include file="post.jsp" %>
+                                        </c:if>                                
+                                    </c:if>
+                                </c:forEach>
+                            </div>
+                        <!--</div>-->
                         <%@include file="modalpost.jsp" %>
-                        <script>
-                            function editComment(commentId, content) {
-                                document.getElementById('editCommentId').value = commentId; // Thiết lập giá trị ID của bình luận vào input ẩn
-                                document.getElementById('editCommentContent').value = content; // Thiết lập nội dung bình luận vào textarea
-
-                                var editCommentModal = new bootstrap.Modal(document.getElementById('editCommentModal')); // Tạo modal sử dụng Bootstrap
-                                editCommentModal.show(); // Hiển thị modal chỉnh sửa bình luận
-                            }
-
-                            document.getElementById('postImage').addEventListener('change', handlePostImageChange);
-
-                            function handlePostImageChange(event) {
-                                const file = event.target.files[0];
-                                const previewContainer = document.getElementById('imgPreview');
-                                const previewDefaultText = previewContainer.querySelector('p');
-
-                                // Xóa ảnh hiện tại nếu có
-                                const existingPreviewImage = previewContainer.querySelector('img');
-                                if (existingPreviewImage) {
-                                    previewContainer.removeChild(existingPreviewImage);
-                                }
-
-                                if (file) {
-                                    const reader = new FileReader();
-                                    const previewImage = document.createElement('img');
-
-                                    previewDefaultText.style.display = 'none';
-                                    previewImage.style.display = 'block';
-
-                                    reader.addEventListener('load', function () {
-                                        previewImage.setAttribute('src', this.result);
-                                    });
-
-                                    reader.readAsDataURL(file);
-                                    previewContainer.appendChild(previewImage);
-                                } else {
-                                    previewDefaultText.style.display = null;
-                                }
-                            }
-
-                            function editPost(postId, content, status, uploadPath) {
-                                document.getElementById('editPostId').value = postId;
-                                document.getElementById('editPostContent').value = content;
-                                document.getElementById('editPostStatus').value = "Public";
-                                document.getElementById('existingUploadPath').value = uploadPath ? uploadPath : 'null';
-
-                                var currentUploadPathImg = document.getElementById('currentUploadPath');
-                                if (uploadPath && uploadPath !== 'null') {
-                                    currentUploadPathImg.src = uploadPath;
-                                    currentUploadPathImg.style.display = 'block';
-                                } else {
-                                    currentUploadPathImg.style.display = 'none';
-                                }
-
-                                var editPostModal = new bootstrap.Modal(document.getElementById('editPostModal'));
-                                editPostModal.show();
-
-                                const editPostImageInput = document.getElementById('editPostImage');
-                                editPostImageInput.removeEventListener('change', handleEditPostImageChange);
-                                editPostImageInput.addEventListener('change', handleEditPostImageChange);
-                            }
-
-                            function handleEditPostImageChange(event) {
-                                const file = event.target.files[0];
-                                const currentUploadPathImg = document.getElementById('currentUploadPath');
-
-                                if (file) {
-                                    const reader = new FileReader();
-                                    reader.addEventListener('load', function () {
-                                        currentUploadPathImg.src = this.result;
-                                        currentUploadPathImg.style.display = 'block';
-                                    });
-                                    reader.readAsDataURL(file);
-                                } else {
-                                    currentUploadPathImg.style.display = 'none';
-                                }
-                            }
-
-                            function confirmCancel() {
-                                return confirm("Bạn có muốn hủy lời mời này không?");
-                            }
-                            function confirmUnfriend() {
-                                return confirm("Bạn có chắc chắn muốn hủy kết bạn không?");
-                            }
-
-                           
-
-                        </script>
                     </div>
                 </div>
             </div>
         </div>
-
+    </div>
 </body>
 <%@ include file="../include/footer.jsp" %>
+<script>
+    function editComment(commentId, content) {
+        document.getElementById('editCommentId').value = commentId; // Thiết lập giá trị ID của bình luận vào input ẩn
+        document.getElementById('editCommentContent').value = content; // Thiết lập nội dung bình luận vào textarea
+
+        var editCommentModal = new bootstrap.Modal(document.getElementById('editCommentModal')); // Tạo modal sử dụng Bootstrap
+        editCommentModal.show(); // Hiển thị modal chỉnh sửa bình luận
+    }
+
+    document.getElementById('postImage').addEventListener('change', handlePostImageChange);
+
+    function handlePostImageChange(event) {
+        const file = event.target.files[0];
+        const previewContainer = document.getElementById('imgPreview');
+        const previewDefaultText = previewContainer.querySelector('p');
+
+        // Xóa ảnh hiện tại nếu có
+        const existingPreviewImage = previewContainer.querySelector('img');
+        if (existingPreviewImage) {
+            previewContainer.removeChild(existingPreviewImage);
+        }
+
+        if (file) {
+            const reader = new FileReader();
+            const previewImage = document.createElement('img');
+
+            previewDefaultText.style.display = 'none';
+            previewImage.style.display = 'block';
+
+            reader.addEventListener('load', function () {
+                previewImage.setAttribute('src', this.result);
+            });
+
+            reader.readAsDataURL(file);
+            previewContainer.appendChild(previewImage);
+        } else {
+            previewDefaultText.style.display = null;
+        }
+    }
+
+    function editPost(postId, content, status, uploadPath) {
+        document.getElementById('editPostId').value = postId;
+        document.getElementById('editPostContent').value = content;
+        document.getElementById('editPostStatus').value = "Public";
+        document.getElementById('existingUploadPath').value = uploadPath ? uploadPath : 'null';
+
+        var currentUploadPathImg = document.getElementById('currentUploadPath');
+        if (uploadPath && uploadPath !== 'null') {
+            currentUploadPathImg.src = uploadPath;
+            currentUploadPathImg.style.display = 'block';
+        } else {
+            currentUploadPathImg.style.display = 'none';
+        }
+
+        var editPostModal = new bootstrap.Modal(document.getElementById('editPostModal'));
+        editPostModal.show();
+
+        const editPostImageInput = document.getElementById('editPostImage');
+        editPostImageInput.removeEventListener('change', handleEditPostImageChange);
+        editPostImageInput.addEventListener('change', handleEditPostImageChange);
+    }
+
+    function handleEditPostImageChange(event) {
+        const file = event.target.files[0];
+        const currentUploadPathImg = document.getElementById('currentUploadPath');
+
+        if (file) {
+            const reader = new FileReader();
+            reader.addEventListener('load', function () {
+                currentUploadPathImg.src = this.result;
+                currentUploadPathImg.style.display = 'block';
+            });
+            reader.readAsDataURL(file);
+        } else {
+            currentUploadPathImg.style.display = 'none';
+        }
+    }
+
+    function confirmCancel() {
+        return confirm("Bạn có muốn hủy lời mời này không?");
+    }
+    function confirmUnfriend() {
+        return confirm("Bạn có chắc chắn muốn hủy kết bạn không?");
+    }
+</script>
