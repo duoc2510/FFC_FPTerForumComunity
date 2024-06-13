@@ -87,9 +87,9 @@ public class Shop_confirmOrder extends HttpServlet {
         String campus = request.getParameter("campus");
         String note = request.getParameter("note");
         double total = Double.parseDouble(request.getParameter("total"));
-        String discountSelect = request.getParameter("discountSelect"); // Get discountSelect as String
+        String discountSelect = request.getParameter("discountSelect");
 
-        int discountId = 0; // Default value for discountId
+        int discountId = 0;
         if (discountSelect != null && !discountSelect.isEmpty()) {
             discountId = Integer.parseInt(discountSelect);
         }
@@ -99,15 +99,33 @@ public class Shop_confirmOrder extends HttpServlet {
                 boolean check = false;
                 Order order1 = sdb.getOrderHasStatusIsNullByUserID(user.getUserId());
                 ArrayList<OrderItem> orderitemlist2 = sdb.getAllOrderItemByOrderIdHasStatusIsNull(order1.getOrder_ID());
-                for (OrderItem od : orderitemlist2) {
+
+                // Retrieve the selected order item IDs from the request
+                String[] selectedItems = request.getParameterValues("selectedItems");
+
+                // Create a list of selected OrderItems
+                ArrayList<OrderItem> selectedOrderItems = new ArrayList<>();
+                if (selectedItems != null) {
+                    for (String itemId : selectedItems) {
+                        for (OrderItem od : orderitemlist2) {
+                            if (od.getOrderItem_id() == Integer.parseInt(itemId)) {
+                                selectedOrderItems.add(od);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                for (OrderItem od : selectedOrderItems) {
                     Product p = sdb.getProductByID(od.getProductID());
                     if (p.getQuantity() == 0) {
                         check = true;
-                        break; // Stop the loop when a product is out of stock
+                        break;
                     }
                 }
+
                 if (!check) {
-                    // If no products are out of stock, proceed to confirm the order
+                    // If no selected products are out of stock, proceed to confirm the order
                     request.setAttribute("fullname", fullname);
                     request.setAttribute("phone", phone);
                     request.setAttribute("campus", campus);
@@ -116,61 +134,90 @@ public class Shop_confirmOrder extends HttpServlet {
                     request.setAttribute("total", total);
                     request.setAttribute("date", getCurrentDate());
                     request.setAttribute("shopid", shopid);
+                    request.setAttribute("selectedOrderItems", selectedOrderItems);
 
                     request.getRequestDispatcher("/marketplace/confirm.jsp").forward(request, response);
                 } else {
-                    // If any products are out of stock, redirect to the cart page with an error message
+                    // If any selected products are out of stock, redirect to the cart page with an error message
                     response.sendRedirect("cart?error=Your+Cart+Contains+Sold+Out+Product!");
                     return;
                 }
                 break;
 
             case "confirm2":
-                boolean check2 = false;
-                Order order = sdb.getOrderHasStatusIsNullByUserID(user.getUserId());
-                ArrayList<OrderItem> orderitemlist1 = sdb.getAllOrderItemByOrderIdHasStatusIsNull(order.getOrder_ID());
-                for (OrderItem ot : orderitemlist1) {
-                    Product p = sdb.getProductByID(ot.getProductID());
-                    if (p.getQuantity() == 0) {
-                        check2 = true;
-                        break; // Stop the loop when a product is out of stock
+                boolean isOutOfStock = false;
+                Order currentOrder = sdb.getOrderHasStatusIsNullByUserID(user.getUserId());
+                ArrayList<OrderItem> currentOrderItems = sdb.getAllOrderItemByOrderIdHasStatusIsNull(currentOrder.getOrder_ID());
+
+                // Retrieve the selected order item IDs from the request
+                String[] selectedItemsConfirm2 = request.getParameterValues("selectedItems");
+
+                // Create a list of selected OrderItems
+                ArrayList<OrderItem> selectedOrderItemsConfirm2 = new ArrayList<>();
+                if (selectedItemsConfirm2 != null) {
+                    for (String itemId : selectedItemsConfirm2) {
+                        for (OrderItem orderItem : currentOrderItems) {
+                            if (orderItem.getOrderItem_id() == Integer.parseInt(itemId)) {
+                                selectedOrderItemsConfirm2.add(orderItem);
+                                break;
+                            }
+                        }
                     }
                 }
-                if (!check2) {
+
+                // Check if any selected products are out of stock
+                for (OrderItem orderItem : selectedOrderItemsConfirm2) {
+                    Product product = sdb.getProductByID(orderItem.getProductID());
+                    if (product.getQuantity() == 0) {
+                        isOutOfStock = true;
+                        break;
+                    }
+                }
+
+                if (!isOutOfStock) {
                     // If no products are out of stock, proceed to update the order
-                    for (OrderItem ot : orderitemlist1) {
-                        Product p = sdb.getProductByID(ot.getProductID());
-                        p.setQuantity(p.getQuantity() - ot.getQuantity()); // Reduce the quantity by the amount ordered
-                        sdb.updateProduct(p);
+                    for (OrderItem orderItem : selectedOrderItemsConfirm2) {
+                        Product product = sdb.getProductByID(orderItem.getProductID());
+                        product.setQuantity(product.getQuantity() - orderItem.getQuantity()); // Reduce the quantity by the amount ordered
+                        sdb.updateProduct(product);
                     }
+
                     if (discountId != 0) {
-                        Discount d = sdb.getDiscountByID(discountId);
-                        sdb.updateUsageLimit(discountId, d.getUsageLimit() - 1);
-                        sdb.updateUsageCount(discountId, d.getUsageCount() + 1);
+                        Discount discount = sdb.getDiscountByID(discountId);
+                        sdb.updateUsageLimit(discountId, discount.getUsageLimit() - 1);
+                        sdb.updateUsageCount(discountId, discount.getUsageCount() + 1);
                     }
-                    order.setReceiverPhone(phone);
-                    order.setDiscountid(discountId);
-                    order.setNote(note);
-                    order.setTotal(total);
-                    order.setStatus("Pending");
-                    sdb.updateOrderbyID(order);
+
+                    currentOrder.setReceiverPhone(phone);
+                    currentOrder.setDiscountid(discountId);
+                    currentOrder.setNote(note);
+                    currentOrder.setTotal(total);
+                    currentOrder.setStatus("Pending");
+                    sdb.updateOrderbyID(currentOrder);
 
                     // Create a new order for the user
                     Order newOrder = new Order(user.getUserId(), 1, null, "null", 0, 1, null, null, 5, null);
                     sdb.addOrder(newOrder);
 
                     // Retrieve the new order and set it in the session
-                    Order ordernew = sdb.getOrderHasStatusIsNullByUserID(user.getUserId());
-                    ArrayList<OrderItem> orderitemlist = sdb.getAllOrderItemByOrderIdHasStatusIsNull(ordernew.getOrder_ID());
-                    request.getSession().setAttribute("ORDER", ordernew);
-                    request.getSession().setAttribute("ORDERITEMLIST", orderitemlist);
+                    Order newOrderForUser = sdb.getOrderHasStatusIsNullByUserID(user.getUserId());
+
+                    // Set orderid for currentOrderItems not in selectedOrderItemsConfirm2
+                    for (OrderItem orderItem : currentOrderItems) {
+                        if (!selectedOrderItemsConfirm2.contains(orderItem)) {
+                            orderItem.setOrder_id(newOrderForUser.getOrder_ID());
+                            sdb.updateOrderItemID(orderItem); // Update orderid in database
+                        }
+                    }
+                    ArrayList<OrderItem> newOrderItems = sdb.getAllOrderItemByOrderIdHasStatusIsNull(newOrderForUser.getOrder_ID());
+                    request.getSession().setAttribute("ORDER", newOrderForUser);
+                    request.getSession().setAttribute("ORDERITEMLIST", newOrderItems);
 
                     // Redirect to the allshop page with a success message
                     response.sendRedirect("allshop?message=Thanks+for+your+order");
                 } else {
                     // If any products are out of stock, redirect to the cart page with an error message
                     response.sendRedirect("cart?error=Your+Cart+Contains+Sold+Out+Product!");
-                    return;
                 }
                 break;
         }
