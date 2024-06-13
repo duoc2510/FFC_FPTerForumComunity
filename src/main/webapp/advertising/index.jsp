@@ -82,11 +82,11 @@
                     </div>
 
                     <div class="w-100 row mt-5">
-                         <div class="col-md-5 p-2">
+                        <div class="col-md-5 p-2">
                             <h3>Boost My Branding</h3>
                             <p>Growth your business with us, you can:</p>
                             <ul class="list-unstyled custom-list my-4">
-                        
+
 
                                 <li>Giám sát tất cả các Trang, tài khoản và tài sản doanh nghiệp ở cùng một nơi.</li>
                                 <li>Dễ dàng tạo và quản lý quảng cáo cho tất cả các tài khoản.</li>
@@ -95,12 +95,12 @@
                             <button class="btn btn-primary mt-3">Join with us</button>
                         </div>
                         <div class="col-md-7 p-2">
-                          
+
                         </div>
-                       
+
                     </div>
 
-                     
+
                 </div>
                 <div>
                     <!--Tao shop-->

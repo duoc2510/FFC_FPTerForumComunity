@@ -9,14 +9,15 @@ package model;
  * @author ThanhDuoc
  */
 public class User_friendship {
-     private int friendshipId;
+
+    private int friendshipId;
     private int userId;
     private int friendId;
     private String requestStatus;
 
     public User_friendship() {
     }
-    
+
     public User_friendship(int friendshipId, int userId, int friendId, String requestStatus) {
         this.friendshipId = friendshipId;
         this.userId = userId;

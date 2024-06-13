@@ -178,7 +178,9 @@
                                                             <div class="d-flex justify-content-between align-items-center pb-3">
                                                                 <div class="d-flex align-items-center">
                                                                     <div class="text-center mt-2">
+                                                                         <a href="${pageContext.request.contextPath}/group/profile?userId=${comment.user.userId}&groupId=${group.groupId}">
                                                                         <img src="${pageContext.request.contextPath}/${comment.user.userAvatar}" alt="" width="30" class="rounded-circle avatar-cover">
+                                                                         </a>
                                                                     </div>
                                                                     <div class="ms-2">
                                                                         <h6 class="card-title fw-semibold mb-0">${comment.user.username}:${comment.content}</h6>

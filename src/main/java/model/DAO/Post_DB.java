@@ -36,10 +36,9 @@ public class Post_DB implements DBinfo {
             pstmtPost.setString(4, post.getPostStatus());
             pstmtPost.setString(5, post.getReason());
 
-            // Tạo ngày tạo với định dạng dd/mm/yyyy
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-            String createDate = dateFormat.format(new Date());
-            pstmtPost.setString(6, createDate);
+            // Tạo ngày tạo dưới dạng Timestamp
+            Timestamp createDate = new Timestamp(new Date().getTime());
+            pstmtPost.setTimestamp(6, createDate);
             pstmtPost.executeUpdate();
 
             // Lấy Post_id vừa tạo ra
@@ -74,12 +73,9 @@ public class Post_DB implements DBinfo {
             pstmtPost.setString(4, "Pending");
             pstmtPost.setString(5, post.getPostStatus());
             pstmtPost.setString(6, post.getReason());
-
-            // Tạo ngày tạo với định dạng dd/MM/yyyy
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-            String createDate = dateFormat.format(new Date());
-            pstmtPost.setString(7, createDate);
-
+            // Tạo ngày tạo dưới dạng Timestamp
+            Timestamp createDate = new Timestamp(new Date().getTime());
+            pstmtPost.setTimestamp(7, createDate);
             pstmtPost.executeUpdate();
 
             // Lấy Post_id vừa tạo ra
@@ -116,10 +112,9 @@ public class Post_DB implements DBinfo {
             pstmtPost.setString(5, post.getPostStatus());
             pstmtPost.setString(6, post.getReason());
 
-            // Tạo ngày tạo với định dạng dd/MM/yyyy
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-            String createDate = dateFormat.format(new Date());
-            pstmtPost.setString(7, createDate);
+            // Tạo ngày tạo dưới dạng Timestamp
+            Timestamp createDate = new Timestamp(new Date().getTime());
+            pstmtPost.setTimestamp(7, createDate);
 
             pstmtPost.executeUpdate();
 

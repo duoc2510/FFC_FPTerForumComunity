@@ -408,6 +408,12 @@ public class Shop_product extends HttpServlet {
             case "thatbai": /////shop hủy đơn
                 int orderid2 = Integer.parseInt(orderid);
                 sdb.updateOrderStatus(orderid2, "Cancelled");
+                ArrayList<OrderItem> orderitemlistnew = sdb.getAllOrderItemByOrderID(orderid2);
+                for (OrderItem ot : orderitemlistnew) {
+                    Product p = sdb.getProductByID(ot.getProductID());
+                    p.setQuantity(p.getQuantity() + ot.getQuantity()); // Reduce the quantity by the amount ordered
+                    sdb.updateProduct(p);
+                }
                 response.sendRedirect("myshop");
                 break;
             case "thanhcong":  ///////shop đã giao hàng thành công
@@ -437,6 +443,12 @@ public class Shop_product extends HttpServlet {
             case "huydon":   //////người đặt hủy đơn
                 int orderid4 = Integer.parseInt(orderid);
                 sdb.updateOrderStatus(orderid4, "Cancelled");
+                ArrayList<OrderItem> orderitemlistnewnew = sdb.getAllOrderItemByOrderID(orderid4);
+                for (OrderItem ot : orderitemlistnewnew) {
+                    Product p = sdb.getProductByID(ot.getProductID());
+                    p.setQuantity(p.getQuantity() + ot.getQuantity()); // Reduce the quantity by the amount ordered
+                    sdb.updateProduct(p);
+                }
                 response.sendRedirect("history");
                 break;
             case "danhanhang":  ///người đặt đã nhận hàng

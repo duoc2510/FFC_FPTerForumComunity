@@ -56,7 +56,7 @@ public class Group_DB implements DBinfo {
                 try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
                         groupId = generatedKeys.getInt(1);
-                        // Thêm người tạo nhóm vào bảng MemberGroup với trạng thái "Approved"
+                        // Thêm người tạo nhóm vào bảng MemberGroup với trạng thái "host"
                         if (!joinGroup(group.getCreaterId(), groupId)) {
                             // Nếu thêm người tạo nhóm vào MemberGroup thất bại, đặt lại giá trị groupId về -1
                             groupId = -1;

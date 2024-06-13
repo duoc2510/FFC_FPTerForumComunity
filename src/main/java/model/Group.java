@@ -160,7 +160,6 @@ public class Group {
         this.isBanned = isBanned;
     }
 
-
     public boolean isIsApproved() {
         return isApproved;
     }
@@ -168,7 +167,6 @@ public class Group {
     public void setIsApproved(boolean isApproved) {
         this.isApproved = isApproved;
     }
-    
 
     public String getStatus() {
         return status;

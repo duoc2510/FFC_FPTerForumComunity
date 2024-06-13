@@ -67,32 +67,28 @@ public class Topic_DB implements DBinfo {
     }
 
     public static boolean deleteTopic(int topicId) {
-    String deleteUserFollowQuery = "DELETE FROM UserFollow WHERE Topic_id = ?";
-    String deletePostQuery = "DELETE FROM Post WHERE Topic_id = ?";
-    String deleteTopicQuery = "DELETE FROM Topic WHERE Topic_id = ?";
-    try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass);
-         PreparedStatement pstmtUserFollow = con.prepareStatement(deleteUserFollowQuery);
-         PreparedStatement pstmtPost = con.prepareStatement(deletePostQuery);
-         PreparedStatement pstmtTopic = con.prepareStatement(deleteTopicQuery)) {
-        
-        // Xóa dữ liệu từ bảng UserFollow có chứa Topic_id
-        pstmtUserFollow.setInt(1, topicId);
-        pstmtUserFollow.executeUpdate();
+        String deleteUserFollowQuery = "DELETE FROM UserFollow WHERE Topic_id = ?";
+        String deletePostQuery = "DELETE FROM Post WHERE Topic_id = ?";
+        String deleteTopicQuery = "DELETE FROM Topic WHERE Topic_id = ?";
+        try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement pstmtUserFollow = con.prepareStatement(deleteUserFollowQuery); PreparedStatement pstmtPost = con.prepareStatement(deletePostQuery); PreparedStatement pstmtTopic = con.prepareStatement(deleteTopicQuery)) {
 
-        // Xóa dữ liệu từ bảng Post có chứa Topic_id
-        pstmtPost.setInt(1, topicId);
-        pstmtPost.executeUpdate();
+            // Xóa dữ liệu từ bảng UserFollow có chứa Topic_id
+            pstmtUserFollow.setInt(1, topicId);
+            pstmtUserFollow.executeUpdate();
 
-        // Xóa dữ liệu từ bảng Topic có Topic_id tương ứng
-        pstmtTopic.setInt(1, topicId);
-        int rowsAffected = pstmtTopic.executeUpdate();
+            // Xóa dữ liệu từ bảng Post có chứa Topic_id
+            pstmtPost.setInt(1, topicId);
+            pstmtPost.executeUpdate();
 
-        return rowsAffected > 0;
-    } catch (SQLException ex) {
-        Logger.getLogger(Topic_DB.class.getName()).log(Level.SEVERE, null, ex);
-        return false;
+            // Xóa dữ liệu từ bảng Topic có Topic_id tương ứng
+            pstmtTopic.setInt(1, topicId);
+            int rowsAffected = pstmtTopic.executeUpdate();
+
+            return rowsAffected > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(Topic_DB.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
     }
-}
-
 
 }

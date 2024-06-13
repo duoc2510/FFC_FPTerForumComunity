@@ -2,8 +2,6 @@
 <%@ include file="include/header.jsp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <body>
-
-
     <c:choose>
         <c:when test="${empty sessionScope.USER}">
             <%@ include file="index_guest.jsp" %>
@@ -28,5 +26,4 @@
         </body>
     </c:otherwise>
 </c:choose>
-
 <%@ include file="include/footer.jsp" %>

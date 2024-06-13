@@ -1,7 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <div class="col-lg-12">
-    <div class="card w-100">
-        <div class="card-body p-4">
+    <div class=" w-100">
+        <div class=" p-4    bg-white shadow rounded mb-3">
             <div class="pb-3 d-flex row">
                 <div class="col-1 text-center mt-2">
                     <c:choose>
@@ -18,7 +18,7 @@
                         </c:otherwise>
                     </c:choose>
                 </div>
-                <div class="col-10">
+                <div class="col-9 mx-3">
                     <h6 class="card-title fw-semibold mb-4 d-inline">${post.user.username}</h6>
                     <p class="s-4">${post.createDate}</p>
                 </div>
@@ -53,7 +53,7 @@
                                 <li>
                                     <a class="dropdown-item" type="button" href="javascript:void(0)" ">Report</a>
                                 </li>
-                                
+
                             </ul>
                         </div>
                     </c:otherwise>
@@ -61,8 +61,8 @@
             </div>
 
             <!-- Option to delete post for the post author -->
-            <div class="mt-3">
-                <p class="fs-6">${post.content}</p>
+            <div class="mt-1 ">
+                <p  style="font-size:30px">${post.content}</p>
                 <c:if test="${not empty post.uploadPath}">
                     <img src="${pageContext.request.contextPath}/${post.uploadPath}" alt="Post Image" class="post-image rounded mx-auto d-block">
                 </c:if>

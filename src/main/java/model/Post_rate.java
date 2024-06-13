@@ -9,6 +9,7 @@ package model;
  * @author ThanhDuoc
  */
 public class Post_rate {
+
     private int rateId; // id tự động tăng cho đánh giá
     private int postId; // id của bài viết được đánh giá
     private int userId; // id của người đánh giá

@@ -35,7 +35,7 @@ public class User_marketplace extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet User_marketplace</title>");            
+            out.println("<title>Servlet User_marketplace</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet User_marketplace at " + request.getContextPath() + "</h1>");
@@ -56,7 +56,7 @@ public class User_marketplace extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-          HttpSession session = request.getSession();
+        HttpSession session = request.getSession();
         request.getRequestDispatcher("/marketplace/index.jsp").forward(request, response);
     }
 
