@@ -1,18 +1,13 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package view;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.sql.SQLException;
+import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.sql.SQLException;
-import java.util.List;
 import model.Comment;
 import model.DAO.Comment_DB;
 import model.DAO.Post_DB;
@@ -22,47 +17,8 @@ import model.Post;
 import model.Topic;
 import model.User;
 
-/**
- *
- * @author ThanhDuoc
- */
 public class home extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet home</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet home at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -75,10 +31,11 @@ public class home extends HttpServlet {
             topics = Topic_DB.getAllTopics();
             session.setAttribute("topics", topics);
         }
+
         // Kiểm tra nếu posts đã có trong session
-        List<Post> posts = (List<Post>) session.getAttribute("posts");
+        List<Post> posts = (List<Post>) session.getAttribute("postsTopic");
         if (posts == null) {
-            posts = Post_DB.getPostsWithUploadPath();
+            posts = Post_DB.getPostsWithTopicId();
             for (Post post : posts) {
                 User author = Post_DB.getUserByPostId(post.getPostId());
                 post.setUser(author);
@@ -92,19 +49,11 @@ public class home extends HttpServlet {
                 }
                 post.setComments(comments);
             }
-            session.setAttribute("posts", posts);
+            session.setAttribute("postsTopic", posts);
         }
         request.getRequestDispatcher("index.jsp").forward(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
@@ -141,7 +90,7 @@ public class home extends HttpServlet {
 
         if (isAdded) {
             session.setAttribute("msg", "Chủ đề đã được thêm thành công.");
-            session.removeAttribute("topics");
+            session.removeAttribute("topics"); // Xóa topics khỏi session để cập nhật mới
         } else {
             session.setAttribute("msg", "Có lỗi xảy ra khi thêm chủ đề.");
         }
@@ -165,7 +114,7 @@ public class home extends HttpServlet {
         try {
             Post_DB.addPostTopic(post);
             session.setAttribute("msg", "Bài đăng đã được thêm thành công.");
-            session.removeAttribute("posts");
+            session.removeAttribute("postsTopic"); // Xóa postsTopic khỏi session để cập nhật mới
         } catch (SQLException e) {
             e.printStackTrace();
             session.setAttribute("msg", "Có lỗi xảy ra khi thêm bài đăng.");
@@ -179,23 +128,11 @@ public class home extends HttpServlet {
 
         if (deleteSuccess) {
             session.setAttribute("msg", "Chủ đề đã được xóa thành công.");
-            session.removeAttribute("topics");
-
+            session.removeAttribute("topics"); // Xóa topics khỏi session để cập nhật mới
+            session.removeAttribute("postsTopic"); // Xóa postsTopic khỏi session để cập nhật mới
         } else {
             session.setAttribute("msg", "Có lỗi xảy ra khi xóa chủ đề.");
         }
-
         response.sendRedirect("home");
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }

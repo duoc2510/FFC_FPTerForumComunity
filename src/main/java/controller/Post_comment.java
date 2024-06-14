@@ -1,18 +1,17 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Comment;
 import model.DAO.Comment_DB;
 import model.DAO.Post_DB;
@@ -20,179 +19,119 @@ import model.DAO.User_DB;
 import model.Post;
 import model.User;
 
-/**
- *
- * @author ThanhDuoc
- */
+@MultipartConfig(
+        maxFileSize = 1024 * 1024 * 10 // 10 MB
+)
 public class Post_comment extends HttpServlet {
-
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet Post_comment</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet Post_comment at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         String action = request.getParameter("action");
-        String referer = request.getHeader("referer");
-        HttpSession session = request.getSession(false);
 
-        if (null != action) {
+        if (action != null) {
             switch (action) {
-                case "addComment": {
-                    // Thêm comment
-                    int postId = Integer.parseInt(request.getParameter("postId"));
-                    if (session != null && session.getAttribute("USER") != null) {
-                        User user = (User) session.getAttribute("USER");
-                        int userId = user.getUserId(); // Lấy userId từ session
-
-                        String content = request.getParameter("content");
-
-                        boolean success = Comment_DB.addCommentToPost(postId, userId, content);
-
-                        if (success) {
-                            User_DB.updateScore(userId);
-                            // Nếu thành công, chuyển hướng đến trang trước đó
-                            List<Post> posts = Post_DB.getPostsWithUploadPath();
-                            for (Post p : posts) {
-                                User author = Post_DB.getUserByPostId(p.getPostId());
-                                p.setUser(author);
-                                List<Comment> comments = Comment_DB.getCommentsByPostId(p.getPostId());
-                                for (Comment comment : comments) {
-                                    User commentUser = User_DB.getUserById(comment.getUserId());
-                                    if (commentUser != null) {
-                                        comment.setUser(commentUser);
-                                    }
-                                }
-                                p.setComments(comments);
-                            }
-                            session.setAttribute("posts", posts);
-                            response.sendRedirect(referer);
-                        } else {
-                            // Nếu thất bại, gửi mã lỗi 500
-                            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to add comment.");
-                        }
-                    } else {
-                        // Nếu không có session hoặc USER không tồn tại trong session, chuyển hướng đến trang login
-                        response.sendRedirect("login");
-                    }
+                case "addComment":
+                    handleAddComment(request, response);
                     break;
-                }
-                case "deleteComment": {
-                    // Xóa comment
-                    int commentId = Integer.parseInt(request.getParameter("commentId"));
-                    if (session != null && session.getAttribute("USER") != null) {
-                        User user = (User) session.getAttribute("USER");
-                        int userId = user.getUserId(); // Lấy userId từ session
-
-                        boolean success = Comment_DB.deleteCommentById(commentId, userId);
-
-                        if (success) {
-                            // Nếu thành công, chuyển hướng đến trang trước đó
-                            List<Post> posts = Post_DB.getPostsWithUploadPath();
-                            for (Post p : posts) {
-                                User author = Post_DB.getUserByPostId(p.getPostId());
-                                p.setUser(author);
-                                List<Comment> comments = Comment_DB.getCommentsByPostId(p.getPostId());
-                                for (Comment comment : comments) {
-                                    User commentUser = User_DB.getUserById(comment.getUserId());
-                                    if (commentUser != null) {
-                                        comment.setUser(commentUser);
-                                    }
-                                }
-                                p.setComments(comments);
-                            }
-                            session.setAttribute("posts", posts);
-                            response.sendRedirect(referer);
-                        } else {
-                            // Nếu thất bại, gửi mã lỗi 500
-                            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to delete comment.");
-                        }
-                    } else {
-                        // Nếu không có session hoặc USER không tồn tại trong session, chuyển hướng đến trang login
-                        response.sendRedirect("login");
-                    }
+                case "deleteComment":
+                    handleDeleteComment(request, response);
                     break;
-                }
-                case "editComment": {
-                    // Sửa comment
-                    int commentId = Integer.parseInt(request.getParameter("commentId"));
-                    String newContent = request.getParameter("newContent");
-                    boolean success = Comment_DB.editComment(commentId, newContent);
-                    if (success) {
-                        List<Post> posts = Post_DB.getPostsWithUploadPath();
-                        for (Post p : posts) {
-                            User author = Post_DB.getUserByPostId(p.getPostId());
-                            p.setUser(author);
-                            List<Comment> comments = Comment_DB.getCommentsByPostId(p.getPostId());
-                            for (Comment comment : comments) {
-                                User commentUser = User_DB.getUserById(comment.getUserId());
-                                if (commentUser != null) {
-                                    comment.setUser(commentUser);
-                                }
-                            }
-                            p.setComments(comments);
-                        }
-                        session.setAttribute("posts", posts);
-                        // Nếu thành công, chuyển hướng đến trang trước đó
-                        response.sendRedirect(referer);
-                    } else {
-                        // Nếu thất bại, gửi mã lỗi 500
-                        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to edit comment.");
-                    }
+                case "editComment":
+                    handleEditComment(request, response);
                     break;
-                }
                 default:
                     break;
             }
         }
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
+    private void handleAddComment(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int postId = Integer.parseInt(request.getParameter("postId"));
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("USER") == null) {
+            response.sendRedirect("login");
+            return;
+        }
+        User user = (User) session.getAttribute("USER");
+        int userId = user.getUserId();
+        String content = request.getParameter("content");
+        boolean success = Comment_DB.addCommentToPost(postId, userId, content);
+        if (success) {
+            User_DB.updateScore(userId);
+            updatePostsInSession(session);
+        } else {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to add comment.");
+        }
+        sendRedirectBack(request, response);
+    }
 
+    private void handleDeleteComment(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int commentId = Integer.parseInt(request.getParameter("commentId"));
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("USER") == null) {
+            response.sendRedirect("login");
+            return;
+        }
+        User user = (User) session.getAttribute("USER");
+        int userId = user.getUserId();
+        boolean success = Comment_DB.deleteCommentById(commentId, userId);
+        if (success) {
+            updatePostsInSession(session);
+        } else {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to delete comment.");
+        }
+        sendRedirectBack(request, response);
+    }
+
+    private void handleEditComment(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int commentId = Integer.parseInt(request.getParameter("commentId"));
+        String newContent = request.getParameter("newContent");
+        boolean success = Comment_DB.editComment(commentId, newContent);
+        if (success) {
+            HttpSession session = request.getSession(false);
+            if (session != null) {
+                updatePostsInSession(session);
+            }
+        } else {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to edit comment.");
+        }
+        sendRedirectBack(request, response);
+    }
+
+    private void updatePostsInSession(HttpSession session) {
+        User user = (User) session.getAttribute("USER");
+        if (user != null) {
+            List<Post> posts;
+            Integer groupId = (Integer) session.getAttribute("groupId");
+            Integer topicId = (Integer) session.getAttribute("topicId");
+            if (groupId != null) {
+                posts = Post_DB.getPostsWithGroupId();
+                session.setAttribute("postsGroup", posts);
+            } else if (topicId != null) {
+                posts = Post_DB.getPostsWithTopicId();
+                session.setAttribute("postsTopic", posts);
+            } else {
+                posts = Post_DB.getPostsWithoutGroupIdAndTopicId();
+                session.setAttribute("postsUser", posts);
+            }
+            for (Post p : posts) {
+                User author = Post_DB.getUserByPostId(p.getPostId());
+                p.setUser(author);
+                List<Comment> comments = Comment_DB.getCommentsByPostId(p.getPostId());
+                for (Comment comment : comments) {
+                    User commentUser = User_DB.getUserById(comment.getUserId());
+                    if (commentUser != null) {
+                        comment.setUser(commentUser);
+                    }
+                }
+                p.setComments(comments);
+            }
+        }
+    }
+
+    private void sendRedirectBack(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String referer = request.getHeader("referer");
+        response.sendRedirect(referer != null ? referer : "profile");
+    }
 }

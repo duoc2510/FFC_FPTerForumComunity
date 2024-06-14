@@ -1,7 +1,6 @@
 package controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -11,10 +10,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 import java.io.File;
-import java.sql.SQLException;
 import model.Comment;
 import model.DAO.Comment_DB;
 import model.DAO.Post_DB;
+import model.DAO.Rate_DB;
 import model.DAO.User_DB;
 import model.Post;
 import model.User;
@@ -24,45 +23,40 @@ import model.User;
 )
 public class Post_postView extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet viewPost</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet viewPost at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("/user/newsfeed.jsp").forward(request, response);
+        response.setContentType("text/html;charset=UTF-8");
+        HttpSession session = request.getSession();
 
+        // Xóa session attribute "postsUser" nếu tồn tại
+        session.removeAttribute("postsUser");
+
+        List<Post> posts = Post_DB.getPostsWithoutGroupIdAndTopicId();
+        for (Post post : posts) {
+            User author = Post_DB.getUserByPostId(post.getPostId());
+            post.setUser(author);
+
+            List<Comment> comments = Comment_DB.getCommentsByPostId(post.getPostId());
+            for (Comment comment : comments) {
+                User commentUser = User_DB.getUserById(comment.getUserId());
+                if (commentUser != null) {
+                    comment.setUser(commentUser);
+                }
+            }
+            post.setComments(comments);
+
+            // Kiểm tra xem người dùng đã like bài viết này chưa và cập nhật trường likedByCurrentUser
+            int userId = ((User) session.getAttribute("USER")).getUserId(); // Lấy userId từ session
+            boolean likedByCurrentUser = Rate_DB.checkIfLiked(post.getPostId(), userId);
+            post.setLikedByCurrentUser(likedByCurrentUser);
+
+            // Lấy số lượt thích của bài viết và cập nhật vào đối tượng Post
+            int likeCount = Rate_DB.getLikes(post.getPostId());
+            post.setLikeCount(likeCount);
+        }
+
+        session.setAttribute("postsUser", posts);
+        request.getRequestDispatcher("/user/newsfeed.jsp").forward(request, response);
     }
 
     @Override
@@ -72,40 +66,21 @@ public class Post_postView extends HttpServlet {
         int postId;
         boolean success = false;
         String message = "";
+
         if (action != null) {
             postId = Integer.parseInt(request.getParameter("postId"));
 
             if ("editPost".equals(action)) {
-                String newContent = request.getParameter("newContent");
-                String newStatus = request.getParameter("newStatus");
-                String existingUploadPath = request.getParameter("existingUploadPath");
-
-                // Kiểm tra xem có file mới được upload không
-                Part filePart = request.getPart("newUploadPath");
-                String newUploadPath = null;
-                if (filePart != null && filePart.getSize() > 0) {
-                    // Xử lý file upload
-                    newUploadPath = handleUpload(request);
-                } else {
-                    // Sử dụng đường dẫn cũ nếu không có file mới được upload
-                    newUploadPath = (existingUploadPath != null && !existingUploadPath.equals("null") && !existingUploadPath.isEmpty()) ? existingUploadPath : null;
-                }
-
-                // Thực hiện chỉnh sửa bài đăng
-                success = Post_DB.editPost(postId, newContent, newStatus, newUploadPath);
+                success = handleEditPost(request, postId);
                 message = success ? "Post edited successfully." : "Failed to edit post.";
-                // Nếu chỉnh sửa thành công, cập nhật lại danh sách bài đăng trong session
-                if (success) {
-                    updatePostsInSession(request.getSession());
-                }
             } else if ("deletePost".equals(action)) {
-                // Thực hiện xóa bài đăng
-                success = Post_DB.deletePost(postId);
+                success = handleDeletePost(postId);
                 message = success ? "Post deleted successfully." : "Failed to delete post.";
-                // Nếu xóa thành công, cập nhật lại danh sách bài đăng trong session
-                if (success) {
-                    updatePostsInSession(request.getSession());
-                }
+            }
+
+            // Nếu hành động thành công, cập nhật lại danh sách bài đăng trong session
+            if (success) {
+                updatePostsInSession(request.getSession());
             }
         } else {
             message = "Action is missing.";
@@ -119,9 +94,33 @@ public class Post_postView extends HttpServlet {
         }
     }
 
-// Phương thức để cập nhật lại danh sách bài đăng trong session
+    private boolean handleEditPost(HttpServletRequest request, int postId) throws IOException, ServletException {
+        String newContent = request.getParameter("newContent");
+        String newStatus = request.getParameter("newStatus");
+        String existingUploadPath = request.getParameter("existingUploadPath");
+
+        // Kiểm tra xem có file mới được upload không
+        Part filePart = request.getPart("newUploadPath");
+        String newUploadPath = null;
+        if (filePart != null && filePart.getSize() > 0) {
+            // Xử lý file upload
+            newUploadPath = handleUpload(request);
+        } else {
+            // Sử dụng đường dẫn cũ nếu không có file mới được upload
+            newUploadPath = (existingUploadPath != null && !existingUploadPath.equals("null") && !existingUploadPath.isEmpty()) ? existingUploadPath : null;
+        }
+
+        // Thực hiện chỉnh sửa bài đăng
+        return Post_DB.editPost(postId, newContent, newStatus, newUploadPath);
+    }
+
+    private boolean handleDeletePost(int postId) {
+        // Thực hiện xóa bài đăng
+        return Post_DB.deletePost(postId);
+    }
+
     private void updatePostsInSession(HttpSession session) {
-        List<Post> posts = Post_DB.getPostsWithUploadPath();
+        List<Post> posts = Post_DB.getPostsWithoutGroupIdAndTopicId();
         for (Post p : posts) {
             User author = Post_DB.getUserByPostId(p.getPostId());
             p.setUser(author);
@@ -135,7 +134,7 @@ public class Post_postView extends HttpServlet {
             }
             p.setComments(comments);
         }
-        session.setAttribute("posts", posts);
+        session.setAttribute("postsUser", posts);
     }
 
     private String handleUpload(HttpServletRequest request) throws IOException, ServletException {
@@ -173,10 +172,4 @@ public class Post_postView extends HttpServlet {
         }
         return "";
     }
-
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }
-
 }

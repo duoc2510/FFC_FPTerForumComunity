@@ -19,6 +19,8 @@ public class Post {
     private Timestamp commentDate; // Thêm trường commentDate
     private User user;
     private List<Comment> comments;
+    private int likeCount; // Thêm trường này để lưu số lượt like
+    private boolean likedByCurrentUser; // Trạng thái đã like của người dùng hiện tại
 
     public Post() {
     }
@@ -203,4 +205,21 @@ public class Post {
     public void setComments(List<Comment> comments) {
         this.comments = comments;
     }
+
+    public int getLikeCount() {
+        return likeCount;
+    }
+
+    public void setLikeCount(int likeCount) {
+        this.likeCount = likeCount;
+    }
+
+    public boolean isLikedByCurrentUser() {
+        return likedByCurrentUser;
+    }
+
+    public void setLikedByCurrentUser(boolean likedByCurrentUser) {
+        this.likedByCurrentUser = likedByCurrentUser;
+    }
+
 }

@@ -54,7 +54,7 @@
 
                             .post-image {
                                 width: 100%;
-                                height: 500px;
+                                height: 250px;
                                 object-fit: cover;
                                 margin-top: 10px;
                             }
@@ -66,7 +66,7 @@
                                 max-height: 300px;
                             }
                         </style>
-                        <c:forEach var="post" items="${posts}">
+                        <c:forEach var="post" items="${postsUser}">
                             <c:if test="${ post.postStatus eq 'Public'}">
                                 <%@include file="post.jsp" %>
                             </c:if>

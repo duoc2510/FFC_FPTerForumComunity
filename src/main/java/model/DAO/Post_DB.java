@@ -217,38 +217,82 @@ public class Post_DB implements DBinfo {
         return post;
     }
 
-    public static List<Post> getPostsWithUploadPath() {
+    public static List<Post> getPostsWithGroupId() {
         List<Post> posts = new ArrayList<>();
         String query = "SELECT p.*, u.UploadPath "
                 + "FROM Post p "
                 + "LEFT JOIN Upload u ON p.Post_id = u.Post_id "
+                + "WHERE p.Group_id IS NOT NULL "
                 + "ORDER BY p.Post_id DESC";
         try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                int postId = rs.getInt("Post_id");
-                int userId = rs.getInt("User_id");
-                int groupId = rs.getInt("Group_id");
-                int topicId = rs.getInt("Topic_id");
-                String content = rs.getString("Content");
-                // Sử dụng getTimestamp() thay vì getString()
-                Timestamp createDateTimestamp = rs.getTimestamp("createDate");
-                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-                String createDate = dateFormat.format(createDateTimestamp);
-                String status = rs.getString("Status");
-                String postStatus = rs.getString("postStatus");
-                String reason = rs.getString("Reason");
-                String uploadPath = rs.getString("UploadPath");
-
-                Post post = new Post(postId, userId, groupId, topicId, content, createDate, status, postStatus, reason, uploadPath);
-                posts.add(post);
+                posts.add(mapResultSetToPost(rs));
             }
-            System.out.println("getPostsWithUploadPath: Query executed successfully.");
+            System.out.println("getPostsWithGroupId: Query executed successfully.");
         } catch (SQLException ex) {
             ex.printStackTrace();
-            System.out.println("getPostsWithUploadPath: Query execution failed.");
+            System.out.println("getPostsWithGroupId: Query execution failed.");
         }
         return posts;
+    }
+
+    public static List<Post> getPostsWithTopicId() {
+        List<Post> posts = new ArrayList<>();
+        String query = "SELECT p.*, u.UploadPath "
+                + "FROM Post p "
+                + "LEFT JOIN Upload u ON p.Post_id = u.Post_id "
+                + "WHERE p.Topic_id IS NOT NULL "
+                + "ORDER BY p.Post_id DESC";
+        try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                posts.add(mapResultSetToPost(rs));
+            }
+            System.out.println("getPostsWithTopicId: Query executed successfully.");
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            System.out.println("getPostsWithTopicId: Query execution failed.");
+        }
+        return posts;
+    }
+
+    public static List<Post> getPostsWithoutGroupIdAndTopicId() {
+        List<Post> posts = new ArrayList<>();
+        String query = "SELECT p.*, u.UploadPath "
+                + "FROM Post p "
+                + "LEFT JOIN Upload u ON p.Post_id = u.Post_id "
+                + "WHERE p.Group_id IS NULL AND p.Topic_id IS NULL "
+                + "ORDER BY CHECKSUM(NEWID());";
+        try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                posts.add(mapResultSetToPost(rs));
+            }
+            System.out.println("getPostsWithoutGroupIdAndTopicId: Query executed successfully.");
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            System.out.println("getPostsWithoutGroupIdAndTopicId: Query execution failed.");
+        }
+        return posts;
+    }
+
+    private static Post mapResultSetToPost(ResultSet rs) throws SQLException {
+        int postId = rs.getInt("Post_id");
+        int userId = rs.getInt("User_id");
+        int groupId = rs.getInt("Group_id");
+        int topicId = rs.getInt("Topic_id");
+        String content = rs.getString("Content");
+        // Sử dụng getTimestamp() thay vì getString()
+        Timestamp createDateTimestamp = rs.getTimestamp("createDate");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        String createDate = dateFormat.format(createDateTimestamp);
+        String status = rs.getString("Status");
+        String postStatus = rs.getString("postStatus");
+        String reason = rs.getString("Reason");
+        String uploadPath = rs.getString("UploadPath");
+
+        return new Post(postId, userId, groupId, topicId, content, createDate, status, postStatus, reason, uploadPath);
     }
 
     public static User getUserByPostId(int postId) {
@@ -257,9 +301,7 @@ public class Post_DB implements DBinfo {
                 + "FROM Users u "
                 + "INNER JOIN Post p ON u.User_id = p.User_id "
                 + "WHERE p.Post_id = ?";
-
         try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement pstmt = conn.prepareStatement(query)) {
-
             pstmt.setInt(1, postId);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
