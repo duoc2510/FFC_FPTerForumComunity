@@ -1,3 +1,4 @@
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <div class="col-lg-12">
     <div class=" w-100">
@@ -62,10 +63,14 @@
 
             <!-- Option to delete post for the post author -->
             <div class="mt-1 ">
-                <p  style="font-size:30px">${post.content}</p>
+                <p>${post.content}</p>
+
                 <c:if test="${not empty post.uploadPath}">
                     <img src="${pageContext.request.contextPath}/${post.uploadPath}" alt="Post Image" class="post-image rounded mx-auto d-block">
                 </c:if>
+                <p>Likes: <span id="like-count-${post.postId}">${post.likeCount}</span></p>
+                <button class="unlike-btn" data-post-id="${post.postId}">Unlike</button>
+                <button class="like-btn" data-post-id="${post.postId}">Like</button>
             </div>
             <div class="">
                 <div class="row p-3 d-flex justify-content-center text-center">
@@ -141,3 +146,75 @@
         </div>
     </div>
 </div>
+                    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+                                                    $(document).ready(function () {
+                                                        // Function to check if the current user has liked a post
+                                                        function checkIfLiked(postId) {
+                                                            // Here you can perform AJAX to check the liked status from the server
+                                                            // For simplicity, assume the liked status is already known
+                                                            var liked = ${post.likedByCurrentUser}; // Replace with actual value from server-side
+
+                                                            return liked;
+                                                        }
+
+                                                        // Click event handler for Like button
+                                                        $(".like-btn").click(function () {
+                                                            var postId = $(this).data("post-id");
+
+                                                            $.ajax({
+                                                                type: "POST",
+                                                                url: "rate",
+                                                                data: {
+                                                                    action: "like",
+                                                                    postId: postId
+                                                                },
+                                                                success: function (response) {
+                                                                    $("#like-count-" + postId).text(response.likeCount);
+                                                                    $(".like-btn[data-post-id='" + postId + "']").hide();
+                                                                    $(".unlike-btn[data-post-id='" + postId + "']").show();
+                                                                },
+                                                                error: function (xhr, status, error) {
+                                                                    console.error("Error: " + error);
+                                                                }
+                                                            });
+                                                        });
+
+                                                        // Click event handler for Unlike button
+                                                        $(".unlike-btn").click(function () {
+                                                            var postId = $(this).data("post-id");
+
+                                                            $.ajax({
+                                                                type: "POST",
+                                                                url: "rate",
+                                                                data: {
+                                                                    action: "unlike",
+                                                                    postId: postId
+                                                                },
+                                                                success: function (response) {
+                                                                    $("#like-count-" + postId).text(response.likeCount);
+                                                                    $(".unlike-btn[data-post-id='" + postId + "']").hide();
+                                                                    $(".like-btn[data-post-id='" + postId + "']").show();
+                                                                },
+                                                                error: function (xhr, status, error) {
+                                                                    console.error("Error: " + error);
+                                                                }
+                                                            });
+                                                        });
+
+                                                        // Initial check and show/hide Like/Unlike buttons based on liked status
+                                                        $(".like-btn, .unlike-btn").each(function () {
+                                                            var postId = $(this).data("post-id");
+                                                            var liked = checkIfLiked(postId);
+
+                                                            if (liked) {
+                                                                $(".like-btn[data-post-id='" + postId + "']").hide();
+                                                                $(".unlike-btn[data-post-id='" + postId + "']").show();
+                                                            } else {
+                                                                $(".unlike-btn[data-post-id='" + postId + "']").hide();
+                                                                $(".like-btn[data-post-id='" + postId + "']").show();
+                                                            }
+                                                        });
+                                                    });
+</script>

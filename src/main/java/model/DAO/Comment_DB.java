@@ -95,7 +95,6 @@ public class Comment_DB {
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-
         return success;
     }
 }

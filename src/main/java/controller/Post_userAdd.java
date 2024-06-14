@@ -13,7 +13,6 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
@@ -34,55 +33,6 @@ import model.User;
 )
 public class Post_userAdd extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet Post_addpost</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet Post_addpost at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -127,28 +77,41 @@ public class Post_userAdd extends HttpServlet {
                 post.setContent(postContent);
                 post.setUploadPath(uploadPath);
                 Post_DB.addPostGroup(post);
+                List<Post> posts = Post_DB.getPostsWithGroupId();
+                for (Post p : posts) {
+                    User author = Post_DB.getUserByPostId(p.getPostId());
+                    p.setUser(author);
+                    List<Comment> comments = Comment_DB.getCommentsByPostId(p.getPostId());
+                    for (Comment comment : comments) {
+                        User commentUser = User_DB.getUserById(comment.getUserId());
+                        if (commentUser != null) {
+                            comment.setUser(commentUser);
+                        }
+                    }
+                    p.setComments(comments);
+                }
+                session.setAttribute("postsGroup", posts);
             } else {
                 post.setUserId(userId);
                 post.setContent(postContent);
                 post.setPostStatus(postStatus);
                 post.setUploadPath(uploadPath);
                 Post_DB.addPostUser(post);
-            }
-            List<Post> posts = Post_DB.getPostsWithUploadPath();
-            for (Post p : posts) {
-                User author = Post_DB.getUserByPostId(p.getPostId());
-                p.setUser(author);
-                List<Comment> comments = Comment_DB.getCommentsByPostId(p.getPostId());
-                for (Comment comment : comments) {
-                    User commentUser = User_DB.getUserById(comment.getUserId());
-                    if (commentUser != null) {
-                        comment.setUser(commentUser);
+                List<Post> posts = Post_DB.getPostsWithoutGroupIdAndTopicId();
+                for (Post p : posts) {
+                    User author = Post_DB.getUserByPostId(p.getPostId());
+                    p.setUser(author);
+                    List<Comment> comments = Comment_DB.getCommentsByPostId(p.getPostId());
+                    for (Comment comment : comments) {
+                        User commentUser = User_DB.getUserById(comment.getUserId());
+                        if (commentUser != null) {
+                            comment.setUser(commentUser);
+                        }
                     }
+                    p.setComments(comments);
                 }
-                p.setComments(comments);
+                session.setAttribute("postsUser", posts);
             }
-            session.setAttribute("posts", posts);
-            // Chuyển hướng người dùng về trang trước đó sau khi đăng bài thành công
             String referer = request.getHeader("referer");
             response.sendRedirect(referer != null ? referer : "profile");
         } catch (SQLException ex) {

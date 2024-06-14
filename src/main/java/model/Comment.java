@@ -42,6 +42,13 @@ public class Comment {
         this.date = date;
     }
 
+    public Comment(int commentId, int postId, String content) {
+        this.commentId = commentId;
+        this.postId = postId;
+        this.content = content;
+    }
+    
+
     // Getters and Setters
     public int getCommentId() {
         return commentId;

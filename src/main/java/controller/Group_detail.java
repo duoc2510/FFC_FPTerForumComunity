@@ -96,6 +96,25 @@ public class Group_detail extends HttpServlet {
                 pendingMembers.add(member);
             }
         }
+        // Kiểm tra nếu posts đã có trong session
+        List<Post> posts = (List<Post>) session.getAttribute("postsGroup");
+        if (posts == null) {
+            posts = Post_DB.getPostsWithGroupId();
+            for (Post post : posts) {
+                User author = Post_DB.getUserByPostId(post.getPostId());
+                post.setUser(author);
+
+                List<Comment> comments = Comment_DB.getCommentsByPostId(post.getPostId());
+                for (Comment comment : comments) {
+                    User commentUser = User_DB.getUserById(comment.getUserId());
+                    if (commentUser != null) {
+                        comment.setUser(commentUser);
+                    }
+                }
+                post.setComments(comments);
+            }
+            session.setAttribute("postsGroup", posts);
+        }
 
         // Đặt danh sách các thành viên đang chờ duyệt vào thuộc tính request
         request.setAttribute("pendingMembers", pendingMembers);
@@ -212,7 +231,7 @@ public class Group_detail extends HttpServlet {
             }
 
             if (success) {
-                List<Post> posts = Post_DB.getPostsWithUploadPath();
+                List<Post> posts = Post_DB.getPostsWithGroupId();
                 for (Post p : posts) {
                     User author = Post_DB.getUserByPostId(p.getPostId());
                     p.setUser(author);
@@ -225,7 +244,7 @@ public class Group_detail extends HttpServlet {
                     }
                     p.setComments(comments);
                 }
-                session.setAttribute("posts", posts);
+                session.setAttribute("postsGroup", posts);
                 System.out.println("Post status updated successfully.");
             } else {
                 System.out.println("Failed to update post status.");
