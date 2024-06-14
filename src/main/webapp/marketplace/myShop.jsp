@@ -61,12 +61,14 @@
                             <div class="card mx-1">
                                 <ul class="list-group list-group-flush rounded-3">
                                     <li class="list-group-item d-flex p-3">
-                                        <i class="fas fa-globe fa-lg text-warning"></i>
-                                        <a class="mb-0" href="" data-toggle="modal" data-target="#editBrand">Edit brand information</a>
+                                        <i style="display: inline-block;
+                                           margin-top: 1px;" class="fas fa-globe fa-lg text-warning"></i>
+                                        <a style="margin-left:10px" class="mb-0" href="" data-toggle="modal" data-target="#editBrand">Edit brand information</a>
                                     </li>
                                     <li class="list-group-item d-flex p-3">
-                                        <i class="fas fa-globe fa-lg text-warning"></i>
-                                        <a class="mb-0" href="" data-toggle="modal" data-target="#deleteShop">Delete shop</a>
+                                        <i style="display: inline-block;
+                                           margin-top: 1px;" class="fas fa-globe fa-lg text-warning"></i>
+                                        <a style="margin-left:10px" class="mb-0" href="" data-toggle="modal" data-target="#deleteShop">Delete shop</a>
                                     </li>
                                 </ul>
                             </div>
@@ -261,85 +263,85 @@
                                                                         <button type="submit" class="btn btn-danger my-1">Khong Nhan Don Hang</button>
                                                                     </form>
                                                                 </td>
-                                                 
-                                                    </c:if>
-                                                    <c:if test="${order.status eq 'Accept'}">
-                                                        <td>
-                                                            <form action="product" method="post">
-                                                                <input type="text" name="orderid" value="${order.order_ID}" hidden/>
-                                                                <input type="text" name="action" value="thanhcong" hidden/>
-                                                                <button type="submit" class="btn btn-primary my-1">Giao hang thanh cong</button>
-                                                            </form>
-                                                            <form action="product" method="post">
-                                                                <input type="text" name="orderid" value="${order.order_ID}" hidden/>
-                                                                <input type="text" name="action" value="thatbai" hidden/>
-                                                                <button type="submit" class="btn btn-danger my-1">Giao hang that bai</button>
-                                                            </form>
-                                                        </td>
-                                                    </c:if>
-                                                    <c:if test="${order.status eq 'Completed'}">
-                                                        <td>
-                                                            <p class="text-success">Đã giao hàng</p>
-                                                        </td>
-                                                    </c:if>
-                                                    <c:if test="${order.status eq 'Cancelled'}">
-                                                        <td>
-                                                            <p class="text-danger">Đơn hàng bị hủy</p>
-                                                        </td>
-                                                    </c:if>
-                                                    <c:if test="${order.status eq 'Success'}">
-                                                        <td>
-                                                            <p class="text-success">Success</p>
-                                                        </td>
-                                                    </c:if>
-                                                </c:if>
-                                                <c:if test="${order.total * 5 / 100 < USER.userWallet}">
-                                                    <c:if test="${order.status eq 'Pending'}">
-                                                        <td>
-                                                            <form action="product" method="post">
-                                                                <input type="text" name="orderid" value="${order.order_ID}" hidden/>
-                                                                <input type="text" name="action" value="chapnhan" hidden/>
-                                                                <button type="submit" class="btn btn-primary my-1">Chap Nhan Don Hang</button>
-                                                            </form>
-                                                            <form action="product" method="post">
-                                                                <input type="text" name="orderid" value="${order.order_ID}" hidden/>
-                                                                <input type="text" name="action" value="thatbai" hidden/>
-                                                                <button type="submit" class="btn btn-danger my-1">Khong Nhan Don Hang</button>
-                                                            </form>
-                                                        </td>
-                                                    </c:if>
-                                                    <c:if test="${order.status eq 'Accept'}">
-                                                        <td>
-                                                            <form action="product" method="post">
-                                                                <input type="text" name="orderid" value="${order.order_ID}" hidden/>
-                                                                <input type="text" name="action" value="thanhcong" hidden/>
-                                                                <button type="submit" class="btn btn-primary my-1">Giao hang thanh cong</button>
-                                                            </form>
-                                                            <form action="product" method="post">
-                                                                <input type="text" name="orderid" value="${order.order_ID}" hidden/>
-                                                                <input type="text" name="action" value="thatbai" hidden/>
-                                                                <button type="submit" class="btn btn-danger my-1">Giao hang that bai</button>
-                                                            </form>
-                                                        </td>
-                                                    </c:if>
-                                                    <c:if test="${order.status eq 'Completed'}">
-                                                        <td>
-                                                            <p class="text-success">Đã giao hàng</p>
-                                                        </td>
-                                                    </c:if>
-                                                    <c:if test="${order.status eq 'Cancelled'}">
-                                                        <td>
-                                                            <p class="text-danger">Đơn hàng bị hủy</p>
-                                                        </td>
-                                                    </c:if>
-                                                    <c:if test="${order.status eq 'Success'}">
-                                                        <td>
-                                                            <p class="text-success">Success</p>
-                                                        </td>
-                                                    </c:if>
-                                                </c:if>
-                                                </tr>
-                                            </c:forEach>
+
+                                                            </c:if>
+                                                            <c:if test="${order.status eq 'Accept'}">
+                                                                <td>
+                                                                    <form action="product" method="post">
+                                                                        <input type="text" name="orderid" value="${order.order_ID}" hidden/>
+                                                                        <input type="text" name="action" value="thanhcong" hidden/>
+                                                                        <button type="submit" class="btn btn-primary my-1">Giao hang thanh cong</button>
+                                                                    </form>
+                                                                    <form action="product" method="post">
+                                                                        <input type="text" name="orderid" value="${order.order_ID}" hidden/>
+                                                                        <input type="text" name="action" value="thatbai" hidden/>
+                                                                        <button type="submit" class="btn btn-danger my-1">Giao hang that bai</button>
+                                                                    </form>
+                                                                </td>
+                                                            </c:if>
+                                                            <c:if test="${order.status eq 'Completed'}">
+                                                                <td>
+                                                                    <p class="text-success">Đã giao hàng</p>
+                                                                </td>
+                                                            </c:if>
+                                                            <c:if test="${order.status eq 'Cancelled'}">
+                                                                <td>
+                                                                    <p class="text-danger">Đơn hàng bị hủy</p>
+                                                                </td>
+                                                            </c:if>
+                                                            <c:if test="${order.status eq 'Success'}">
+                                                                <td>
+                                                                    <p class="text-success">Success</p>
+                                                                </td>
+                                                            </c:if>
+                                                        </c:if>
+                                                        <c:if test="${order.total * 5 / 100 < USER.userWallet}">
+                                                            <c:if test="${order.status eq 'Pending'}">
+                                                                <td>
+                                                                    <form action="product" method="post">
+                                                                        <input type="text" name="orderid" value="${order.order_ID}" hidden/>
+                                                                        <input type="text" name="action" value="chapnhan" hidden/>
+                                                                        <button type="submit" class="btn btn-primary my-1">Chap Nhan Don Hang</button>
+                                                                    </form>
+                                                                    <form action="product" method="post">
+                                                                        <input type="text" name="orderid" value="${order.order_ID}" hidden/>
+                                                                        <input type="text" name="action" value="thatbai" hidden/>
+                                                                        <button type="submit" class="btn btn-danger my-1">Khong Nhan Don Hang</button>
+                                                                    </form>
+                                                                </td>
+                                                            </c:if>
+                                                            <c:if test="${order.status eq 'Accept'}">
+                                                                <td>
+                                                                    <form action="product" method="post">
+                                                                        <input type="text" name="orderid" value="${order.order_ID}" hidden/>
+                                                                        <input type="text" name="action" value="thanhcong" hidden/>
+                                                                        <button type="submit" class="btn btn-primary my-1">Giao hang thanh cong</button>
+                                                                    </form>
+                                                                    <form action="product" method="post">
+                                                                        <input type="text" name="orderid" value="${order.order_ID}" hidden/>
+                                                                        <input type="text" name="action" value="thatbai" hidden/>
+                                                                        <button type="submit" class="btn btn-danger my-1">Giao hang that bai</button>
+                                                                    </form>
+                                                                </td>
+                                                            </c:if>
+                                                            <c:if test="${order.status eq 'Completed'}">
+                                                                <td>
+                                                                    <p class="text-success">Đã giao hàng</p>
+                                                                </td>
+                                                            </c:if>
+                                                            <c:if test="${order.status eq 'Cancelled'}">
+                                                                <td>
+                                                                    <p class="text-danger">Đơn hàng bị hủy</p>
+                                                                </td>
+                                                            </c:if>
+                                                            <c:if test="${order.status eq 'Success'}">
+                                                                <td>
+                                                                    <p class="text-success">Success</p>
+                                                                </td>
+                                                            </c:if>
+                                                        </c:if>
+                                                    </tr>
+                                                </c:forEach>
                                             </tbody>
                                         </table>
 
