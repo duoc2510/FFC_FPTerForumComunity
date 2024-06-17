@@ -10,9 +10,6 @@
         <link rel="icon" href="https://fptshop.com.vn/favicon.ico" />
         <link rel="shortcut icon" type="image/png" href="${pageContext.request.contextPath}/static/images/logos/favicon.png" />
         <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/styles.min.css" />
-        <!--<link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap.css" />-->
-
-        <!--<link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/css/bootstrap.min.css" rel="stylesheet">-->
         <style>
             .row>*{
                 padding:0

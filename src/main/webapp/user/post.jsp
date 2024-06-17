@@ -1,8 +1,7 @@
-
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <div class="col-lg-12">
-    <div class=" w-100">
-        <div class=" p-4    bg-white shadow rounded mb-3">
+    <div class="w-100">
+        <div class="p-4 bg-white shadow rounded mb-3">
             <div class="pb-3 d-flex row">
                 <div class="col-1 text-center mt-2">
                     <c:choose>
@@ -11,7 +10,6 @@
                                 <img src="${pageContext.request.contextPath}/${post.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
                             </a>
                         </c:when>
-
                         <c:otherwise>
                             <a href="${pageContext.request.contextPath}/profile?username=${post.user.username}">
                                 <img src="${pageContext.request.contextPath}/${post.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
@@ -25,7 +23,6 @@
                 </div>
                 <c:choose>
                     <c:when test="${post.user.userId == USER.userId}">
-                        <!-- Dropdown menu for the post owner -->
                         <div class="dropdown col-1 px-2" style="text-align: right">
                             <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <span><i class="ti-more-alt"></i></span>   
@@ -45,39 +42,43 @@
                         </div>
                     </c:when>
                     <c:otherwise>
-                        <!-- Dropdown menu for the post owner -->
                         <div class="dropdown col-1 px-2" style="text-align: right">
                             <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <span><i class="ti-more-alt"></i></span>   
                             </a>
                             <ul class="dropdown-menu">
                                 <li>
-                                    <a class="dropdown-item" type="button" href="javascript:void(0)" ">Report</a>
+                                    <a class="dropdown-item" type="button" href="javascript:void(0)">Report</a>
                                 </li>
-
                             </ul>
                         </div>
                     </c:otherwise>
                 </c:choose>
             </div>
-
-            <!-- Option to delete post for the post author -->
-            <div class="mt-1 ">
-                <p>${post.content}</p>
+            <div class="mt-1">
+                <p class="fs-8">${post.content}</p>
 
                 <c:if test="${not empty post.uploadPath}">
                     <img src="${pageContext.request.contextPath}/${post.uploadPath}" alt="Post Image" class="post-image rounded mx-auto d-block">
                 </c:if>
-                <p>Likes: <span id="like-count-${post.postId}">${post.likeCount}</span></p>
-                <button class="unlike-btn" data-post-id="${post.postId}">Unlike</button>
-                <button class="like-btn" data-post-id="${post.postId}">Like</button>
             </div>
             <div class="">
                 <div class="row p-3 d-flex justify-content-center text-center">
-                    <a class="col nav-link nav-icon-hover" href="javascript:void(0)">
-                        <span><i class="ti ti-heart"></i></span>
-                        <span class="hide-menu">Like</span>
+                    <!-- Like button (Th? <a>), hi?n th? khi ch?a like -->
+                    <span id="like-count-${post.postId}">Post Likes: ${post.likeCount}</span>
+
+                    <!-- Nút Like -->
+                    <a href="#" id="like-btn-${post.postId}" class="col nav-link nav-icon-hover" style="${post.likedByCurrentUser ? 'display:none;' : ''}" onclick="handleLike(event, ${post.postId}, 'like')" data-postid="${post.postId}" data-action="like">
+                        <span><i class="ti ti-message-plus" style="color: green;"></i></span>
+                        <span class="hide-menu" style="color: green;">Like</span>
                     </a>
+
+                    <!-- Nút Unlike -->
+                    <a href="#" id="unlike-btn-${post.postId}" class="col nav-link nav-icon-hover" style="${post.likedByCurrentUser ? '' : 'display:none;'}" onclick="handleLike(event, ${post.postId}, 'unlike')" data-postid="${post.postId}" data-action="unlike">
+                        <span><i class="ti ti-message-minus" style="color: red;"></i></span>
+                        <span class="hide-menu" style="color: red;">Unlike</span>
+                    </a>
+
                     <a class="col nav-link nav-icon-hover">
                         <span><i class="ti ti-message-plus"></i></span>
                         <span class="hide-menu">Comment</span>
@@ -87,7 +88,6 @@
                         <span class="hide-menu">Share</span>
                     </a>
                 </div>
-                <!-- Add comment form -->
                 <form action="${pageContext.request.contextPath}/comment" method="post" class="input-group">
                     <input type="hidden" name="action" value="addComment">
                     <input type="hidden" name="postId" value="${post.postId}">
@@ -95,7 +95,6 @@
                     <input type="text" class="form-control" name="content" placeholder="Write a comment" required>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
-                <!-- Display comments -->
                 <div class="comments mt-3">
                     <c:forEach var="comment" items="${post.comments}">
                         <div class="comment">
@@ -107,7 +106,6 @@
                                                 <img src="${pageContext.request.contextPath}/${comment.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
                                             </a>
                                         </c:when>
-
                                         <c:otherwise>
                                             <a href="${pageContext.request.contextPath}/profile?username=${comment.user.username}">
                                                 <img src="${pageContext.request.contextPath}/${comment.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
@@ -146,75 +144,34 @@
         </div>
     </div>
 </div>
-                    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-                                                    $(document).ready(function () {
-                                                        // Function to check if the current user has liked a post
-                                                        function checkIfLiked(postId) {
-                                                            // Here you can perform AJAX to check the liked status from the server
-                                                            // For simplicity, assume the liked status is already known
-                                                            var liked = ${post.likedByCurrentUser}; // Replace with actual value from server-side
+                                                    function handleLike(event, postId, action) {
+                                                        event.preventDefault();
 
-                                                            return liked;
-                                                        }
+                                                        $.ajax({
+                                                            type: 'POST',
+                                                            url: '${pageContext.request.contextPath}/rate',
+                                                            data: {
+                                                                postId: postId,
+                                                                action: action
+                                                            },
+                                                            success: function (response) {
+                                                                $('#like-count-' + postId).text('Likes: ' + response.likeCount);
 
-                                                        // Click event handler for Like button
-                                                        $(".like-btn").click(function () {
-                                                            var postId = $(this).data("post-id");
-
-                                                            $.ajax({
-                                                                type: "POST",
-                                                                url: "rate",
-                                                                data: {
-                                                                    action: "like",
-                                                                    postId: postId
-                                                                },
-                                                                success: function (response) {
-                                                                    $("#like-count-" + postId).text(response.likeCount);
-                                                                    $(".like-btn[data-post-id='" + postId + "']").hide();
-                                                                    $(".unlike-btn[data-post-id='" + postId + "']").show();
-                                                                },
-                                                                error: function (xhr, status, error) {
-                                                                    console.error("Error: " + error);
+                                                                // C?p nh?t tr?ng thái hi?n th? c?a các th? <a>
+                                                                if (action === 'like') {
+                                                                    $('#like-btn-' + postId).hide();
+                                                                    $('#unlike-btn-' + postId).show();
+                                                                } else if (action === 'unlike') {
+                                                                    $('#like-btn-' + postId).show();
+                                                                    $('#unlike-btn-' + postId).hide();
                                                                 }
-                                                            });
-                                                        });
-
-                                                        // Click event handler for Unlike button
-                                                        $(".unlike-btn").click(function () {
-                                                            var postId = $(this).data("post-id");
-
-                                                            $.ajax({
-                                                                type: "POST",
-                                                                url: "rate",
-                                                                data: {
-                                                                    action: "unlike",
-                                                                    postId: postId
-                                                                },
-                                                                success: function (response) {
-                                                                    $("#like-count-" + postId).text(response.likeCount);
-                                                                    $(".unlike-btn[data-post-id='" + postId + "']").hide();
-                                                                    $(".like-btn[data-post-id='" + postId + "']").show();
-                                                                },
-                                                                error: function (xhr, status, error) {
-                                                                    console.error("Error: " + error);
-                                                                }
-                                                            });
-                                                        });
-
-                                                        // Initial check and show/hide Like/Unlike buttons based on liked status
-                                                        $(".like-btn, .unlike-btn").each(function () {
-                                                            var postId = $(this).data("post-id");
-                                                            var liked = checkIfLiked(postId);
-
-                                                            if (liked) {
-                                                                $(".like-btn[data-post-id='" + postId + "']").hide();
-                                                                $(".unlike-btn[data-post-id='" + postId + "']").show();
-                                                            } else {
-                                                                $(".unlike-btn[data-post-id='" + postId + "']").hide();
-                                                                $(".like-btn[data-post-id='" + postId + "']").show();
+                                                            },
+                                                            error: function (jqXHR, textStatus, errorThrown) {
+                                                                console.error('Error:', errorThrown);
                                                             }
                                                         });
-                                                    });
+                                                    }
 </script>

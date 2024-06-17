@@ -110,7 +110,7 @@
                             <form action="changepass" method="post" onsubmit="return validatePassword()">
                                 <div class="form-group pb-3">
                                     <label>Email:</label>
-                                    <input type="email" class="form-control" name="email" value="${USER.userEmail}" disabled>
+                                    <input type="email" class="form-control" name="email" value="${USER.userEmail}" readonly="">
                                 </div>
                                 <div class="form-group pb-3">
                                     <label>Old Password:</label>

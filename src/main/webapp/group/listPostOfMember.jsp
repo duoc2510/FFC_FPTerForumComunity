@@ -2,6 +2,62 @@
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
 <%@ include file="../include/header.jsp" %>
 <body>
+    <style>
+        .post {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            margin: 0;
+        }
+
+        .post-status {
+            margin: 5px 0 0;
+            color: #888;
+            font-size: 14px;
+        }
+
+        .post-content {
+            margin-top: 10px;
+        }
+
+        .post-content p {
+            margin: 0;
+        }
+
+        .post-image {
+            max-width: 100%;
+            height: auto;
+            margin-top: 10px;
+        }
+        .img-preview {
+            margin-top: 20px;
+        }
+        .img-preview img {
+            max-width: 100%;
+            max-height: 300px;
+        }
+    </style>
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
          data-sidebar-position="fixed" data-header-position="fixed">
         <%@ include file="../include/slidebar.jsp" %>
@@ -10,62 +66,6 @@
             <div class="container-fluid pb-2">
                 <div class="row ">
                     <div id ="profile-wrapper" >
-                        <style>
-                            .post {
-                                border: 1px solid #ccc;
-                                border-radius: 8px;
-                                padding: 10px;
-                                margin-bottom: 20px;
-                            }
-
-                            .post-header {
-                                display: flex;
-                                align-items: center;
-                            }
-
-                            .avatar {
-                                width: 40px;
-                                height: 40px;
-                                border-radius: 50%;
-                                margin-right: 10px;
-                            }
-
-                            .user-info {
-                                display: flex;
-                                flex-direction: column;
-                            }
-
-                            .user-name {
-                                margin: 0;
-                            }
-
-                            .post-status {
-                                margin: 5px 0 0;
-                                color: #888;
-                                font-size: 14px;
-                            }
-
-                            .post-content {
-                                margin-top: 10px;
-                            }
-
-                            .post-content p {
-                                margin: 0;
-                            }
-
-                            .post-image {
-                                max-width: 100%;
-                                height: auto;
-                                margin-top: 10px;
-                            }
-                            .img-preview {
-                                margin-top: 20px;
-                            }
-                            .img-preview img {
-                                max-width: 100%;
-                                max-height: 300px;
-                            }
-                        </style>
                         <div class="bg-white shadow rounded overflow-hidden ">
                             <div class="px-4 py-4 cover cover " style="background: url(${pageContext.request.contextPath}/upload/deli-2.png)">
                                 <div class="media align-items-end profile-head">
@@ -81,14 +81,14 @@
                                 <div class="media-body mb-5 text-white">
                                     <h4 class="mt-0 mb-0">${user.userFullName}</h4>
                                     <c:if test="${group.createrId == user.userId}">
-                                            <button class="btn btn-info btn-sm btn-block edit-cover my-2" disabled>Host Group</button>
-                                        </c:if>
+                                        <button class="btn btn-info btn-sm btn-block edit-cover my-2" disabled>Host Group</button>
+                                    </c:if>
                                 </div>
                                 <ul class="list-inline mb-0">
                                     <li class="list-inline-item">
                                         <h5 class="font-weight-bold mb-0 d-block">${postCount}</h5><small class="text-muted"><i class="fas fa-image mr-1"></i>Post in group</small>
                                     </li>
-              
+
                                 </ul>
                             </div>
                         </div>
@@ -178,9 +178,9 @@
                                                             <div class="d-flex justify-content-between align-items-center pb-3">
                                                                 <div class="d-flex align-items-center">
                                                                     <div class="text-center mt-2">
-                                                                         <a href="${pageContext.request.contextPath}/group/profile?userId=${comment.user.userId}&groupId=${group.groupId}">
-                                                                        <img src="${pageContext.request.contextPath}/${comment.user.userAvatar}" alt="" width="30" class="rounded-circle avatar-cover">
-                                                                         </a>
+                                                                        <a href="${pageContext.request.contextPath}/group/profile?userId=${comment.user.userId}&groupId=${group.groupId}">
+                                                                            <img src="${pageContext.request.contextPath}/${comment.user.userAvatar}" alt="" width="30" class="rounded-circle avatar-cover">
+                                                                        </a>
                                                                     </div>
                                                                     <div class="ms-2">
                                                                         <h6 class="card-title fw-semibold mb-0">${comment.user.username}:${comment.content}</h6>

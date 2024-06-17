@@ -297,9 +297,9 @@
                         </c:if>
 
                         <div id="postsContainer">
-                            <c:forEach var="post" items="${posts}">
+                            <c:forEach var="post" items="${postsGroup}">
                                 <c:if test="${post.groupId == group.groupId && post.status eq 'Active'}">
-                                    <%@ include file="postactive.jsp" %>
+                                    <%@ include file="postactive.jsp"%>
                                 </c:if>
                                 <c:if test="${post.groupId == group.groupId && group.createrId == USER.userId && post.status eq 'Pending'}">
                                     <%@ include file="postpending.jsp" %>

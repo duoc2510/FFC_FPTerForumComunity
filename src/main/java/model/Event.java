@@ -37,8 +37,6 @@ public class Event {
         this.location = location;
         this.createdAt = createdAt;
     }
-    
-    
 
     public Event(int eventId, String title, String description, Timestamp startDate, Timestamp endDate, int userId, String location, Timestamp createdAt, String uploadPath) {
         this.eventId = eventId;

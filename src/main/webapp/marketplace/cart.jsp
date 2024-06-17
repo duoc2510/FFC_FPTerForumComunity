@@ -35,7 +35,7 @@
                             <h1 class="text-uppercase text-bold my-3">bag is empty</h1>
                         </div>
                     </div>
-                            
+
                 </c:if>
 
                 <div class="row" id="billing">

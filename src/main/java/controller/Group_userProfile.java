@@ -85,8 +85,8 @@ public class Group_userProfile extends HttpServlet {
             }
             post.setComments(comments);
         }
-        int postCount=Group_DB.countPostsInGroupByUser(groupId, userId);
-        int cmtCount=Group_DB.countCommentsInGroupByUser(groupId, userId);
+        int postCount = Group_DB.countPostsInGroupByUser(groupId, userId);
+        int cmtCount = Group_DB.countCommentsInGroupByUser(groupId, userId);
         request.setAttribute("postCount", postCount);
         request.setAttribute("cmtCount", cmtCount);
         request.setAttribute("posts", posts);

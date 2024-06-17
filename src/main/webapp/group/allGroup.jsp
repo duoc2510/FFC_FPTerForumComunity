@@ -112,35 +112,35 @@
 </div>
 <%@include file="modal.jsp" %>
 <script>
-     function toggleCreatedGroups() {
-    var createdGroupsSection = document.getElementById("createdGroupsSection");
-    var joinedGroupsSection = document.getElementById("joinedGroupsSection");
-    var groupListSection = document.getElementById("groupListSection");
+    function toggleCreatedGroups() {
+        var createdGroupsSection = document.getElementById("createdGroupsSection");
+        var joinedGroupsSection = document.getElementById("joinedGroupsSection");
+        var groupListSection = document.getElementById("groupListSection");
 
-    createdGroupsSection.classList.remove("hidden");
-    joinedGroupsSection.classList.add("hidden");
-    groupListSection.classList.add("hidden");
-}
+        createdGroupsSection.classList.remove("hidden");
+        joinedGroupsSection.classList.add("hidden");
+        groupListSection.classList.add("hidden");
+    }
 
-function toggleJoinedGroups() {
-    var createdGroupsSection = document.getElementById("createdGroupsSection");
-    var joinedGroupsSection = document.getElementById("joinedGroupsSection");
-    var groupListSection = document.getElementById("groupListSection");
+    function toggleJoinedGroups() {
+        var createdGroupsSection = document.getElementById("createdGroupsSection");
+        var joinedGroupsSection = document.getElementById("joinedGroupsSection");
+        var groupListSection = document.getElementById("groupListSection");
 
-    joinedGroupsSection.classList.remove("hidden");
-    createdGroupsSection.classList.add("hidden");
-    groupListSection.classList.add("hidden");
-}
+        joinedGroupsSection.classList.remove("hidden");
+        createdGroupsSection.classList.add("hidden");
+        groupListSection.classList.add("hidden");
+    }
 
-function toggleGroupList() {
-    var createdGroupsSection = document.getElementById("createdGroupsSection");
-    var joinedGroupsSection = document.getElementById("joinedGroupsSection");
-    var groupListSection = document.getElementById("groupListSection");
+    function toggleGroupList() {
+        var createdGroupsSection = document.getElementById("createdGroupsSection");
+        var joinedGroupsSection = document.getElementById("joinedGroupsSection");
+        var groupListSection = document.getElementById("groupListSection");
 
-    groupListSection.classList.remove("hidden");
-    createdGroupsSection.classList.add("hidden");
-    joinedGroupsSection.classList.add("hidden");
-}
+        groupListSection.classList.remove("hidden");
+        createdGroupsSection.classList.add("hidden");
+        joinedGroupsSection.classList.add("hidden");
+    }
 
 
 </script>

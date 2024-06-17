@@ -16,6 +16,7 @@ import model.DAO.Post_DB;
 import model.DAO.Rate_DB;
 import model.DAO.User_DB;
 import model.User;
+import org.json.JSONObject;
 
 /**
  *
@@ -25,12 +26,10 @@ public class Post_rate extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("application/json");
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("USER");
-
         if (user == null) {
-            response.getWriter().write("{\"error\": \"User not logged in.\"}");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
@@ -40,19 +39,29 @@ public class Post_rate extends HttpServlet {
 
         try {
             if ("like".equals(action)) {
-                Rate_DB.addLike(postId, userId); // Thực hiện thêm like vào bài viết
+                Rate_DB.addLike(postId, userId);
             } else if ("unlike".equals(action)) {
-                Rate_DB.removeLike(postId, userId); // Thực hiện xóa like khỏi bài viết
+                Rate_DB.removeLike(postId, userId);
+            } else {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return;
             }
 
-            int likeCount = Rate_DB.getLikes(postId); // Lấy số lượt like mới
+            // Fetch updated like count and like status
+            int likeCount = Rate_DB.getLikes(postId);
+            boolean likedByCurrentUser = Rate_DB.checkIfLiked(postId, userId);
 
-            // Tạo JSON response để gửi về client
-            String jsonResponse = "{\"likeCount\": " + likeCount + "}";
-            response.getWriter().write(jsonResponse);
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            response.getWriter().write("{\"error\": \"Failed to perform like/unlike operation.\"}");
+            // Prepare JSON response
+            JSONObject jsonResponse = new JSONObject();
+            jsonResponse.put("likeCount", likeCount);
+            jsonResponse.put("likedByCurrentUser", likedByCurrentUser);
+
+            // Send JSON response
+            response.setContentType("application/json");
+            response.getWriter().write(jsonResponse.toString());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
