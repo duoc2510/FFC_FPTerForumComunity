@@ -61,12 +61,14 @@
                             <div class="card mx-1">
                                 <ul class="list-group list-group-flush rounded-3">
                                     <li class="list-group-item d-flex p-3">
-                                        <i class="fas fa-globe fa-lg text-warning"></i>
-                                        <a class="mb-0" href="" data-toggle="modal" data-target="#editBrand">Edit brand information</a>
+                                        <i style="display: inline-block;
+                                           margin-top: 1px;" class="fas fa-globe fa-lg text-warning"></i>
+                                        <a style="margin-left:10px" class="mb-0" href="" data-toggle="modal" data-target="#editBrand">Edit brand information</a>
                                     </li>
                                     <li class="list-group-item d-flex p-3">
-                                        <i class="fas fa-globe fa-lg text-warning"></i>
-                                        <a class="mb-0" href="" data-toggle="modal" data-target="#deleteShop">Delete shop</a>
+                                        <i style="display: inline-block;
+                                           margin-top: 1px;" class="fas fa-globe fa-lg text-warning"></i>
+                                        <a style="margin-left:10px" class="mb-0" href="" data-toggle="modal" data-target="#deleteShop">Delete shop</a>
                                     </li>
                                 </ul>
                             </div>
