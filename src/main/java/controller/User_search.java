@@ -110,7 +110,7 @@ public class User_search extends HttpServlet {
     for (User user : filteredUsers) {
         String requestStatus = User_DB.getFriendRequestStatus(userId, user.getUsername());
         if (requestStatus != null) {
-            user.setIsPending(requestStatus.equals("pending"));
+            user.setIsPending(requestStatus.equals("sent"));
             user.setIsApproved(requestStatus.equals("accepted"));
             user.setIsCancelled(requestStatus.equals("cancelled"));
             user.setIsPendingRq(User_DB.hasFriendRequestFromUser(userId, user.getUsername()));
@@ -189,10 +189,10 @@ public class User_search extends HttpServlet {
     for (User user : filteredUsers) {
         String requestStatus = User_DB.getFriendRequestStatus(userId, user.getUsername());
         if (requestStatus != null) {
-            user.setIsPending(requestStatus.equals("pending"));
+            user.setIsPending(requestStatus.equals("sent"));
             user.setIsApproved(requestStatus.equals("accepted"));
             user.setIsCancelled(requestStatus.equals("cancelled"));
-            user.setIsPendingRq(User_DB.hasFriendRequestFromUser(userId, user.getUsername()));
+            user.setIsPendingRq(requestStatus.equals("received"));
         }
     }
 

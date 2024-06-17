@@ -348,36 +348,41 @@ public class User_DB implements DBinfo {
             return false;
         }
     }
-   public static boolean addFriendRequest(int userId, int friendId) {
+ public static boolean addFriendRequest(int userId, int friendId) {
     String checkQuery = "SELECT COUNT(*) FROM FriendShip WHERE (User_id = ? AND Friend_id = ?) OR (User_id = ? AND Friend_id = ?)";
-    String insertQuery = "INSERT INTO FriendShip (User_id, Friend_id, Request_status) VALUES (?, ?, 'pending'), (?, ?, 'pending')";
-    String updateQuery = "UPDATE FriendShip SET Request_status = 'pending' WHERE User_id = ? AND Friend_id = ?";
+    String insertQuery = "INSERT INTO FriendShip (User_id, Friend_id, Request_status) VALUES (?, ?, 'sent'), (?, ?, 'received')";
+    String updateQuery = "UPDATE FriendShip SET Request_status = CASE WHEN User_id = ? THEN 'sent' ELSE 'received' END WHERE (User_id = ? AND Friend_id = ?) OR (User_id = ? AND Friend_id = ?)";
 
-    try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement checkStmt = conn.prepareStatement(checkQuery)) {
+    try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); 
+         PreparedStatement checkStmt = conn.prepareStatement(checkQuery)) {
 
         checkStmt.setInt(1, userId);
         checkStmt.setInt(2, friendId);
         checkStmt.setInt(3, friendId);
         checkStmt.setInt(4, userId);
         ResultSet rs = checkStmt.executeQuery();
+        
         if (rs.next() && rs.getInt(1) > 0) {
-            // Yêu cầu kết bạn đã tồn tại, cập nhật trạng thái thành "pending"
+            // Friend request already exists, update status to "sent" for sender and "received" for receiver
             try (PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
                 updateStmt.setInt(1, userId);
-                updateStmt.setInt(2, friendId);
+                updateStmt.setInt(2, userId);
+                updateStmt.setInt(3, friendId);
+                updateStmt.setInt(4, friendId);
+                updateStmt.setInt(5, userId);
                 int rowsAffected = updateStmt.executeUpdate();
                 return rowsAffected > 0;
             }
-        }
-
-        // Thêm yêu cầu kết bạn mới
-        try (PreparedStatement insertStmt = conn.prepareStatement(insertQuery)) {
-            insertStmt.setInt(1, userId);
-            insertStmt.setInt(2, friendId);
-            insertStmt.setInt(3, friendId);
-            insertStmt.setInt(4, userId);
-            int rowsAffected = insertStmt.executeUpdate();
-            return rowsAffected > 0;
+        } else {
+            // Add new friend request
+            try (PreparedStatement insertStmt = conn.prepareStatement(insertQuery)) {
+                insertStmt.setInt(1, userId);
+                insertStmt.setInt(2, friendId);
+                insertStmt.setInt(3, friendId);
+                insertStmt.setInt(4, userId);
+                int rowsAffected = insertStmt.executeUpdate();
+                return rowsAffected > 0;
+            }
         }
     } catch (SQLException e) {
         e.printStackTrace();
@@ -387,70 +392,67 @@ public class User_DB implements DBinfo {
 }
 
 public static boolean acceptFriendRequest(int userId, int friendId) {
-    String query = "UPDATE FriendShip SET Request_status = ? WHERE (User_id = ? AND Friend_id = ?) OR (User_id = ? AND Friend_id = ?)";
+    String query = "UPDATE FriendShip SET Request_status = 'accepted' WHERE (User_id = ? AND Friend_id = ?) OR (User_id = ? AND Friend_id = ?)";
 
     try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
-        stmt.setString(1, "accepted");
-        stmt.setInt(2, userId);
+        stmt.setInt(1, userId);
+        stmt.setInt(2, friendId);
         stmt.setInt(3, friendId);
-        stmt.setInt(4, friendId);
-        stmt.setInt(5, userId);
+        stmt.setInt(4, userId);
         int rowsAffected = stmt.executeUpdate();
-        return rowsAffected > 0; // Trả về true nếu có ít nhất một hàng được cập nhật
+        return rowsAffected > 0; // Return true if at least one row was updated
     } catch (SQLException e) {
         e.printStackTrace();
-        return false; // Trả về false nếu có lỗi xảy ra
+        return false; // Return false if an error occurred
+    }
+}
+public static boolean rejectFriendRequest(int userId, int friendId) {
+    String query = "UPDATE FriendShip SET Request_status = 'rejected' WHERE (User_id = ? AND Friend_id = ?) OR (User_id = ? AND Friend_id = ?)";
+
+    try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
+        stmt.setInt(1, userId);
+        stmt.setInt(2, friendId);
+        stmt.setInt(3, friendId);
+        stmt.setInt(4, userId);
+        int rowsAffected = stmt.executeUpdate();
+        return rowsAffected > 0; // Return true if at least one row was updated
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false; // Return false if an error occurred
     }
 }
 
-
-   public static boolean rejectFriendRequest(int userId, int friendId) {
-    String query = "UPDATE FriendShip SET Request_status = ? WHERE (User_id = ? AND Friend_id = ?) OR (User_id = ? AND Friend_id = ?)";
+public static boolean unFriend(int userId, int friendId) {
+    String query = "UPDATE FriendShip SET Request_status = 'unfriended' WHERE (User_id = ? AND Friend_id = ?) OR (User_id = ? AND Friend_id = ?)";
 
     try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
-        stmt.setString(1, "deny");
-        stmt.setInt(2, userId);
+        stmt.setInt(1, userId);
+        stmt.setInt(2, friendId);
         stmt.setInt(3, friendId);
-        stmt.setInt(4, friendId);
-        stmt.setInt(5, userId);
+        stmt.setInt(4, userId);
         int rowsAffected = stmt.executeUpdate();
-        return rowsAffected > 0; // Trả về true nếu có ít nhất một hàng được cập nhật
+        return rowsAffected > 0; // Return true if at least one row was updated
     } catch (SQLException e) {
         e.printStackTrace();
-        return false; // Trả về false nếu có lỗi xảy ra
+        return false; // Return false if an error occurred
     }
 }
 
-    public static boolean unFriend(int userId, int friendId) {
-    String query = "UPDATE FriendShip SET Request_status = ? WHERE (User_id = ? AND Friend_id = ?) OR (User_id = ? AND Friend_id = ?)";
+  public static boolean cancelFriendRequest(int userId, int friendId) {
+    String query = "UPDATE FriendShip SET Request_status = 'cancelled' WHERE (User_id = ? AND Friend_id = ? AND Request_status = 'sent')";
 
     try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
-        stmt.setString(1, "deny");
-        stmt.setInt(2, userId);
-        stmt.setInt(3, friendId);
-        stmt.setInt(4, friendId);
-        stmt.setInt(5, userId);
+        stmt.setInt(1, userId);
+        stmt.setInt(2, friendId);
         int rowsAffected = stmt.executeUpdate();
-        return rowsAffected > 0; // Trả về true nếu có ít nhất một hàng được cập nhật
+        return rowsAffected > 0; // Return true if at least one row was updated
     } catch (SQLException e) {
         e.printStackTrace();
-        return false; // Trả về false nếu có lỗi xảy ra
+        return false; // Return false if an error occurred
     }
 }
     
-    public static boolean cancelFriendRequest(int userId, int friendId) {
-        String query = "UPDATE FriendShip SET Request_status = 'cancelled' WHERE User_id = ? AND Friend_id = ? AND Request_status = 'pending'";
-
-        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, userId);
-            stmt.setInt(2, friendId);
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0; // Trả về true nếu có ít nhất một hàng được cập nhật
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false; // Trả về false nếu có lỗi xảy ra
-        }
-    }
+  
 
     public static String getFriendRequestStatus(int userId, String userName) {
         String getUserIdQuery = "SELECT User_id FROM Users WHERE Username = ?";
@@ -482,34 +484,36 @@ public static boolean acceptFriendRequest(int userId, int friendId) {
     }
 
     public static List<User> getPendingFriendRequests(int user_id) {
-        List<User> pendingRequests = new ArrayList<>();
+    List<User> pendingRequests = new ArrayList<>();
 
-        // Câu truy vấn SQL để lấy các người bạn mà người dùng đã gửi lời mời và trạng thái là "pending"
-        String getPendingRequestsQuery = "SELECT u.User_id, u.Username, u.User_avatar FROM Users u "
-                + "INNER JOIN FriendShip f ON u.User_id = f.User_id  "
-                + "WHERE f.Friend_id = ? AND f.Request_status = 'pending'";
+    // Câu truy vấn SQL để lấy các người bạn mà người dùng đã gửi lời mời và trạng thái là "received"
+    String getPendingRequestsQuery = "SELECT u.User_id, u.Username, u.User_avatar FROM Users u "
+            + "INNER JOIN FriendShip f ON u.User_id = f.User_id "
+            + "WHERE f.Friend_id = ? AND f.Request_status = 'sent'";
 
-        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement getPendingRequestsStmt = conn.prepareStatement(getPendingRequestsQuery)) {
+    try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); 
+         PreparedStatement getPendingRequestsStmt = conn.prepareStatement(getPendingRequestsQuery)) {
 
-            getPendingRequestsStmt.setInt(1, user_id);
-            ResultSet rs = getPendingRequestsStmt.executeQuery();
+        getPendingRequestsStmt.setInt(1, user_id);
+        ResultSet rs = getPendingRequestsStmt.executeQuery();
 
-            // Lặp qua kết quả của truy vấn và thêm người bạn vào danh sách pendingRequests
-            while (rs.next()) {
-                int friendId = rs.getInt("User_id");
-                String userName = rs.getString("Username");
-                String userAvatar = rs.getString("User_avatar");
+        // Lặp qua kết quả của truy vấn và thêm người bạn vào danh sách pendingRequests
+        while (rs.next()) {
+            int friendId = rs.getInt("User_id");
+            String userName = rs.getString("Username");
+            String userAvatar = rs.getString("User_avatar");
 
-                User friend = new User(friendId, userName, userAvatar); // Tạo đối tượng User từ kết quả truy vấn
-                pendingRequests.add(friend);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            Logger.getLogger(User_DB.class.getName()).log(Level.SEVERE, "Error occurred while fetching pending friend requests", e);
+            User friend = new User(friendId, userName, userAvatar); // Tạo đối tượng User từ kết quả truy vấn
+            pendingRequests.add(friend);
         }
-
-        return pendingRequests;
+    } catch (SQLException e) {
+        e.printStackTrace();
+        Logger.getLogger(User_DB.class.getName()).log(Level.SEVERE, "Error occurred while fetching pending friend requests", e);
     }
+
+    return pendingRequests;
+}
+
 
 public static List<User> getAcceptedFriends(int userId) {
     List<User> acceptedFriends = new ArrayList<>();
@@ -583,7 +587,7 @@ public static List<User> getAcceptedFriends(int userId) {
 public static boolean hasFriendRequestFromUser(int userId, String friendName) {
     String checkRequestQuery = "SELECT COUNT(*) FROM FriendShip f " +
                                "JOIN Users u ON f.User_id = u.User_id " +
-                               "WHERE f.Friend_id = ? AND u.Username = ? AND f.Request_status = 'pending'";
+                               "WHERE f.Friend_id = ? AND u.Username = ? AND f.Request_status = 'received'";
 
     try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); 
          PreparedStatement checkStmt = conn.prepareStatement(checkRequestQuery)) {
@@ -593,10 +597,8 @@ public static boolean hasFriendRequestFromUser(int userId, String friendName) {
 
         ResultSet rs = checkStmt.executeQuery();
         if (rs.next() && rs.getInt(1) > 0) {
-            // Người dùng đã nhận yêu cầu kết bạn từ người dùng có tên là friendName
             return true;
         } else {
-            // Người dùng chưa nhận yêu cầu kết bạn hoặc yêu cầu đã được chấp nhận
             return false;
         }
     } catch (SQLException e) {

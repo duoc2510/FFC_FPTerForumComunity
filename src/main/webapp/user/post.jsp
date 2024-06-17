@@ -49,12 +49,57 @@
                             <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <span><i class="ti-more-alt"></i></span>   
                             </a>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a class="dropdown-item" type="button" href="javascript:void(0)" ">Report</a>
-                                </li>
-                                
+                            <ul class="dropdown-menu" aria-labelledby="moreOptionsDropdownPost">
+                                <c:choose>
+                                    <c:when test="${post.hasReportPost}">
+                                        <li>
+                                            <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#revokePostReportModal">
+                                                Revoke post report
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editPostReportModal">
+                                                Edit post report
+                                            </button>
+                                        </li>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <li>
+                                            <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#reportPostModal">
+                                                Report post
+                                            </button>
+                                        </li>
+                                    </c:otherwise>
+                                </c:choose>
                             </ul>
+
+
+                            <div class="modal fade" id="reportPostModal" tabindex="-1" aria-labelledby="reportPostModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <form id="reportPostForm" action="${pageContext.request.contextPath}/report" method="post">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="reportPostModalLabel">Report post</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="mb-3">
+                                                    <label for="reportPostReason" class="form-label">Reason</label>
+                                                    <textarea class="form-control" id="reportPostReason" name="reportReason" rows="3" required></textarea>
+                                                </div>
+
+                                                <input type="hidden" name="postId" value="${post.postId}">
+                                                <input type="hidden" name="userId" value="${post.user.userId}">
+                                                <input type="hidden" name="action" value="rpPost">
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn btn-primary">Submit report</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </c:otherwise>
                 </c:choose>

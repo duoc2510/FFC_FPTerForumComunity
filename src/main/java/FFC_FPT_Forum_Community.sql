@@ -589,3 +589,10 @@ SELECT * FROM GroupChatMessage;
 SELECT * FROM Upload;
 
 SELECT * FROM UserFollow
+
+
+INSERT INTO Post (User_id, Group_id, Topic_id, Content, Status, postStatus)
+VALUES 
+
+
+(3, Null, Null,'Nice.', 'Active', 'Public');

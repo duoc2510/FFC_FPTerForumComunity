@@ -84,7 +84,7 @@
                                                             </button>
                                                             <ul class="dropdown-menu" aria-labelledby="friendDropdown">
                                                                 <li>
-                                                                    <form id="unfriendRequestForm" action="${pageContext.request.contextPath}/friendHandel" method="post" class="d-inline" onsubmit="return confirmUnfriend()">
+                                                                    <form id="unfriendRequestForm" action="${pageContext.request.contextPath}/friendHandel" method="post" class="d-inline" onsubmit="return confirmCancel()">
                                                                         <input type="hidden" name="friendId" value="${user.userId}">
                                                                         <input type="hidden" name="friendName" value="${user.username}">
                                                                         <input type="hidden" name="action" value="cancelFrSearch">
@@ -94,7 +94,7 @@
                                                             </ul>
                                                         </div>
                                                     </c:when>
-                                                    <c:when test="${user.isPendingRq and !user.isCancelled}">
+                                                    <c:when test="${user.isPendingRq}">
                                                         <form action="${pageContext.request.contextPath}/friends" method="post" class="d-inline">
                                                             <input type="hidden" name="friendId" value="${user.userId}">
                                                             <input type="hidden" name="friendName" value="${user.username}">

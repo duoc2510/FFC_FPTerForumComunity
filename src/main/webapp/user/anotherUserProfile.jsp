@@ -71,7 +71,18 @@
                             .dropdown-menu {
                                 transform: translateY(0) !important;
                             }
+                            .modal-dialog-centered {
+                                display: flex !important;
+                                align-items: center;
+                                min-height: calc(100% - 4.5rem);
+                            }
+                            .modal-content {
+                                padding: 20px;
+                            }
                         </style>
+
+
+
                         <div class="bg-white shadow rounded overflow-hidden ">
                             <div class="px-4 py-4 cover cover " style="background: url(${pageContext.request.contextPath}/upload/deli-2.png)">
                                 <div class="media align-items-end profile-head">
@@ -86,7 +97,7 @@
                                 </div>
                                 <ul class="list-inline mb-0">
                                     <c:choose>
-                                        <c:when test="${friendStatus == 'pending'}">
+                                        <c:when test="${friendStatus == 'sent'}">
                                             <div class="dropdown d-inline">
                                                 <button class="btn btn-warning btn-sm btn-block edit-cover mx-2 dropdown-toggle" type="button" id="friendDropdown" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
                                                     Request Sent
@@ -104,14 +115,14 @@
                                             </div>
 
                                         </c:when>
-                                        <c:when test="${isPendingRq and friendStatus !='cancelled'}">
+                                        <c:when test="${friendStatus == 'received'}">
                                             <form action="${pageContext.request.contextPath}/friends" method="post" class="d-inline">
                                                 <input type="hidden" name="friendId" value="${user.userId}">
                                                 <input type="hidden" name="friendName" value="${user.username}">
                                                 <input type="hidden" name="action" value="acceptFr"> 
                                                 <button type="submit" class="btn btn-success btn-sm btn-block edit-cover mx-2">Accept friend</button>
                                             </form>
-                                           <form action="${pageContext.request.contextPath}/friends" method="post" class="d-inline">
+                                            <form action="${pageContext.request.contextPath}/friends" method="post" class="d-inline">
                                                 <input type="hidden" name="friendId" value="${user.userId}">
                                                 <input type="hidden" name="friendName" value="${user.username}">
                                                 <input type="hidden" name="action" value="denyFr"> 
@@ -119,7 +130,7 @@
                                             </form>
                                         </c:when>
                                         <c:when test="${areFriend}">
-                                            <div class="dropdown d-inline dropup">
+                                            <div class="dropdown d-inline">
                                                 <button class="btn btn-warning btn-sm btn-block edit-cover mx-2 dropdown-toggle" type="button" id="friendDropdown" data-bs-toggle="dropdown"  data-bs-display="static"  aria-expanded="false">
                                                     Bạn bè
                                                 </button>
@@ -145,6 +156,65 @@
                                         </c:otherwise>
                                     </c:choose>
                                     <li class="list-inline-item">
+                                        <div class="dropdown d-inline">
+                                            <button class="btn btn-secondary btn-sm btn-block edit-cover mx-2 dropdown-toggle" type="button" id="moreOptionsDropdown" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+                                                <i class="fas fa-ellipsis-h"></i>
+                                            </button>
+                                            <ul class="dropdown-menu" aria-labelledby="moreOptionsDropdown">
+                                                <c:choose>
+                                                    <c:when test="${hasReport}">
+                                                        
+                                                        <li>
+                                                            <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#revokeReportModal">
+                                                                Revoke report
+                                                            </button>
+                                                        </li>
+                                                        <li>
+                                                            <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editReportModal">
+                                                                Edit report
+                                                            </button>
+                                                        </li>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <li>
+                                                            <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#reportModal">
+                                                                Report profile
+                                                            </button>
+                                                        </li>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </ul>
+                                        </div>  
+                                    </li>
+
+                                    <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <form id="reportForm" action="${pageContext.request.contextPath}/report" method="post">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="reportModalLabel">Report personal profile</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="mb-3">
+                                                            <label for="reportReason" class="form-label text-center w-100">Reason</label>
+                                                            <textarea class="form-control" id="reportReason" name="reportReason" rows="3" required></textarea>
+                                                        </div>
+                                                        <input type="hidden" name="userId" value="${user.userId}">
+                                                        <input type="hidden" name="username" value="${user.username}">
+                                                        <input type="hidden" name="action" value="rpUser">
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                        <button type="submit" class="btn btn-primary">Submit report</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <li class="list-inline-item">
                                         <h5 class="font-weight-bold mb-0 d-block">${postCount}</h5><small class="text-muted"><i class="fas fa-image mr-1"></i>Posts</small>
                                     </li>
                                     <li class="list-inline-item">
@@ -159,6 +229,19 @@
                                     <li class="list-inline-item">
                                         <h5 class="font-weight-bold mb-0 d-block">${user.userRank}</h5><small class="text-muted"><i class="fas fa-user mr-1"></i>Rank</small>
                                     </li>
+                                    <c:if test="${not empty reportMessage}">
+                                        <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3000">
+                                            <div class="toast-header">
+                                                <strong class="mr-auto">Thông báo</strong>
+                                                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="toast-body">
+                                                ${reportMessage}
+                                            </div>
+                                        </div>
+                                    </c:if>
                                 </ul>
                             </div>
                             <div class="px-4 py-3">
@@ -188,98 +271,108 @@
                             </c:if>
                         </c:forEach>
                         <%@include file="modalpost.jsp" %>
-                        <script>
-                            function editComment(commentId, content) {
-                                document.getElementById('editCommentId').value = commentId; // Thiết lập giá trị ID của bình luận vào input ẩn
-                                document.getElementById('editCommentContent').value = content; // Thiết lập nội dung bình luận vào textarea
 
-                                var editCommentModal = new bootstrap.Modal(document.getElementById('editCommentModal')); // Tạo modal sử dụng Bootstrap
-                                editCommentModal.show(); // Hiển thị modal chỉnh sửa bình luận
-                            }
 
-                            document.getElementById('postImage').addEventListener('change', handlePostImageChange);
-
-                            function handlePostImageChange(event) {
-                                const file = event.target.files[0];
-                                const previewContainer = document.getElementById('imgPreview');
-                                const previewDefaultText = previewContainer.querySelector('p');
-
-                                // Xóa ảnh hiện tại nếu có
-                                const existingPreviewImage = previewContainer.querySelector('img');
-                                if (existingPreviewImage) {
-                                    previewContainer.removeChild(existingPreviewImage);
-                                }
-
-                                if (file) {
-                                    const reader = new FileReader();
-                                    const previewImage = document.createElement('img');
-
-                                    previewDefaultText.style.display = 'none';
-                                    previewImage.style.display = 'block';
-
-                                    reader.addEventListener('load', function () {
-                                        previewImage.setAttribute('src', this.result);
-                                    });
-
-                                    reader.readAsDataURL(file);
-                                    previewContainer.appendChild(previewImage);
-                                } else {
-                                    previewDefaultText.style.display = null;
-                                }
-                            }
-
-                            function editPost(postId, content, status, uploadPath) {
-                                document.getElementById('editPostId').value = postId;
-                                document.getElementById('editPostContent').value = content;
-                                document.getElementById('editPostStatus').value = "Public";
-                                document.getElementById('existingUploadPath').value = uploadPath ? uploadPath : 'null';
-
-                                var currentUploadPathImg = document.getElementById('currentUploadPath');
-                                if (uploadPath && uploadPath !== 'null') {
-                                    currentUploadPathImg.src = uploadPath;
-                                    currentUploadPathImg.style.display = 'block';
-                                } else {
-                                    currentUploadPathImg.style.display = 'none';
-                                }
-
-                                var editPostModal = new bootstrap.Modal(document.getElementById('editPostModal'));
-                                editPostModal.show();
-
-                                const editPostImageInput = document.getElementById('editPostImage');
-                                editPostImageInput.removeEventListener('change', handleEditPostImageChange);
-                                editPostImageInput.addEventListener('change', handleEditPostImageChange);
-                            }
-
-                            function handleEditPostImageChange(event) {
-                                const file = event.target.files[0];
-                                const currentUploadPathImg = document.getElementById('currentUploadPath');
-
-                                if (file) {
-                                    const reader = new FileReader();
-                                    reader.addEventListener('load', function () {
-                                        currentUploadPathImg.src = this.result;
-                                        currentUploadPathImg.style.display = 'block';
-                                    });
-                                    reader.readAsDataURL(file);
-                                } else {
-                                    currentUploadPathImg.style.display = 'none';
-                                }
-                            }
-
-                            function confirmCancel() {
-                                return confirm("Bạn có muốn hủy lời mời này không?");
-                            }
-                            function confirmUnfriend() {
-                                return confirm("Bạn có chắc chắn muốn hủy kết bạn không?");
-                            }
-
-                           
-
-                        </script>
                     </div>
                 </div>
             </div>
         </div>
+        <script>
+            function editComment(commentId, content) {
+                document.getElementById('editCommentId').value = commentId; // Thiết lập giá trị ID của bình luận vào input ẩn
+                document.getElementById('editCommentContent').value = content; // Thiết lập nội dung bình luận vào textarea
 
+                var editCommentModal = new bootstrap.Modal(document.getElementById('editCommentModal')); // Tạo modal sử dụng Bootstrap
+                editCommentModal.show(); // Hiển thị modal chỉnh sửa bình luận
+            }
+
+            document.getElementById('postImage').addEventListener('change', handlePostImageChange);
+
+            function handlePostImageChange(event) {
+                const file = event.target.files[0];
+                const previewContainer = document.getElementById('imgPreview');
+                const previewDefaultText = previewContainer.querySelector('p');
+
+                // Xóa ảnh hiện tại nếu có
+                const existingPreviewImage = previewContainer.querySelector('img');
+                if (existingPreviewImage) {
+                    previewContainer.removeChild(existingPreviewImage);
+                }
+
+                if (file) {
+                    const reader = new FileReader();
+                    const previewImage = document.createElement('img');
+
+                    previewDefaultText.style.display = 'none';
+                    previewImage.style.display = 'block';
+
+                    reader.addEventListener('load', function () {
+                        previewImage.setAttribute('src', this.result);
+                    });
+
+                    reader.readAsDataURL(file);
+                    previewContainer.appendChild(previewImage);
+                } else {
+                    previewDefaultText.style.display = null;
+                }
+            }
+
+            function editPost(postId, content, status, uploadPath) {
+                document.getElementById('editPostId').value = postId;
+                document.getElementById('editPostContent').value = content;
+                document.getElementById('editPostStatus').value = "Public";
+                document.getElementById('existingUploadPath').value = uploadPath ? uploadPath : 'null';
+
+                var currentUploadPathImg = document.getElementById('currentUploadPath');
+                if (uploadPath && uploadPath !== 'null') {
+                    currentUploadPathImg.src = uploadPath;
+                    currentUploadPathImg.style.display = 'block';
+                } else {
+                    currentUploadPathImg.style.display = 'none';
+                }
+
+                var editPostModal = new bootstrap.Modal(document.getElementById('editPostModal'));
+                editPostModal.show();
+
+                const editPostImageInput = document.getElementById('editPostImage');
+                editPostImageInput.removeEventListener('change', handleEditPostImageChange);
+                editPostImageInput.addEventListener('change', handleEditPostImageChange);
+            }
+
+            function handleEditPostImageChange(event) {
+                const file = event.target.files[0];
+                const currentUploadPathImg = document.getElementById('currentUploadPath');
+
+                if (file) {
+                    const reader = new FileReader();
+                    reader.addEventListener('load', function () {
+                        currentUploadPathImg.src = this.result;
+                        currentUploadPathImg.style.display = 'block';
+                    });
+                    reader.readAsDataURL(file);
+                } else {
+                    currentUploadPathImg.style.display = 'none';
+                }
+            }
+
+            function confirmCancel() {
+                return confirm("Bạn có muốn hủy lời mời này không?");
+            }
+            function confirmUnfriend() {
+                return confirm("Bạn có chắc chắn muốn hủy kết bạn không?");
+            }
+            document.addEventListener('DOMContentLoaded', function () {
+                var reportForm = document.getElementById('reportForm');
+
+                reportForm.addEventListener('submit', function (event) {
+                    // Bạn có thể thêm các kiểm tra hoặc xử lý khác tại đây
+                    // Nếu cần thiết, ngăn chặn gửi form bằng cách sử dụng event.preventDefault();
+                });
+            });
+
+            $('.toast').toast('show');
+            // Xóa reportMessage khỏi session
+            <c:remove var="reportMessage" scope="session"/>;
+        </script>
 </body>
 <%@ include file="../include/footer.jsp" %>

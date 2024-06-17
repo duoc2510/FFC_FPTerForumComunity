@@ -16,6 +16,7 @@ import java.util.List;
 import model.Comment;
 import model.DAO.Comment_DB;
 import model.DAO.Post_DB;
+import model.DAO.Report_DB;
 import model.DAO.Topic_DB;
 import model.DAO.User_DB;
 import model.Post;
@@ -68,7 +69,7 @@ public class home extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
-
+       
         // Kiểm tra nếu topics đã có trong session
         List<Topic> topics = (List<Topic>) session.getAttribute("topics");
         if (topics == null) {
@@ -82,7 +83,7 @@ public class home extends HttpServlet {
             for (Post post : posts) {
                 User author = Post_DB.getUserByPostId(post.getPostId());
                 post.setUser(author);
-
+                
                 List<Comment> comments = Comment_DB.getCommentsByPostId(post.getPostId());
                 for (Comment comment : comments) {
                     User commentUser = User_DB.getUserById(comment.getUserId());

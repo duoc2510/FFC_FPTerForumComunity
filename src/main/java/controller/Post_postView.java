@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import model.Comment;
 import model.DAO.Comment_DB;
 import model.DAO.Post_DB;
+import model.DAO.Report_DB;
 import model.DAO.User_DB;
 import model.Post;
 import model.User;
@@ -126,11 +127,13 @@ public class Post_postView extends HttpServlet {
 
 // Phương thức để cập nhật lại danh sách bài đăng trong session
     private void updatePostsInSession(HttpSession session) {
+        User user = (User) session.getAttribute("USER");
+        int userId = user.getUserId();
         List<Post> posts = Post_DB.getPostsWithUploadPath();
         for (Post p : posts) {
             User author = Post_DB.getUserByPostId(p.getPostId());
             p.setUser(author);
-
+            p.setHasReportPost(Report_DB.hasReportedPost(userId,p.getPostId()));
             List<Comment> comments = Comment_DB.getCommentsByPostId(p.getPostId());
             for (Comment comment : comments) {
                 User commentUser = User_DB.getUserById(comment.getUserId());

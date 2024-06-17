@@ -15,6 +15,7 @@ import java.util.List;
 import model.Comment;
 import model.DAO.Comment_DB;
 import model.DAO.Post_DB;
+import model.DAO.Report_DB;
 import model.DAO.User_DB;
 import model.Post;
 import model.User;
@@ -136,9 +137,11 @@ public class User_profile extends HttpServlet {
                 }
                 boolean areFriend = User_DB.areFriendsAccepted(userId, requestedUsername);
                 boolean isPendingRq = User_DB.hasFriendRequestFromUser(userId, requestedUsername);
+                boolean hasReport = Report_DB.hasReported(userId, requestedUsername);
                 int postCountofUser = User_DB.countPostByUserName(requestedUsername);
 
                 // Thiết lập các thuộc tính cho session và request
+                session.setAttribute("hasReport", hasReport);
                 session.setAttribute("isPendingRq", isPendingRq);
                 session.setAttribute("areFriend", areFriend);
                 session.setAttribute("postCountofUser", postCountofUser);

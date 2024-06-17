@@ -198,7 +198,10 @@
         <servlet-name>Event_deleteEvent</servlet-name>
         <servlet-class>controller.Event_deleteEvent</servlet-class>
     </servlet>
-
+    <servlet>
+        <servlet-name>Report_handel</servlet-name>
+        <servlet-class>controller.Report_submitRp</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PostComment</servlet-name>
         <url-pattern>/comment</url-pattern>
@@ -383,6 +386,10 @@
     <servlet-mapping>
         <servlet-name>Event_deleteEvent</servlet-name>
         <url-pattern>/deleteEvent</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Report_handel</servlet-name>
+        <url-pattern>/report</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>home</welcome-file>
