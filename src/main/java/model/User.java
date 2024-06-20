@@ -24,6 +24,7 @@ public class User {
     private boolean isApproved;
     private boolean isCancelled;
     private boolean isPendingRq;
+
     public User() {
     }
 
@@ -209,7 +210,6 @@ public class User {
         this.isPendingRq = isPendingRq;
     }
 
-    
     public static User login(String identify, String inputMatKhau) {
         User user = User_DB.getUserByEmailorUsername(identify);
         if (user != null) {

@@ -10,6 +10,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 import java.io.File;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Comment;
 import model.DAO.Comment_DB;
 import model.DAO.Post_DB;
@@ -27,11 +30,14 @@ public class Post_postView extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
-
-        // Xóa session attribute "postsUser" nếu tồn tại
-        session.removeAttribute("postsUser");
+        User user = (User) session.getAttribute("USER");
+        if (user == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
 
         List<Post> posts = Post_DB.getPostsWithoutGroupIdAndTopicId();
+        int userId = user.getUserId(); // Lấy userId từ session
         for (Post post : posts) {
             User author = Post_DB.getUserByPostId(post.getPostId());
             post.setUser(author);
@@ -46,12 +52,21 @@ public class Post_postView extends HttpServlet {
             post.setComments(comments);
 
             // Kiểm tra xem người dùng đã like bài viết này chưa và cập nhật trường likedByCurrentUser
-            int userId = ((User) session.getAttribute("USER")).getUserId(); // Lấy userId từ session
-            boolean likedByCurrentUser = Rate_DB.checkIfLiked(post.getPostId(), userId);
+            boolean likedByCurrentUser = false;
+            try {
+                likedByCurrentUser = Rate_DB.checkIfLiked(post.getPostId(), userId);
+            } catch (SQLException ex) {
+                Logger.getLogger(Post_postView.class.getName()).log(Level.SEVERE, null, ex);
+            }
             post.setLikedByCurrentUser(likedByCurrentUser);
 
             // Lấy số lượt thích của bài viết và cập nhật vào đối tượng Post
-            int likeCount = Rate_DB.getLikes(post.getPostId());
+            int likeCount = 0;
+            try {
+                likeCount = Rate_DB.getLikes(post.getPostId());
+            } catch (SQLException ex) {
+                Logger.getLogger(Post_postView.class.getName()).log(Level.SEVERE, null, ex);
+            }
             post.setLikeCount(likeCount);
         }
 

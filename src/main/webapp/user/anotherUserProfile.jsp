@@ -176,18 +176,18 @@
                     </div>
                     <div class="col-12 col-sm-7 px-2">
                         <!--<div class=" bg-white shadow rounded p-4 ">-->
-                            <div class="p0">
-                                <h5 class="mb-2">Bài viết của bạn</h5>
-                            </div>
-                            <div>
-                                <c:forEach var="post" items="${posts}">
-                                    <c:if test="${post.user.userId == user.userId}">
-                                        <c:if test="${post.postStatus eq'Public'}">
-                                            <%@include file="post.jsp" %>
-                                        </c:if>                                
-                                    </c:if>
-                                </c:forEach>
-                            </div>
+                        <div class="p0">
+                            <h5 class="mb-2">Bài viết của bạn</h5>
+                        </div>
+                        <div>
+                            <c:forEach var="post" items="${posts}">
+                                <c:if test="${post.user.userId == user.userId}">
+                                    <c:if test="${post.postStatus eq'Public'}">
+                                        <%@include file="post.jsp" %>
+                                    </c:if>                                
+                                </c:if>
+                            </c:forEach>
+                        </div>
                         <!--</div>-->
                         <%@include file="modalpost.jsp" %>
                     </div>

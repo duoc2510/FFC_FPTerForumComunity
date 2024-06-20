@@ -47,7 +47,6 @@ public class Comment {
         this.postId = postId;
         this.content = content;
     }
-    
 
     // Getters and Setters
     public int getCommentId() {

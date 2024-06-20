@@ -181,36 +181,34 @@ public class Event_DB {
         return event;
     }
 
-   public boolean deleteEvent(int eventId) {
-    String DELETE_UPLOAD_QUERY = "DELETE FROM Upload WHERE event_id = ?";
-    String DELETE_EVENT_QUERY = "DELETE FROM Event WHERE Event_id = ?";
+    public boolean deleteEvent(int eventId) {
+        String DELETE_UPLOAD_QUERY = "DELETE FROM Upload WHERE event_id = ?";
+        String DELETE_EVENT_QUERY = "DELETE FROM Event WHERE Event_id = ?";
 
-    try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); 
-            PreparedStatement pstmtUpload = con.prepareStatement(DELETE_UPLOAD_QUERY); 
-            PreparedStatement pstmtEvent = con.prepareStatement(DELETE_EVENT_QUERY)) {
+        try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement pstmtUpload = con.prepareStatement(DELETE_UPLOAD_QUERY); PreparedStatement pstmtEvent = con.prepareStatement(DELETE_EVENT_QUERY)) {
 
-        con.setAutoCommit(false);
+            con.setAutoCommit(false);
 
-        // Delete from Upload table first
-        pstmtUpload.setInt(1, eventId);
-        pstmtUpload.executeUpdate();
+            // Delete from Upload table first
+            pstmtUpload.setInt(1, eventId);
+            pstmtUpload.executeUpdate();
 
-        // Delete from Event table
-        pstmtEvent.setInt(1, eventId);
-        int affectedRows = pstmtEvent.executeUpdate();
+            // Delete from Event table
+            pstmtEvent.setInt(1, eventId);
+            int affectedRows = pstmtEvent.executeUpdate();
 
-        if (affectedRows > 0) {
-            con.commit();
-            return true;
-        } else {
-            con.rollback();
+            if (affectedRows > 0) {
+                con.commit();
+                return true;
+            } else {
+                con.rollback();
+                return false;
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
             return false;
         }
-
-    } catch (SQLException ex) {
-        ex.printStackTrace();
-        return false;
     }
-}
 
 }

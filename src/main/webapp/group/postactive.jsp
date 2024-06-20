@@ -50,9 +50,19 @@
             </div>
             <div class="">
                 <div class="row p-3 d-flex justify-content-center text-center">
-                    <a class="col nav-link nav-icon-hover" href="javascript:void(0)">
-                        <span><i class="ti ti-heart"></i></span>
-                        <span class="hide-menu">Like</span>
+                    <!-- Like button (Th? <a>), hi?n th? khi ch?a like -->
+                    <span id="like-count-${post.postId}">Post Likes: ${post.likeCount}</span>
+
+                    <!-- Nút Like -->
+                    <a href="#" id="like-btn-${post.postId}" class="col nav-link nav-icon-hover" style="${post.likedByCurrentUser ? 'display:none;' : ''}" onclick="handleLike(event, ${post.postId}, 'like')" data-postid="${post.postId}" data-action="like">
+                        <span><i class="ti ti-message-plus" style="color: green;"></i></span>
+                        <span class="hide-menu" style="color: green;">Like</span>
+                    </a>
+
+                    <!-- Nút Unlike -->
+                    <a href="#" id="unlike-btn-${post.postId}" class="col nav-link nav-icon-hover" style="${post.likedByCurrentUser ? '' : 'display:none;'}" onclick="handleLike(event, ${post.postId}, 'unlike')" data-postid="${post.postId}" data-action="unlike">
+                        <span><i class="ti ti-message-minus" style="color: red;"></i></span>
+                        <span class="hide-menu" style="color: red;">Unlike</span>
                     </a>
                     <a class="col nav-link nav-icon-hover">
                         <span><i class="ti ti-message-plus"></i></span>
@@ -79,13 +89,13 @@
                                 <div class="d-flex align-items-center">
                                     <c:choose>
                                         <c:when test="${comment.userId == USER.userId}">
-                                           <a href="${pageContext.request.contextPath}/group/profile?userId=${post.user.userId}&groupId=${group.groupId}">
+                                            <a href="${pageContext.request.contextPath}/group/profile?userId=${post.user.userId}&groupId=${group.groupId}">
                                                 <img src="${pageContext.request.contextPath}/${comment.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
                                             </a>
                                         </c:when>
 
                                         <c:otherwise>
-                                             <a href="${pageContext.request.contextPath}/group/profile?userId=${post.user.userId}&groupId=${group.groupId}">
+                                            <a href="${pageContext.request.contextPath}/group/profile?userId=${post.user.userId}&groupId=${group.groupId}">
                                                 <img src="${pageContext.request.contextPath}/${comment.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
                                             </a>
                                         </c:otherwise>
@@ -122,3 +132,31 @@
         </div>
     </div>
 </div>
+<script>
+    function handleLike(event, postId, action) {
+        event.preventDefault();
+
+        $.ajax({
+            type: 'POST',
+            url: '${pageContext.request.contextPath}/rate',
+            data: {
+                postId: postId,
+                action: action
+            },
+            success: function (response) {
+                $('#like-count-' + postId).text('Likes: ' + response.likeCount);
+
+                // C?p nh?t tr?ng thái hi?n th? c?a các th? <a>
+                if (action === 'like') {
+                    $('#like-btn-' + postId).hide();
+                    $('#unlike-btn-' + postId).show();
+                } else if (action === 'unlike') {
+                    $('#like-btn-' + postId).show();
+                    $('#unlike-btn-' + postId).hide();
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error('Error:', errorThrown);
+            }
+        });
+    }</script>
