@@ -100,12 +100,13 @@
                                             <p class="text-muted mb-0">${USER.userWallet} VNĐ</p>
                                         </div>
                                     </li>
+                                    <c:set var="count" value="${Shop_DB.countSuccessAndCompletedOrdersByShopID(SHOP.shopID)}" />
                                     <li class="list-group-item d-flex p-3">
                                         <div class="col-sm-3">
-                                            <p class="mb-0">Score</p>
+                                            <p class="mb-0">Successful orders</p>
                                         </div>
                                         <div class="col-sm-9">
-                                            <p class="text-muted mb-0">${USER.userScore}</p>
+                                            <p class="text-muted mb-0">${count}</p>
                                         </div>
                                     </li>
                                 </ul>

@@ -185,7 +185,7 @@
                     let messageText = data.messageText;
 
                     let loggedInUserId = ${USER.userId};
-                    let messageDiv = document.createElement("div");
+                    let  messageDiv = document.createElement("div");
                     messageDiv.classList.add("message");
 
                     if (fromId === loggedInUserId) {

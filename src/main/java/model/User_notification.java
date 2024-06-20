@@ -17,16 +17,19 @@ public class User_notification {
     private String message;
     private java.sql.Timestamp date;
     private String status;
+    private String notification_link;
 
     public User_notification() {
     }
 
-    public User_notification(int notificationId, int userId, String message, Timestamp date, String status) {
+    public User_notification(int notificationId, int userId, String message, Timestamp date, String status, String notification_link) {
         this.notificationId = notificationId;
         this.userId = userId;
         this.message = message;
         this.date = date;
         this.status = status;
+        this.notification_link = notification_link;
+
     }
 
     // Getters and Setters
@@ -69,4 +72,18 @@ public class User_notification {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public String getNotification_link() {
+        return notification_link;
+    }
+
+    public void setNotification_link(String notification_link) {
+        this.notification_link = notification_link;
+    }
+
+    @Override
+    public String toString() {
+        return "User_notification{" + "notificationId=" + notificationId + ", userId=" + userId + ", message=" + message + ", date=" + date + ", status=" + status + ", notification_link=" + notification_link + '}';
+    }
+
 }

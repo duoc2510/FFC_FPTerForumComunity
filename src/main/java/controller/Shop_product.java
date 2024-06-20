@@ -11,6 +11,7 @@ import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 import java.io.File;
 import java.io.InputStream;
@@ -111,6 +112,8 @@ public class Shop_product extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
+
         User user = (User) request.getSession().getAttribute("USER");
         Shop shop = (Shop) request.getSession().getAttribute("SHOP");
         Shop_DB sdb = new Shop_DB();
@@ -402,11 +405,15 @@ public class Shop_product extends HttpServlet {
 
             case "chapnhan": ////shop chấp nhận
                 int orderid1 = Integer.parseInt(orderid);
+                Order or = sdb.getOrderbyID(orderid1);
                 sdb.updateOrderStatus(orderid1, "Accept");
+                sdb.addNewNotification(or.getUserID(), "Đơn hàng của bạn đã được chấp nhận!", "/marketplace/history");
                 response.sendRedirect("myshop");
                 break;
             case "thatbai": /////shop hủy đơn
                 int orderid2 = Integer.parseInt(orderid);
+                Order or1 = sdb.getOrderbyID(orderid2);
+                sdb.addNewNotification(or1.getUserID(), "Đơn hàng của bạn không được chấp nhận!", "/marketplace/history");
                 sdb.updateOrderStatus(orderid2, "Cancelled");
                 ArrayList<OrderItem> orderitemlistnew = sdb.getAllOrderItemByOrderID(orderid2);
                 for (OrderItem ot : orderitemlistnew) {
@@ -438,6 +445,7 @@ public class Shop_product extends HttpServlet {
                 User updatedUser = User_DB.getUserByEmailorUsername(user.getUserEmail());
                 request.getSession().setAttribute("USER", updatedUser);
                 sdb.updateOrderStatus(orderid3, "Completed");
+                sdb.addNewNotification(order.getUserID(), "Đơn hàng của bạn đã giao thành công! Vui lòng bấm đã nhận được hàng!", "/marketplace/history");
                 response.sendRedirect("myshop");
                 break;
             case "huydon":   //////người đặt hủy đơn
@@ -449,6 +457,14 @@ public class Shop_product extends HttpServlet {
                     p.setQuantity(p.getQuantity() + ot.getQuantity()); // Reduce the quantity by the amount ordered
                     sdb.updateProduct(p);
                 }
+
+                for (OrderItem ot : orderitemlistnewnew) {
+                    Product p1 = sdb.getProductByID(ot.getProductID());
+                    Shop shop1 = sdb.getShopHaveStatusIs1ByUserID(p1.getShopId());
+                    sdb.addNewNotification(shop1.getOwnerID(), "Người đặt đã hủy đơn do 1 số nguyên nhân!", "/marketplace/myshop");
+                    break;
+                }
+
                 response.sendRedirect("history");
                 break;
             case "danhanhang":  ///người đặt đã nhận hàng
@@ -457,13 +473,22 @@ public class Shop_product extends HttpServlet {
                 break;
             case "danhgia":  ///người đặt đánh giá
                 int orderid6 = Integer.parseInt(orderid);
+                ArrayList<OrderItem> orderitemlistnewnew1 = sdb.getAllOrderItemByOrderID(orderid6);
+                for (OrderItem ot : orderitemlistnewnew1) {
+                    Product p1 = sdb.getProductByID(ot.getProductID());
+                    Shop shop1 = sdb.getShopHaveStatusIs1ByUserID(p1.getShopId());
+                    sdb.addNewNotification(shop1.getOwnerID(), "Người đặt đã nhận được hàng và đã đánh giá!", "/marketplace/allshop/shopdetail?shopid=" + shop1.getShopID());
+                    break;
+                }
                 String stars = request.getParameter("stars");
                 int star = Integer.parseInt(stars);
                 String comment = request.getParameter("comment");
                 sdb.updateOrderStatus(orderid6, "Success");
                 sdb.updateOrderFeedback(orderid6, comment);
                 sdb.updateOrderStar(orderid6, star);
-                response.sendRedirect("allshop?message=Success+Evaluate!");
+                String msg = "Thanks for your order! ";
+                session.setAttribute("message", msg);
+                response.sendRedirect("allshop");
                 break;
 
         }

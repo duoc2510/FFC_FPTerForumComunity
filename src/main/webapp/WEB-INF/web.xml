@@ -207,6 +207,14 @@
         <servlet-class>controller.Post_rate</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>Notifications</servlet-name>
+        <servlet-class>controller.Notifications</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Notifications_List</servlet-name>
+        <servlet-class>controller.Notifications_List</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>User_chat</servlet-name>
         <servlet-class>chat.User_chat</servlet-class>
     </servlet>
@@ -410,6 +418,14 @@
     <servlet-mapping>
         <servlet-name>Topic_follow</servlet-name>
         <url-pattern>/follow</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Notifications</servlet-name>
+        <url-pattern>/notifications</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Notifications_List</servlet-name>
+        <url-pattern>/allnotifications</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index_guest.jsp</welcome-file>

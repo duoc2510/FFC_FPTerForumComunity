@@ -10,17 +10,15 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
+import jakarta.servlet.http.HttpSession;
 import model.DAO.Shop_DB;
-import model.DAO.User_DB;
-import model.Shop;
 import model.User;
 
 /**
  *
  * @author Admin
  */
-public class Shop_allshop extends HttpServlet {
+public class Notifications_List extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,10 +37,10 @@ public class Shop_allshop extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Shop_allshop</title>");
+            out.println("<title>Servlet Notifications_List</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Shop_allshop at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet Notifications_List at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -60,23 +58,7 @@ public class Shop_allshop extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        Shop_DB sdb = new Shop_DB();
-        User_DB udb = new User_DB();
-        String message = request.getParameter("message");
-        ArrayList<Shop> shoplist = sdb.getAllShop();
-
-        // Loại bỏ các shop có owner với userRole = 0
-        shoplist.removeIf(shop -> {
-            User u = udb.getUserById(shop.getOwnerID());
-            return u.getUserRole() == 0;
-        });
-
-        // Loại bỏ những shop có status là 0
-        shoplist.removeIf(shop -> shop.getStatus() == 0);
-
-        request.setAttribute("shoplist", shoplist);
-        request.setAttribute("message", message);
-        request.getRequestDispatcher("/marketplace/allShop.jsp").forward(request, response);
+        request.getRequestDispatcher("/user/notifications.jsp").forward(request, response);
     }
 
     /**
@@ -90,7 +72,21 @@ public class Shop_allshop extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("USER");
+        if (user != null) {
+            int notificationId = Integer.parseInt(request.getParameter("notificationId"));
+
+            // Gọi hàm updateStatusNotifications từ Shop_DB hoặc NotificationDAO
+            Shop_DB.deleteNotificationByID(notificationId);
+
+            // Gửi phản hồi về client
+            response.setContentType("text/plain");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write("Notification deleted successfully.");
+        } else {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+        }
     }
 
     /**

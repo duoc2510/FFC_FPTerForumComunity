@@ -1,9 +1,11 @@
-<%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
+
+
+<%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" import="model.*" import="model.DAO.*"%>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>-->
 <%@ include file="../include/header.jsp" %>
-<link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/js/bootstrap.min.js"></script>
 
 <style>
     .item img {
@@ -218,11 +220,5 @@
         </div>
     </div>
 
-    <script src="${pageContext.request.contextPath}/static/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="${pageContext.request.contextPath}/static/js/sidebarmenu.js"></script>
-    <script src="${pageContext.request.contextPath}/static/js/app.min.js"></script>
-    <script src="${pageContext.request.contextPath}/static/libs/apexcharts/dist/apexcharts.min.js"></script>
-    <script src="${pageContext.request.contextPath}/static/assets/libs/simplebar/dist/simplebar.js"></script>
-    <script src="${pageContext.request.contextPath}/static/js/dashboard.js"></script>
-</body>
-</html>
+   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<%@ include file="../include/footer.jsp" %>

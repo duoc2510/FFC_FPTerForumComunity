@@ -4,6 +4,22 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
 <body>
+
+    <script>
+        // Check if the message variable is set or not
+        document.addEventListener("DOMContentLoaded", (event) => {
+            var errorMessage = "${message}";
+            // Kiểm tra nếu errorMessage không rỗng, hiển thị thông báo lỗi
+            if (errorMessage != "") {
+                swal({
+                    title: "Error!",
+                    text: errorMessage,
+                    icon: "error",
+                    button: "OK",
+                });
+            }
+        });
+    </script>
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
          data-sidebar-position="fixed" data-header-position="fixed">
         <c:if test="${not empty sessionScope.USER}">
@@ -38,6 +54,12 @@
                         </div>
                     </div>
 
+                </c:if>
+
+                <c:if test="${not empty message}">
+                    <%
+                        session.removeAttribute("message");
+                    %>
                 </c:if>
                 <div class="row" id="billing">                    
                     <div class="col-md-6">
@@ -302,16 +324,6 @@
                                                         });
                                                     });
 
-                                                    var errorParam = "${param.error}";
-                                                    if (errorParam) {
-                                                        var errorMessage = decodeURIComponent(errorParam.replace(/\+/g, " "));
-                                                        swal({
-                                                            title: "Error!",
-                                                            text: errorMessage,
-                                                            icon: "error",
-                                                            button: "OK",
-                                                        });
-                                                    }
 
                                                     // Initial call to hide the discount select box if no items are selected
                                                     updateSummary();
