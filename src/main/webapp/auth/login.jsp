@@ -10,6 +10,22 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/styles.min.css" />
     </head>
     <body>
+
+        <script>
+            // Check if the message variable is set or not
+            document.addEventListener("DOMContentLoaded", (event) => {
+                var errorMessage = "${message}";
+                // Kiểm tra nếu errorMessage không rỗng, hiển thị thông báo lỗi
+                if (errorMessage != "") {
+                    swal({
+                        title: "Error!",
+                        text: errorMessage,
+                        icon: "error",
+                        button: "OK",
+                    });
+                }
+            });
+        </script>
         <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
              data-sidebar-position="fixed" data-header-position="fixed">
             <div class="position-relative overflow-hidden radial-gradient min-vh-100 d-flex align-items-center justify-content-center">
@@ -34,8 +50,11 @@
 
 
                                         <c:if test="${not empty message}">
-                                            <div class="alert alert-danger">${message}</div>
+                                            <%
+                                                session.removeAttribute("message");
+                                            %>
                                         </c:if>
+
 
                                         <div class="d-flex align-items-center justify-content-between mb-4">
                                             <div class="form-check">
@@ -61,5 +80,7 @@
         </div>
         <script src="${pageContext.request.contextPath}/static/libs/jquery/dist/jquery.min.js"></script>
         <script src="${pageContext.request.contextPath}/static/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
     </body>
 </html>

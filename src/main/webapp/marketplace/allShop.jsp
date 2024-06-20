@@ -6,6 +6,21 @@
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
 <%@ include file="../include/header.jsp" %>
 <body>
+    <script>
+        // Check if the message variable is set or not
+        document.addEventListener("DOMContentLoaded", (event) => {
+            var errorMessage = "${message}";
+            // Kiểm tra nếu errorMessage không rỗng, hiển thị thông báo lỗi
+            if (errorMessage != "") {
+                swal({
+                    title: "Thanks for your order!",
+                    text: errorMessage,
+                    icon: "success",
+                    button: "OK!",
+                });
+            }
+        });
+    </script>
     <style>
         .container-fluid .card img{
             aspect-ratio: 1 / 1;
@@ -31,7 +46,11 @@
                 <!--Control panel-->
                 <%@ include file="panel.jsp" %>
 
-
+                <c:if test="${not empty message}">
+                    <%
+                        session.removeAttribute("message");
+                    %>
+                </c:if>
                 <div class="col-lg-12">
                     <div class="w-100 row">
                         <c:forEach var="shop" items="${shoplist}" >
@@ -54,29 +73,6 @@
                 </div>
             </div>
         </div>
-        <script>
-            //      Message error
-            document.addEventListener("DOMContentLoaded", function (event) {
-                // Ensure your DOM is fully loaded before executing any code
-                var errorMessage = "${requestScope.message}";
-                // Kiểm tra nếu errorMessage không rỗng, hiển thị thông báo lỗi
-                if (errorMessage != "") {
-
-                    swal({
-                        title: "Thanks for your order!",
-                        text: errorMessage,
-                        icon: "success",
-                        button: "OK!",
-                    });
-
-                }
-
-
-
-
-            });
-        </script>     
-
 
 </body>
 

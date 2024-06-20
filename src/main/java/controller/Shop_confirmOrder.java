@@ -10,6 +10,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,6 +19,7 @@ import model.Discount;
 import model.Order;
 import model.OrderItem;
 import model.Product;
+import model.Shop;
 import model.User;
 
 /**
@@ -78,6 +80,7 @@ public class Shop_confirmOrder extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
         Shop_DB sdb = new Shop_DB();
         User user = (User) request.getSession().getAttribute("USER");
         String action = request.getParameter("action");
@@ -139,7 +142,9 @@ public class Shop_confirmOrder extends HttpServlet {
                     request.getRequestDispatcher("/marketplace/confirm.jsp").forward(request, response);
                 } else {
                     // If any selected products are out of stock, redirect to the cart page with an error message
-                    response.sendRedirect("cart?error=Your+Cart+Contains+Sold+Out+Product!");
+                    String msg = "Your Cart Contains Sold Out Product! ";
+                    session.setAttribute("message", msg);
+                    response.sendRedirect("cart");
                     return;
                 }
                 break;
@@ -212,12 +217,17 @@ public class Shop_confirmOrder extends HttpServlet {
                     ArrayList<OrderItem> newOrderItems = sdb.getAllOrderItemByOrderIdHasStatusIsNull(newOrderForUser.getOrder_ID());
                     request.getSession().setAttribute("ORDER", newOrderForUser);
                     request.getSession().setAttribute("ORDERITEMLIST", newOrderItems);
-
+                    Shop shop = sdb.getShopHaveStatusIs1ByUserID(shopid);
+                    sdb.addNewNotification(shop.getOwnerID(), "Shop của bạn có đơn hàng mới!", "/marketplace/myshop");
                     // Redirect to the allshop page with a success message
-                    response.sendRedirect("allshop?message=Thanks+for+your+order");
+                    String msg = "Thanks for your order! ";
+                    session.setAttribute("message", msg);
+                    response.sendRedirect("allshop");
                 } else {
                     // If any products are out of stock, redirect to the cart page with an error message
-                    response.sendRedirect("cart?error=Your+Cart+Contains+Sold+Out+Product!");
+                    String msg = "Your Cart Contains Sold Out Product! ";
+                    session.setAttribute("message", msg);
+                    response.sendRedirect("cart");
                 }
                 break;
         }

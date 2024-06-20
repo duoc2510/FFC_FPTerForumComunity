@@ -8,6 +8,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import model.DAO.Shop_DB;
 import model.DAO.User_DB;
@@ -24,6 +25,7 @@ public class User_authLogin extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
         String code = request.getParameter("code");
         String accessToken = getToken(code);
         UserGoogleDto usergg = getUserInfo(accessToken);
@@ -37,8 +39,10 @@ public class User_authLogin extends HttpServlet {
             switch (userRole) {
                 case 0:
                     message = "Your account has been banned.";
-                    request.setAttribute("message", message);
-                    request.getRequestDispatcher("/auth/login.jsp").forward(request, response);
+                    session.setAttribute("message", message);
+//                    request.setAttribute("message", message);
+//                    request.getRequestDispatcher("/auth/login.jsp").forward(request, response);
+                    response.sendRedirect("logingooglehandler?value=login");
                     return;
                 case 1:
                     role = "USER";
@@ -64,8 +68,11 @@ public class User_authLogin extends HttpServlet {
             response.sendRedirect("home");
         } else {
             String msg = "Email account has not been created yet! ";
-            request.setAttribute("message", msg);
-            request.getRequestDispatcher("/auth/login.jsp").forward(request, response);
+            session.setAttribute("message", msg);
+//            request.setAttribute("message", msg);
+//            request.getRequestDispatcher("/auth/login.jsp").forward(request, response);
+            response.sendRedirect("logingooglehandler?value=login");
+
         }
     }
 
@@ -110,35 +117,6 @@ public class User_authLogin extends HttpServlet {
 
             if (user == null) {
                 processRequest(request, response);
-
-            } else {
-                String role = null;
-                String message = null;
-                switch (user.getUserRole()) {
-                    case 0:
-                        message = "Your account has been banned.";
-                        request.setAttribute("message", message);
-                        request.getRequestDispatcher("/auth/login.jsp").forward(request, response);
-                        return;
-                    case 1:
-                        role = "USER";
-                        message = "Welcome, User!";
-                        break;
-                    case 2:
-                        role = "MANAGER";
-                        message = "Welcome, Manager!";
-                        break;
-                    case 3:
-                        role = "ADMIN";
-                        message = "Welcome, Admin!";
-                        break;
-                }
-                request.getSession().setAttribute("USER", user);
-                request.getSession().setAttribute("ROLE", role);
-                request.setAttribute("roleMessage", message);
-                request.setAttribute("userInfo", user);
-                response.sendRedirect("home");
-
             }
         } else {
             request.getRequestDispatcher("/auth/login.jsp").forward(request, response);
@@ -162,9 +140,19 @@ public class User_authLogin extends HttpServlet {
         String rememberMe = request.getParameter("rememberMe");
         User user = User.login(identify, password);
         User userInfo = User_DB.getUserByEmailorUsername(identify);
+        HttpSession session = request.getSession();
+        String message = "";
         Shop_DB sdb = new Shop_DB();
         if (user != null) {
             Order order = sdb.getOrderHasStatusIsNullByUserID(userInfo.getUserId());
+            if (userInfo.getUserRole() == 0) {
+
+                message = "Your account has been banned.";
+                session.setAttribute("message", message);
+//                request.getRequestDispatcher("/auth/login.jsp").forward(request, response);
+                response.sendRedirect("logingooglehandler?value=login");
+                return;
+            }
             ArrayList<OrderItem> orderitemlist = sdb.getAllOrderItemByOrderIdHasStatusIsNull(order.getOrder_ID());
             request.getSession().setAttribute("USER", user);
             request.getSession().setAttribute("ORDER", order);
@@ -206,8 +194,10 @@ public class User_authLogin extends HttpServlet {
             }
         } else {
             String msg = "Invalid email or password";
-            request.setAttribute("message", msg);
-            request.getRequestDispatcher("/auth/login.jsp").forward(request, response);
+            session.setAttribute("message", msg);
+//            request.setAttribute("message", msg);
+//            request.getRequestDispatcher("/auth/login.jsp").forward(request, response);
+            response.sendRedirect("logingooglehandler?value=login");
         }
     }
 
