@@ -206,6 +206,14 @@
         <servlet-name>Post_rate</servlet-name>
         <servlet-class>controller.Post_rate</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>User_chat</servlet-name>
+        <servlet-class>chat.User_chat</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Topic_follow</servlet-name>
+        <servlet-class>controller.Topic_follow</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PostComment</servlet-name>
         <url-pattern>/comment</url-pattern>
@@ -395,7 +403,15 @@
         <servlet-name>Post_rate</servlet-name>
         <url-pattern>/rate</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>User_chat</servlet-name>
+        <url-pattern>/messenger</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Topic_follow</servlet-name>
+        <url-pattern>/follow</url-pattern>
+    </servlet-mapping>
     <welcome-file-list>
-        <welcome-file>home</welcome-file>
+        <welcome-file>index_guest.jsp</welcome-file>
     </welcome-file-list>
 </web-app>

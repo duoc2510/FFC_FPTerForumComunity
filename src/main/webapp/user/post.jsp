@@ -19,7 +19,7 @@
                 </div>
                 <div class="col-9 mx-3">
                     <h6 class="card-title fw-semibold mb-4 d-inline">${post.user.username}</h6>
-                    <p class="s-4">${post.createDate}</p>
+                    <a href="${pageContext.request.contextPath}/post/detail?postId=${post.postId}" class="s-4">${post.createDate}</a>
                 </div>
                 <c:choose>
                     <c:when test="${post.user.userId == USER.userId}">

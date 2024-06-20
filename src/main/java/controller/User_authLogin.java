@@ -162,10 +162,9 @@ public class User_authLogin extends HttpServlet {
         String rememberMe = request.getParameter("rememberMe");
         User user = User.login(identify, password);
         User userInfo = User_DB.getUserByEmailorUsername(identify);
-        Shop_DB sdb = new Shop_DB();
         if (user != null) {
-            Order order = sdb.getOrderHasStatusIsNullByUserID(userInfo.getUserId());
-            ArrayList<OrderItem> orderitemlist = sdb.getAllOrderItemByOrderIdHasStatusIsNull(order.getOrder_ID());
+            Order order = Shop_DB.getOrderHasStatusIsNullByUserID(userInfo.getUserId());
+            ArrayList<OrderItem> orderitemlist = Shop_DB.getAllOrderItemByOrderIdHasStatusIsNull(order.getOrder_ID());
             request.getSession().setAttribute("USER", user);
             request.getSession().setAttribute("ORDER", order);
             request.getSession().setAttribute("ORDERITEMLIST", orderitemlist);

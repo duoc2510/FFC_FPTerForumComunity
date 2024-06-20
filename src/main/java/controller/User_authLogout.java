@@ -62,7 +62,7 @@ public class User_authLogout extends HttpServlet {
 
         if (session != null) {
             session.invalidate();
-            response.sendRedirect("home");
+            response.sendRedirect("index_guest.jsp");
         }
 
         out.close();

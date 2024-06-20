@@ -91,4 +91,59 @@ public class Topic_DB implements DBinfo {
         }
     }
 
+    // Method to follow a topic
+    public static boolean followTopic(int userId, int topicId) {
+        String sql = "INSERT INTO UserFollow (User_id, Topic_id) VALUES (?, ?)";
+
+        try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement pstmt = con.prepareStatement(sql)) {
+
+            pstmt.setInt(1, userId);
+            pstmt.setInt(2, topicId);
+
+            pstmt.executeUpdate();
+            return true;
+
+        } catch (SQLException e) {
+            System.err.println("SQL error: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // Method to unfollow a topic
+    public static boolean unfollowTopic(int userId, int topicId) {
+        String sql = "DELETE FROM UserFollow WHERE User_id = ? AND Topic_id = ?";
+
+        try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement pstmt = con.prepareStatement(sql)) {
+
+            pstmt.setInt(1, userId);
+            pstmt.setInt(2, topicId);
+
+            pstmt.executeUpdate();
+            return true;
+
+        } catch (SQLException e) {
+            System.err.println("SQL error: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public static boolean isFollowingTopic(int userId, int topicId) {
+        String sql = "SELECT COUNT(*) FROM UserFollow WHERE User_id = ? AND Topic_id = ?";
+
+        try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement pstmt = con.prepareStatement(sql)) {
+
+            pstmt.setInt(1, userId);
+            pstmt.setInt(2, topicId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    int count = rs.getInt(1);
+                    return count > 0; // Returns true if count is greater than 0, meaning the user is following the topic
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("SQL error: " + e.getMessage());
+        }
+        return false; // Returns false if no record is found or if an SQL error occurs
+    }
 }

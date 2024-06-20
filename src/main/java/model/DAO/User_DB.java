@@ -102,7 +102,7 @@ public class User_DB implements DBinfo {
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(insertQuery)) {
 
             // Mã hóa mật khẩu
-            String hashedPassword = BCrypt.hashpw(user.getUserPassword(), BCrypt.gensalt());
+                String hashedPassword = BCrypt.hashpw(user.getUserPassword(), BCrypt.gensalt());
 
             // Lấy ngày hiện tại và định dạng theo dd/MM/yyyy
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -456,7 +456,6 @@ public class User_DB implements DBinfo {
     public static String getFriendRequestStatus(int userId, String userName) {
         String getUserIdQuery = "SELECT User_id FROM Users WHERE Username = ?";
         String getRequestStatusQuery = "SELECT Request_status FROM FriendShip WHERE User_id = ? AND Friend_id = ?";
-
         try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement getUserStmt = conn.prepareStatement(getUserIdQuery)) {
 
             getUserStmt.setString(1, userName);
@@ -533,7 +532,6 @@ public class User_DB implements DBinfo {
                 int friendId = rs.getInt("User_id");
                 String userName = rs.getString("Username");
                 String userAvatar = rs.getString("User_avatar");
-
                 // Kiểm tra xem friendId đã tồn tại trong Set chưa
                 if (!uniqueFriendIds.contains(friendId)) {
                     uniqueFriendIds.add(friendId); // Thêm friendId vào Set
@@ -545,7 +543,6 @@ public class User_DB implements DBinfo {
             e.printStackTrace();
             Logger.getLogger(User_DB.class.getName()).log(Level.SEVERE, "Error occurred while fetching accepted friends", e);
         }
-
         return acceptedFriends;
     }
 

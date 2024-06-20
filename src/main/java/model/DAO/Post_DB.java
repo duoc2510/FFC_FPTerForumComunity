@@ -189,32 +189,29 @@ public class Post_DB implements DBinfo {
         return posts;
     }
 
-    public static Post getPostById(int postId) {
-        Post post = null;
-        String selectPostQuery = "SELECT Post_id, User_id, Group_id, Topic_id, Content, createDate, Status, postStatus, Reason, UploadPath "
-                + "FROM Post WHERE Post_id = ?";
-        try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement pstmtPost = con.prepareStatement(selectPostQuery)) {
-            pstmtPost.setInt(1, postId);
-            try (ResultSet rsPost = pstmtPost.executeQuery()) {
-                if (rsPost.next()) {
-                    int userId = rsPost.getInt("User_id");
-                    int groupId = rsPost.getInt("Group_id");
-                    int topicId = rsPost.getInt("Topic_id");
-                    String content = rsPost.getString("Content");
-                    String createDate = rsPost.getString("createDate");
-                    String status = rsPost.getString("Status");
-                    String postStatus = rsPost.getString("postStatus");
-                    String reason = rsPost.getString("Reason");
-                    String uploadPath = rsPost.getString("UploadPath");
+    public static List<Post> getPostByPostId(int postId) {
+        List<Post> posts = new ArrayList<>();
+        String query = "SELECT p.*, u.UploadPath "
+                + "FROM Post p "
+                + "LEFT JOIN Upload u ON p.Post_id = u.Post_id "
+                + "WHERE p.Post_id = ? "
+                + "ORDER BY p.Post_id DESC";
+        try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
 
-                    post = new Post(postId, userId, groupId, topicId, content, createDate, status, postStatus, reason, uploadPath);
+            // Set the postId parameter in the query
+            stmt.setInt(1, postId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    posts.add(mapResultSetToPost(rs));
                 }
             }
+            System.out.println("getPostByPostId: Query executed successfully.");
         } catch (SQLException ex) {
-            System.out.println("Lỗi khi lấy bài viết cho postId: " + postId);
             ex.printStackTrace();
+            System.out.println("getPostByPostId: Query execution failed.");
         }
-        return post;
+        return posts;
     }
 
     public static List<Post> getPostsWithGroupId() {

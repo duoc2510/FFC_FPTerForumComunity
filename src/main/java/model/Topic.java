@@ -13,8 +13,17 @@ public class Topic {
     private int topicId;
     private String topicName;
     private String description;
+    private boolean followed; // Add this field
 
     public Topic() {
+    }
+
+    public boolean isFollowed() {
+        return followed;
+    }
+
+    public void setFollowed(boolean followed) {
+        this.followed = followed;
     }
 
     public Topic(String topicName, String description) {
