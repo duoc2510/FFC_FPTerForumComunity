@@ -137,6 +137,7 @@ CREATE TABLE Notification (
     Message NVARCHAR(MAX) NOT NULL, -- Nội dung thông báo, không được null
     Created_at DATETIME DEFAULT GETDATE(), -- Ngày và giờ tạo thông báo, mặc định là ngày và giờ hiện tại
     Status NVARCHAR(50) DEFAULT 'Unread', -- Trạng thái của thông báo, mặc định là 'Unread' (chưa đọc)
+	Notification_link NVARCHAR(100),
     FOREIGN KEY (User_id) REFERENCES Users(User_id) -- Tham chiếu khóa ngoại tới bảng Users
 );
 GO
@@ -457,10 +458,10 @@ VALUES
 (3, 'Large Ad Content', NULL, 3);
 GO
 -- Chèn dữ liệu mẫu vào bảng Message
-INSERT INTO Message (From_id, To_id, MessageText)
+INSERT INTO Message (From_id, To_id, MessageText,FromUsername)
 VALUES 
-(1, 2, 'Hello, how are you?'),
-(2, 1, 'I''m fine, thanks!');
+(1, 2, 'Hello, how are you?','swpduoc'),
+(2, 1, 'I''m fine, thanks!','swpdiem');
 GO
 -- Chèn dữ liệu mẫu vào bảng Feedback
 INSERT INTO Feedback (Feedback_detail, Feedback_title, User_id)
@@ -526,67 +527,3 @@ VALUES
 (1, NULL, 1),
 (2, NULL, 2),
 (3, NULL, 1);
-GO
-INSERT INTO Discount (Code, Owner_id, Shop_id, Discount_percent, Valid_from, Valid_to, Usage_limit, Usage_count, Condition) 
-VALUES ('DISCOUNT2024', 1, Null, 15.00, '2024-06-01', '2024-12-31', 100, 0, 500.00);
-INSERT INTO Discount (Code, Owner_id, Shop_id, Discount_percent, Valid_from, Valid_to, Usage_limit, Usage_count, Condition) 
-VALUES ('DISCOUNT2025', Null, Null, 15.00, '2024-06-01', '2024-12-31', 100, 0, 500.00);
-INSERT INTO Discount (Code, Owner_id, Shop_id, Discount_percent, Valid_from, Valid_to, Usage_limit, Usage_count, Condition) 
-VALUES ('DISCOUNT2026', Null, 2, 15.00, '2024-06-01', '2024-12-31', 100, 0, 500.00);
-
-SELECT * FROM PostWithUploadAndComment;
--- Xem thông tin từ bảng Users
-SELECT * FROM Users;
-SELECT * FROM GroupView;
--- Xem thông tin từ bảng FriendShip
-SELECT * FROM FriendShip;
--- Xem thông tin từ bảng Notification
-SELECT * FROM Notification;
--- Xem thông tin từ bảng Event
-SELECT * FROM Event;
--- Xem thông tin từ bảng Payment
-SELECT * FROM Payment;
--- Xem thông tin từ bảng Combo_ads
-SELECT * FROM Combo_ads;
--- Xem thông tin từ bảng Ads
-SELECT * FROM Ads;
--- Xem thông tin từ bảng Message
-SELECT * FROM Message;
--- Xem thông tin từ bảng Feeback
-SELECT * FROM Feedback;
--- Xem thông tin từ bảng Topic
-SELECT * FROM Topic;
--- Xem thông tin từ bảng UserTopic
-SELECT * FROM UserTopic;   
--- Xem thông tin từ bảng [Group]
-SELECT * FROM [Group];
--- Xem thông tin từ bảng MemberGroup
-SELECT * FROM MemberGroup;
--- Xem thông tin từ bảng Post
-SELECT * FROM Post;
--- Xem thông tin từ bảng Comment
-SELECT * FROM Comment;
--- Xem thông tin từ bảng Rate
-SELECT * FROM Rate;
--- Xem thông tin từ bảng PostReport
-SELECT * FROM Report;
-
-SELECT * FROM Shop;
-
-SELECT * FROM [Order];
-
-SELECT * FROM OrderItem;
-
-SELECT * FROM Title;
-
-SELECT * FROM UserTitle;
-
-SELECT * FROM Product;
-
-SELECT * FROM Discount;
-
-SELECT * FROM GroupChatMessage;
-
-SELECT * FROM Upload;
-
-SELECT * FROM UserFollow

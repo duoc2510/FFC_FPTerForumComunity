@@ -30,6 +30,10 @@
     </filter-mapping>
     <filter-mapping>
         <filter-name>AuthenticateFilter</filter-name>
+        <url-pattern>/messenger/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>AuthenticateFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     <listener>
@@ -378,7 +382,6 @@
         <servlet-name>User_search</servlet-name>
         <url-pattern>/search</url-pattern>
     </servlet-mapping>
-    <!-- Danh sách file chào mừng -->
     <servlet-mapping>
         <servlet-name>Advertising_allAds</servlet-name>
         <url-pattern>/advertising</url-pattern>

@@ -38,7 +38,8 @@ public class AuthenticateFilter implements Filter {
                     || uri.startsWith(contextPath + "/profile")
                     || uri.startsWith(contextPath + "/marketplace/")
                     || uri.startsWith(contextPath + "/manager/")
-                    || uri.startsWith(contextPath + "/post")) {
+                    || uri.startsWith(contextPath + "/post")
+                    || uri.startsWith(contextPath + "/messenger")) {
                 if (user == null) {
                     // Lưu lại URL hiện tại
                     String referer = httpRequest.getHeader("referer");
