@@ -4,7 +4,6 @@
  */
 package controller;
 
-import jakarta.servlet.http.HttpServlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,26 +11,18 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
-import model.Comment;
-import model.DAO.Comment_DB;
 import model.DAO.Event_DB;
-import model.DAO.Post_DB;
-import model.DAO.Topic_DB;
 import model.DAO.User_DB;
 import model.Event;
 import model.User;
-import model.Event;
-import model.Post;
-import model.Topic;
 
 /**
  *
  * @author Admin
  */
-public class Event_eventList extends HttpServlet {
+public class Event_viewEvent extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -50,10 +41,10 @@ public class Event_eventList extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Event_eventList</title>");
+            out.println("<title>Servlet Event_viewEvent</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Event_eventList at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet Event_viewEvent at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -71,25 +62,35 @@ public class Event_eventList extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        Event_DB eventDB = new Event_DB();
+        String eventIdStr = request.getParameter("eventId");
         HttpSession session = request.getSession();
-        session.removeAttribute("eventList");
-        User user = (User) session.getAttribute("USER");
-        List<Event> eventList = (List<Event>) session.getAttribute("eventList");
-        if (eventList == null) {
-            eventList = Event_DB.getAllEvents();
-            for (Event event : eventList) {
-                boolean interested = false;
-                interested = Event_DB.checkUserInterest(user.getUserId(), event.getEventId());
-                event.setIsInterest(interested);
+
+        if (eventIdStr != null) {
+            int eventId = Integer.parseInt(eventIdStr);
+            User user = (User) session.getAttribute("USER");
+            List<Event> eventList = (List<Event>) session.getAttribute("eventList");
+            if (eventList == null) {
+                eventList = Event_DB.getAllEvents();
+                for (Event event : eventList) {
+                    boolean interested = Event_DB.checkUserInterest(user.getUserId(), event.getEventId());
+                    event.setIsInterest(interested);
+                }
+                session.setAttribute("eventList", eventList);
             }
-            session.setAttribute("eventList", eventList);
+
+            Event event = Event_DB.getEventById(eventId);
+            boolean interested = Event_DB.checkUserInterest(user.getUserId(), eventId);
+            event.setIsInterest(interested);
+            request.setAttribute("event", event);
+
+            List<String> interestedUsers = User_DB.getUsersInterestedInEvent(eventId);
+            int numInterestedUsers = User_DB.countInterestedUsers(eventId);
+            request.setAttribute("numInterestedUsers", numInterestedUsers);
+            request.setAttribute("interestedUsers", interestedUsers);
+            // Set the current time
+            request.setAttribute("now", new Date());
+            request.getRequestDispatcher("/event/viewEvent.jsp").forward(request, response);
         }
-        // Set the current time
-        request.setAttribute("now", new Date());
-        eventList.sort((e1, e2) -> e2.getStartDate().compareTo(e1.getStartDate()));
-        session.setAttribute("eventList", eventList);
-        request.getRequestDispatcher("/event/index.jsp").forward(request, response);
     }
 
     /**
