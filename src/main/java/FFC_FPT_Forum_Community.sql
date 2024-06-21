@@ -315,6 +315,22 @@ CREATE TABLE Upload (
     FOREIGN KEY (Event_id) REFERENCES Event(Event_id) -- Khóa ngoại tham chiếu đến bài viết
 );
 GO
+CREATE TABLE ATMInfo (
+    ATMNumber NVARCHAR(255),
+    username NVARCHAR(255),
+    BankName NVARCHAR(255),
+    Money DECIMAL(10, 2) DEFAULT 0.00,
+    CODE INT,
+    Status NVARCHAR(255)
+);
+GO
+-- Insert sample data into the ATMInfo table
+INSERT INTO ATMInfo (ATMNumber, username, BankName, Money, CODE,Status) VALUES
+('25102003221', 'Nguyen Van A', 'MBBank', 0, 1234, 'Admin'), --Thẻ admin
+('25102003222', 'Nguyen Van B', 'MBBank', 500000, 1234, 'Active'), --Thẻ thanh toán thành công
+('25102003223', 'Nguyen Van B', 'MBBank', 200000, 1234, 'Block'), --Thẻ bị khoá
+('25102003224', 'Nguyen Van D', 'MBBank', 0, 1234,'Active'); -- Thẻ không đủ số dư
+GO
 CREATE OR ALTER VIEW GroupView AS
 SELECT 
     g.Group_id,

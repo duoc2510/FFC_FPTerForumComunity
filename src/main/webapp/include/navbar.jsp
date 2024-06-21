@@ -120,9 +120,9 @@
                                 <i class="ti ti-user-circle fs-6"></i>
                                 <p class="mb-0 fs-3">My Account</p>
                             </a>
-                            <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
+                            <a href="${pageContext.request.contextPath}/payment" class="d-flex align-items-center gap-2 dropdown-item">
                                 <i class="ti ti-wallet fs-6"></i>
-                                <p class="mb-0 fs-3">Wallet: ${USER.userWallet}</p>
+                                <p class="mb-0 fs-3" id="walletAmount">Wallet: ${USER.userWallet}</p>
                             </a>
                             <a href="${pageContext.request.contextPath}/logout"
                                class="btn btn-outline-danger mx-3 mt-2 d-block">Logout</a>
@@ -132,6 +132,7 @@
             </ul>
         </div>
     </nav>
+
     <script>
         var oldNotificationCount = 0;
         var contextPath = '<%= request.getContextPath() %>';
@@ -237,6 +238,7 @@
                 loadNotifications();
             });
         });
+
     </script>
 
 
