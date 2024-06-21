@@ -102,7 +102,7 @@ public class User_DB implements DBinfo {
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(insertQuery)) {
 
             // Mã hóa mật khẩu
-                String hashedPassword = BCrypt.hashpw(user.getUserPassword(), BCrypt.gensalt());
+            String hashedPassword = BCrypt.hashpw(user.getUserPassword(), BCrypt.gensalt());
 
             // Lấy ngày hiện tại và định dạng theo dd/MM/yyyy
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -509,6 +509,47 @@ public class User_DB implements DBinfo {
         }
 
         return pendingRequests;
+    }
+
+    public static List<User> getAcceptedFriendsOrderByLatestMessage(int userId) {
+        List<User> acceptedFriends = new ArrayList<>();
+        Set<Integer> uniqueFriendIds = new HashSet<>(); // Dùng Set để lưu trữ các friendId duy nhất
+
+        // Câu truy vấn SQL để lấy danh sách các bạn bè đã chấp nhận của người dùng từ cả hai phía và sắp xếp theo thứ tự tin nhắn mới nhất
+        String getAcceptedFriendsQuery = "SELECT u.User_id, u.Username, u.User_avatar, MAX(m.TimeStamp) AS LatestMessageTime "
+                + "FROM Users u "
+                + "INNER JOIN FriendShip f ON (u.User_id = f.Friend_id OR u.User_id = f.User_id) "
+                + "LEFT JOIN Message m ON (u.User_id = m.From_id AND f.User_id = m.To_id) "
+                + "                      OR (u.User_id = m.To_id AND f.User_id = m.From_id) "
+                + "WHERE (f.User_id = ? OR f.Friend_id = ?) AND f.Request_status = 'accepted' AND u.User_id != ? "
+                + "GROUP BY u.User_id, u.Username, u.User_avatar "
+                + "ORDER BY LatestMessageTime DESC";
+
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement getAcceptedFriendsStmt = conn.prepareStatement(getAcceptedFriendsQuery)) {
+
+            getAcceptedFriendsStmt.setInt(1, userId);
+            getAcceptedFriendsStmt.setInt(2, userId);
+            getAcceptedFriendsStmt.setInt(3, userId);
+            ResultSet rs = getAcceptedFriendsStmt.executeQuery();
+
+            // Lặp qua kết quả của truy vấn và thêm các bạn bè đã chấp nhận vào danh sách acceptedFriends
+            while (rs.next()) {
+                int friendId = rs.getInt("User_id");
+                String userName = rs.getString("Username");
+                String userAvatar = rs.getString("User_avatar");
+
+                // Kiểm tra xem friendId đã tồn tại trong Set chưa
+                if (!uniqueFriendIds.contains(friendId)) {
+                    uniqueFriendIds.add(friendId); // Thêm friendId vào Set
+                    User friend = new User(friendId, userName, userAvatar); // Tạo đối tượng User từ kết quả truy vấn
+                    acceptedFriends.add(friend);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Logger.getLogger(User_DB.class.getName()).log(Level.SEVERE, "Error occurred while fetching accepted friends", e);
+        }
+        return acceptedFriends;
     }
 
     public static List<User> getAcceptedFriends(int userId) {

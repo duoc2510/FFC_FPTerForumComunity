@@ -3,9 +3,9 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <style>
-/*    .user-settings  .dropdown-menu{
-        min-width: 200px !important;
-    }*/
+    /*    .user-settings  .dropdown-menu{
+            min-width: 200px !important;
+        }*/
     .avatar-cover {
         width: 35px;
         height: 35px;
@@ -84,6 +84,9 @@
                         </ul>
                     </li>
                 </div>
+                <a href="${pageContext.request.contextPath}/messenger">
+                    <i class="ti ti-message-forward fs-8"></i>
+                </a>
 
                 <li class="nav-item dropdown">
                     <a class="nav-link nav-icon-hover" href="javascript:void(0)" id="drop2"
@@ -92,7 +95,7 @@
                         <img src="${pageContext.request.contextPath}/${USER.userAvatar}" alt="" width="35"
                              class="rounded-circle avatar-cover">
                     </a>
-                             <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2" style="min-width: 200px">
+                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2" style="min-width: 200px">
                         <div class="message-body">
                             <a href="${pageContext.request.contextPath}/profile?username=${USER.username}"
                                class="d-flex align-items-center gap-2 dropdown-item">

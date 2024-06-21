@@ -4,6 +4,7 @@
  */
 package chat;
 
+import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -11,6 +12,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.sql.SQLException;
 import java.util.List;
 import model.DAO.User_DB;
 import model.User;
@@ -57,15 +59,22 @@ public class User_chat extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        HttpSession session = request.getSession(false); // Không tự động tạo session mới
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("USER") == null) {
+            response.sendRedirect(request.getContextPath() + "/logingooglehandler");
+            return;
+        }
+
         User user = (User) session.getAttribute("USER");
-        int userId = user.getUserId();
-        List<User> acceptedFriends = User_DB.getAcceptedFriends(userId);
-        request.setAttribute("acceptedFriends", acceptedFriends);
-        request.getRequestDispatcher("test.jsp").forward(request, response);
+
+        // Gọi phương thức từ lớp User_DB để lấy danh sách bạn bè đã chấp nhận
+        List<User> acceptedFriends = User_DB.getAcceptedFriendsOrderByLatestMessage(user.getUserId());
+        // Đưa danh sách bạn bè vào thuộc tính của request để sử dụng trong JSP
+        request.setAttribute("friends", acceptedFriends);
+        // Chuyển hướng sang trang chat.jsp để hiển thị danh sách bạn bè và khung chat
+        RequestDispatcher dispatcher = request.getRequestDispatcher("test.jsp");
+        dispatcher.forward(request, response);
     }
 
     /**

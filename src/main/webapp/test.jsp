@@ -149,7 +149,8 @@
         <div class="container">
             <div class="friend-list">
                 <h2>Liên hệ của bạn</h2>
-                <c:forEach var="friend" items="${acceptedFriends}">
+                <!-- Assuming friends is a list of objects containing userId, username, and userAvatar -->
+                <c:forEach var="friend" items="${friends}">
                     <div class="friend">
                         <img src="${friend.userAvatar}" alt="${friend.username}">
                         <button onclick="setAndLoadMessages(${friend.userId}, '${friend.username}')">${friend.username}</button>
@@ -158,7 +159,7 @@
             </div>
             <div class="chat-container">
                 <div id="friendName"></div>
-                <div id="chat"></div>
+                <div id="chat" class="chat"></div>
                 <div class="input-group">
                     <input type="text" id="message" placeholder="Nhập tin nhắn của bạn" required>
                     <button onclick="sendMessage()">Gửi</button>
@@ -169,10 +170,58 @@
         <script>
             let ws = new WebSocket("ws://localhost:8080/FPTer/chat");
             let toId = null;
+            let loggedInUserId = ${USER.userId}; // Assuming USER is a JavaScript variable passed from server-side
 
             ws.onopen = function () {
                 console.log('WebSocket đã kết nối.');
             };
+
+            function setAndLoadMessages(userId, username) {
+                toId = userId;
+
+                let messageObj = {
+                    type: "loadMessages",
+                    toId: toId
+                };
+
+                // Clear chat window
+                let chat = document.getElementById("chat");
+                chat.innerHTML = "";
+
+                // Display friend's name
+                let friendNameDiv = document.getElementById("friendName");
+                friendNameDiv.textContent = username;
+
+                // Send request to server to load messages
+                if (ws.readyState === WebSocket.OPEN) {
+                    ws.send(JSON.stringify(messageObj));
+                } else {
+                    console.log('Kết nối WebSocket không mở.');
+                }
+            }
+
+            function sendMessage() {
+                let messageInput = document.getElementById("message");
+                if (!messageInput.value.trim()) {
+                    alert("Tin nhắn không được để trống");
+                    return;
+                }
+
+                if (ws.readyState === WebSocket.OPEN) {
+                    let messageObj = {
+                        type: "chat",
+                        toId: toId,
+                        fromId: loggedInUserId,
+                        fromUsername: '${USER.username}', // Assuming USER.username is a JavaScript variable passed from server-side
+                        messageText: messageInput.value
+                    };
+
+                    ws.send(JSON.stringify(messageObj));
+                    messageInput.value = '';
+                } else {
+                    console.log('Kết nối WebSocket không mở.');
+                }
+            }
 
             ws.onmessage = function (event) {
                 let data = JSON.parse(event.data);
@@ -181,37 +230,12 @@
                 if (data.type === "chat") {
                     let fromId = data.fromId;
                     let fromUsername = data.fromUsername;
-                    let toId = data.toId;
                     let messageText = data.messageText;
 
-                    let loggedInUserId = ${USER.userId};
-                    let  messageDiv = document.createElement("div");
+                    let messageDiv = document.createElement("div");
                     messageDiv.classList.add("message");
 
-                    if (fromId === loggedInUserId) {
-                        messageDiv.classList.add("user");
-                    } else {
-                        messageDiv.classList.add("other");
-                        let usernameDiv = document.createElement("div");
-                        usernameDiv.classList.add("username");
-                        usernameDiv.textContent = fromUsername;
-                        messageDiv.appendChild(usernameDiv);
-                    }
-                    messageDiv.appendChild(document.createTextNode(messageText));
-                    chat.appendChild(messageDiv);
-                    scrollToBottom();
-                } else if (data.type === "loadMessages") {
-                    chat.innerHTML = "";
-                    data.messages.forEach(function (message) {
-                        let fromId = message.fromId;
-                        let fromUsername = message.fromUsername;
-                        let toId = message.toId;
-                        let messageText = message.messageText;
-
-                        let loggedInUserId = ${USER.userId};
-                        let messageDiv = document.createElement("div");
-                        messageDiv.classList.add("message");
-
+                    if (fromId === loggedInUserId || toId === fromId) {
                         if (fromId === loggedInUserId) {
                             messageDiv.classList.add("user");
                         } else {
@@ -221,9 +245,40 @@
                             usernameDiv.textContent = fromUsername;
                             messageDiv.appendChild(usernameDiv);
                         }
+
                         messageDiv.appendChild(document.createTextNode(messageText));
                         chat.appendChild(messageDiv);
                         scrollToBottom();
+                    } else {
+                        console.log("Received message not relevant to current chat window.");
+                    }
+                } else if (data.type === "loadMessages") {
+                    chat.innerHTML = "";
+                    data.messages.forEach(function (message) {
+                        let fromId = message.fromId;
+                        let fromUsername = message.fromUsername;
+                        let messageText = message.messageText;
+
+                        let messageDiv = document.createElement("div");
+                        messageDiv.classList.add("message");
+
+                        if (fromId === loggedInUserId || toId === fromId) {
+                            if (fromId === loggedInUserId) {
+                                messageDiv.classList.add("user");
+                            } else {
+                                messageDiv.classList.add("other");
+                                let usernameDiv = document.createElement("div");
+                                usernameDiv.classList.add("username");
+                                usernameDiv.textContent = fromUsername;
+                                messageDiv.appendChild(usernameDiv);
+                            }
+
+                            messageDiv.appendChild(document.createTextNode(messageText));
+                            chat.appendChild(messageDiv);
+                            scrollToBottom();
+                        } else {
+                            console.log("Loaded message not relevant to current chat window.");
+                        }
                     });
                 }
             };
@@ -235,49 +290,6 @@
             ws.onclose = function (event) {
                 console.log('WebSocket đã đóng.');
             };
-
-            function sendMessage() {
-                let messageInput = document.getElementById("message");
-                if (!messageInput.value.trim()) {
-                    alert("Tin nhắn không được để trống");
-                    return;
-                }
-
-                let loggedInUserId = ${USER.userId};
-
-                if (ws.readyState === WebSocket.OPEN) {
-                    let messageObj = {
-                        type: "chat",
-                        toId: toId,
-                        fromId: loggedInUserId,
-                        fromUsername: '${USER.username}',
-                        messageText: messageInput.value
-                    };
-
-                    ws.send(JSON.stringify(messageObj));
-                    messageInput.value = '';
-                } else {
-                    console.log('Kết nối WebSocket không mở.');
-                }
-            }
-
-            function setAndLoadMessages(userId, username) {
-                toId = userId;
-
-                let messageObj = {
-                    type: "loadMessages",
-                    toId: toId
-                };
-
-                if (ws.readyState === WebSocket.OPEN) {
-                    ws.send(JSON.stringify(messageObj));
-                } else {
-                    console.log('Kết nối WebSocket không mở.');
-                }
-
-                let friendNameDiv = document.getElementById("friendName");
-                friendNameDiv.textContent = username;
-            }
 
             function scrollToBottom() {
                 let chat = document.getElementById("chat");

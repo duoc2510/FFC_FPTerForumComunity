@@ -1,35 +1,20 @@
 package chat;
 
 import jakarta.servlet.http.HttpSession;
-import jakarta.websocket.CloseReason;
-import jakarta.websocket.EndpointConfig;
-import jakarta.websocket.HandshakeResponse;
-import jakarta.websocket.OnClose;
-import jakarta.websocket.OnError;
-import jakarta.websocket.OnMessage;
-import jakarta.websocket.OnOpen;
-import jakarta.websocket.Session;
+import jakarta.websocket.*;
 import jakarta.websocket.server.HandshakeRequest;
 import jakarta.websocket.server.ServerEndpoint;
 import jakarta.websocket.server.ServerEndpointConfig;
+import model.User;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Base64;
+import java.sql.*;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import model.DAO.DBinfo;
-import model.User;
 
 @ServerEndpoint(value = "/chat", configurator = Chat.Configurator.class)
 public class Chat {
@@ -63,37 +48,68 @@ public class Chat {
         throwable.printStackTrace();
     }
 
-    private void saveMessageToDatabase(int fromId, int toId, String messageText) {
+    @OnMessage
+    public void onMessage(String message, Session session) {
+        System.out.println("Received message: " + message);
+
         try {
-            String encryptedMessage = AESUtil.encrypt(messageText);
+            JSONObject jsonMessage = new JSONObject(message);
+            String type = jsonMessage.getString("type");
 
-            System.out.println("Encrypted Message (before saving): " + encryptedMessage);
-
-            String query = "INSERT INTO Message (From_id, To_id, MessageText) VALUES (?, ?, ?)";
-            try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
-
-                stmt.setInt(1, fromId);
-                stmt.setInt(2, toId);
-                stmt.setString(3, encryptedMessage);
-
-                stmt.executeUpdate();
-
-                System.out.println("Message saved to database successfully.");
-
-            } catch (SQLException e) {
-                e.printStackTrace();
+            if ("chat".equals(type)) {
+                handleChatMessage(jsonMessage);
+            } else if ("loadMessages".equals(type)) {
+                handleLoadMessages(jsonMessage, session);
+            } else {
+                System.out.println("Invalid message type received: " + type);
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    private String decrypt(String encryptedMessage) throws Exception {
-        return AESUtil.decrypt(encryptedMessage);
+    private void handleChatMessage(JSONObject jsonMessage) throws Exception {
+        int toId = jsonMessage.getInt("toId");
+        int fromId = jsonMessage.getInt("fromId");
+        String messageText = jsonMessage.getString("messageText");
+
+        // Save message to database
+        saveMessageToDatabase(fromId, toId, messageText);
+
+        // Get fromUsername from database
+        String fromUsername = getUsername(fromId);
+
+        // Broadcast message to relevant clients
+        broadcastMessage(fromId, fromUsername, toId, messageText);
     }
 
-    private void sendExistingMessages(Session session, int fromId, int toId) {
-        String query = "SELECT From_id, To_id, MessageText FROM Message "
+    private void handleLoadMessages(JSONObject jsonMessage, Session session) throws Exception {
+        int toId = jsonMessage.getInt("toId");
+        int fromId = getUserId(session);
+
+        // Send existing messages to the client
+        sendExistingMessages(session, fromId, toId);
+    }
+
+    private void saveMessageToDatabase(int fromId, int toId, String messageText) throws Exception {
+        String fromUsername = getUsername(fromId);
+
+        try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass)) {
+            String insertMessageQuery = "INSERT INTO Message (From_id, To_id, MessageText, FromUsername) VALUES (?, ?, ?, ?)";
+            try (PreparedStatement insertMessageStmt = conn.prepareStatement(insertMessageQuery)) {
+                insertMessageStmt.setInt(1, fromId);
+                insertMessageStmt.setInt(2, toId);
+                String encryptedMessage = AESUtil.encrypt(messageText);
+                insertMessageStmt.setString(3, encryptedMessage);
+                insertMessageStmt.setString(4, fromUsername);
+                insertMessageStmt.executeUpdate();
+            }
+            System.out.println("Message saved to database successfully.");
+        }
+    }
+
+    private void sendExistingMessages(Session session, int fromId, int toId) throws Exception {
+        String query = "SELECT From_id, To_id, MessageText, FromUsername FROM Message "
                 + "WHERE (From_id = ? AND To_id = ?) OR (From_id = ? AND To_id = ?)";
 
         try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -109,18 +125,14 @@ public class Chat {
                     int rsFromId = rs.getInt("From_id");
                     int rsToId = rs.getInt("To_id");
                     String encryptedMessage = rs.getString("MessageText");
-
-                    System.out.println("Encrypted Message (from DB): " + encryptedMessage);
-
-                    // Decrypt message
                     String decryptedMessage = AESUtil.decrypt(encryptedMessage);
-
-                    System.out.println("Decrypted Message: " + decryptedMessage);
+                    String fromUsername = rs.getString("FromUsername");
 
                     JSONObject messageObj = new JSONObject();
                     messageObj.put("fromId", rsFromId);
                     messageObj.put("toId", rsToId);
                     messageObj.put("messageText", decryptedMessage);
+                    messageObj.put("fromUsername", fromUsername);
                     messages.put(messageObj);
                 }
 
@@ -128,42 +140,11 @@ public class Chat {
                 response.put("type", "loadMessages");
                 response.put("messages", messages);
 
-                session.getBasicRemote().sendText(response.toString());
-
-            } catch (Exception e) {
-                e.printStackTrace();
+                // Convert to string and send to the session asynchronously
+                session.getAsyncRemote().sendText(response.toString());
             }
-        } catch (SQLException e) {
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    @OnMessage
-    public void onMessage(String message, Session session) {
-        System.out.println("Received message: " + message);
-
-        JSONObject jsonMessage = new JSONObject(message);
-        String type = jsonMessage.getString("type");
-
-        if (type.equals("chat")) {
-            int toId = jsonMessage.getInt("toId");
-            int fromId = jsonMessage.getInt("fromId");
-            String fromUsername = jsonMessage.getString("fromUsername");
-            String messageText = jsonMessage.getString("messageText");
-
-            // Save message to database
-            saveMessageToDatabase(fromId, toId, messageText);
-
-            // Broadcast message to all clients
-            broadcastMessage(fromId, fromUsername, toId, messageText);
-        } else if (type.equals("loadMessages")) {
-            int toId = jsonMessage.getInt("toId");
-            int fromId = getUserId(session);
-
-            // Send existing messages to the client
-            sendExistingMessages(session, fromId, toId);
-        } else {
-            System.out.println("Invalid message type received: " + type);
         }
     }
 
@@ -178,13 +159,39 @@ public class Chat {
 
         synchronized (clients) {
             for (Session client : clients) {
-                try {
-                    client.getBasicRemote().sendText(message);
-                } catch (IOException e) {
-                    e.printStackTrace();
+                HttpSession httpSession = (HttpSession) client.getUserProperties().get(HttpSession.class.getName());
+                User user = (User) httpSession.getAttribute("USER");
+                int userId = user.getUserId();
+
+                // Only send message to relevant sessions (fromId and toId match the current user)
+                if (userId == fromId || userId == toId) {
+                    try {
+                        client.getBasicRemote().sendText(message);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
+    }
+
+    private String getUsername(int userId) {
+        String username = null;
+        String getUserQuery = "SELECT Username FROM Users WHERE User_id = ?";
+        try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement getUserStmt = conn.prepareStatement(getUserQuery)) {
+
+            getUserStmt.setInt(1, userId);
+            try (ResultSet rs = getUserStmt.executeQuery()) {
+                if (rs.next()) {
+                    username = rs.getString("Username");
+                } else {
+                    System.out.println("User not found for UserId: " + userId);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return username;
     }
 
     private int getUserId(Session session) {

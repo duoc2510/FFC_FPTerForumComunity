@@ -151,7 +151,7 @@ CREATE TABLE Event (
     Location NVARCHAR(255), -- Địa điểm tổ chức sự kiện
     Created_by INT NOT NULL, -- Người tạo sự kiện, không được null
     Created_at DATETIME DEFAULT GETDATE(), -- Ngày và giờ tạo sự kiện, mặc định là ngày và giờ hiện tại
-FOREIGN KEY (Created_by) REFERENCES Users(User_id) -- Tham chiếu khóa ngoại tới bảng Users
+	FOREIGN KEY (Created_by) REFERENCES Users(User_id) -- Tham chiếu khóa ngoại tới bảng Users
 );
 GO
 -- Tạo bảng Payment: lưu thông tin về thanh toán
@@ -186,9 +186,10 @@ CREATE TABLE Message (
     From_id INT NOT NULL, -- id người gửi, không được null
     To_id INT NOT NULL, -- id người nhận, không được null
     MessageText NVARCHAR(255) NOT NULL, -- Nội dung tin nhắn, không được null
+	FromUsername NVARCHAR(255) NOT NULL,
     TimeStamp DATETIME DEFAULT GETDATE(), -- Thời gian gửi tin nhắn, mặc định là ngày hiện tại
     FOREIGN KEY (From_id) REFERENCES Users(User_id), -- Khóa ngoại tham chiếu đến người gửi
-    FOREIGN KEY (To_id) REFERENCES Users(User_id) -- Khóa ngoại tham chiếu đến người nhận
+    FOREIGN KEY (	To_id) REFERENCES Users(User_id) -- Khóa ngoại tham chiếu đến người nhận
 );
 GO
 -- Tạo bảng Feeback: lưu thông tin về phản hồi
