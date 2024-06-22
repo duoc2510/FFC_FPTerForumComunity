@@ -137,7 +137,7 @@ CREATE TABLE Notification (
     Message NVARCHAR(MAX) NOT NULL, -- Nội dung thông báo, không được null
     Created_at DATETIME DEFAULT GETDATE(), -- Ngày và giờ tạo thông báo, mặc định là ngày và giờ hiện tại
     Status NVARCHAR(50) DEFAULT 'Unread', -- Trạng thái của thông báo, mặc định là 'Unread' (chưa đọc)
-	Notification_link NVARCHAR(100),
+    Notification_link NVARCHAR(100);
     FOREIGN KEY (User_id) REFERENCES Users(User_id) -- Tham chiếu khóa ngoại tới bảng Users
 );
 GO
