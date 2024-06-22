@@ -9,6 +9,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
@@ -23,8 +24,7 @@ import model.OrderItem;
 import model.Product;
 import model.Shop;
 import model.Upload;
-import java.util.Collections;
-import java.util.Comparator;
+import model.User_notification;
 
 /**
  *
@@ -36,7 +36,7 @@ public class Shop_DB {
         try {
             Class.forName(driver);
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(User_DB.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -424,6 +424,29 @@ public class Shop_DB {
         return order;
     }
 
+    public static int countSuccessAndCompletedOrdersByShopID(int shopID) {
+        int count = 0;
+        String query = "SELECT COUNT(*) "
+                + "FROM [Order] o "
+                + "JOIN OrderItem oi ON o.Order_id = oi.Order_id "
+                + "JOIN Product p ON oi.Product_id = p.Product_id "
+                + "WHERE o.Order_status IN ('Success', 'Completed') AND p.Shop_id = ?";
+
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
+
+            pstmt.setInt(1, shopID);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                count = rs.getInt(1); // Retrieve the first column of the result set which contains the count
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return count;
+    }
+
     public static void updateOrderbyID(Order order) {
         String updateQuery = "UPDATE [Order] SET User_id = ?, Order_date = ?, Order_status = ?, Total_amount = ?, Note = ?, Discount_id = ?, Feedback = ?, Star = ?, Receiver_phone = ? WHERE Order_id = ?";
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(updateQuery)) {
@@ -495,6 +518,46 @@ public class Shop_DB {
                 + "JOIN OrderItem oi ON o.Order_id = oi.Order_id "
                 + "JOIN Product p ON oi.Product_id = p.Product_id "
                 + "WHERE p.Shop_id = ? AND o.Order_status IS NOT NULL AND o.Order_status != 'null' AND o.Order_status != 'Cancelled' "
+                + "GROUP BY o.Order_id, o.User_id, o.Order_date, o.Order_status, o.Total_amount, o.Note, o.Discount_id, o.Feedback, o.Star, o.Receiver_phone";
+
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setInt(1, shopId);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                // Create an Order object from the query result
+                Order order = new Order();
+                order.setOrder_ID(rs.getInt("Order_id"));
+                order.setUserID(rs.getInt("User_id"));
+                order.setOrderDate(rs.getDate("Order_date"));
+                order.setStatus(rs.getString("Order_status"));
+                order.setTotal(rs.getDouble("Total_amount"));
+                order.setNote(rs.getString("Note"));
+                order.setDiscountid(rs.getInt("Discount_id"));
+                order.setFeedback(rs.getString("Feedback"));
+                order.setStar(rs.getInt("Star"));
+                order.setReceiverPhone(rs.getString("Receiver_phone"));
+
+                // Add the Order object to the list
+                orders.add(order);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        // Sort the list by order date from newest to oldest
+        orders.sort((o1, o2) -> Integer.compare(o2.getOrder_ID(), o1.getOrder_ID()));
+
+        return orders;
+    }
+
+    public static ArrayList<Order> getOrdersByShopIdWithStatusSuccess(int shopId) {
+        ArrayList<Order> orders = new ArrayList<>();
+        String query = "SELECT o.* "
+                + "FROM [Order] o "
+                + "JOIN OrderItem oi ON o.Order_id = oi.Order_id "
+                + "JOIN Product p ON oi.Product_id = p.Product_id "
+                + "WHERE p.Shop_id = ? AND o.Order_status = 'Success' "
                 + "GROUP BY o.Order_id, o.User_id, o.Order_date, o.Order_status, o.Total_amount, o.Note, o.Discount_id, o.Feedback, o.Star, o.Receiver_phone";
 
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
@@ -942,10 +1005,88 @@ public class Shop_DB {
         }
     }
 
-    public static void main(String[] args) {
-        Order order = getOrderbyID(10);
-        System.out.println(order);
-        Discount dis = getDiscountByID(8);
-        System.out.println(dis);
+    public static void addNewNotification(int userId, String message, String notificationLink) {
+        String query = "INSERT INTO Notification (User_id, Message, Created_at, Status, Notification_link) VALUES (?, ?, GETDATE(), 'Unread', ?)";
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setInt(1, userId);
+            pstmt.setString(2, message);
+            pstmt.setString(3, notificationLink);
+            pstmt.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
+
+    public static ArrayList<User_notification> getAllNotificationsbyUSERID(int userId) {
+        ArrayList<User_notification> notifications = new ArrayList<>();
+        String query = "SELECT * FROM Notification WHERE User_id = ? ORDER BY Created_at DESC";
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setInt(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                int notificationId = rs.getInt("Notification_id");
+                String message = rs.getString("Message");
+                Timestamp date = rs.getTimestamp("Created_at");
+                String status = rs.getString("Status");
+                String notification_link = rs.getString("Notification_link");
+                User_notification notification = new User_notification(notificationId, userId, message, date, status, notification_link);
+                notifications.add(notification);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return notifications;
+    }
+
+    public static ArrayList<User_notification> getUnreadNotificationsByUserId(int userId) {
+        ArrayList<User_notification> notifications = new ArrayList<>();
+        String query = "SELECT * FROM Notification WHERE User_id = ? AND Status = 'Unread' ORDER BY Created_at DESC";
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setInt(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                int notificationId = rs.getInt("Notification_id");
+                String message = rs.getString("Message");
+                Timestamp date = rs.getTimestamp("Created_at");
+                String status = rs.getString("Status");
+                String notification_link = rs.getString("Notification_link");
+                User_notification notification = new User_notification(notificationId, userId, message, date, status, notification_link);
+                notifications.add(notification);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return notifications;
+    }
+
+    public static void updateStatusNotifications(int notificationId) {
+        String query = "UPDATE Notification SET Status = 'Read' WHERE Notification_id = ?";
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setInt(1, notificationId);
+            int rowsUpdated = pstmt.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("Notification status updated successfully.");
+            } else {
+                System.out.println("Failed to update notification status.");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public static void deleteNotificationByID(int notificationId) {
+        String query = "DELETE FROM Notification WHERE Notification_id = ?";
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setInt(1, notificationId);
+            int rowsDeleted = pstmt.executeUpdate();
+            if (rowsDeleted > 0) {
+                System.out.println("Notification deleted successfully.");
+            } else {
+                System.out.println("Failed to delete notification. Notification not found or already deleted.");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
 }

@@ -124,7 +124,7 @@ public class User_search extends HttpServlet {
                 user.setIsPending(requestStatus.equals("sent"));
                 user.setIsApproved(requestStatus.equals("accepted"));
                 user.setIsCancelled(requestStatus.equals("cancelled"));
-                user.setIsPendingRq(User_DB.hasFriendRequestFromUser(userId, user.getUsername()));
+                user.setIsPendingRq(requestStatus.equals("received"));
             }
         }
         for (User user : filteredUsername) {
@@ -133,7 +133,7 @@ public class User_search extends HttpServlet {
                 user.setIsPending(requestStatus.equals("sent"));
                 user.setIsApproved(requestStatus.equals("accepted"));
                 user.setIsCancelled(requestStatus.equals("cancelled"));
-                user.setIsPendingRq(User_DB.hasFriendRequestFromUser(userId, user.getUsername()));
+                user.setIsPendingRq(requestStatus.equals("received"));
             }
         }
           List<String> searchHistory = (List<String>) session.getAttribute("searchHistory");
@@ -225,7 +225,7 @@ public class User_search extends HttpServlet {
                 user.setIsPending(requestStatus.equals("sent"));
                 user.setIsApproved(requestStatus.equals("accepted"));
                 user.setIsCancelled(requestStatus.equals("cancelled"));
-                user.setIsPendingRq(User_DB.hasFriendRequestFromUser(userId, user.getUsername()));
+                user.setIsPendingRq(requestStatus.equals("received"));
             }
         }
         for (User user : filteredUsername) {
@@ -234,7 +234,7 @@ public class User_search extends HttpServlet {
                 user.setIsPending(requestStatus.equals("sent"));
                 user.setIsApproved(requestStatus.equals("accepted"));
                 user.setIsCancelled(requestStatus.equals("cancelled"));
-                user.setIsPendingRq(User_DB.hasFriendRequestFromUser(userId, user.getUsername()));
+                user.setIsPendingRq(requestStatus.equals("received"));
             }
         }
           List<String> searchHistory = (List<String>) session.getAttribute("searchHistory");

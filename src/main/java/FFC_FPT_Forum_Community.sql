@@ -137,6 +137,7 @@ CREATE TABLE Notification (
     Message NVARCHAR(MAX) NOT NULL, -- Nội dung thông báo, không được null
     Created_at DATETIME DEFAULT GETDATE(), -- Ngày và giờ tạo thông báo, mặc định là ngày và giờ hiện tại
     Status NVARCHAR(50) DEFAULT 'Unread', -- Trạng thái của thông báo, mặc định là 'Unread' (chưa đọc)
+    Notification_link NVARCHAR(100);
     FOREIGN KEY (User_id) REFERENCES Users(User_id) -- Tham chiếu khóa ngoại tới bảng Users
 );
 GO
@@ -151,7 +152,7 @@ CREATE TABLE Event (
     Location NVARCHAR(255), -- Địa điểm tổ chức sự kiện
     Created_by INT NOT NULL, -- Người tạo sự kiện, không được null
     Created_at DATETIME DEFAULT GETDATE(), -- Ngày và giờ tạo sự kiện, mặc định là ngày và giờ hiện tại
-FOREIGN KEY (Created_by) REFERENCES Users(User_id) -- Tham chiếu khóa ngoại tới bảng Users
+	FOREIGN KEY (Created_by) REFERENCES Users(User_id) -- Tham chiếu khóa ngoại tới bảng Users
 );
 GO
 -- Tạo bảng Payment: lưu thông tin về thanh toán
@@ -186,9 +187,10 @@ CREATE TABLE Message (
     From_id INT NOT NULL, -- id người gửi, không được null
     To_id INT NOT NULL, -- id người nhận, không được null
     MessageText NVARCHAR(255) NOT NULL, -- Nội dung tin nhắn, không được null
+	FromUsername NVARCHAR(255) NOT NULL,
     TimeStamp DATETIME DEFAULT GETDATE(), -- Thời gian gửi tin nhắn, mặc định là ngày hiện tại
     FOREIGN KEY (From_id) REFERENCES Users(User_id), -- Khóa ngoại tham chiếu đến người gửi
-    FOREIGN KEY (To_id) REFERENCES Users(User_id) -- Khóa ngoại tham chiếu đến người nhận
+    FOREIGN KEY (	To_id) REFERENCES Users(User_id) -- Khóa ngoại tham chiếu đến người nhận
 );
 GO
 -- Tạo bảng Feeback: lưu thông tin về phản hồi
@@ -313,6 +315,21 @@ CREATE TABLE Upload (
     FOREIGN KEY (Event_id) REFERENCES Event(Event_id) -- Khóa ngoại tham chiếu đến bài viết
 );
 GO
+CREATE TABLE ATMInfo (
+    ATMNumber NVARCHAR(255),
+    username NVARCHAR(255),
+    BankName NVARCHAR(255),
+    Money DECIMAL(10, 2) DEFAULT 0.00,
+    CODE INT,
+    Status NVARCHAR(255)
+);
+GO
+-- Insert sample data into the ATMInfo table
+INSERT INTO ATMInfo (ATMNumber, username, BankName, Money, CODE,Status) VALUES
+('25102003221', 'Nguyen Van A', 'MBBank', 0, 1234, 'Admin'), --Thẻ admin
+('25102003222', 'Nguyen Van B', 'MBBank', 500000, 1234, 'Active'), --Thẻ thanh toán thành công
+('25102003223', 'Nguyen Van B', 'MBBank', 200000, 1234, 'Block'), --Thẻ bị khoá
+('25102003224', 'Nguyen Van D', 'MBBank', 0, 1234,'Active'); -- Thẻ không đủ số dư
 CREATE TABLE managerRegistr (
     managerRegistr_id INT IDENTITY(1,1) PRIMARY KEY, -- ID tự động tăng cho đăng ký quản lý
     User_id INT NOT NULL, -- Tham chiếu đến User_id bên bảng Users
@@ -466,10 +483,10 @@ VALUES
 (3, 'Large Ad Content', NULL, 3);
 GO
 -- Chèn dữ liệu mẫu vào bảng Message
-INSERT INTO Message (From_id, To_id, MessageText)
+INSERT INTO Message (From_id, To_id, MessageText,FromUsername)
 VALUES 
-(1, 2, 'Hello, how are you?'),
-(2, 1, 'I''m fine, thanks!');
+(1, 2, 'Hello, how are you?','swpduoc'),
+(2, 1, 'I''m fine, thanks!','swpdiem');
 GO
 -- Chèn dữ liệu mẫu vào bảng Feedback
 INSERT INTO Feedback (Feedback_detail, Feedback_title, User_id)
@@ -535,93 +552,3 @@ VALUES
 (1, NULL, 1),
 (2, NULL, 2),
 (3, NULL, 1);
-GO
-INSERT INTO Discount (Code, Owner_id, Shop_id, Discount_percent, Valid_from, Valid_to, Usage_limit, Usage_count, Condition) 
-VALUES ('DISCOUNT2024', 1, Null, 15.00, '2024-06-01', '2024-12-31', 100, 0, 500.00);
-INSERT INTO Discount (Code, Owner_id, Shop_id, Discount_percent, Valid_from, Valid_to, Usage_limit, Usage_count, Condition) 
-VALUES ('DISCOUNT2025', Null, Null, 15.00, '2024-06-01', '2024-12-31', 100, 0, 500.00);
-INSERT INTO Discount (Code, Owner_id, Shop_id, Discount_percent, Valid_from, Valid_to, Usage_limit, Usage_count, Condition) 
-VALUES ('DISCOUNT2026', Null, 2, 15.00, '2024-06-01', '2024-12-31', 100, 0, 500.00);
-
-SELECT * FROM PostWithUploadAndComment;
--- Xem thông tin từ bảng Users
-SELECT * FROM Users;
-SELECT * FROM GroupView;
--- Xem thông tin từ bảng FriendShip
-SELECT * FROM FriendShip;
--- Xem thông tin từ bảng Notification
-SELECT * FROM Notification;
--- Xem thông tin từ bảng Event
-SELECT * FROM Event;
--- Xem thông tin từ bảng Payment
-SELECT * FROM Payment;
--- Xem thông tin từ bảng Combo_ads
-SELECT * FROM Combo_ads;
--- Xem thông tin từ bảng Ads
-SELECT * FROM Ads;
--- Xem thông tin từ bảng Message
-SELECT * FROM Message;
--- Xem thông tin từ bảng Feeback
-SELECT * FROM Feedback;
--- Xem thông tin từ bảng Topic
-SELECT * FROM Topic;
--- Xem thông tin từ bảng UserTopic
-SELECT * FROM UserTopic;   
--- Xem thông tin từ bảng [Group]
-SELECT * FROM [Group];
--- Xem thông tin từ bảng MemberGroup
-SELECT * FROM MemberGroup;
--- Xem thông tin từ bảng Post
-SELECT * FROM Post;
--- Xem thông tin từ bảng Comment
-SELECT * FROM Comment;
--- Xem thông tin từ bảng Rate
-SELECT * FROM Rate;
--- Xem thông tin từ bảng PostReport
-SELECT * FROM Report;
-
-SELECT * FROM Shop;
-
-SELECT * FROM [Order];
-
-SELECT * FROM OrderItem;
-
-SELECT * FROM Title;
-
-SELECT * FROM UserTitle;
-
-SELECT * FROM Product;
-
-SELECT * FROM Discount;
-
-SELECT * FROM GroupChatMessage;
-
-SELECT * FROM Upload;
-
-SELECT * FROM UserFollow
-
-SELECT * FROM managerRegistr
-
-INSERT INTO Post (User_id, Group_id, Topic_id, Content, Status, postStatus)
-VALUES 
-
-
-(3, Null, Null,'Nice.', 'Active', 'Public');
-
-INSERT INTO Report (Reporter_id, User_id, Reason, Status)
-VALUES (3, 1, N'tệ', N'pending'),
-(3, 1, N'tệ', N'pending'),
-(3, 1, N'tệ', N'pending');
-INSERT INTO Report (Reporter_id, User_id, Post_id,Reason, Status)
-VALUES (3, 4,4 ,N'tệ', N'pendingM'),
-(3, 4, 4,N'tệ', N'pendingM'),
-(3, 4,4 ,N'tệ', N'pendingM');
-INSERT INTO Users (Username, usernameVip, User_email, User_password, User_role, User_fullName, User_wallet, User_avatar, User_story, User_rank, User_score, User_sex, User_activeStatus)
-VALUES 
-('user3', NULL, 'user3@fpt.edu.vn', '123', 2,N'To Rung', 100.00, Null, Null, 1, 10, 'Male', 1);
-
-INSERT INTO managerRegistr (User_id, RegistrationDate, Status, Remarks)
-VALUES
-    (2, GETDATE(), 'pending', 'Waiting for approval');
-   
- 

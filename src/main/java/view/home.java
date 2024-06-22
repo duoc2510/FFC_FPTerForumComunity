@@ -25,12 +25,21 @@ public class home extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
-         User user = (User) session.getAttribute("USER");
-         
+        User user = (User) session.getAttribute("USER");
+        if (user == null) {
+            response.sendRedirect("logingooglehandler"); // Redirect to login if not logged in
+            return;
+        }
+
+        int userId = user.getUserId();
         // Kiểm tra nếu topics đã có trong session
         List<Topic> topics = (List<Topic>) session.getAttribute("topics");
         if (topics == null) {
             topics = Topic_DB.getAllTopics();
+            for (Topic topic : topics) {
+                boolean isFollowing = Topic_DB.isFollowingTopic(userId, topic.getTopicId());
+                topic.setFollowed(isFollowing); // Assume there's a setFollowed method in the Topic class
+            }
             session.setAttribute("topics", topics);
         }
 
@@ -50,6 +59,7 @@ public class home extends HttpServlet {
                     }
                 }
                 post.setComments(comments);
+
             }
             session.setAttribute("postsTopic", posts);
         }

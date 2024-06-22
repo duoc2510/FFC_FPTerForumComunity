@@ -2,31 +2,26 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
+package chat;
 
+import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import model.Comment;
-import model.DAO.Comment_DB;
-import model.DAO.Post_DB;
-import model.DAO.Rate_DB;
 import model.DAO.User_DB;
-import model.Post;
 import model.User;
 
 /**
  *
  * @author ThanhDuoc
  */
-public class Post_detail extends HttpServlet {
+public class User_chat extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -45,10 +40,10 @@ public class Post_detail extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Post_detail</title>");
+            out.println("<title>Servlet User_chat</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Post_detail at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet User_chat at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -64,47 +59,22 @@ public class Post_detail extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        int postId = Integer.parseInt(request.getParameter("postId"));
-
-        List<Post> posts = Post_DB.getPostByPostId(postId);
-        User user = (User) request.getSession().getAttribute("USER");
-
-        if (posts != null && !posts.isEmpty()) {
-            for (Post post : posts) {
-                User author = Post_DB.getUserByPostId(post.getPostId());
-                post.setUser(author);
-
-                List<Comment> comments = Comment_DB.getCommentsByPostId(post.getPostId());
-                for (Comment comment : comments) {
-                    User commentUser = User_DB.getUserById(comment.getUserId());
-                    if (commentUser != null) {
-                        comment.setUser(commentUser);
-                    }
-                }
-                post.setComments(comments);
-                // Kiểm tra xem người dùng đã like bài viết này chưa và cập nhật trường likedByCurrentUser
-                boolean likedByCurrentUser = false;
-                try {
-                    likedByCurrentUser = Rate_DB.checkIfLiked(post.getPostId(), user.getUserId());
-                } catch (SQLException ex) {
-                    Logger.getLogger(Post_postView.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                post.setLikedByCurrentUser(likedByCurrentUser);
-
-                // Lấy số lượt thích của bài viết và cập nhật vào đối tượng Post
-                int likeCount = 0;
-                try {
-                    likeCount = Rate_DB.getLikes(post.getPostId());
-                } catch (SQLException ex) {
-                    Logger.getLogger(Post_postView.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                post.setLikeCount(likeCount);
-            }
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("USER") == null) {
+            response.sendRedirect(request.getContextPath() + "/logingooglehandler");
+            return;
         }
-        request.getSession().setAttribute("postDetail", posts);
-        request.getRequestDispatcher("/user/postDetail.jsp").forward(request, response);
+
+        User user = (User) session.getAttribute("USER");
+
+        // Gọi phương thức từ lớp User_DB để lấy danh sách bạn bè đã chấp nhận
+        List<User> acceptedFriends = User_DB.getAcceptedFriendsOrderByLatestMessage(user.getUserId());
+        // Đưa danh sách bạn bè vào thuộc tính của request để sử dụng trong JSP
+        request.setAttribute("friends", acceptedFriends);
+        // Chuyển hướng sang trang chat.jsp để hiển thị danh sách bạn bè và khung chat
+        RequestDispatcher dispatcher = request.getRequestDispatcher("test.jsp");
+        dispatcher.forward(request, response);
     }
 
     /**
@@ -118,7 +88,7 @@ public class Post_detail extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        processRequest(request, response);
     }
 
     /**

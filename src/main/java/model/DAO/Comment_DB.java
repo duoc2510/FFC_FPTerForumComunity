@@ -68,6 +68,29 @@ public class Comment_DB {
         return comments;
     }
 
+    public static Comment getLatestCommentForPost(int postId, int userId, String content) {
+        String query = "SELECT * FROM Comment WHERE Post_id = ? AND User_id = ? AND Content = ? ORDER BY Date DESC";
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, postId);
+            stmt.setInt(2, userId);
+            stmt.setString(3, content);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                int commentId = rs.getInt("Comment_id");
+                Date date = rs.getDate("Date");
+
+                User user = User_DB.getUserById(userId); // Get user information for the comment
+
+                Comment comment = new Comment(commentId, postId, userId, content, date);
+                comment.setUser(user); // Set user information to comment
+                return comment;
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
     public static boolean deleteCommentById(int commentId, int userId) {
         String query = "DELETE FROM Comment WHERE Comment_id = ? AND User_id = ?";
         try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {

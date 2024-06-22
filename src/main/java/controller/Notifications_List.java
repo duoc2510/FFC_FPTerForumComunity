@@ -10,23 +10,15 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import model.Comment;
-import model.DAO.Comment_DB;
-import model.DAO.Post_DB;
-import model.DAO.Rate_DB;
-import model.DAO.User_DB;
-import model.Post;
+import jakarta.servlet.http.HttpSession;
+import model.DAO.Shop_DB;
 import model.User;
 
 /**
  *
- * @author ThanhDuoc
+ * @author Admin
  */
-public class Post_detail extends HttpServlet {
+public class Notifications_List extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -45,10 +37,10 @@ public class Post_detail extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Post_detail</title>");
+            out.println("<title>Servlet Notifications_List</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Post_detail at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet Notifications_List at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -66,45 +58,7 @@ public class Post_detail extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int postId = Integer.parseInt(request.getParameter("postId"));
-
-        List<Post> posts = Post_DB.getPostByPostId(postId);
-        User user = (User) request.getSession().getAttribute("USER");
-
-        if (posts != null && !posts.isEmpty()) {
-            for (Post post : posts) {
-                User author = Post_DB.getUserByPostId(post.getPostId());
-                post.setUser(author);
-
-                List<Comment> comments = Comment_DB.getCommentsByPostId(post.getPostId());
-                for (Comment comment : comments) {
-                    User commentUser = User_DB.getUserById(comment.getUserId());
-                    if (commentUser != null) {
-                        comment.setUser(commentUser);
-                    }
-                }
-                post.setComments(comments);
-                // Kiểm tra xem người dùng đã like bài viết này chưa và cập nhật trường likedByCurrentUser
-                boolean likedByCurrentUser = false;
-                try {
-                    likedByCurrentUser = Rate_DB.checkIfLiked(post.getPostId(), user.getUserId());
-                } catch (SQLException ex) {
-                    Logger.getLogger(Post_postView.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                post.setLikedByCurrentUser(likedByCurrentUser);
-
-                // Lấy số lượt thích của bài viết và cập nhật vào đối tượng Post
-                int likeCount = 0;
-                try {
-                    likeCount = Rate_DB.getLikes(post.getPostId());
-                } catch (SQLException ex) {
-                    Logger.getLogger(Post_postView.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                post.setLikeCount(likeCount);
-            }
-        }
-        request.getSession().setAttribute("postDetail", posts);
-        request.getRequestDispatcher("/user/postDetail.jsp").forward(request, response);
+        request.getRequestDispatcher("/user/notifications.jsp").forward(request, response);
     }
 
     /**
@@ -118,7 +72,21 @@ public class Post_detail extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("USER");
+        if (user != null) {
+            int notificationId = Integer.parseInt(request.getParameter("notificationId"));
 
+            // Gọi hàm updateStatusNotifications từ Shop_DB hoặc NotificationDAO
+            Shop_DB.deleteNotificationByID(notificationId);
+
+            // Gửi phản hồi về client
+            response.setContentType("text/plain");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write("Notification deleted successfully.");
+        } else {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+        }
     }
 
     /**

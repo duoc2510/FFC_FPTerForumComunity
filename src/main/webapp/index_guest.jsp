@@ -18,8 +18,6 @@
                 <li class="nav-item active">
                     <a class="nav-link" href="${pageContext.request.contextPath}">Home </a>
                 </li>
-
-
             </ul>
             <div class="my-2 my-lg-0">
                 <a href="${pageContext.request.contextPath}/logingooglehandler?value=login" class="btn btn-outline-success my-2 my-sm-0">Login</a>

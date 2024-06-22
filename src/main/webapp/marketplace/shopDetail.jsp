@@ -96,7 +96,7 @@
                         <div class="card mx-2">
                             <img class="card-img-top" src="${pageContext.request.contextPath}/static/${shop.image}" alt="Card image cap">
                             <div class="card-body">
-                                <c:set var="orderlist" value="${Shop_DB.getOrdersByShopIdHasStatusNotNullandNotCancel(shop.shopID)}" />
+                                <c:set var="orderlist" value="${Shop_DB.getOrdersByShopIdWithStatusSuccess(shop.shopID)}" />
                                 <c:set var="starshop" value="0"/>
                                 <c:forEach var="order" items="${orderlist}">
                                     <c:set var="starshop" value="${order.star + starshop}" />
@@ -107,7 +107,8 @@
                                         <i class="fas fa-star text-warning"></i>
                                     </c:forEach> 
                                 </h5>
-
+                                <c:set var="countorder" value="${Shop_DB.countSuccessAndCompletedOrdersByShopID(SHOP.shopID)}" />
+                                <p class="card-text">Đã bán: ${countorder} Đơn</p>
                                 <p class="card-text">${shop.phone}</p>
                                 <p class="card-text">${shop.campus}</p>
                                 <p class="card-text">${shop.description}</p>

@@ -30,6 +30,10 @@
     </filter-mapping>
     <filter-mapping>
         <filter-name>AuthenticateFilter</filter-name>
+        <url-pattern>/messenger/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>AuthenticateFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     <listener>
@@ -218,6 +222,26 @@
         <servlet-name>User_registerManager</servlet-name>
         <servlet-class>controller.User_registerManager</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>Notifications</servlet-name>
+        <servlet-class>controller.Notifications</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Notifications_List</servlet-name>
+        <servlet-class>controller.Notifications_List</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>User_chat</servlet-name>
+        <servlet-class>chat.User_chat</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Topic_follow</servlet-name>
+        <servlet-class>controller.Topic_follow</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Payment</servlet-name>
+        <servlet-class>controller.Payment</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PostComment</servlet-name>
         <url-pattern>/comment</url-pattern>
@@ -378,7 +402,6 @@
         <servlet-name>User_search</servlet-name>
         <url-pattern>/search</url-pattern>
     </servlet-mapping>
-    <!-- Danh sách file chào mừng -->
     <servlet-mapping>
         <servlet-name>Advertising_allAds</servlet-name>
         <url-pattern>/advertising</url-pattern>
@@ -426,6 +449,26 @@
     <servlet-mapping>
         <servlet-name>User_registerManager</servlet-name>
         <url-pattern>/registerManager</url-pattern>
+    </servlet-mapping>
+     <servlet-mapping>    
+        <servlet-name>User_chat</servlet-name>
+        <url-pattern>/messenger</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Topic_follow</servlet-name>
+        <url-pattern>/follow</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Notifications</servlet-name>
+        <url-pattern>/notifications</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Notifications_List</servlet-name>
+        <url-pattern>/allnotifications</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Payment</servlet-name>
+        <url-pattern>/payment</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index_guest.jsp</welcome-file>

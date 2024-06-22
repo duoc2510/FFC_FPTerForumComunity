@@ -12,7 +12,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import model.DAO.Shop_DB;
+import model.DAO.User_DB;
 import model.Shop;
+import model.User;
 
 /**
  *
@@ -59,8 +61,15 @@ public class Shop_allshop extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         Shop_DB sdb = new Shop_DB();
+        User_DB udb = new User_DB();
         String message = request.getParameter("message");
         ArrayList<Shop> shoplist = sdb.getAllShop();
+
+        // Loại bỏ các shop có owner với userRole = 0
+        shoplist.removeIf(shop -> {
+            User u = udb.getUserById(shop.getOwnerID());
+            return u.getUserRole() == 0;
+        });
 
         // Loại bỏ những shop có status là 0
         shoplist.removeIf(shop -> shop.getStatus() == 0);

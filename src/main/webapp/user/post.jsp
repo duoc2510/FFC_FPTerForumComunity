@@ -21,7 +21,7 @@
                 </div>
                 <div class="col-9 mx-3">
                     <h6 class="card-title fw-semibold mb-4 d-inline">${post.user.username}</h6>
-                    <p class="s-4">${post.createDate}</p>
+                    <a href="${pageContext.request.contextPath}/post/detail?postId=${post.postId}" class="s-4">${post.createDate}</a>
                 </div>
                 <c:choose>
                     <c:when test="${post.user.userId == USER.userId}">
@@ -312,23 +312,18 @@
                                 success: function (response) {
                                     $('#like-count-' + postId).text('Likes: ' + response.likeCount);
 
-                                    // C?p nh?t tr?ng thái hi?n th? c?a các th? <a>
-                                    if (action === 'like') {
-                                        $('#like-btn-' + postId).hide();
-                                        $('#unlike-btn-' + postId).show();
-                                    } else if (action === 'unlike') {
-                                        $('#like-btn-' + postId).show();
-                                        $('#unlike-btn-' + postId).hide();
-                                    }
-                                },
-                                error: function (jqXHR, textStatus, errorThrown) {
-                                    console.error('Error:', errorThrown);
-                                }
-                            });
-                        }
-                        function submitBanPostForm(formId) {
-                            // You can add additional confirmation if needed
-                            document.getElementById(formId).submit();
-                        }
-
+                                                                // C?p nh?t tr?ng thái hi?n th? c?a các th? <a>
+                                                                if (action === 'like') {
+                                                                    $('#like-btn-' + postId).hide();
+                                                                    $('#unlike-btn-' + postId).show();
+                                                                } else if (action === 'unlike') {
+                                                                    $('#like-btn-' + postId).show();
+                                                                    $('#unlike-btn-' + postId).hide();
+                                                                }
+                                                            },
+                                                            error: function (jqXHR, textStatus, errorThrown) {
+                                                                console.error('Error:', errorThrown);
+                                                            }
+                                                        });
+                                                    }
 </script>
