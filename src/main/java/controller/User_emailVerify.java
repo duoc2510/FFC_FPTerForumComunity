@@ -10,6 +10,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -86,6 +87,8 @@ public class User_emailVerify extends HttpServlet {
         String number = request.getParameter("number");
         User_DB userDB = new User_DB();
         Shop_DB sdb = new Shop_DB();
+        HttpSession session = request.getSession();
+
         String msg;
         if (status.equals("lostaccount")) {
             if (Integer.parseInt(x) == Integer.parseInt(number)) {
@@ -96,7 +99,7 @@ public class User_emailVerify extends HttpServlet {
                 request.setAttribute("message", msg);
                 request.setAttribute("x", x);
                 request.setAttribute("email", email);
-                request.getRequestDispatcher("/auth/verifyaccount.jsp").forward(request, response);
+                request.getRequestDispatcher("/auth/verifyemail.jsp").forward(request, response);
             }
         } else {
             if (Integer.parseInt(x) == Integer.parseInt(number)) {
@@ -111,8 +114,10 @@ public class User_emailVerify extends HttpServlet {
                 Order o = new Order(u.getUserId(), 1, null, "null", 0, 1, null, null, 5, null);
                 sdb.addOrder(o);
                 msg = "Registration Success";
-                request.setAttribute("message", msg);
-                request.getRequestDispatcher("/auth/login.jsp").forward(request, response);
+//                request.setAttribute("message", msg);
+                session.setAttribute("message", msg);
+//                request.getRequestDispatcher("/auth/login.jsp").forward(request, response);
+                response.sendRedirect("logingooglehandler?value=login");
             } else {
                 msg = "Verify Code Is Wrong!";
                 request.setAttribute("message", msg);

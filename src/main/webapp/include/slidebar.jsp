@@ -50,7 +50,7 @@
                                     <span class="hide-menu">- Handle report manager</span>
                                 </a>
                             </li>
-                           
+
                             <li class="sidebar-item sub-item">
                                 <a href="${pageContext.request.contextPath}/#" class="sidebar-link">
                                     <span class="hide-menu">- Reset rankings</span>

@@ -242,6 +242,10 @@
         <servlet-name>Payment</servlet-name>
         <servlet-class>controller.Payment</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>chatAI</servlet-name>
+        <servlet-class>controller.chatAI</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PostComment</servlet-name>
         <url-pattern>/comment</url-pattern>
@@ -450,7 +454,7 @@
         <servlet-name>User_registerManager</servlet-name>
         <url-pattern>/registerManager</url-pattern>
     </servlet-mapping>
-     <servlet-mapping>    
+    <servlet-mapping>    
         <servlet-name>User_chat</servlet-name>
         <url-pattern>/messenger</url-pattern>
     </servlet-mapping>
@@ -465,6 +469,10 @@
     <servlet-mapping>
         <servlet-name>Notifications_List</servlet-name>
         <url-pattern>/allnotifications</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>chatAI</servlet-name>
+        <url-pattern>/chatai</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Payment</servlet-name>

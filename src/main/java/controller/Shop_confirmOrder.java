@@ -21,6 +21,7 @@ import model.OrderItem;
 import model.Product;
 import model.Shop;
 import model.User;
+import notifications.NotificationWebSocket;
 
 /**
  *
@@ -81,6 +82,7 @@ public class Shop_confirmOrder extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
+        NotificationWebSocket nw = new NotificationWebSocket();
         Shop_DB sdb = new Shop_DB();
         User user = (User) request.getSession().getAttribute("USER");
         String action = request.getParameter("action");
@@ -217,8 +219,12 @@ public class Shop_confirmOrder extends HttpServlet {
                     ArrayList<OrderItem> newOrderItems = sdb.getAllOrderItemByOrderIdHasStatusIsNull(newOrderForUser.getOrder_ID());
                     request.getSession().setAttribute("ORDER", newOrderForUser);
                     request.getSession().setAttribute("ORDERITEMLIST", newOrderItems);
+
                     Shop shop = sdb.getShopHaveStatusIs1ByUserID(shopid);
-                    sdb.addNewNotification(shop.getOwnerID(), "Shop của bạn có đơn hàng mới!", "/marketplace/myshop");
+//                    sdb.addNewNotification(shop.getOwnerID(), "Shop của bạn có đơn hàng mới!", "/marketplace/myshop");
+                    nw.saveNotificationToDatabase(shop.getOwnerID(), "Shop của bạn có đơn hàng mới!", "/marketplace/myshop");
+                    nw.sendNotificationToClient(shop.getOwnerID(), "Shop của bạn có đơn hàng mới!", "/marketplace/myshop");
+
                     // Redirect to the allshop page with a success message
                     String msg = "Thanks for your order! ";
                     session.setAttribute("message", msg);

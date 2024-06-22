@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import model.DAO.DBinfo;
+import notifications.NotificationWebSocket;
 
 @ServerEndpoint(value = "/chat", configurator = Chat.Configurator.class)
 public class Chat {
@@ -69,6 +70,7 @@ public class Chat {
     }
 
     private void handleChatMessage(JSONObject jsonMessage) throws Exception {
+        NotificationWebSocket nw = new NotificationWebSocket();
         int toId = jsonMessage.getInt("toId");
         int fromId = jsonMessage.getInt("fromId");
         String messageText = jsonMessage.getString("messageText");
@@ -81,6 +83,9 @@ public class Chat {
 
         // Broadcast message to relevant clients
         broadcastMessage(fromId, fromUsername, toId, messageText);
+        String notificationMessage = fromUsername + " sent you a message.";
+        nw.saveNotificationToDatabase(toId, notificationMessage, "/messenger");
+        nw.sendNotificationToClient(toId, notificationMessage, "/messenger");
     }
 
     private void handleLoadMessages(JSONObject jsonMessage, Session session) throws Exception {
