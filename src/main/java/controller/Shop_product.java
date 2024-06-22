@@ -420,7 +420,7 @@ public class Shop_product extends HttpServlet {
 //                sdb.addNewNotification(or1.getUserID(), "Đơn hàng của bạn không được chấp nhận!", "/marketplace/history");
                 nw.saveNotificationToDatabase(or1.getUserID(), "Đơn hàng của bạn không được chấp nhận!", "/marketplace/history");
                 nw.sendNotificationToClient(or1.getUserID(), "Đơn hàng của bạn không được chấp nhận!", "/marketplace/history");
-                sdb.updateOrderStatus(orderid2, "Cancelled");
+                sdb.updateOrderStatus(orderid2, "Fail");
                 ArrayList<OrderItem> orderitemlistnew = sdb.getAllOrderItemByOrderID(orderid2);
                 for (OrderItem ot : orderitemlistnew) {
                     Product p = sdb.getProductByID(ot.getProductID());

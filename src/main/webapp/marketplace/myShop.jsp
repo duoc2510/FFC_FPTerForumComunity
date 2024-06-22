@@ -287,7 +287,12 @@
                                                             </c:if>
                                                             <c:if test="${order.status eq 'Cancelled'}">
                                                                 <td>
-                                                                    <p class="text-danger">Đơn hàng bị hủy</p>
+                                                                    <p class="text-danger">Đơn hàng bị người dùng hủy.</p>
+                                                                </td>
+                                                            </c:if>
+                                                            <c:if test="${order.status eq 'Fail'}">
+                                                                <td>
+                                                                    <p>Đơn hàng bị shop hủy.</p>
                                                                 </td>
                                                             </c:if>
                                                             <c:if test="${order.status eq 'Success'}">
