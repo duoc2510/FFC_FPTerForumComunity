@@ -55,6 +55,7 @@ public class Event_addEvent extends HttpServlet {
         String startDateString = request.getParameter("start_date");
         String endDateString = request.getParameter("end_date");
         String location = request.getParameter("location");
+        String place = request.getParameter("place");
 
         Timestamp startDate = null;
         Timestamp endDate = null;
@@ -69,6 +70,22 @@ public class Event_addEvent extends HttpServlet {
         if (endDateString != null && !endDateString.isEmpty()) {
             LocalDateTime localDateTime = LocalDateTime.parse(endDateString, formatter);
             endDate = Timestamp.valueOf(localDateTime);
+        }
+
+        // Check if the dates are valid
+        Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+        if (startDate.before(currentTimestamp) || endDate.before(currentTimestamp) || endDate.before(startDate)) {
+            // Set the message in the session
+            request.getSession().setAttribute("message", "Invalid date selection. Please ensure the dates are correct and in the future.");
+            // Redirect to the events page
+            response.sendRedirect(request.getContextPath() + "/listEvent");
+            return;
+        }
+
+        if (endDate.before(startDate)) {
+            request.getSession().setAttribute("message", "End date cannot be before start date.");
+            response.sendRedirect(request.getContextPath() + "/listEvent");
+            return;
         }
 
         User user = (User) request.getSession().getAttribute("USER");
@@ -98,7 +115,7 @@ public class Event_addEvent extends HttpServlet {
 
         Timestamp createdAt = new Timestamp(System.currentTimeMillis());
 
-        Event event = new Event(0, title, description, startDate, endDate, userId, location, createdAt);
+        Event event = new Event(0, title, description, startDate, endDate, userId, location, place, createdAt);
 
         Upload upload = new Upload(0, 0, 0, 0, filePathForDatabase);
         Event_DB eventDB = new Event_DB();

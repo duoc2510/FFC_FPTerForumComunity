@@ -173,6 +173,7 @@
                                 <p><strong>Start Date:</strong> ${event.startDate}</p>
                                 <p><strong>End Date:</strong> ${event.endDate}</p>
                                 <p><strong>Location:</strong> ${event.location}</p>
+                                <p><strong>Place:</strong> ${event.place}</p>
                                 <p><strong>Created At:</strong> ${event.createdAt}</p>
                             </div>
                             <div class="interested-members">

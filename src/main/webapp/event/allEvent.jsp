@@ -10,8 +10,6 @@
 <body>
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
          data-sidebar-position="fixed" data-header-position="fixed">
-
-
         <div class="row mt-3 p-2">
             <div class="col-md-6">
                 <c:if test="${USER.userRole > 1}">
@@ -40,21 +38,19 @@
                             <div class="card-body">
                                 <h5 class="card-title">
                                     <!-- Event Title -->
-                                    <a href="viewEvent?eventId=${event.eventId}" class="event-link">
+                                    <a href="${pageContext.request.contextPath}/viewEvent?eventId=${event.eventId}" class="event-link">
                                         ${event.title}
                                     </a>
                                     <!-- Three-dot menu for delete -->
                                     <div class="dropdown float-end">
                                         <c:if test="${USER.userRole > 1}">
                                             <div class="dropdown">
-                                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton${event.eventId}" data-bs-toggle="dropdown" aria-expanded="false">
-
-                                                </button>
+                                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton${event.eventId}" data-bs-toggle="dropdown" aria-expanded="false"></button>
                                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton${event.eventId}">
                                                     <li>
                                                         <a class="dropdown-item update-event-btn" 
                                                            onclick="editEvent('${event.eventId}', '${event.title}', '${event.description}', '${event.startDate}',
-                                                                           '${event.endDate}', '${event.location}', '${not empty event.uploadPath ? event.uploadPath : ''}')">
+                                                                           '${event.endDate}', '${event.location}', '${event.place}', '${not empty event.uploadPath ? event.uploadPath : ''}')">
                                                             Edit
                                                         </a>
                                                     </li>
@@ -62,7 +58,6 @@
                                                         <a class="dropdown-item" href="#" onclick="deleteEvent('${event.eventId}')">Delete</a>
                                                     </li>
                                                 </ul>
-
                                             </div>
                                         </c:if>
                                     </div>
@@ -72,10 +67,32 @@
                                 <p class="card-text">Start Date: ${event.startDate}</p>
                                 <p class="card-text">End Date: ${event.endDate}</p>
                                 <p class="card-text">Location: ${event.location}</p>
-                                <p class="card-text">Created At: ${event.createdAt}</p>
-                                <!-- Interest Button -->
-                                <a href="#" class="btn btn-primary w-100 mt-3">Interest</a>
+                                <p class="card-text">Place: ${event.place}</p>
+                                <p class="card-text">Created At: ${event.createdAt}"</p>
 
+                                <!-- Check Event Status -->
+                                <c:choose>
+                                    <c:when test="${event.endDate < now}">
+                                        <p class="text-danger"><strong>This event has ended</strong></p>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <p class="text-success"><strong>This event is ongoing</strong></p>
+                                    </c:otherwise>
+                                </c:choose>
+
+                                <!-- Interest Button -->
+                                <c:choose>
+                                    <c:when test="${event.isInterest eq true}">
+                                        <button class="btn btn-secondary" disabled>Interested</button>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <form action="${pageContext.request.contextPath}/interested" method="post">
+                                            <input type="hidden" name="eventId" value="${event.eventId}">
+                                            <input type="hidden" name="action" value="interest">
+                                            <button type="submit" class="btn btn-primary">Interest</button>
+                                        </form>
+                                    </c:otherwise>
+                                </c:choose>
                             </div>
                         </div>
                     </div>
@@ -120,6 +137,11 @@
                             <div class="form-group my-2">
                                 <label for="editEventLocation">Location:</label>
                                 <input type="text" class="form-control" id="editEventLocation" name="location" required>
+                            </div>
+
+                            <div class="form-group my-2">
+                                <label for="editEventPlace">Place:</label>
+                                <input type="text" class="form-control" id="editEventPlace" name="place" required>
                             </div>
 
                             <div class="form-group my-2">
@@ -175,6 +197,10 @@
                                         <input type="text" class="form-control" id="location" name="location">
                                     </div>
                                     <div class="form-group my-2">
+                                        <label for="place">Place</label>
+                                        <input type="text" class="form-control" id="place" name="place">
+                                    </div>
+                                    <div class="form-group my-2">
                                         <label for="image">Image</label>
                                         <input type="file" class="form-control-file" id="image" name="upload_path" required>
                                     </div>
@@ -186,16 +212,13 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
-</div>
-</div>
-
+</body>
 <script>
-    // Lắng nghe sự kiện khi nút "Add Event" được click
+    // Listen for click event on "Add Event" button
     document.getElementById('showFormBtn').addEventListener('click', function () {
         document.getElementById('eventForm').style.display = 'block';
     });
@@ -204,8 +227,8 @@
         console.log('Form submitted with action:', document.getElementsByName('action')[0].value);
     };
 
-    function editEvent(eventId, title, description, startDate, endDate, location, uploadPath) {
-        console.log("Edit Event called with:", {eventId, title, description, startDate, endDate, location, uploadPath});
+    function editEvent(eventId, title, description, startDate, endDate, location, place, uploadPath) {
+        console.log("Edit Event called with:", {eventId, title, description, startDate, endDate, location, place, uploadPath});
 
         document.getElementById('editEventId').value = eventId;
         document.getElementById('editEventTitle').value = title;
@@ -213,6 +236,7 @@
         document.getElementById('editEventStartDate').value = startDate;
         document.getElementById('editEventEndDate').value = endDate;
         document.getElementById('editEventLocation').value = location;
+        document.getElementById('editEventPlace').value = place;
         document.getElementById('existingEventUploadPath').value = uploadPath;
 
         if (uploadPath && uploadPath !== 'null') {
@@ -231,12 +255,13 @@
             window.location.href = 'deleteEvent?eventId=' + eventId;
         }
     }
+
+    // Hide message after 3 seconds
     setTimeout(function () {
         document.getElementById('message').style.display = 'none';
     }, 3000);
 
+    // Get current date and time
+    var now = new Date().toISOString().slice(0, 16);
 </script>
-
-
-</body>
-
+</html>

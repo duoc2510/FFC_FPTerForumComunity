@@ -111,6 +111,7 @@ public class Event_updateEvent extends HttpServlet {
                 String startDateString = request.getParameter("startDate");
                 String endDateString = request.getParameter("endDate");
                 String location = request.getParameter("location");
+                String place = request.getParameter("place");
                 String existingUploadPath = request.getParameter("existingUploadPath");
 
                 // Debug: Print all parameters
@@ -148,7 +149,7 @@ public class Event_updateEvent extends HttpServlet {
                 }
 
                 // Perform event update
-                Event event = new Event(eventId, title, description, startDate, endDate, userId, location, null); // UserId and CreatedAt will be updated in DB
+                Event event = new Event(eventId, title, description, startDate, endDate, userId, location, place, null); // UserId and CreatedAt will be updated in DB
                 success = Event_DB.updateEvent(event, newUploadPath); // Use the outer success variable
                 message = success ? "Event updated successfully." : "Failed to update event.";
             } else {

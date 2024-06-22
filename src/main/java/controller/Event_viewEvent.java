@@ -64,7 +64,6 @@ public class Event_viewEvent extends HttpServlet {
             throws ServletException, IOException {
         String eventIdStr = request.getParameter("eventId");
         HttpSession session = request.getSession();
-
         if (eventIdStr != null) {
             int eventId = Integer.parseInt(eventIdStr);
             User user = (User) session.getAttribute("USER");
