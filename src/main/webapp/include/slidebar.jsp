@@ -147,7 +147,7 @@
                 </li>
             </ul>
             <c:choose>
-                <c:when test="${USER.userRank == 3 && (USER.userRole != 0 && USER.userRole != 0)}">
+                <c:when test="${USER.userRank == 3 && (USER.userRole != 2 && USER.userRole != 3)}">
                     <%@ include file="../user/managerRegistr.jsp" %>
                 </c:when>
                 <c:otherwise>

@@ -55,9 +55,12 @@
                         <button id="usernameButton" class="btn btn-secondary">Usernames</button>
                     </div>
                     <div id="results">
-                        <c:if test="${empty filteredUsername && empty filteredUsers && empty filteredGroups}">
+                        <c:if test="${empty filteredUsers && empty filteredGroups}">
                              <p>Don't have any result.</p>
                             </c:if>
+                       
+                            
+                              
                         <div id="allResults">
                             <!-- User List -->
                             <c:forEach var="user" items="${filteredUsers}">
@@ -165,88 +168,10 @@
                                     </div>
                                 </c:forEach>
                             </div>
-                            <div class="row">
                            
-                            <c:forEach var="username" items="${filteredUsername}">
-                                <div class="card mb-3">
-                                    <div class="card-body d-flex align-items-center">
-                                        <a href="${pageContext.request.contextPath}/profile?username=${username.username}" class="me-3">
-                                            <img src="${pageContext.request.contextPath}/${username.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
-                                        </a>
-                                        <div class="me-3">
-                                            <h5 class="card-title mb-0">${username.userFullName}</h5>
-                                        </div>
-                                        <div class="flex-grow-1">
-                                            <ul class="list-inline mb-0">
-                                                <c:choose>
-                                                    <c:when test="${username.userId == USER.userId}"></c:when>
-                                                    <c:when test="${username.isPending}">
-                                                        <div class="dropdown d-inline">
-                                                            <button class="btn btn-warning btn-sm btn-block edit-cover mx-2 dropdown-toggle" type="button" id="friendDropdown" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
-                                                                Request Sent
-                                                            </button>
-                                                            <ul class="dropdown-menu" aria-labelledby="friendDropdown">
-                                                                <li>
-                                                                    <form id="unfriendRequestForm" action="${pageContext.request.contextPath}/friendHandel" method="post" class="d-inline" onsubmit="return confirmCancel()">
-                                                                        <input type="hidden" name="friendId" value="${username.userId}">
-                                                                        <input type="hidden" name="friendName" value="${username.username}">
-                                                                        <input type="hidden" name="action" value="cancelFrSearch">
-                                                                        <button type="submit" class="dropdown-item">Cancel Request</button>
-                                                                    </form>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </c:when>
-                                                    <c:when test="${username.isPendingRq}">
-                                                        <form action="${pageContext.request.contextPath}/friends" method="post" class="d-inline">
-                                                            <input type="hidden" name="friendId" value="${username.userId}">
-                                                            <input type="hidden" name="friendName" value="${username.username}">
-                                                            <input type="hidden" name="action" value="acceptFrSearch">
-                                                            <button type="submit" class="btn btn-success btn-sm btn-block edit-cover mx-2">Accept Friend</button>
-                                                        </form>
-                                                        <form action="${pageContext.request.contextPath}/friends" method="post" class="d-inline">
-                                                            <input type="hidden" name="friendId" value="${username.userId}">
-                                                            <input type="hidden" name="friendName" value="${username.username}">
-                                                            <input type="hidden" name="action" value="denyFrSearch">
-                                                            <button type="submit" class="btn btn-danger btn-sm btn-block edit-cover mx-2">Deny Friend</button>
-                                                        </form>
-                                                    </c:when>
-                                                    <c:when test="${username.isApproved}">
-                                                        <div class="dropdown d-inline dropup">
-                                                            <button class="btn btn-warning btn-sm btn-block edit-cover mx-2 dropdown-toggle" type="button" id="friendDropdown" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
-                                                                Friends
-                                                            </button>
-                                                            <ul class="dropdown-menu" aria-labelledby="friendDropdown">
-                                                                <li>
-                                                                    <form id="unfriendRequestForm" action="${pageContext.request.contextPath}/friendHandel" method="post" class="d-inline" onsubmit="return confirmUnfriend()">
-                                                                        <input type="hidden" name="friendId" value="${username.userId}">
-                                                                        <input type="hidden" name="friendName" value="${username.username}">
-                                                                        <input type="hidden" name="action" value="unfriendSearch">
-                                                                        <button type="submit" class="dropdown-item">Unfriend</button>
-                                                                    </form>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <form id="addFriendForm" action="${pageContext.request.contextPath}/friendHandel" method="post" class="d-inline">
-                                                            <input type="hidden" name="friendId" value="${username.userId}">
-                                                            <input type="hidden" name="friendName" value="${username.username}">
-                                                            <input type="hidden" name="action" value="addFrSearch">
-                                                            <button type="submit" class="btn btn-primary btn-sm btn-block edit-cover mx-2">Add Friend</button>
-                                                        </form>
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </c:forEach>
-                        </div>
-                            
                             
                         </div>
-                      
+                 
                         <div id="userResults" class="d-none">
                             <c:if test="${empty filteredUsers}">
                                 <p>Don't have any users you are looking for.</p>
@@ -363,10 +288,10 @@
                         </div>
                         
                         <div id="usernameResults" class="d-none">
-                            <c:if test="${empty filteredUsername}">
+                            <c:if test="${empty filteredUsers}">
                                 <p>Don't have any usernames you are looking for.</p>
                             </c:if>
-                            <c:forEach var="username" items="${filteredUsername}">
+                            <c:forEach var="username" items="${filteredUsers}">
                                 <div class="card mb-3">
                                     <div class="card-body d-flex align-items-center">
                                         <a href="${pageContext.request.contextPath}/profile?username=${username.username}" class="me-3">
