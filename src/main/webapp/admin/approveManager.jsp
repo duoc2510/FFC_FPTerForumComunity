@@ -34,6 +34,7 @@
                                                 <th>User Name</th>
                                                 <th>User Role</th>
                                                 <th>Registration</th>
+                                                <th>Contribute</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -55,6 +56,7 @@
                                                     <td>${user.user.username}</td>
                                                     <td>${user.user.userRole}</td>
                                                     <td>${user.registrationDate}</td>
+                                                    <td>${user.remarks}</td>
                                                     <td>
                                                         <div class="dropdown">
                                                             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton_${user.user.userId}" data-bs-toggle="dropdown" aria-expanded="false">
@@ -129,9 +131,9 @@
             }
         }
         function confirmCancel(formId) {
-        if (confirm("Bạn có chắc chắn muốn hủy phê duyệt quản lý của người dùng này?")) {
-            document.getElementById(formId).submit();
+            if (confirm("Bạn có chắc chắn muốn hủy phê duyệt quản lý của người dùng này?")) {
+                document.getElementById(formId).submit();
+            }
         }
-    }
     </script>
 </body>

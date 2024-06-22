@@ -63,6 +63,16 @@
                             </li>
                             <li class="sidebar-item sub-item">
                                 <a href="${pageContext.request.contextPath}/#" class="sidebar-link">
+                                    <span class="hide-menu">- Add ads</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item sub-item">
+                                <a href="${pageContext.request.contextPath}/#" class="sidebar-link">
+                                    <span class="hide-menu">- Create voucher</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item sub-item">
+                                <a href="${pageContext.request.contextPath}/#" class="sidebar-link">
                                     <span class="hide-menu">- View feedback</span>
                                 </a>
                             </li>
@@ -147,7 +157,7 @@
                 </li>
             </ul>
             <c:choose>
-                <c:when test="${USER.userRank == 3 && (USER.userRole != 2 && USER.userRole != 3)}">
+                <c:when test="${USER.userRank == 3 && USER.userRole==1}">
                     <%@ include file="../user/managerRegistr.jsp" %>
                 </c:when>
                 <c:otherwise>
