@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.Set;
 import model.DAO.DBinfo;
 import model.User;
+import notifications.NotificationWebSocket;
 
 @ServerEndpoint(value = "/chat", configurator = Chat.Configurator.class)
 public class Chat {
@@ -140,6 +141,7 @@ public class Chat {
 
     @OnMessage
     public void onMessage(String message, Session session) {
+        NotificationWebSocket nw = new NotificationWebSocket();
         System.out.println("Received message: " + message);
 
         JSONObject jsonMessage = new JSONObject(message);
@@ -156,6 +158,11 @@ public class Chat {
 
             // Broadcast message to all clients
             broadcastMessage(fromId, fromUsername, toId, messageText);
+
+            // Save and send notification
+            String notificationMessage = fromUsername + " sent you a message.";
+            nw.saveNotificationToDatabase(toId, notificationMessage, "/messenger");
+            nw.sendNotificationToClient(toId, notificationMessage, "/messenger");
         } else if (type.equals("loadMessages")) {
             int toId = jsonMessage.getInt("toId");
             int fromId = getUserId(session);
