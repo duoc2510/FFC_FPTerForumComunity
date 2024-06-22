@@ -50,8 +50,20 @@ public class AuthenticateFilter implements Filter {
                     httpResponse.sendRedirect(httpResponse.encodeRedirectURL(contextPath + "/logingooglehandler?value=login"));
                     return;
                 }
+
+            }
+
+            // Kiểm tra quyền truy cập vào trang admin
+            if (uri.startsWith(contextPath + "/admin/")) {
+                // Kiểm tra userRole của người dùng
+                if (user == null || user.getUserRole() != 3) {
+                    // Nếu không có quyền, chuyển hướng về trang home
+                    httpResponse.sendRedirect(contextPath + "/home");
+                    return;
+                }
             }
         }
+
         // Kiểm tra nếu người dùng đã đăng nhập và cố truy cập vào trang login hoặc register
         if ((uri.equals(contextPath + "/login") || uri.equals(contextPath + "/register")) && user != null) {
             // Chuyển hướng đến trang chủ

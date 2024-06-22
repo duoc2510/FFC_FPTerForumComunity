@@ -81,6 +81,7 @@
                                     </div>
                                 </div>
                             </div>
+                                        
                             <div class="bg-light pt-4 px-4 d-flex justify-content-between text-center ">
                                 <div class="media-body mb-5 text-white">
                                     <h4 class="mt-0 mb-0 position-relative" style="left: 6.5em">${USER.userFullName}</h4>     

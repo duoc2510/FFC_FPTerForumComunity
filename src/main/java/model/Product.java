@@ -12,7 +12,7 @@ public class Product {
     private int quantity;
     private String productDescription;
     private int shopId;
-
+    
     public Product() {
     }
 
