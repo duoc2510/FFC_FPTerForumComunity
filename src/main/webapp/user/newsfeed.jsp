@@ -67,7 +67,7 @@
                             }
                         </style>
                         <c:forEach var="post" items="${postsUser}">
-                            <c:if test="${ post.postStatus eq 'Public'}">
+                            <c:if test="${ post.postStatus eq 'Public' && post.status ne 'banned'}">
                                 <%@include file="post.jsp" %>
                             </c:if>
                         </c:forEach>

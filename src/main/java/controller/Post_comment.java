@@ -63,7 +63,7 @@ public class Post_comment extends HttpServlet {
         } else {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to add comment.");
         }
-        sendRedirectBack(request, response);
+        response.sendRedirect(request.getContextPath() + "/post/detail?postId=" + postId);
     }
 
     private void handleDeleteComment(HttpServletRequest request, HttpServletResponse response) throws IOException {

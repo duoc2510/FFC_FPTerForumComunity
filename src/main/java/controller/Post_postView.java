@@ -17,6 +17,7 @@ import model.Comment;
 import model.DAO.Comment_DB;
 import model.DAO.Post_DB;
 import model.DAO.Rate_DB;
+import model.DAO.Report_DB;
 import model.DAO.User_DB;
 import model.Post;
 import model.User;
@@ -41,7 +42,7 @@ public class Post_postView extends HttpServlet {
         for (Post post : posts) {
             User author = Post_DB.getUserByPostId(post.getPostId());
             post.setUser(author);
-
+            post.setHasReportPost(Report_DB.hasReportedPost(userId, post.getPostId()));
             List<Comment> comments = Comment_DB.getCommentsByPostId(post.getPostId());
             for (Comment comment : comments) {
                 User commentUser = User_DB.getUserById(comment.getUserId());

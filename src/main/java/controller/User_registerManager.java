@@ -2,9 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package chat;
+package controller;
 
-import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.http.HttpServlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,16 +12,15 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.sql.SQLException;
-import java.util.List;
 import model.DAO.User_DB;
+import model.ManagerRegistr;
 import model.User;
 
 /**
  *
- * @author ThanhDuoc
+ * @author PC
  */
-public class User_chat extends HttpServlet {
+public class User_registerManager extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -40,10 +39,10 @@ public class User_chat extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet User_chat</title>");
+            out.println("<title>Servlet User_registerManager</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet User_chat at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet User_registerManager at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -59,22 +58,9 @@ public class User_chat extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("USER") == null) {
-            response.sendRedirect(request.getContextPath() + "/logingooglehandler");
-            return;
-        }
-
-        User user = (User) session.getAttribute("USER");
-
-        // Gọi phương thức từ lớp User_DB để lấy danh sách bạn bè đã chấp nhận
-        List<User> acceptedFriends = User_DB.getAcceptedFriendsOrderByLatestMessage(user.getUserId());
-        // Đưa danh sách bạn bè vào thuộc tính của request để sử dụng trong JSP
-        request.setAttribute("friends", acceptedFriends);
-        // Chuyển hướng sang trang chat.jsp để hiển thị danh sách bạn bè và khung chat
-        RequestDispatcher dispatcher = request.getRequestDispatcher("test.jsp");
-        dispatcher.forward(request, response);
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
     }
 
     /**
@@ -86,11 +72,35 @@ public class User_chat extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
+   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    // Get parameters from the request
+    HttpSession session = request.getSession(); 
+    int userId = Integer.parseInt(request.getParameter("userId"));
+    String contributions = request.getParameter("contributions");
 
+    // Validate the input
+    User currentUser = (User) session.getAttribute("USER");
+  
+    
+    // Check if the user already has a pending registration
+    boolean isRegister = User_DB.isManagerPending(currentUser.getUserId());
+    if (isRegister) {
+        session.setAttribute("msg", "Bạn đã đăng ký rồi, hãy đợi duyệt.");
+    } else {
+        // Process the registration (you need to implement the actual registration logic)
+        ManagerRegistr managerRegistr = new ManagerRegistr(userId, contributions);
+        boolean registrationSuccess = User_DB.registrManager(managerRegistr);
+        
+        if (registrationSuccess) {
+            session.setAttribute("msg", "Đăng ký successfully!");
+        } else {
+            session.setAttribute("msg", "Đăng ký thất bại. Vui lòng thử lại.");
+        }
+    }
+    
+    // Redirect back to the referring page
+    response.sendRedirect(request.getHeader("Referer"));
+}
     /**
      * Returns a short description of the servlet.
      *

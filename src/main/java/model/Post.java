@@ -19,6 +19,7 @@ public class Post {
     private Timestamp commentDate; // Thêm trường commentDate
     private User user;
     private List<Comment> comments;
+    private boolean hasReportPost;
     private int likeCount; // Thêm trường này để lưu số lượt like
     private boolean likedByCurrentUser; // Trạng thái đã like của người dùng hiện tại
 
@@ -33,6 +34,15 @@ public class Post {
         this.createDate = createDate;
         this.status = status;
     }
+
+    public Post(int postId, int userId, String content, String status) {
+        this.postId = postId;
+        this.userId = userId;
+        this.content = content;
+        this.status = status;
+    }
+
+ 
 
     public Post(int userId, int groupId, String content, String createDate, String status, String postStatus, String uploadPath) {
         this.userId = userId;
@@ -206,6 +216,18 @@ public class Post {
         this.comments = comments;
     }
 
+    public boolean isHasReportPost() {
+        return hasReportPost;
+    }
+
+    public void setHasReportPost(boolean hasReportPost) {
+        this.hasReportPost = hasReportPost;
+    }
+
+  
+
+
+    
     public int getLikeCount() {
         return likeCount;
     }

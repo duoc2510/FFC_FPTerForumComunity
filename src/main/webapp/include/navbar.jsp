@@ -3,6 +3,9 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <style>
+    /*    .user-settings  .dropdown-menu{
+            min-width: 200px !important;
+        }*/
     .avatar-cover {
         width: 35px;
         height: 35px;
@@ -44,15 +47,17 @@
 
 <header class="app-header">
     <nav class="navbar navbar-expand-lg navbar-light">
+
+
+
+       
         <ul class="navbar-nav w-100" style="max-width: 400px">
             <form class="d-flex" action="${pageContext.request.contextPath}/search" method="post">
-                <input type="text" class="form-control me-2" name="query"
-                       placeholder="Search for user name or group name" aria-label="Search"
-                       data-bs-toggle="tooltip" data-bs-placement="bottom"
-                       title="Search for user name or group name">
+                <input id="searchInput" type="text" class="form-control me-2" name="query" placeholder="Search for user name or group name" aria-label="Search" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Search for user name or group name">
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
         </ul>
+       
         <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
             <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
                 <li class="nav-item d-block d-xl-none">
@@ -75,6 +80,10 @@
                         </ul>
                     </li>
                 </div>
+                <a href="${pageContext.request.contextPath}/messenger">
+                    <i class="ti ti-message-forward fs-8"></i>
+                </a>
+
                 <li class="nav-item dropdown">
                     <a class="nav-link nav-icon-hover" href="javascript:void(0)" id="drop2"
                        data-bs-toggle="dropdown"
@@ -107,9 +116,9 @@
                                 <i class="ti ti-user-circle fs-6"></i>
                                 <p class="mb-0 fs-3">My Account</p>
                             </a>
-                            <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
+                            <a href="${pageContext.request.contextPath}/payment" class="d-flex align-items-center gap-2 dropdown-item">
                                 <i class="ti ti-wallet fs-6"></i>
-                                <p class="mb-0 fs-3">Wallet: ${USER.userWallet}</p>
+                                <p class="mb-0 fs-3" id="walletAmount">Wallet: ${USER.userWallet}</p>
                             </a>
                             <a href="${pageContext.request.contextPath}/logout"
                                class="btn btn-outline-danger mx-3 mt-2 d-block">Logout</a>
@@ -119,6 +128,7 @@
             </ul>
         </div>
     </nav>
+
     <script>
         var contextPath = '<%= request.getContextPath() %>';
         var oldNotificationCount = 0;
@@ -220,5 +230,8 @@
                 loadNotifications();
             });
         });
+
     </script>
+
+
 </header>

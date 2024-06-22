@@ -1,4 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 <div class="col-lg-12">
     <div class="w-100">
         <div class="p-4 bg-white shadow rounded mb-3">
@@ -46,11 +48,123 @@
                             <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <span><i class="ti-more-alt"></i></span>   
                             </a>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a class="dropdown-item" type="button" href="javascript:void(0)">Report</a>
-                                </li>
+                            <ul class="dropdown-menu" aria-labelledby="moreOptionsDropdownPost">
+                                <c:choose>
+
+                                    <c:when test="${post.hasReportPost}">
+                                        <li>
+
+                                            <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#cancelReportModal_${post.postId}">
+                                                Revoke report
+                                            </button>
+
+                                        </li>
+                                        <li>
+                                            <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editPostReportModal">
+                                                Edit post report
+                                            </button>
+                                        </li>
+                                    </c:when>
+
+                                    <c:otherwise>
+
+                                        <c:choose>
+
+                                            <c:when test="${USER.userRole == 1 || (post.user.userRole == 2 && USER.userRole==2)}">
+                                                <li>
+                                                    <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#reportPostModal">
+                                                        Report post
+                                                    </button>
+                                                </li>
+                                            </c:when>
+
+                                            <c:when test="${USER.userRole == 2 || USER.userRole == 3}">
+                                                <li>
+                                                    <form id="banPostForm_${post.postId}" action="${pageContext.request.contextPath}/manager/report" method="post">
+                                                        <input type="hidden" name="postId" value="${post.postId}">
+                                                        <input type="hidden" name="action" value="banPostByAd">
+                                                        <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#reportPostModal_${post.postId}">
+                                                            Ban Post
+                                                        </button>
+                                                    </form>
+                                                </li>
+                                            </c:when>
+                                        </c:choose>
+                                    </c:otherwise>
+                                </c:choose>
                             </ul>
+                        </div>
+
+
+                        <div class="modal fade" id="reportPostModal" tabindex="-1" aria-labelledby="reportPostModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <form id="reportPostForm" action="${pageContext.request.contextPath}/report" method="post">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="reportPostModalLabel">Report post</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="mb-3">
+                                                <label for="reportPostReason" class="form-label">Reason</label>
+                                                <textarea class="form-control" id="reportPostReason" name="reportReason" rows="3" required></textarea>
+                                            </div>
+
+                                            <input type="hidden" name="postId" value="${post.postId}">
+                                            <input type="hidden" name="userId" value="${post.user.userId}">
+                                             <input type="hidden" name="userRole" value="${post.user.userRole}">
+                                            <input type="hidden" name="action" value="rpPost">
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-primary">Submit report</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="cancelReportModal_${post.postId}" tabindex="-1" aria-labelledby="cancelReportModalLabel_${post.postId}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="cancelReportModalLabel_${post.postId}">Cancel Report</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="${pageContext.request.contextPath}/report" method="post">
+                                            <input type="hidden" name="postId" value="${post.postId}">
+
+                                            <input type="hidden" name="action" value="cancelReportPost">
+                                            <p>Are you sure you want to revoke this report?</p>
+                                            <button type="submit" class="btn btn-danger">Cancel Report</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="editPostReportModal" tabindex="-1" aria-labelledby="editPostReportModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="editPostReportModalLabel">Edit Post Report</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="${pageContext.request.contextPath}/report" method="post">
+                                            <input type="hidden" name="postId" value="${post.postId}">
+                                            
+                                            <input type="hidden" name="action" value="editPostReport">
+                                            <div class="mb-3">
+                                                <label for="editReason" class="form-label">New Reason:</label>
+                                                <textarea class="form-control" id="editReason" name="editReason" rows="3" required></textarea>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </c:otherwise>
                 </c:choose>
@@ -145,20 +259,58 @@
     </div>
 </div>
 
+<div class="modal fade" id="reportPostModal_${post.postId}" tabindex="-1" aria-labelledby="reportPostModalLabel_${post.postId}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reportPostModalLabel_${post.postId}">Ban Post</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="confirmBanPostForm_${post.postId}" action="${pageContext.request.contextPath}/manager/report" method="post">
+                    <input type="hidden" name="postId" value="${post.postId}">
+                    <input type="hidden" name="action" value="banPostByAd">
+                    <div class="mb-3">
+                        <label for="banReason_${post.postId}" class="form-label">Ban Reason</label>
+                        <textarea class="form-control" id="banReason_${post.postId}" name="banReason" rows="3" required></textarea>
+                    </div>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" onclick="submitBanPostForm('confirmBanPostForm_${post.postId}')">Ban Post</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-                                                    function handleLike(event, postId, action) {
-                                                        event.preventDefault();
+    document.addEventListener("DOMContentLoaded", function (event) {
+                // Ensure your DOM is fully loaded before executing any code
+                var msg = "${sessionScope.msg}";
+                console.log("Message from session:", msg);
+               
+                if (msg !== null && msg !== "") {
+                    swal({
+                        title: msg.includes("successfully") ? "Success" : "Error",
+                        text: msg,
+                        icon: msg.includes("successfully") ? "success" : "error",
+                        button: "OK!"
+                    });
+                   
+            <% session.removeAttribute("msg"); %>
+                }
+            });
+                        function handleLike(event, postId, action) {
+                            event.preventDefault();
 
-                                                        $.ajax({
-                                                            type: 'POST',
-                                                            url: '${pageContext.request.contextPath}/rate',
-                                                            data: {
-                                                                postId: postId,
-                                                                action: action
-                                                            },
-                                                            success: function (response) {
-                                                                $('#like-count-' + postId).text('Likes: ' + response.likeCount);
+                            $.ajax({
+                                type: 'POST',
+                                url: '${pageContext.request.contextPath}/rate',
+                                data: {
+                                    postId: postId,
+                                    action: action
+                                },
+                                success: function (response) {
+                                    $('#like-count-' + postId).text('Likes: ' + response.likeCount);
 
                                                                 // C?p nh?t tr?ng thái hi?n th? c?a các th? <a>
                                                                 if (action === 'like') {

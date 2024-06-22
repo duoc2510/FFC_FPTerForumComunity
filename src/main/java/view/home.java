@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpSession;
 import model.Comment;
 import model.DAO.Comment_DB;
 import model.DAO.Post_DB;
+import model.DAO.Report_DB;
 import model.DAO.Topic_DB;
 import model.DAO.User_DB;
 import model.Post;
@@ -49,7 +50,7 @@ public class home extends HttpServlet {
             for (Post post : posts) {
                 User author = Post_DB.getUserByPostId(post.getPostId());
                 post.setUser(author);
-
+                
                 List<Comment> comments = Comment_DB.getCommentsByPostId(post.getPostId());
                 for (Comment comment : comments) {
                     User commentUser = User_DB.getUserById(comment.getUserId());
@@ -62,6 +63,8 @@ public class home extends HttpServlet {
             }
             session.setAttribute("postsTopic", posts);
         }
+       boolean hasRegister = User_DB.isManagerPending(user.getUserId());
+        session.setAttribute("hasRegister", hasRegister);
         request.getRequestDispatcher("index.jsp").forward(request, response);
     }
 
