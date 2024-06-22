@@ -16,9 +16,9 @@ show this in right index
         <title>Đăng ký làm Manager</title>
         <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
         <style>
-           
+
 
         </style>
     </head>
@@ -29,11 +29,18 @@ show this in right index
             <div class="card-body">
                 <h5 class="card-title text-center my-3"><strong>Đã có form đăng kí làm manager</strong></h5>
                 <p class="card-text"><strong>Đăng ký để có nhiều quyền lợi hơn nhé: </strong> Nhấn vào nút phía dưới</p>
-               
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registrManagerModal">
-                        Đăng ký ngay
-                    </button>
-               
+                <c:choose>
+                    <c:when test="${hasRegister}">
+                        <button type="button" class="btn btn-secondary" disabled>
+                            Đã đăng ký
+                        </button>
+                    </c:when>
+                    <c:otherwise>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registrManagerModal">
+                            Đăng ký ngay
+                        </button>
+                    </c:otherwise>
+                </c:choose>
             </div>
         </div>
 
@@ -69,39 +76,39 @@ show this in right index
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                         <button type="submit" form="registrManagerForm" class="btn btn-primary">Đăng ký</button>
-                        
+
 
                     </div>
                 </div>
             </div>
         </div>
-                                <script>
-    $(document).ready(function(){
-        $("#registrManagerModal").prependTo("body");
-    });
-    document.addEventListener("DOMContentLoaded", function (event) {
-    // Ensure your DOM is fully loaded before executing any code
-    var msg = "${sessionScope.msg}";
-    console.log("Message from session:", msg);
-    
-    // Kiểm tra nếu msg không rỗng, hiển thị thông báo
-    if (msg !== null && msg !== "") {
-        swal({
-            title: msg.includes("successfully") ? "Success" : 
-                   msg.includes("đăng ký rồi") ? "Warning" : 
-                   "Error",
-            text: msg,
-            icon: msg.includes("successfully") ? "success" : 
-                  msg.includes("đăng ký rồi") ? "warning" : 
-                  "error",
-            button: "OK!"
-        });
-        // Xóa msg sau khi hiển thị để tránh hiển thị lại khi tải lại trang
-        <% session.removeAttribute("msg"); %>
-    }
-});
+        <script>
+            $(document).ready(function () {
+                $("#registrManagerModal").prependTo("body");
+            });
+            document.addEventListener("DOMContentLoaded", function (event) {
+                // Ensure your DOM is fully loaded before executing any code
+                var msg = "${sessionScope.msg}";
+                console.log("Message from session:", msg);
 
-</script>
+                // Kiểm tra nếu msg không rỗng, hiển thị thông báo
+                if (msg !== null && msg !== "") {
+                    swal({
+                        title: msg.includes("successfully") ? "Success" :
+                                msg.includes("đăng ký rồi") ? "Warning" :
+                                "Error",
+                        text: msg,
+                        icon: msg.includes("successfully") ? "success" :
+                                msg.includes("đăng ký rồi") ? "warning" :
+                                "error",
+                        button: "OK!"
+                    });
+                    // Xóa msg sau khi hiển thị để tránh hiển thị lại khi tải lại trang
+            <% session.removeAttribute("msg"); %>
+                }
+            });
+
+        </script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>

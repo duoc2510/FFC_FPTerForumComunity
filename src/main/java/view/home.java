@@ -25,7 +25,8 @@ public class home extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
-       
+         User user = (User) session.getAttribute("USER");
+         
         // Kiểm tra nếu topics đã có trong session
         List<Topic> topics = (List<Topic>) session.getAttribute("topics");
         if (topics == null) {
@@ -52,7 +53,8 @@ public class home extends HttpServlet {
             }
             session.setAttribute("postsTopic", posts);
         }
-       
+       boolean hasRegister = User_DB.isManagerPending(user.getUserId());
+        session.setAttribute("hasRegister", hasRegister);
         request.getRequestDispatcher("index.jsp").forward(request, response);
     }
 
