@@ -9,13 +9,13 @@ package model;
  * @author ThanhDuoc
  */
 public class Ads {
+
     private int adsId;
     private int adsDetailId;
     private String content;
     private String image;
     private int userId;
     private String URI;
-    
 
     public Ads() {
     }
@@ -27,7 +27,7 @@ public class Ads {
         this.image = image;
         this.userId = userId;
     }
-    
+
     // Getters and Setters
     public int getAdsId() {
         return adsId;

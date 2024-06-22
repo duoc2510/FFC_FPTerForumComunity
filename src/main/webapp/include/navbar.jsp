@@ -11,12 +11,14 @@
 
 
 
+       
         <ul class="navbar-nav w-100" style="max-width: 400px">
             <form class="d-flex" action="${pageContext.request.contextPath}/search" method="post">
-                <input type="text" class="form-control me-2" name="query" placeholder="Search for user name or group name" aria-label="Search" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Search for user name or group name">
+                <input id="searchInput" type="text" class="form-control me-2" name="query" placeholder="Search for user name or group name" aria-label="Search" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Search for user name or group name">
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
         </ul>
+       
         <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
             <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
                 <!--tim kiem--> 
@@ -51,17 +53,17 @@
                             <a href="${pageContext.request.contextPath}/profile?username=${USER.username}" class="d-flex align-items-center gap-2 dropdown-item">
                                 <img src="${pageContext.request.contextPath}/${USER.userAvatar}" alt="" width="40" class="rounded-circle avatar-cover">
                                 <p class="mb-0 fs-6">
-                                <c:choose>
-                                    <c:when test="${USER.userRole == 1}">
-                                        ${USER.username}
-                                    </c:when>
-                                    <c:when test="${USER.userRole == 2}">
-                                        Manager
-                                    </c:when>
-                                    <c:when test="${USER.userRole == 3}">
-                                        Admin
-                                    </c:when>
-                                </c:choose>
+                                    <c:choose>
+                                        <c:when test="${USER.userRole == 1}">
+                                            ${USER.username}
+                                        </c:when>
+                                        <c:when test="${USER.userRole == 2}">
+                                            Manager
+                                        </c:when>
+                                        <c:when test="${USER.userRole == 3}">
+                                            Admin
+                                        </c:when>
+                                    </c:choose>
                                 </p>
                             </a>
                             <a href="${pageContext.request.contextPath}/profile/setting" class="d-flex align-items-center gap-2 dropdown-item">
@@ -85,5 +87,6 @@
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl);
         });
+       
     </script>
 </header>

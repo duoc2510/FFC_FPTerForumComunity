@@ -53,8 +53,9 @@
                             }
 
                             .post-image {
-                                max-width: 100%;
-                                height: auto;
+                                width: 100%;
+                                height: 250px;
+                                object-fit: cover;
                                 margin-top: 10px;
                             }
                             .img-preview {
@@ -65,8 +66,8 @@
                                 max-height: 300px;
                             }
                         </style>
-                        <c:forEach var="post" items="${posts}">
-                            <c:if test="${ post.postStatus eq 'Public'}">
+                        <c:forEach var="post" items="${postsUser}">
+                            <c:if test="${ post.postStatus eq 'Public' && post.status ne 'banned'}">
                                 <%@include file="post.jsp" %>
                             </c:if>
                         </c:forEach>
@@ -176,7 +177,7 @@
                                 });
                             });
                         </script>
-                      
+
                     </div>
                 </div>
             </div>

@@ -14,7 +14,6 @@ public class Shop {
     private int ownerID;
     private String image;
     private int status;
-    
 
     public Shop() {
     }

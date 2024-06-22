@@ -165,8 +165,6 @@ public class Event_updateEvent extends HttpServlet {
         }
     }
 
-    
-
     private String handleUpload(HttpServletRequest request) throws IOException, ServletException {
         Part filePart = request.getPart("newUploadPath");
         if (filePart != null && filePart.getSize() > 0) {

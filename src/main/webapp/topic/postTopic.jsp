@@ -12,7 +12,7 @@
         <tbody>
         <c:set var="counter" value="1" />
         <c:set var="hasPosts" value="false" />
-        <c:forEach var="post" items="${posts}">
+        <c:forEach var="post" items="${postsTopic}">
             <c:if test="${post.topicId == topic.topicId && post.status eq 'Active'}">
                 <tr>
                     <td>${counter}</td>

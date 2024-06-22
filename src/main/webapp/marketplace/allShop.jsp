@@ -11,7 +11,7 @@
             aspect-ratio: 1 / 1;
             object-fit: cover;
         }
-        </style>
+    </style>
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
          data-sidebar-position="fixed" data-header-position="fixed">
         <c:if test="${not empty sessionScope.USER}">

@@ -72,45 +72,115 @@ public class Report_submitRp extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
- protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     HttpSession session = request.getSession();
     User currentUser = (User) session.getAttribute("USER");
     int reporterId = currentUser.getUserId();
-    String reason = request.getParameter("reportReason");
     String action = request.getParameter("action");
-   
-    String username = request.getParameter("username");
 
-    Report report = new Report();
-    report.setReporter_id(reporterId);
-    report.setReason(reason);
-    report.setStatus("pending");
+    if (action != null && !action.isEmpty()) {
+        if ("cancelReportPost".equals(action)) {
+            int postId = Integer.parseInt(request.getParameter("postId"));
+            boolean reportCancelled = Report_DB.cancelReport(reporterId, postId);
 
-    boolean success = false;
-    String msg = "";
+            if (reportCancelled) {
+                String msg = "Report cancelled successfully.";
+                session.setAttribute("msg", msg);
+            } else {
+                String msg = "Failed to cancel report.";
+                session.setAttribute("msg", msg);
+            }
 
-    if ("rpUser".equals(action)) {
-        int userId = Integer.parseInt(request.getParameter("userId"));
-        report.setUserId(userId);
-        report.setShopId(0);
-        report.setPostId(0);
-        success = Report_DB.insertReport(report);
-    } else if ("rpPost".equals(action)) {
-        int userId = Integer.parseInt(request.getParameter("userId"));
-        int postId = Integer.parseInt(request.getParameter("postId"));
-        report.setPostId(postId);
-        report.setUserId(userId);
-        report.setShopId(0);
-        success = Report_DB.insertReport(report);
+            response.sendRedirect(request.getContextPath() + "/post");
+            return; // Exit method to prevent further processing
+        } else if ("editPostReport".equals(action)) {
+            int postId = Integer.parseInt(request.getParameter("postId"));
+            String newReason = request.getParameter("editReason");
+            boolean reportEdited = Report_DB.editReport(reporterId, postId, newReason);
+
+            if (reportEdited) {
+                String msg = "Report edited successfully.";
+                session.setAttribute("msg", msg);
+            } else {
+                String msg = "Failed to edit report.";
+                session.setAttribute("msg", msg);
+            }
+
+            response.sendRedirect(request.getContextPath() + "/post");
+            return; // Exit method to prevent further processing
+        } else if ("revokeReportU".equals(action)) {
+         int userId = Integer.parseInt(request.getParameter("reportId"));
+            boolean reportRevoked = Report_DB.cancelReportUser(reporterId, userId);
+            String username = request.getParameter("username");
+            if (reportRevoked) {
+                String msg = "Report revoked successfully.";
+                session.setAttribute("msg", msg);
+            } else {
+                String msg = "Failed to revoke report.";
+                session.setAttribute("msg", msg);
+            }
+
+              response.sendRedirect(request.getContextPath() + "/profile?username=" +username);
+            return; // Exit method to prevent further processing
+        } else if ("editReportU".equals(action)) {
+             int userId = Integer.parseInt(request.getParameter("reportId"));
+            String newReason = request.getParameter("editReason");
+            String username = request.getParameter("username");
+            boolean reportEdited = Report_DB.editReportUser(reporterId, userId, newReason);
+
+            if (reportEdited) {
+                String msg = "Report edited successfully.";
+                session.setAttribute("msg", msg);
+            } else {
+                String msg = "Failed to edit report.";
+                session.setAttribute("msg", msg);
+            }
+
+             response.sendRedirect(request.getContextPath() + "/profile?username=" +username);
+            return; // Exit method to prevent further processing
+       
+        } else if ("rpUser".equals(action) || "rpPost".equals(action)) {
+            // Keep the existing code for reporting users or posts
+            String reason = request.getParameter("reportReason");
+            String username = request.getParameter("username");
+            int userRole = Integer.parseInt(request.getParameter("userRole"));
+            Report report = new Report();
+            report.setReporter_id(reporterId);
+            report.setReason(reason);
+            report.setStatus(userRole == 2 ? "pendingM" : "pending");
+            
+            boolean success = false;
+            String msg = "";
+
+            if ("rpUser".equals(action)) {
+                int userId = Integer.parseInt(request.getParameter("userId"));
+                report.setUserId(userId);
+                report.setShopId(0);
+                report.setPostId(0);
+                success = Report_DB.insertReport(report);
+            } else if ("rpPost".equals(action)) {
+                int userId = Integer.parseInt(request.getParameter("userId"));
+                int postId = Integer.parseInt(request.getParameter("postId"));
+                report.setPostId(postId);
+                report.setUserId(userId);
+                report.setShopId(0);
+                success = Report_DB.insertReport(report);
+            }
+
+            if (success) {
+                msg = "Report submitted successfully.";
+            } else {
+                msg = "Failed to submit report. Please try again later.";
+            }
+            session.setAttribute("msg", msg);
+            response.sendRedirect(request.getContextPath() + (action.equals("rpUser") ? "/profile?username=" + username : "/post"));
+            return; // Exit method to prevent further processing
+        }
     }
 
-    if (success) {
-        msg = "Report submitted successfully.";
-    } else {
-        msg = "Failed to submit report. Please try again later.";
-    }
-    session.setAttribute("reportMessage", msg);
-    response.sendRedirect(request.getContextPath() + (action.equals("rpUser") ? "/profile?username=" + username : "/post"));
+    String errorMsg = "Invalid action.";
+    session.setAttribute("msg", errorMsg);
+    response.sendRedirect(request.getContextPath() + "/manager/report");
 }
 
     

@@ -126,10 +126,10 @@
     --bs-border-style: solid;
     --bs-border-color: #ebf1f6;
     --bs-border-color-translucent: rgba(0, 0, 0, 0.175);
-    --bs-border-radius: 7px;
-    --bs-border-radius-sm: 5px;
-    --bs-border-radius-lg: 15px;
-    --bs-border-radius-xl: 12px;
+    --bs-border-radius: 1.5em;
+    --bs-border-radius-sm: 1.4em;
+    --bs-border-radius-lg: 2em;
+    --bs-border-radius-xl: 1.3em;
     --bs-border-radius-2xl: 2rem;
     --bs-border-radius-pill: 50rem;
     --bs-box-shadow: 0 0.5rem 1rem rgba(var(--bs-body-color-rgb), 0.15);

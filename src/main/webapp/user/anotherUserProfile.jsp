@@ -4,6 +4,8 @@
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 <body>
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
          data-sidebar-position="fixed" data-header-position="fixed">
@@ -68,9 +70,7 @@
                                 max-width: 100%;
                                 max-height: 300px;
                             }
-                            .dropdown-menu {
-                                transform: translateY(0) !important;
-                            }
+
                             .modal-dialog-centered {
                                 display: flex !important;
                                 align-items: center;
@@ -79,12 +79,20 @@
                             .modal-content {
                                 padding: 20px;
                             }
+                            .dropdown-menu {
+                                position: absolute; /* Đảm bảo dropdown hiển thị dựa trên vị trí tuyệt đối */
+                                z-index: 1000; /* Thiết lập z-index cao hơn để dropdown hiển thị phía trên */
+                                margin-top: 5px; /* Điều chỉnh margin để tạo khoảng cách phù hợp với button */
+                                margin-left: 0; /* Điều chỉnh margin nếu cần thiết */
+                                padding: 8px 0; /* Điều chỉnh padding nếu cần thiết */
+                            }
+
                         </style>
 
 
 
-                        <div class="bg-white shadow rounded overflow-hidden ">
-                            <div class="px-4 py-4 cover cover " style="background: url(${pageContext.request.contextPath}/upload/deli-2.png)">
+                        <div class="bg-white shadow rounded  ">
+                            <div class="px-4 py-4 cover cover " style="border-radius: 1.5em 1.5em 0 0;background: url(${pageContext.request.contextPath}/upload/deli-2.png)">
                                 <div class="media align-items-end profile-head">
                                     <div class="profile mr-3 d-flex justify-content-between align-items-end">
                                         <img src="${pageContext.request.contextPath}/${user.userAvatar}" class="rounded-circle img-thumbnail" style="object-fit: cover;">
@@ -102,7 +110,7 @@
                                                 <button class="btn btn-warning btn-sm btn-block edit-cover mx-2 dropdown-toggle" type="button" id="friendDropdown" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
                                                     Request Sent
                                                 </button>
-                                                <ul class="dropdown-menu" aria-labelledby="friendDropdown">
+                                                <ul class="dropdown-menu" aria-labelledby="friendDropdown" style="    top: -1em;    margin-left: 9em;">
                                                     <li>
                                                         <form id="unfriendRequestForm" action="${pageContext.request.contextPath}/friendHandel" method="post" class="d-inline" onsubmit="return confirmUnfriend()">
                                                             <input type="hidden" name="friendId" value="${user.userId}">
@@ -155,37 +163,151 @@
                                             </form>
                                         </c:otherwise>
                                     </c:choose>
-                                    <li class="list-inline-item">
-                                        <div class="dropdown d-inline">
-                                            <button class="btn btn-secondary btn-sm btn-block edit-cover mx-2 dropdown-toggle" type="button" id="moreOptionsDropdown" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
-                                                <i class="fas fa-ellipsis-h"></i>
-                                            </button>
-                                            <ul class="dropdown-menu" aria-labelledby="moreOptionsDropdown">
-                                                <c:choose>
-                                                    <c:when test="${hasReport}">
-                                                        
-                                                        <li>
-                                                            <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#revokeReportModal">
-                                                                Revoke report
+
+                                    <c:choose>
+
+                                        <c:when test="${USER.userRole == 3}">
+                                            <li class="list-inline-item">
+                                                <div class="dropdown d-inline">
+                                                    <button class="btn btn-secondary btn-sm btn-block edit-cover mx-2 dropdown-toggle" type="button" id="moreOptionsDropdown" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+                                                        <i class="fas fa-ellipsis-h"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu" aria-labelledby="moreOptionsDropdown">
+                                                        <c:choose>
+
+                                                            <c:when test="${user.userRole == 0}">
+                                                                <li>
+                                                                    <button type="button" class="dropdown-item" disabled>
+                                                                        User banned
+                                                                    </button>
+                                                                </li>
+                                                            </c:when>
+                                                            <c:when test="${user.userRole == 2}">
+                                                                <li class="w-100">
+
+                                                                    <form id="revokeManagerForm_${user.userId}" action="${pageContext.request.contextPath}/manager/report" method="post">
+                                                                        <input type="hidden" name="userId" value="${user.userId}">
+                                                                        <input type="hidden" name="username" value="${user.username}">
+                                                                        <input type="hidden" name="action" value="revokeM">
+                                                                        <button type="button" class="dropdown-item" onclick="confirmRevoke('revokeManagerForm_${user.userId}')">Revoke manager</button>
+                                                                    </form>
+                                                                    <form id="banUserForm_${user.userId}" action="${pageContext.request.contextPath}/manager/report" method="post">
+                                                                        <input type="hidden" name="userId" value="${user.userId}">
+                                                                        <input type="hidden" name="username" value="${user.username}">
+                                                                        <input type="hidden" name="action" value="banUserByAd">
+                                                                        <button type="button" class="btn btn-danger" onclick="confirmBan('banUserForm_${user.userId}')">Ban user</button>
+                                                                    </form>
+                                                                </li>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <li>       
+                                                                <li class="w-100">
+                                                                    <form id="setManagerForm_${user.userId}" action="${pageContext.request.contextPath}/manager/report" method="post">
+                                                                        <input type="hidden" name="userId" value="${user.userId}">
+                                                                        <input type="hidden" name="username" value="${user.username}">
+                                                                        <input type="hidden" name="action" value="setM">
+                                                                        <button type="button" class="btn btn-primary" onclick="confirmSetM('setManagerForm_${user.userId}')">Set manager</button>
+                                                                    </form>
+                                                                </li>
+                                                                <form id="banUserForm_${user.userId}" action="${pageContext.request.contextPath}/manager/report" method="post">
+                                                                    <input type="hidden" name="userId" value="${user.userId}">
+                                                                    <input type="hidden" name="username" value="${user.username}">
+                                                                    <input type="hidden" name="action" value="banUserByAd">
+                                                                    <button type="button" class="btn btn-danger" onclick="confirmBan('banUserForm_${user.userId}')">Ban user</button>
+                                                                </form>
+                                                                </li>
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </ul>
+                                                </div>  
+                                            </li>
+                                        </c:when>
+
+
+                                        <c:otherwise>
+                                            <c:choose>
+                                                <c:when test="${USER.userRole == 2}">
+                                                    <li class="list-inline-item">
+                                                        <div class="dropdown d-inline">
+                                                            <button class="btn btn-secondary btn-sm btn-block edit-cover mx-2 dropdown-toggle" type="button" id="moreOptionsDropdown" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+                                                                <i class="fas fa-ellipsis-h"></i>
                                                             </button>
-                                                        </li>
-                                                        <li>
-                                                            <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editReportModal">
-                                                                Edit report
+                                                            <ul class="dropdown-menu" aria-labelledby="moreOptionsDropdown">
+                                                                <c:choose>
+
+                                                                    <c:when test="${user.userRole == 0}">
+                                                                        <li>
+                                                                            <button type="button" class="dropdown-item" disabled>
+                                                                                User banned
+                                                                            </button>
+                                                                        </li>
+                                                                    </c:when>
+
+                                                                    <c:when test="${hasReportedMore3}">
+                                                                        <li>
+                                                                            <form id="banUserForm_${user.userId}" action="${pageContext.request.contextPath}/manager/report" method="post">
+                                                                                <input type="hidden" name="userId" value="${user.userId}">
+                                                                                <input type="hidden" name="username" value="${user.username}">
+                                                                                <input type="hidden" name="action" value="banUserByM">
+                                                                                <button type="button" class="btn btn-danger" onclick="confirmBan('banUserForm_${user.userId}')">Ban user</button>
+                                                                            </form>
+                                                                        </li>
+                                                                    </c:when>
+                                                                    <c:otherwise>
+                                                                        <li>
+                                                                            <button type="button" class="dropdown-item" disabled>
+                                                                                Valid user
+                                                                            </button>
+                                                                        </li>
+                                                                    </c:otherwise>
+                                                                </c:choose>
+                                                            </ul>
+                                                        </div>  
+                                                    </li>
+                                                </c:when>
+
+
+                                                <c:when test="${user.userRole != 3 && (USER.userRole == 1)}">
+                                                    <li class="list-inline-item">
+                                                        <div class="dropdown d-inline">
+                                                            <button class="btn btn-secondary btn-sm btn-block edit-cover mx-2 dropdown-toggle" type="button" id="moreOptionsDropdown" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+                                                                <i class="fas fa-ellipsis-h"></i>
                                                             </button>
-                                                        </li>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <li>
-                                                            <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#reportModal">
-                                                                Report profile
-                                                            </button>
-                                                        </li>
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </ul>
-                                        </div>  
-                                    </li>
+                                                            <ul class="dropdown-menu" aria-labelledby="moreOptionsDropdown">
+                                                                <c:choose>
+
+                                                                    <c:when test="${hasReport}">
+                                                                        <li>
+                                                                            <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#revokeReportModal_${user.userId}">
+                                                                                Revoke report
+                                                                            </button>
+                                                                        </li>
+                                                                        <li>
+                                                                            <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editReportModal_${user.userId}">
+                                                                                Edit report
+                                                                            </button>
+                                                                        </li>
+                                                                    </c:when>
+
+                                                                    <c:otherwise>
+                                                                        <li>
+                                                                            <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#reportModal">
+                                                                                Report profile
+                                                                            </button>
+                                                                        </li>
+                                                                    </c:otherwise>
+                                                                </c:choose>
+                                                            </ul>
+                                                        </div>  
+                                                    </li>
+                                                </c:when>
+
+                                                <c:otherwise>
+
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </c:otherwise>
+                                    </c:choose>
 
                                     <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
                                         <div class="modal-dialog">
@@ -202,6 +324,7 @@
                                                         </div>
                                                         <input type="hidden" name="userId" value="${user.userId}">
                                                         <input type="hidden" name="username" value="${user.username}">
+                                                        <input type="hidden" name="userRole" value="${user.userRole}">
                                                         <input type="hidden" name="action" value="rpUser">
                                                     </div>
                                                     <div class="modal-footer">
@@ -209,6 +332,49 @@
                                                         <button type="submit" class="btn btn-primary">Submit report</button>
                                                     </div>
                                                 </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal fade" id="revokeReportModal_${user.userId}" tabindex="-1" aria-labelledby="revokeReportModalLabel_${user.userId}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="revokeReportModalLabel_${user.userId}">Revoke Report</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form action="${pageContext.request.contextPath}/report" method="post">
+                                                        <input type="hidden" name="reportId" value="${user.userId}">
+                                                        <input type="hidden" name="username" value="${user.username}">
+                                                        <input type="hidden" name="action" value="revokeReportU">
+                                                        <p>Are you sure you want to revoke this report?</p>
+                                                        <button type="submit" class="btn btn-danger">Revoke Report</button>
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal fade" id="editReportModal_${user.userId}" tabindex="-1" aria-labelledby="editReportModalLabel_${user.userId}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="editReportModalLabel_${report.reportId}">Edit Report</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form action="${pageContext.request.contextPath}/report" method="post">
+                                                        <input type="hidden" name="reportId" value="${user.userId}">
+                                                        <input type="hidden" name="username" value="${user.username}">
+                                                        <input type="hidden" name="action" value="editReportU">
+                                                        <div class="mb-3">
+                                                            <label for="editReason_${user.userId}" class="form-label">New Reason:</label>
+                                                            <textarea class="form-control" id="editReason_${user.userId}" name="editReason" rows="3" required></textarea>
+                                                        </div>
+                                                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    </form>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -244,32 +410,34 @@
                                     </c:if>
                                 </ul>
                             </div>
-                            <div class="px-4 py-3">
-                                <p class="font-italic mb-0"><i class="ti ti-calendar"></i>Ngày tham gia: ${user.userCreateDate}</p>
-                                <p class="font-italic mb-0">Giới tính: ${user.userSex}</p>
-                                <div class="p-4 rounded shadow-sm">
-                                    <p class="font-italic mb-0">${user.userStory}<i class="ti ti-feather"></i></p>
-                                </div>
-
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
             <div class="container-fluid pt-0">
-                <div class="row form-settings bg-white shadow rounded py-4 px-4 d-flex justify-content-between ">
-                    <div class="p0">
-                        <h5 class="mb-2">Bài viết của ${user.userFullName}</h5>
+                <div class="row form-settings d-flex justify-content-between">
+                    <div class="col-12 col-sm-5 px-2">
+                        <div class=" bg-white shadow rounded p-4 ">
+                            <p class="font-italic mb-2"><i class="ti ti-calendar"></i>Ngày tham gia: ${user.userCreateDate}</p>
+                            <p class="font-italic mb-2">Giới tính: ${user.userSex}</p>
+                            <p class="font-italic mb-2"><i class="ti ti-feather"></i>${user.userStory}</p>
+                        </div>
                     </div>
-                    <div>
-                        <c:forEach var="post" items="${posts}">
-                            <c:if test="${post.user.userId == user.userId}">
-                                <c:if test="${post.postStatus eq'Public'}">
-                                    <%@include file="post.jsp" %>
-                                </c:if>                                
-                            </c:if>
-                        </c:forEach>
+                    <div class="col-12 col-sm-7 px-2">
+                        <!--<div class=" bg-white shadow rounded p-4 ">-->
+                        <div class="p0">
+                            <h5 class="mb-2">Bài viết của bạn</h5>
+                        </div>
+                        <div>
+                            <c:forEach var="post" items="${posts}">
+                                <c:if test="${post.user.userId == user.userId}">
+                                    <c:if test="${post.postStatus eq'Public'}">
+                                        <%@include file="post.jsp" %>
+                                    </c:if>                                
+                                </c:if>
+                            </c:forEach>
+                        </div>
+                        <!--</div>-->
                         <%@include file="modalpost.jsp" %>
 
 
@@ -278,6 +446,22 @@
             </div>
         </div>
         <script>
+            document.addEventListener("DOMContentLoaded", function (event) {
+                // Ensure your DOM is fully loaded before executing any code
+                var msg = "${sessionScope.msg}";
+                console.log("Message from session:", msg);
+                // Kiểm tra nếu msg không rỗng, hiển thị thông báo
+                if (msg !== null && msg !== "") {
+                    swal({
+                        title: msg.includes("successfully") ? "Success" : "Error",
+                        text: msg,
+                        icon: msg.includes("successfully") ? "success" : "error",
+                        button: "OK!"
+                    });
+                    // Xóa msg sau khi hiển thị để tránh hiển thị lại khi tải lại trang
+            <% session.removeAttribute("msg"); %>
+                }
+            });
             function editComment(commentId, content) {
                 document.getElementById('editCommentId').value = commentId; // Thiết lập giá trị ID của bình luận vào input ẩn
                 document.getElementById('editCommentContent').value = content; // Thiết lập nội dung bình luận vào textarea
@@ -361,18 +545,23 @@
             function confirmUnfriend() {
                 return confirm("Bạn có chắc chắn muốn hủy kết bạn không?");
             }
-            document.addEventListener('DOMContentLoaded', function () {
-                var reportForm = document.getElementById('reportForm');
-
-                reportForm.addEventListener('submit', function (event) {
-                    // Bạn có thể thêm các kiểm tra hoặc xử lý khác tại đây
-                    // Nếu cần thiết, ngăn chặn gửi form bằng cách sử dụng event.preventDefault();
-                });
-            });
-
-            $('.toast').toast('show');
-            // Xóa reportMessage khỏi session
-            <c:remove var="reportMessage" scope="session"/>;
+            function confirmBan(formId) {
+                if (confirm("Bạn có chắc chắn muốn thực hiện hành động này không?")) {
+                    document.getElementById(formId).submit();
+                }
+            }
+            function confirmRevoke(formId) {
+                if (confirm("Bạn có chắc chắn muốn thu hồi quyền manager của người dùng này?")) {
+                    document.getElementById(formId).submit();
+                }
+            }
+            function confirmSetM(formId) {
+                if (confirm("Bạn có chắc chắn muốn set quyền manager của người dùng này?")) {
+                    document.getElementById(formId).submit();
+                }
+            }
         </script>
 </body>
 <%@ include file="../include/footer.jsp" %>
+
+

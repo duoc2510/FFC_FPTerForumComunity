@@ -9,7 +9,7 @@ package model;
  * @author ThanhDuoc
  */
 public class Topic {
- 
+
     private int topicId;
     private String topicName;
     private String description;
@@ -21,8 +21,7 @@ public class Topic {
         this.topicName = topicName;
         this.description = description;
     }
-    
-    
+
     public Topic(int topicId, String topicName, String description) {
         this.topicId = topicId;
         this.topicName = topicName;

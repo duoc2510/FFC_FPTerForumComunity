@@ -27,32 +27,6 @@ import model.User;
  */
 public class Manager_post extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet Manager_post</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet Manager_post at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -109,7 +83,7 @@ public class Manager_post extends HttpServlet {
             success = result;
         }
         if (success) {
-            List<Post> posts = Post_DB.getPostsWithUploadPath();
+            List<Post> posts = Post_DB.getPostsWithTopicId();
             for (Post p : posts) {
                 User author = Post_DB.getUserByPostId(p.getPostId());
                 p.setUser(author);
@@ -122,7 +96,7 @@ public class Manager_post extends HttpServlet {
                 }
                 p.setComments(comments);
             }
-            session.setAttribute("posts", posts);
+            session.setAttribute("postsTopic", posts);
             System.out.println("Post status updated successfully.");
         } else {
             System.out.println("Failed to update post status.");

@@ -313,6 +313,16 @@ CREATE TABLE Upload (
     FOREIGN KEY (Event_id) REFERENCES Event(Event_id) -- Khóa ngoại tham chiếu đến bài viết
 );
 GO
+CREATE TABLE managerRegistr (
+    managerRegistr_id INT IDENTITY(1,1) PRIMARY KEY, -- ID tự động tăng cho đăng ký quản lý
+    User_id INT NOT NULL, -- Tham chiếu đến User_id bên bảng Users
+    RegistrationDate DATETIME DEFAULT GETDATE(), -- Ngày đăng ký, mặc định là ngày hiện tại
+    Status NVARCHAR(50), -- Trạng thái của đăng ký (Pending, Approved, Rejected), mặc định là 'Pending'
+    Remarks NVARCHAR(255), -- Ghi chú về đăng ký (tùy chọn)
+    
+    CONSTRAINT fk_user FOREIGN KEY (User_id) REFERENCES Users(User_id) -- Khóa ngoại tham chiếu tới User_id của bảng Users
+);
+GO
 CREATE OR ALTER VIEW GroupView AS
 SELECT 
     g.Group_id,
@@ -590,9 +600,28 @@ SELECT * FROM Upload;
 
 SELECT * FROM UserFollow
 
+SELECT * FROM managerRegistr
 
 INSERT INTO Post (User_id, Group_id, Topic_id, Content, Status, postStatus)
 VALUES 
 
 
 (3, Null, Null,'Nice.', 'Active', 'Public');
+
+INSERT INTO Report (Reporter_id, User_id, Reason, Status)
+VALUES (3, 1, N'tệ', N'pending'),
+(3, 1, N'tệ', N'pending'),
+(3, 1, N'tệ', N'pending');
+INSERT INTO Report (Reporter_id, User_id, Post_id,Reason, Status)
+VALUES (3, 4,4 ,N'tệ', N'pendingM'),
+(3, 4, 4,N'tệ', N'pendingM'),
+(3, 4,4 ,N'tệ', N'pendingM');
+INSERT INTO Users (Username, usernameVip, User_email, User_password, User_role, User_fullName, User_wallet, User_avatar, User_story, User_rank, User_score, User_sex, User_activeStatus)
+VALUES 
+('user3', NULL, 'user3@fpt.edu.vn', '123', 2,N'To Rung', 100.00, Null, Null, 1, 10, 'Male', 1);
+
+INSERT INTO managerRegistr (User_id, RegistrationDate, Status, Remarks)
+VALUES
+    (2, GETDATE(), 'pending', 'Waiting for approval');
+   
+ 

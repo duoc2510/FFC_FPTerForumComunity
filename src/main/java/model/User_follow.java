@@ -9,6 +9,7 @@ package model;
  * @author ThanhDuoc
  */
 public class User_follow {
+
     private int userFollowId;
     private int userId;
     private Integer eventId; // Using Integer for nullable field

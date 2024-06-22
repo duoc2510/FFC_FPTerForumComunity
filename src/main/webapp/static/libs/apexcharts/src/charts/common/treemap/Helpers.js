@@ -3,190 +3,190 @@ import Graphics from '../../../modules/Graphics'
 import DataLabels from '../../../modules/DataLabels'
 
 export default class TreemapHelpers {
-  constructor(ctx) {
-    this.ctx = ctx
-    this.w = ctx.w
-  }
-
-  checkColorRange() {
-    const w = this.w
-
-    let negRange = false
-    let chartOpts = w.config.plotOptions[w.config.chart.type]
-
-    if (chartOpts.colorScale.ranges.length > 0) {
-      chartOpts.colorScale.ranges.map((range, index) => {
-        if (range.from <= 0) {
-          negRange = true
-        }
-      })
+    constructor(ctx) {
+        this.ctx = ctx
+        this.w = ctx.w
     }
-    return negRange
-  }
 
-  getShadeColor(chartType, i, j, negRange) {
-    const w = this.w
+    checkColorRange() {
+        const w = this.w
 
-    let colorShadePercent = 1
-    let shadeIntensity = w.config.plotOptions[chartType].shadeIntensity
+        let negRange = false
+        let chartOpts = w.config.plotOptions[w.config.chart.type]
 
-    const colorProps = this.determineColor(chartType, i, j)
+        if (chartOpts.colorScale.ranges.length > 0) {
+            chartOpts.colorScale.ranges.map((range, index) => {
+                if (range.from <= 0) {
+                    negRange = true
+                }
+            })
+        }
+        return negRange
+    }
 
-    if (w.globals.hasNegs || negRange) {
-      if (w.config.plotOptions[chartType].reverseNegativeShade) {
-        if (colorProps.percent < 0) {
-          colorShadePercent =
-            (colorProps.percent / 100) * (shadeIntensity * 1.25)
+    getShadeColor(chartType, i, j, negRange) {
+        const w = this.w
+
+        let colorShadePercent = 1
+        let shadeIntensity = w.config.plotOptions[chartType].shadeIntensity
+
+        const colorProps = this.determineColor(chartType, i, j)
+
+        if (w.globals.hasNegs || negRange) {
+            if (w.config.plotOptions[chartType].reverseNegativeShade) {
+                if (colorProps.percent < 0) {
+                    colorShadePercent =
+                            (colorProps.percent / 100) * (shadeIntensity * 1.25)
+                } else {
+                    colorShadePercent =
+                            (1 - colorProps.percent / 100) * (shadeIntensity * 1.25)
+                }
+            } else {
+                if (colorProps.percent <= 0) {
+                    colorShadePercent =
+                            1 - (1 + colorProps.percent / 100) * shadeIntensity
+                } else {
+                    colorShadePercent = (1 - colorProps.percent / 100) * shadeIntensity
+                }
+            }
         } else {
-          colorShadePercent =
-            (1 - colorProps.percent / 100) * (shadeIntensity * 1.25)
+            colorShadePercent = 1 - colorProps.percent / 100
+            if (chartType === 'treemap') {
+                colorShadePercent =
+                        (1 - colorProps.percent / 100) * (shadeIntensity * 1.25)
+            }
         }
-      } else {
-        if (colorProps.percent <= 0) {
-          colorShadePercent =
-            1 - (1 + colorProps.percent / 100) * shadeIntensity
-        } else {
-          colorShadePercent = (1 - colorProps.percent / 100) * shadeIntensity
+
+        let color = colorProps.color
+        let utils = new Utils()
+
+        if (w.config.plotOptions[chartType].enableShades) {
+            if (this.w.config.theme.mode === 'dark') {
+                color = Utils.hexToRgba(
+                        utils.shadeColor(colorShadePercent * -1, colorProps.color),
+                        w.config.fill.opacity
+                        )
+            } else {
+                color = Utils.hexToRgba(
+                        utils.shadeColor(colorShadePercent, colorProps.color),
+                        w.config.fill.opacity
+                        )
+            }
         }
-      }
-    } else {
-      colorShadePercent = 1 - colorProps.percent / 100
-      if (chartType === 'treemap') {
-        colorShadePercent =
-          (1 - colorProps.percent / 100) * (shadeIntensity * 1.25)
-      }
+
+        return {color, colorProps}
     }
 
-    let color = colorProps.color
-    let utils = new Utils()
+    determineColor(chartType, i, j) {
+        const w = this.w
 
-    if (w.config.plotOptions[chartType].enableShades) {
-      if (this.w.config.theme.mode === 'dark') {
-        color = Utils.hexToRgba(
-          utils.shadeColor(colorShadePercent * -1, colorProps.color),
-          w.config.fill.opacity
-        )
-      } else {
-        color = Utils.hexToRgba(
-          utils.shadeColor(colorShadePercent, colorProps.color),
-          w.config.fill.opacity
-        )
-      }
-    }
+        let val = w.globals.series[i][j]
 
-    return { color, colorProps }
-  }
+        let chartOpts = w.config.plotOptions[chartType]
 
-  determineColor(chartType, i, j) {
-    const w = this.w
+        let seriesNumber = chartOpts.colorScale.inverse ? j : i
 
-    let val = w.globals.series[i][j]
-
-    let chartOpts = w.config.plotOptions[chartType]
-
-    let seriesNumber = chartOpts.colorScale.inverse ? j : i
-
-    if (chartOpts.distributed && w.config.chart.type === 'treemap') {
-      seriesNumber = j
-    }
-
-    let color = w.globals.colors[seriesNumber]
-    let foreColor = null
-    let min = Math.min(...w.globals.series[i])
-    let max = Math.max(...w.globals.series[i])
-
-    if (!chartOpts.distributed && chartType === 'heatmap') {
-      min = w.globals.minY
-      max = w.globals.maxY
-    }
-
-    if (typeof chartOpts.colorScale.min !== 'undefined') {
-      min =
-        chartOpts.colorScale.min < w.globals.minY
-          ? chartOpts.colorScale.min
-          : w.globals.minY
-      max =
-        chartOpts.colorScale.max > w.globals.maxY
-          ? chartOpts.colorScale.max
-          : w.globals.maxY
-    }
-
-    let total = Math.abs(max) + Math.abs(min)
-
-    let percent = (100 * val) / (total === 0 ? total - 0.000001 : total)
-
-    if (chartOpts.colorScale.ranges.length > 0) {
-      const colorRange = chartOpts.colorScale.ranges
-      colorRange.map((range, index) => {
-        if (val >= range.from && val <= range.to) {
-          color = range.color
-          foreColor = range.foreColor ? range.foreColor : null
-          min = range.from
-          max = range.to
-          let rTotal = Math.abs(max) + Math.abs(min)
-          percent = (100 * val) / (rTotal === 0 ? rTotal - 0.000001 : rTotal)
+        if (chartOpts.distributed && w.config.chart.type === 'treemap') {
+            seriesNumber = j
         }
-      })
+
+        let color = w.globals.colors[seriesNumber]
+        let foreColor = null
+        let min = Math.min(...w.globals.series[i])
+        let max = Math.max(...w.globals.series[i])
+
+        if (!chartOpts.distributed && chartType === 'heatmap') {
+            min = w.globals.minY
+            max = w.globals.maxY
+        }
+
+        if (typeof chartOpts.colorScale.min !== 'undefined') {
+            min =
+                    chartOpts.colorScale.min < w.globals.minY
+                    ? chartOpts.colorScale.min
+                    : w.globals.minY
+            max =
+                    chartOpts.colorScale.max > w.globals.maxY
+                    ? chartOpts.colorScale.max
+                    : w.globals.maxY
+        }
+
+        let total = Math.abs(max) + Math.abs(min)
+
+        let percent = (100 * val) / (total === 0 ? total - 0.000001 : total)
+
+        if (chartOpts.colorScale.ranges.length > 0) {
+            const colorRange = chartOpts.colorScale.ranges
+            colorRange.map((range, index) => {
+                if (val >= range.from && val <= range.to) {
+                    color = range.color
+                    foreColor = range.foreColor ? range.foreColor : null
+                    min = range.from
+                    max = range.to
+                    let rTotal = Math.abs(max) + Math.abs(min)
+                    percent = (100 * val) / (rTotal === 0 ? rTotal - 0.000001 : rTotal)
+                }
+            })
+        }
+
+        return {
+            color,
+            foreColor,
+            percent
+        }
     }
 
-    return {
-      color,
-      foreColor,
-      percent
-    }
-  }
+    calculateDataLabels( { text, x, y, i, j, colorProps, fontSize }) {
+        let w = this.w
+        let dataLabelsConfig = w.config.dataLabels
 
-  calculateDataLabels({ text, x, y, i, j, colorProps, fontSize }) {
-    let w = this.w
-    let dataLabelsConfig = w.config.dataLabels
+        const graphics = new Graphics(this.ctx)
 
-    const graphics = new Graphics(this.ctx)
+        let dataLabels = new DataLabels(this.ctx)
 
-    let dataLabels = new DataLabels(this.ctx)
+        let elDataLabelsWrap = null
 
-    let elDataLabelsWrap = null
+        if (dataLabelsConfig.enabled) {
+            elDataLabelsWrap = graphics.group({
+                class: 'apexcharts-data-labels'
+            })
 
-    if (dataLabelsConfig.enabled) {
-      elDataLabelsWrap = graphics.group({
-        class: 'apexcharts-data-labels'
-      })
+            const offX = dataLabelsConfig.offsetX
+            const offY = dataLabelsConfig.offsetY
 
-      const offX = dataLabelsConfig.offsetX
-      const offY = dataLabelsConfig.offsetY
+            let dataLabelsX = x + offX
+            let dataLabelsY =
+                    y + parseFloat(dataLabelsConfig.style.fontSize) / 3 + offY
 
-      let dataLabelsX = x + offX
-      let dataLabelsY =
-        y + parseFloat(dataLabelsConfig.style.fontSize) / 3 + offY
+            dataLabels.plotDataLabelsText({
+                x: dataLabelsX,
+                y: dataLabelsY,
+                text,
+                i,
+                j,
+                color: colorProps.foreColor,
+                parent: elDataLabelsWrap,
+                fontSize,
+                dataLabelsConfig
+            })
+        }
 
-      dataLabels.plotDataLabelsText({
-        x: dataLabelsX,
-        y: dataLabelsY,
-        text,
-        i,
-        j,
-        color: colorProps.foreColor,
-        parent: elDataLabelsWrap,
-        fontSize,
-        dataLabelsConfig
-      })
+        return elDataLabelsWrap
     }
 
-    return elDataLabelsWrap
-  }
-
-  addListeners(elRect) {
-    const graphics = new Graphics(this.ctx)
-    elRect.node.addEventListener(
-      'mouseenter',
-      graphics.pathMouseEnter.bind(this, elRect)
-    )
-    elRect.node.addEventListener(
-      'mouseleave',
-      graphics.pathMouseLeave.bind(this, elRect)
-    )
-    elRect.node.addEventListener(
-      'mousedown',
-      graphics.pathMouseDown.bind(this, elRect)
-    )
-  }
+    addListeners(elRect) {
+        const graphics = new Graphics(this.ctx)
+        elRect.node.addEventListener(
+                'mouseenter',
+                graphics.pathMouseEnter.bind(this, elRect)
+                )
+        elRect.node.addEventListener(
+                'mouseleave',
+                graphics.pathMouseLeave.bind(this, elRect)
+                )
+        elRect.node.addEventListener(
+                'mousedown',
+                graphics.pathMouseDown.bind(this, elRect)
+                )
+    }
 }

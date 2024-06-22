@@ -87,10 +87,10 @@ public class User_friendHandel extends HttpServlet {
                 success = User_DB.addFriendRequest(userId, friendId);
                 redirectUrl = request.getContextPath() + "/profile?username=" + friendName;
                 break;
-             case "addFrSearch":
+            case "addFrSearch":
                 success = User_DB.addFriendRequest(userId, friendId);
                 redirectUrl = request.getContextPath() + "/search";
-                break;    
+                break;
             case "unfriendProfile":
                 success = User_DB.unFriend(userId, friendId);
 
@@ -104,7 +104,7 @@ public class User_friendHandel extends HttpServlet {
             case "unfriendSearch":
                 success = User_DB.unFriend(userId, friendId);
                 redirectUrl = request.getContextPath() + "/search";
-                break;    
+                break;
             case "cancel":
                 success = User_DB.cancelFriendRequest(userId, friendId);
                 redirectUrl = request.getContextPath() + "/profile?username=" + friendName;

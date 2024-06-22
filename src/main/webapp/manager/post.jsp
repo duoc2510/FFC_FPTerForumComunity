@@ -18,7 +18,7 @@
                             <c:set var="hasPendingPosts" value="false" />
 
                             <c:forEach var="topic" items="${topics}">
-                                <c:forEach var="post" items="${posts}">
+                                <c:forEach var="post" items="${postsTopic}">
                                     <c:if test="${post.status eq 'Pending' && not empty post.topicId && post.topicId == topic.topicId}">
                                         <c:set var="hasPendingPosts" value="true" />
                                         <%@ include file="topicPostdetail.jsp" %>

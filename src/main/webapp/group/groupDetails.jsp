@@ -127,12 +127,7 @@
                                     </li>
                                 </ul>
                             </div>
-                            <div class="px-4 py-3">
-                                <h5 class="mb-2">Description</h5>
-                                <div class="p-4 rounded shadow-sm">
-                                    <p class="font-italic mb-0">${group.groupDescription}</p>
-                                </div>
-                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -302,9 +297,9 @@
                         </c:if>
 
                         <div id="postsContainer">
-                            <c:forEach var="post" items="${posts}">
+                            <c:forEach var="post" items="${postsGroup}">
                                 <c:if test="${post.groupId == group.groupId && post.status eq 'Active'}">
-                                    <%@ include file="postactive.jsp" %>
+                                    <%@ include file="postactive.jsp"%>
                                 </c:if>
                                 <c:if test="${post.groupId == group.groupId && group.createrId == USER.userId && post.status eq 'Pending'}">
                                     <%@ include file="postpending.jsp" %>
@@ -317,10 +312,23 @@
 
             <c:if test="${not isUserApproved and group.createrId != USER.userId and !isUserBanned}">
                 <div class="container-fluid pt-0">
-                    <div class="row form-settings bg-white shadow rounded py-4 px-4 d-flex justify-content-between ">
-                        <div class="p0">
-                            <h5 class="mb-2">Bạn chưa tham gia group ${USER.userFullName} ơi</h5>
+
+                    <div class="row form-settings bg-white  d-flex justify-content-between ">
+                        <div class="col-12 col-sm-5 px-2">
+                            <div class="px-4 py-3 shadow rounded p-4">
+                                <h5 class="mb-2">Description</h5>
+                                <div class="p-4 ">
+                                    <p class="font-italic mb-0">${group.groupDescription}</p>
+                                </div>
+                            </div>
                         </div>
+                        <div class="col-12 col-sm-7 px-2">
+                            <div class="p0 shadow rounded p-4">
+                                <h5 class="mb-2">Bạn chưa tham gia group ${USER.userFullName} ơi</h5>
+                            </div>
+                        </div>
+
+
                     </div>
                 </div>
             </c:if>

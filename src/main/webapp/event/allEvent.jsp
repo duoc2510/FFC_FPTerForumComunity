@@ -10,7 +10,7 @@
 <body>
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
          data-sidebar-position="fixed" data-header-position="fixed">
-        
+
 
         <div class="row mt-3 p-2">
             <div class="col-md-6">
@@ -231,10 +231,10 @@
             window.location.href = 'deleteEvent?eventId=' + eventId;
         }
     }
-    setTimeout(function() {
+    setTimeout(function () {
         document.getElementById('message').style.display = 'none';
     }, 3000);
-    
+
 </script>
 
 

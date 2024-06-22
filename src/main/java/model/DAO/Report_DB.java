@@ -36,38 +36,79 @@ public class Report_DB {
     }
 
     public static boolean insertReport(Report report) {
-        String insertQuery = "INSERT INTO Report (Reporter_id, User_id, Shop_id, Post_id, Reason, Status) VALUES (?, ?, ?, ?, ?, 'pending')";
+        String selectQuery = "SELECT Report_id FROM Report "
+                + "WHERE Reporter_id = ? "
+                + "  AND User_id = ? "
+                + "  AND Shop_id = ? "
+                + "  AND Post_id = ?";
 
-        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(insertQuery)) {
+        String updateQuery = "UPDATE Report SET Status = ?, Reason = ? "
+                + "WHERE Reporter_id = ? "
+                + "  AND User_id = ? "
+                + "  AND Shop_id = ? "
+                + "  AND Post_id = ?";
 
-            // Thiết lập các giá trị cho câu lệnh SQL
-            stmt.setInt(1, report.getReporter_id());
+        String insertQuery = "INSERT INTO Report (Reporter_id, User_id, Shop_id, Post_id, Reason, Status) "
+                + "VALUES (?, ?, ?, ?, ?, ?)";
 
-            if (report.getUserId() == 0) {
-                stmt.setInt(2, Types.INTEGER);
-            } else {
-                stmt.setInt(2, report.getUserId());
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement selectStmt = conn.prepareStatement(selectQuery); PreparedStatement updateStmt = conn.prepareStatement(updateQuery); PreparedStatement insertStmt = conn.prepareStatement(insertQuery)) {
+
+            // Thiết lập các giá trị cho câu lệnh SELECT
+            selectStmt.setInt(1, report.getReporter_id());
+            selectStmt.setInt(2, report.getUserId());
+            selectStmt.setInt(3, report.getShopId());
+            selectStmt.setInt(4, report.getPostId());
+
+            // Thực thi câu lệnh SELECT để kiểm tra sự tồn tại của báo cáo
+            try (ResultSet rs = selectStmt.executeQuery()) {
+                if (rs.next()) {
+                    // Báo cáo đã tồn tại, cập nhật trạng thái và lý do
+                    updateStmt.setString(1, report.getStatus());
+                    updateStmt.setString(2, report.getReason());
+                    updateStmt.setInt(3, report.getReporter_id());
+                    updateStmt.setInt(4, report.getUserId());
+                    updateStmt.setInt(5, report.getShopId());
+                    updateStmt.setInt(6, report.getPostId());
+
+                    int rowsUpdated = updateStmt.executeUpdate();
+                    return rowsUpdated > 0;
+                } else {
+                    // Báo cáo chưa tồn tại, thêm mới báo cáo
+                    insertStmt.setInt(1, report.getReporter_id());
+
+                    // Xử lý userId
+                    if (report.getUserId() == 0) {
+                        insertStmt.setNull(2, Types.INTEGER);
+                    } else {
+                        insertStmt.setInt(2, report.getUserId());
+                    }
+
+                    // Xử lý shopId
+                    if (report.getShopId() == 0) {
+                        insertStmt.setNull(3, Types.INTEGER);
+                    } else {
+                        insertStmt.setInt(3, report.getShopId());
+                    }
+
+                    // Xử lý postId
+                    if (report.getPostId() == 0) {
+                        insertStmt.setNull(4, Types.INTEGER);
+                    } else {
+                        insertStmt.setInt(4, report.getPostId());
+                    }
+
+                    // Thiết lập lý do và trạng thái
+                    insertStmt.setString(5, report.getReason());
+                    insertStmt.setString(6, report.getStatus());
+
+                    int rowsInserted = insertStmt.executeUpdate();
+                    return rowsInserted > 0;
+                }
             }
-            if (report.getShopId() == 0) {
-                stmt.setNull(3, Types.INTEGER); // Set giá trị null nếu shopId là 0
-            } else {
-                stmt.setInt(3, report.getShopId());
-            }
-            if (report.getPostId() == 0) {
-                stmt.setNull(4, Types.INTEGER); // Set giá trị null nếu postId là 0
-            } else {
-                stmt.setInt(4, report.getPostId());
-            }
-            stmt.setString(5, report.getReason());
 
-            // Thực thi câu lệnh SQL
-            int rowsAffected = stmt.executeUpdate();
-
-            // Kiểm tra nếu có ít nhất một hàng bị ảnh hưởng
-            return rowsAffected > 0;
         } catch (SQLException e) {
             e.printStackTrace();
-            Logger.getLogger(Report_DB.class.getName()).log(Level.SEVERE, "Error occurred while inserting report", e);
+            Logger.getLogger(Report_DB.class.getName()).log(Level.SEVERE, "Error occurred while inserting or updating report", e);
             return false;
         }
     }
@@ -158,10 +199,11 @@ public class Report_DB {
 
     public static List<Report> getUsersReportedAtLeastThreeTimesWithReasons() {
         List<Report> reportedUsers = new ArrayList<>();
-        String selectQuery = "SELECT u.User_id, u.Username,u.User_role, u.User_avatar, COUNT(r.Report_id) as ReportCount, STRING_AGG(r.Reason, '; ') as Reasons, r.Status as rpStatus "
+        String selectQuery = "SELECT u.User_id, u.Username, u.User_role, u.User_avatar, COUNT(r.Report_id) as ReportCount, STRING_AGG(r.Reason, '; ') as Reasons, r.Status as rpStatus "
                 + "FROM Report r "
                 + "JOIN Users u ON r.User_id = u.User_id "
-                + "GROUP BY u.User_id, u.Username,u.User_role, u.User_avatar,r.Status "
+                + "WHERE r.Post_id IS NULL " // Loại bỏ các báo cáo từ bài viết
+                + "GROUP BY u.User_id, u.Username, u.User_role, u.User_avatar, r.Status "
                 + "HAVING COUNT(r.Report_id) >= 3";
 
         try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(selectQuery); ResultSet rs = stmt.executeQuery()) {
@@ -183,6 +225,40 @@ public class Report_DB {
         }
 
         return reportedUsers;
+    }
+
+    public static boolean userReportedAtLeastThreeTimes(int userId) {
+        System.out.println("Checking if user with ID " + userId + " has been reported at least three times.");
+
+        String selectQuery = "SELECT COUNT(*) as ReportCount "
+                            + "FROM Report "
+                            + "WHERE User_id = ? "
+                            + "  AND Post_id IS NULL "
+                            + "  AND Status = 'pending'"; // Thêm điều kiện Status = 'pending'
+
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); 
+             PreparedStatement stmt = conn.prepareStatement(selectQuery)) {
+
+            System.out.println("Database connection established.");
+
+            stmt.setInt(1, userId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                System.out.println("SQL query executed.");
+
+                if (rs.next()) {
+                    int reportCount = rs.getInt("ReportCount");
+                    System.out.println("User with ID " + userId + " has " + reportCount + " reports.");
+                    return reportCount >= 3;
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Error occurred while checking report count for user with ID " + userId);
+        }
+
+        return false;
     }
 
     public static boolean banUser(int userId) {
@@ -214,12 +290,152 @@ public class Report_DB {
         }
     }
 
-    public static boolean banPost(int postId) {
-        String updateQuery = "UPDATE Post SET Status = 'inactive' WHERE Post_id = ?";
+    public static boolean revokeManagerPrivileges(int userId) {
+        String updateQuery = "UPDATE Users SET User_role = 1 WHERE User_id = ?";
 
         try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
 
-            stmt.setInt(1, postId);
+            stmt.setInt(1, userId);
+
+            int rowsAffected = stmt.executeUpdate();
+
+            if (rowsAffected > 0) {
+                // Update status in the report table
+                String updateReportQuery = "UPDATE Report SET Status = 'Processed' WHERE User_id = ?";
+                try (PreparedStatement updateReportStmt = conn.prepareStatement(updateReportQuery)) {
+                    updateReportStmt.setInt(1, userId);
+                    updateReportStmt.executeUpdate();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    // Handle exception if needed
+                }
+            }
+
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean revokeManager(int userId) {
+        String updateQuery = "UPDATE Users SET User_role = 1 WHERE User_id = ?";
+
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
+
+            stmt.setInt(1, userId);
+
+            int rowsAffected = stmt.executeUpdate();
+
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean banUserByAd(int userId) {
+        String updateQuery = "UPDATE Users SET User_role = 0 WHERE User_id = ?";
+
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
+
+            stmt.setInt(1, userId);
+
+            int rowsAffected = stmt.executeUpdate();
+
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean unBanUser(int userId) {
+        String updateQuery = "UPDATE Users SET User_role = 1 WHERE User_id = ?";
+
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
+
+            stmt.setInt(1, userId);
+
+            int rowsAffected = stmt.executeUpdate();
+
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean setManager(int userId) {
+        String updateQuery = "UPDATE Users SET User_role = 2 WHERE User_id = ?";
+
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
+
+            stmt.setInt(1, userId);
+
+            int rowsAffected = stmt.executeUpdate();
+
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+      public static boolean approveManager(int userId) {
+    String updateQuery = "UPDATE Users SET User_role = 2 WHERE User_id = ?";
+
+    try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass);
+         PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
+
+        stmt.setInt(1, userId);
+
+        int rowsAffected = stmt.executeUpdate();
+        if (rowsAffected > 0) {
+            // Update status in the report table
+            String updateApproveQuery = "UPDATE managerRegistr SET Status = 'Approved' WHERE User_id = ?";
+            try (PreparedStatement updateReportStmt = conn.prepareStatement(updateApproveQuery)) {
+                updateReportStmt.setInt(1, userId);
+                updateReportStmt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                // Handle exception if needed
+                System.err.println("Error updating managerRegistr table: " + e.getMessage());
+            }
+        }
+        return rowsAffected > 0;
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+        System.err.println("Database error: " + e.getMessage());
+        return false;
+    }
+}
+public static boolean cancelApproveManager(int userId) {
+    String query = "UPDATE managerRegistr SET Status = 'cancelled' WHERE User_id = ?";
+    
+    try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass);
+         PreparedStatement stmt = conn.prepareStatement(query)) {
+        stmt.setInt(1, userId);
+        int rowsAffected = stmt.executeUpdate();
+        return rowsAffected > 0; // Trả về true nếu có ít nhất một dòng được cập nhật
+    } catch (SQLException e) {
+        e.printStackTrace();
+        System.err.println("Database error: " + e.getMessage());
+        return false; // Trả về false nếu có lỗi xảy ra
+    }
+}
+    public static boolean banPost(int postId, String banReason) {
+        String updateQuery = "UPDATE Post SET Status = 'inactive', Reason = ? WHERE Post_id = ?";
+
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
+
+            stmt.setString(1, banReason);
+            stmt.setInt(2, postId);
 
             int rowsAffected = stmt.executeUpdate();
 
@@ -242,46 +458,178 @@ public class Report_DB {
             return false;
         }
     }
-public static boolean hasReported(int reporterId, String username) {
-    String query = "SELECT COUNT(*) FROM Report " +
-                   "JOIN Users ON Report.User_id = Users.User_id " +
-                   "WHERE Report.Reporter_id = ? AND Users.Username = ?";
-    try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass);
-         PreparedStatement stmt = conn.prepareStatement(query)) {
 
-        stmt.setInt(1, reporterId);
-        stmt.setString(2, username);
+    public static boolean banPostByAd(int postId, String banReason) {
+        String updateQuery = "UPDATE Post SET Status = 'banned', Reason = ? WHERE Post_id = ?";
 
-        ResultSet rs = stmt.executeQuery();
-        if (rs.next()) {
-            int count = rs.getInt(1);
-            return count > 0;
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
+
+            stmt.setString(1, banReason);
+            stmt.setInt(2, postId);
+
+            int rowsAffected = stmt.executeUpdate();
+
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
-
-    } catch (SQLException e) {
-        e.printStackTrace();
     }
-    return false;
-}
 
-public static boolean hasReportedPost(int reporterId, int postId) {
-    String query = "SELECT COUNT(*) FROM Report WHERE Reporter_id = ? AND Post_id = ?";
-    try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass);
-         PreparedStatement stmt = conn.prepareStatement(query)) {
+    public static boolean hasReported(int reporterId, String username) {
+        String query = "SELECT COUNT(*) FROM Report "
+                + "WHERE Reporter_id = ? AND (Status = 'pending' OR Status = 'pendingM') "
+                + "AND User_id = (SELECT User_id FROM Users WHERE Username = ?)";
 
-        stmt.setInt(1, reporterId);
-        stmt.setInt(2, postId);
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
 
-        ResultSet rs = stmt.executeQuery();
-        if (rs.next()) {
-            int count = rs.getInt(1);
-            return count > 0;
+            stmt.setInt(1, reporterId);
+            stmt.setString(2, username);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    int count = rs.getInt(1);
+                    return count > 0;
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Logger.getLogger(Report_DB.class.getName()).log(Level.SEVERE, "Error occurred while checking report status", e);
         }
-
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return false;
     }
-    return false;
-}
-    
+
+    public static boolean hasReportedPost(int reporterId, int postId) {
+        String query = "SELECT COUNT(*) FROM Report WHERE Reporter_id = ? AND Post_id = ? AND (Status = 'pending' OR Status = 'pendingM')";
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, reporterId);
+            stmt.setInt(2, postId);
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                return count > 0;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static boolean cancelReport(int reporterId, int postId) {
+        String updateQuery = "UPDATE Report SET Status = 'cancelled' "
+                + "WHERE Reporter_id = ? AND Post_id = ? AND (Status = 'pending' OR Status = 'pendingM')";
+
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
+
+            stmt.setInt(1, reporterId);
+            stmt.setInt(2, postId);
+
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Logger.getLogger(Report_DB.class.getName()).log(Level.SEVERE, "Error occurred while cancelling report", e);
+            return false;
+        }
+    }
+
+    public static boolean editReport(int reporterId, int postId, String newReason) {
+        String updateQuery = "UPDATE Report SET Reason = ? "
+                + "WHERE Reporter_id = ? AND Post_id = ? AND (Status = 'pending' OR Status = 'pendingM')";
+
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
+
+            stmt.setString(1, newReason);
+            stmt.setInt(2, reporterId);
+            stmt.setInt(3, postId);
+
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Logger.getLogger(Report_DB.class.getName()).log(Level.SEVERE, "Error occurred while editing report", e);
+            return false;
+        }
+    }
+
+    public static boolean cancelReportUser(int reporterId, int userId) {
+        String updateQuery = "UPDATE Report SET Status = 'cancelled' "
+                + "WHERE Reporter_id = ? AND User_id = ? AND (Status = 'pending' OR Status = 'pendingM')";
+
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
+
+            stmt.setInt(1, reporterId);
+            stmt.setInt(2, userId);
+
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Logger.getLogger(Report_DB.class.getName()).log(Level.SEVERE, "Error occurred while cancelling report", e);
+            return false;
+        }
+    }
+
+    public static boolean editReportUser(int reporterId, int userId, String newReason) {
+        String updateQuery = "UPDATE Report SET Reason = ? "
+                + "WHERE Reporter_id = ? AND User_id = ? AND (Status = 'pending' OR Status = 'pendingM')";
+
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
+
+            stmt.setString(1, newReason);
+            stmt.setInt(2, reporterId);
+            stmt.setInt(3, userId);
+
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Logger.getLogger(Report_DB.class.getName()).log(Level.SEVERE, "Error occurred while editing report", e);
+            return false;
+        }
+    }
+
+    public static boolean cancelReportMgU(int userId) {
+        String updateQuery = "UPDATE Report SET Status = 'cancelled' WHERE User_id = ?";
+
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
+
+            stmt.setInt(1, userId);
+
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Logger.getLogger(Report_DB.class.getName()).log(Level.SEVERE, "Error occurred while cancelling report", e);
+            return false;
+        }
+    }
+
+    public static boolean cancelReportMgP(int postId) {
+        String updateQuery = "UPDATE Report SET Status = 'cancelled' WHERE Post_id = ?";
+
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
+
+            stmt.setInt(1, postId);
+
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Logger.getLogger(Report_DB.class.getName()).log(Level.SEVERE, "Error occurred while cancelling report", e);
+            return false;
+        }
+    }
+  
 }

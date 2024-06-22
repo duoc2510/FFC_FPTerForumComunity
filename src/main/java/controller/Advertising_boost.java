@@ -19,7 +19,6 @@ import model.Event;
 import model.Upload;
 import model.User;
 
-
 @MultipartConfig(
         maxFileSize = 1024 * 1024 * 10 // 10 MB
 )
@@ -47,7 +46,7 @@ public class Advertising_boost extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Advertising_boost</title>");            
+            out.println("<title>Servlet Advertising_boost</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet Advertising_boost at " + request.getContextPath() + "</h1>");
@@ -69,7 +68,7 @@ public class Advertising_boost extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-                request.getRequestDispatcher("/advertising/boost.jsp").forward(request, response);
+        request.getRequestDispatcher("/advertising/boost.jsp").forward(request, response);
     }
 
     /**
@@ -85,7 +84,7 @@ public class Advertising_boost extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-           String title = request.getParameter("title");
+        String title = request.getParameter("title");
         String description = request.getParameter("description");
         Timestamp startDate = Timestamp.valueOf(request.getParameter("start_date"));
         Timestamp endDate = Timestamp.valueOf(request.getParameter("end_date"));
@@ -105,10 +104,8 @@ public class Advertising_boost extends HttpServlet {
 
 //        String savePath = uploadFilePath + File.separator + fileName;
 //        filePart.write(savePath);
-
         // Đường dẫn lưu trong cơ sở dữ liệu
 //        String filePathForDatabase = UPLOAD_DIR + File.separator + fileName;
-
         Event event = new Event(0, title, description, startDate, endDate, userId);
 //        Upload upload = new Upload(0, 0, 0, 0, filePathForDatabase); // Thay đổi savePath thành filePathForDatabase
 

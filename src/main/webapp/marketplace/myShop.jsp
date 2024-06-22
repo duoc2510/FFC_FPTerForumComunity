@@ -18,7 +18,7 @@
     .table-bordered td{
         font-size: 14px;
     }
-    
+
 </style>
 <body>
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
@@ -61,12 +61,14 @@
                             <div class="card mx-1">
                                 <ul class="list-group list-group-flush rounded-3">
                                     <li class="list-group-item d-flex p-3">
-                                        <i class="fas fa-globe fa-lg text-warning"></i>
-                                        <a class="mb-0" href="" data-toggle="modal" data-target="#editBrand">Edit brand information</a>
+                                        <i style="display: inline-block;
+                                           margin-top: 1px;" class="fas fa-globe fa-lg text-warning"></i>
+                                        <a style="margin-left:10px" class="mb-0" href="" data-toggle="modal" data-target="#editBrand">Edit brand information</a>
                                     </li>
                                     <li class="list-group-item d-flex p-3">
-                                        <i class="fas fa-globe fa-lg text-warning"></i>
-                                        <a class="mb-0" href="" data-toggle="modal" data-target="#deleteShop">Delete shop</a>
+                                        <i style="display: inline-block;
+                                           margin-top: 1px;" class="fas fa-globe fa-lg text-warning"></i>
+                                        <a style="margin-left:10px" class="mb-0" href="" data-toggle="modal" data-target="#deleteShop">Delete shop</a>
                                     </li>
                                 </ul>
                             </div>
@@ -255,7 +257,13 @@
                                                             <c:if test="${order.status eq 'Pending'}">
                                                                 <td>
                                                                     <p class="text-danger"> Ví bạn không đủ tiền để thanh toán thuế!</p>
+                                                                    <form action="product" method="post">
+                                                                        <input type="text" name="orderid" value="${order.order_ID}" hidden/>
+                                                                        <input type="text" name="action" value="thatbai" hidden/>
+                                                                        <button type="submit" class="btn btn-danger my-1">Khong Nhan Don Hang</button>
+                                                                    </form>
                                                                 </td>
+
                                                             </c:if>
                                                             <c:if test="${order.status eq 'Accept'}">
                                                                 <td>

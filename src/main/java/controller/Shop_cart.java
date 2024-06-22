@@ -195,6 +195,11 @@ public class Shop_cart extends HttpServlet {
 
                 Shop_DB sdb = new Shop_DB();
                 HttpSession session = request.getSession();
+                OrderItem odi = sdb.getOrderItemById(orderItemId);
+                Product p = sdb.getProductByID(odi.getProductID());
+                if (newQuantity > p.getQuantity()) {
+                    newQuantity = p.getQuantity();
+                }
                 sdb.updateOrderItemQuantity(orderItemId, newQuantity);
                 Order order = (Order) session.getAttribute("ORDER");
                 ArrayList<OrderItem> orderitemlistnew = sdb.getAllOrderItemByOrderIdHasStatusIsNull(order.getOrder_ID());

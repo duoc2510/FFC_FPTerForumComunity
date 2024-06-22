@@ -17,7 +17,9 @@ import model.DAO.Event_DB;
  * @author Admin
  */
 public class Event_deleteEvent extends HttpServlet {
+
     private static final long serialVersionUID = 1L;
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -35,7 +37,7 @@ public class Event_deleteEvent extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Event_deleteEvent</title>");            
+            out.println("<title>Servlet Event_deleteEvent</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet Event_deleteEvent at " + request.getContextPath() + "</h1>");

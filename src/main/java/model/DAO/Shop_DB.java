@@ -668,6 +668,18 @@ public class Shop_DB {
         }
     }
 
+    // Hàm cập nhật Order_id cho OrderItem
+    public void updateOrderItemID(OrderItem orderItem) {
+        String updateQuery = "UPDATE OrderItem SET Order_id = ? WHERE OrderItem_id = ?";
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(updateQuery)) {
+            pstmt.setInt(1, orderItem.getOrder_id());
+            pstmt.setInt(2, orderItem.getOrderItem_id());
+            pstmt.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     public static void deleteOrderItemByID(int orderItemID) {
         String deleteQuery = "DELETE FROM OrderItem WHERE OrderItem_id = ?";
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(deleteQuery)) {
