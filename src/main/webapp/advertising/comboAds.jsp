@@ -1,0 +1,145 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+<%@ include file="../include/header.jsp" %>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<body>
+    <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+         data-sidebar-position="fixed" data-header-position="fixed">
+        <%@ include file="../include/slidebar.jsp" %>
+        <div class="body-wrapper">
+            <%@ include file="../include/navbar.jsp" %>
+            <div class="container-fluid pb-2">
+                <div class="row">
+                    <div id="profile-wrapper">
+                        <div class="bg-white shadow rounded overflow-hidden">
+                            <div class="px-4 py-4 cover cover" style="background: url(${pageContext.request.contextPath}/upload/deli-2.png); height:250px;">
+                                <div class="media align-items-end profile-head">
+                                    <div class="profile mr-3 d-flex justify-content-between align-items-end">
+                                        <img src="${pageContext.request.contextPath}/${USER.userAvatar}" class="position-absolute rounded-circle img-thumbnail" style="object-fit: cover;">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-light pt-4 px-4 d-flex justify-content-between text-center">
+                                <div class="media-body mb-5 text-white">
+                                    <h4 class="mt-0 mb-0 position-relative" style="left: 6.5em">${USER.userFullName}</h4>
+                                </div>
+                                <ul class="list-inline mb-0">
+                                    <!-- Add any list items here if needed -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid pt-0">
+                <div class="row form-settings d-flex justify-content-between">
+                    <div class="col-12 col-sm-5 px-2">
+                        <%@include file="menuAds.jsp" %>
+                    </div>
+                    <div class="col-12 col-sm-7 px-2">
+                        <div class="bg-white shadow rounded p-4">
+                            <div>
+                                <div class="mb-4">
+                                    <h3>Advertising Package</h3>
+                                    <h6>We have 3 options to boost your branding</h6>
+                                </div>
+                                <div class="form-group pb-3">
+                                    <c:forEach var="adsCombo" items="${allAdsCombo}">
+                                        <div data-ads="${adsCombo.adsDetailId}" class="d-flex flex-row align-items-center mb-4 pb-1">
+                                            <img class="img-fluid" src="https://nhanhoa.com/templates/images/v2/kim_cuong.png" />
+                                            <div class="flex-fill mx-3 d-flex">
+                                                <div data-mdb-input-init class="form-outline col-11">
+                                                    <h6>${adsCombo.content}</h6>
+                                                    <p>View post: ${adsCombo.maxView}</p>
+                                                    <p>${adsCombo.budget} VND</p>
+                                                </div>
+                                                <div class="col-1 d-flex justify-content-center align-items-center">
+                                                    <a class="btn btn-primary" data-toggle="modal" data-target="#addProduct${adsCombo.adsDetailId}" href="javascript:void(0)">Boost</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </c:forEach>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%@ include file="../include/footer.jsp" %>
+    </div>
+    <!-- Modals to add new Advertising by Package -->
+    <c:forEach var="adsCombo" items="${allAdsCombo}">
+        <div class="modal fade" id="addProduct${adsCombo.adsDetailId}" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Boost your brand</h5>
+                        <button class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <form action="boost" method="post" enctype="multipart/form-data">
+                        <div class="modal-body">
+                            <div class="form-group mb-3">
+                                <label for="productNameInput">Title:</label>
+                                <input type="text" class="form-control" id="productNameInput" name="productName" required>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="productPriceInput">Campus:</label>
+                                <div class="form-group">
+                                    <div class="checkbox my-2">
+                                        <label>
+                                            <input type="checkbox" class="check" id="checkAll" name="campus" value="All"> All campus
+                                        </label>
+                                    </div>
+                                    <div class="checkbox my-2">
+                                        <label>
+                                            <input type="checkbox" class="check" name="campus" value="Ha Noi"> Ha Noi
+                                        </label>
+                                    </div>
+                                    <div class="checkbox my-2">
+                                        <label>
+                                            <input type="checkbox" class="check" name="campus" value="Da Nang"> Da Nang
+                                        </label>
+                                    </div>
+                                    <!-- Add other campus checkboxes as needed -->
+                                </div>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="fileInput">Choose Image File:</label>
+                                <input type="file" class="form-control-file" id="fileInput" name="file" accept="image/*" required>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="productDescriptionInput">Content:</label>
+                                <textarea class="form-control" id="productDescriptionInput" name="productDescription" required></textarea>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="productURIInput">URI:</label>
+                                <input type="text" class="form-control" id="productURIInput" name="productURI" required>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="productQuantityInput">Your wallet need:</label>
+                                <input type="text" class="form-control" id="productQuantityInput" name="productQuantity" value="${adsCombo.budget} VND" readonly>
+                            </div>
+                            <!-- Hidden input field -->
+                            <input type="hidden" name="action" value="add">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Pay</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </c:forEach>
+
+    <script>
+        $("#checkAll").click(function () {
+            $(".check").prop('checked', $(this).prop('checked'));
+        });
+    </script>
+</body>
+</html>

@@ -10,17 +10,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.Random;
-import model.DAO.User_DB;
-import model.User;
-import static util.Email.sendEmail;
 
 /**
  *
- * @author Admin
+ * @author mac
  */
-public class User_lostAccount extends HttpServlet {
+public class User_Wallet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,10 +34,10 @@ public class User_lostAccount extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet User_LostAccount</title>");
+            out.println("<title>Servlet User_Wallet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet User_LostAccount at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet User_Wallet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -61,7 +56,7 @@ public class User_lostAccount extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        request.getRequestDispatcher("/auth/lost-account.jsp").forward(request, response);
+        request.getRequestDispatcher("/wallet/index.jsp").forward(request, response);
     }
 
     /**
@@ -75,32 +70,7 @@ public class User_lostAccount extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
-        String email = request.getParameter("identify");
-        User_DB userDB = new User_DB();
-        String msg;
-        User u = null;
-        ArrayList<User> userlist = userDB.getAllUsers();
-        boolean checkMail = false;
-        for (User us : userlist) {
-            if (us.getUserEmail().equals(email)) {
-                u = us;
-                checkMail = true;
-                break;
-            }
-        }
-        if (checkMail == true) {
-            int x = new Random().nextInt(90000) + 10000;
-            sendEmail(email, x);
-            request.setAttribute("x", x);
-            request.setAttribute("email", email);
-            request.getRequestDispatcher("/auth/verifyemail.jsp").forward(request, response);
-
-        } else {
-            msg = "Email not found!";
-            request.setAttribute("message", msg);
-            request.getRequestDispatcher("/auth/lost-account.jsp").forward(request, response);
-        }
+        processRequest(request, response);
     }
 
     /**

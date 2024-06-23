@@ -6,24 +6,27 @@ package model;
 
 /**
  *
- * @author ThanhDuoc
+ * @author mac
  */
 public class Ads_combo {
 
     private int adsDetailId;
     private String content;
     private double budget;
+    private int maxView;
 
     public Ads_combo() {
     }
 
-    public Ads_combo(int adsDetailId, String content, double budget) {
+    public Ads_combo(int adsDetailId, String content, double budget, int maxView) {
         this.adsDetailId = adsDetailId;
         this.content = content;
         this.budget = budget;
+        this.maxView = maxView;
     }
 
     // Getters and Setters
+
     public int getAdsDetailId() {
         return adsDetailId;
     }
@@ -47,4 +50,14 @@ public class Ads_combo {
     public void setBudget(double budget) {
         this.budget = budget;
     }
+
+    public int getMaxView() {
+        return maxView;
+    }
+
+    public void setMaxView(int maxView) {
+        this.maxView = maxView;
+    }
+
+    
 }

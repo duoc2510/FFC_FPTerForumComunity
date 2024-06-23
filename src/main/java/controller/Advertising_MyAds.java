@@ -10,17 +10,17 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.Random;
-import model.DAO.User_DB;
+import jakarta.servlet.http.HttpSession;
+import java.util.List;
+import model.Ads;
+import model.DAO.Ads_DB;
 import model.User;
-import static util.Email.sendEmail;
 
 /**
  *
  * @author Admin
  */
-public class User_lostAccount extends HttpServlet {
+public class Advertising_MyAds extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,10 +39,10 @@ public class User_lostAccount extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet User_LostAccount</title>");
+            out.println("<title>Servlet Advertising_allAds</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet User_LostAccount at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet Advertising_allAds at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -60,8 +60,27 @@ public class User_lostAccount extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        request.getRequestDispatcher("/auth/lost-account.jsp").forward(request, response);
+        // Get the session, do not create a new one if it doesn't exist
+        HttpSession session = request.getSession(false);
+
+        // Check if the user is logged in
+        if (session != null && session.getAttribute("USER") != null) {
+            // Retrieve the current user from the session
+            User currentUser = (User) session.getAttribute("USER");
+
+            // Fetch the list of ads for the current user
+            List<Ads> allAds = Ads_DB.getAllAdsByUserID(currentUser.getUserId());
+
+            // Set the list of ads as an attribute in the request
+            request.setAttribute("allAds", allAds);
+
+            // Set the response content type and forward the request to the JSP page
+            response.setContentType("text/html;charset=UTF-8");
+            request.getRequestDispatcher("/advertising/index.jsp").forward(request, response);
+        } else {
+            // If the user is not logged in, redirect to the login page or show an error message
+            response.sendRedirect("login.jsp");
+        }
     }
 
     /**
@@ -75,32 +94,7 @@ public class User_lostAccount extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
-        String email = request.getParameter("identify");
-        User_DB userDB = new User_DB();
-        String msg;
-        User u = null;
-        ArrayList<User> userlist = userDB.getAllUsers();
-        boolean checkMail = false;
-        for (User us : userlist) {
-            if (us.getUserEmail().equals(email)) {
-                u = us;
-                checkMail = true;
-                break;
-            }
-        }
-        if (checkMail == true) {
-            int x = new Random().nextInt(90000) + 10000;
-            sendEmail(email, x);
-            request.setAttribute("x", x);
-            request.setAttribute("email", email);
-            request.getRequestDispatcher("/auth/verifyemail.jsp").forward(request, response);
-
-        } else {
-            msg = "Email not found!";
-            request.setAttribute("message", msg);
-            request.getRequestDispatcher("/auth/lost-account.jsp").forward(request, response);
-        }
+        processRequest(request, response);
     }
 
     /**

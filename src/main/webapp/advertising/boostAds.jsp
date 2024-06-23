@@ -6,53 +6,6 @@
 
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
 <%@ include file="../include/header.jsp" %>
-<style>
-    .card-img-top{
-        height:250px;
-        object-fit: cover;
-    }
-    .card-text{
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        width: 200px;
-        overflow: hidden;
-    }
-    .imgs-grid{
-        display: grid;
-        grid-template-columns: repeat(27, 1fr);
-        position: relative;
-    }
-    .imgs-grid .grid.grid-1 {
-        -ms-grid-column: 1;
-        -ms-grid-column-span: 18;
-        grid-column: 1 / span 18;
-        -ms-grid-row: 1;
-        -ms-grid-row-span: 27;
-        grid-row: 1 / span 27;
-    }
-    .imgs-grid .grid.grid-2 {
-        -ms-grid-column: 19;
-        -ms-grid-column-span: 27;
-        grid-column: 19 / span 27;
-        -ms-grid-row: 1;
-        -ms-grid-row-span: 5;
-        grid-row: 1 / span 5;
-        padding-left: 20px;
-    }
-    .imgs-grid .grid.grid-3 {
-        -ms-grid-column: 14;
-        -ms-grid-column-span: 16;
-        grid-column: 14 / span 16;
-        -ms-grid-row: 6;
-        -ms-grid-row-span: 27;
-        grid-row: 6 / span 27;
-        padding-top: 20px;
-    }
-    .imgs-grid .grid img {
-        border-radius: 20px;
-        max-width: 100%;
-    }
-</style>
 <body>
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
          data-sidebar-position="fixed" data-header-position="fixed">

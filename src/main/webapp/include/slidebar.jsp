@@ -50,7 +50,7 @@
                                     <span class="hide-menu">- Handle report manager</span>
                                 </a>
                             </li>
-                           
+
                             <li class="sidebar-item sub-item">
                                 <a href="${pageContext.request.contextPath}/#" class="sidebar-link">
                                     <span class="hide-menu">- Reset rankings</span>
@@ -59,6 +59,16 @@
                             <li class="sidebar-item sub-item">
                                 <a href="${pageContext.request.contextPath}/#" class="sidebar-link">
                                     <span class="hide-menu">- Approve shop</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item sub-item">
+                                <a href="${pageContext.request.contextPath}/#" class="sidebar-link">
+                                    <span class="hide-menu">- Add ads</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item sub-item">
+                                <a href="${pageContext.request.contextPath}/#" class="sidebar-link">
+                                    <span class="hide-menu">- Create voucher</span>
                                 </a>
                             </li>
                             <li class="sidebar-item sub-item">

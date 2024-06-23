@@ -33,6 +33,7 @@ import model.Product;
 import model.Shop;
 import model.Upload;
 import model.User;
+import notifications.NotificationWebSocket;
 
 /**
  *
@@ -113,6 +114,7 @@ public class Shop_product extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
+        NotificationWebSocket nw = new NotificationWebSocket();
 
         User user = (User) request.getSession().getAttribute("USER");
         Shop shop = (Shop) request.getSession().getAttribute("SHOP");
@@ -407,14 +409,18 @@ public class Shop_product extends HttpServlet {
                 int orderid1 = Integer.parseInt(orderid);
                 Order or = sdb.getOrderbyID(orderid1);
                 sdb.updateOrderStatus(orderid1, "Accept");
-                sdb.addNewNotification(or.getUserID(), "Đơn hàng của bạn đã được chấp nhận!", "/marketplace/history");
+//                sdb.addNewNotification(or.getUserID(), "Đơn hàng của bạn đã được chấp nhận!", "/marketplace/history");
+                nw.saveNotificationToDatabase(or.getUserID(), "Đơn hàng của bạn đã được chấp nhận!", "/marketplace/history");
+                nw.sendNotificationToClient(or.getUserID(), "Đơn hàng của bạn đã được chấp nhận!", "/marketplace/history");
                 response.sendRedirect("myshop");
                 break;
             case "thatbai": /////shop hủy đơn
                 int orderid2 = Integer.parseInt(orderid);
                 Order or1 = sdb.getOrderbyID(orderid2);
-                sdb.addNewNotification(or1.getUserID(), "Đơn hàng của bạn không được chấp nhận!", "/marketplace/history");
-                sdb.updateOrderStatus(orderid2, "Cancelled");
+//                sdb.addNewNotification(or1.getUserID(), "Đơn hàng của bạn không được chấp nhận!", "/marketplace/history");
+                nw.saveNotificationToDatabase(or1.getUserID(), "Đơn hàng của bạn không được chấp nhận!", "/marketplace/history");
+                nw.sendNotificationToClient(or1.getUserID(), "Đơn hàng của bạn không được chấp nhận!", "/marketplace/history");
+                sdb.updateOrderStatus(orderid2, "Fail");
                 ArrayList<OrderItem> orderitemlistnew = sdb.getAllOrderItemByOrderID(orderid2);
                 for (OrderItem ot : orderitemlistnew) {
                     Product p = sdb.getProductByID(ot.getProductID());
@@ -445,7 +451,9 @@ public class Shop_product extends HttpServlet {
                 User updatedUser = User_DB.getUserByEmailorUsername(user.getUserEmail());
                 request.getSession().setAttribute("USER", updatedUser);
                 sdb.updateOrderStatus(orderid3, "Completed");
-                sdb.addNewNotification(order.getUserID(), "Đơn hàng của bạn đã giao thành công! Vui lòng bấm đã nhận được hàng!", "/marketplace/history");
+//                sdb.addNewNotification(order.getUserID(), "Đơn hàng của bạn đã giao thành công! Vui lòng bấm đã nhận được hàng!", "/marketplace/history");
+                nw.saveNotificationToDatabase(order.getUserID(), "Đơn hàng của bạn đã giao thành công! Vui lòng bấm đã nhận được hàng!", "/marketplace/history");
+                nw.sendNotificationToClient(order.getUserID(), "Đơn hàng của bạn đã giao thành công! Vui lòng bấm đã nhận được hàng!", "/marketplace/history");
                 response.sendRedirect("myshop");
                 break;
             case "huydon":   //////người đặt hủy đơn
@@ -461,7 +469,9 @@ public class Shop_product extends HttpServlet {
                 for (OrderItem ot : orderitemlistnewnew) {
                     Product p1 = sdb.getProductByID(ot.getProductID());
                     Shop shop1 = sdb.getShopHaveStatusIs1ByUserID(p1.getShopId());
-                    sdb.addNewNotification(shop1.getOwnerID(), "Người đặt đã hủy đơn do 1 số nguyên nhân!", "/marketplace/myshop");
+//                    sdb.addNewNotification(shop1.getOwnerID(), "Người đặt đã hủy đơn do 1 số nguyên nhân!", "/marketplace/myshop");
+                    nw.saveNotificationToDatabase(shop1.getOwnerID(), "Người đặt đã hủy đơn do 1 số nguyên nhân!", "/marketplace/myshop");
+                    nw.sendNotificationToClient(shop1.getOwnerID(), "Người đặt đã hủy đơn do 1 số nguyên nhân!", "/marketplace/myshop");
                     break;
                 }
 
@@ -477,7 +487,9 @@ public class Shop_product extends HttpServlet {
                 for (OrderItem ot : orderitemlistnewnew1) {
                     Product p1 = sdb.getProductByID(ot.getProductID());
                     Shop shop1 = sdb.getShopHaveStatusIs1ByUserID(p1.getShopId());
-                    sdb.addNewNotification(shop1.getOwnerID(), "Người đặt đã nhận được hàng và đã đánh giá!", "/marketplace/allshop/shopdetail?shopid=" + shop1.getShopID());
+//                    sdb.addNewNotification(shop1.getOwnerID(), "Người đặt đã nhận được hàng và đã đánh giá!", "/marketplace/allshop/shopdetail?shopid=" + shop1.getShopID());
+                    nw.saveNotificationToDatabase(shop1.getOwnerID(), "Người đặt đã nhận được hàng và đã đánh giá!", "/marketplace/allshop/shopdetail?shopid=" + shop1.getShopID());
+                    nw.sendNotificationToClient(shop1.getOwnerID(), "Người đặt đã nhận được hàng và đã đánh giá!", "/marketplace/allshop/shopdetail?shopid=" + shop1.getShopID());
                     break;
                 }
                 String stars = request.getParameter("stars");

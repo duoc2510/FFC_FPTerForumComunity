@@ -384,7 +384,7 @@ public class Shop_DB {
         String insertQuery = "INSERT INTO [Order] (User_id, Order_date, Order_status, Total_amount, Note, Discount_id, Feedback, Star, Receiver_phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(insertQuery)) {
             pstmt.setInt(1, order.getUserID());
-            pstmt.setObject(2, order.getOrderDate() != null ? new java.sql.Date(order.getOrderDate().getTime()) : null);
+            pstmt.setTimestamp(2, order.getOrderDate());
             pstmt.setString(3, order.getStatus());
             pstmt.setDouble(4, order.getTotal());
             pstmt.setString(5, order.getNote());
@@ -407,7 +407,7 @@ public class Shop_DB {
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 int orderID = rs.getInt("Order_id");
-                Date orderDate = rs.getDate("Order_date");
+                Timestamp orderDate = rs.getTimestamp("Order_date");
                 String orderStatus = rs.getString("Order_status");
                 double totalAmount = rs.getDouble("Total_amount");
                 String note = rs.getString("Note");
@@ -451,11 +451,7 @@ public class Shop_DB {
         String updateQuery = "UPDATE [Order] SET User_id = ?, Order_date = ?, Order_status = ?, Total_amount = ?, Note = ?, Discount_id = ?, Feedback = ?, Star = ?, Receiver_phone = ? WHERE Order_id = ?";
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(updateQuery)) {
             pstmt.setInt(1, order.getUserID());
-
-            // Tạo một đối tượng Date mới để lấy ngày hiện tại
-            Date currentDate = new Date();
-            pstmt.setObject(2, new java.sql.Date(currentDate.getTime()));
-
+            pstmt.setTimestamp(2, new java.sql.Timestamp(new java.util.Date().getTime()));
             pstmt.setString(3, order.getStatus());
             pstmt.setDouble(4, order.getTotal());
             pstmt.setString(5, order.getNote());
@@ -485,11 +481,10 @@ public class Shop_DB {
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                // Create an Order object from the query result
                 Order order = new Order();
                 order.setOrder_ID(rs.getInt("Order_id"));
                 order.setUserID(rs.getInt("User_id"));
-                order.setOrderDate(rs.getDate("Order_date"));
+                order.setOrderDate(rs.getTimestamp("Order_date"));
                 order.setStatus(rs.getString("Order_status"));
                 order.setTotal(rs.getDouble("Total_amount"));
                 order.setNote(rs.getString("Note"));
@@ -498,16 +493,13 @@ public class Shop_DB {
                 order.setStar(rs.getInt("Star"));
                 order.setReceiverPhone(rs.getString("Receiver_phone"));
 
-                // Add the Order object to the list
                 orders.add(order);
             }
         } catch (SQLException ex) {
             Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        // Sort the list by order date from newest to oldest
         orders.sort((o1, o2) -> o2.getOrderDate().compareTo(o1.getOrderDate()));
-
         return orders;
     }
 
@@ -529,7 +521,7 @@ public class Shop_DB {
                 Order order = new Order();
                 order.setOrder_ID(rs.getInt("Order_id"));
                 order.setUserID(rs.getInt("User_id"));
-                order.setOrderDate(rs.getDate("Order_date"));
+                order.setOrderDate(rs.getTimestamp("Order_date"));
                 order.setStatus(rs.getString("Order_status"));
                 order.setTotal(rs.getDouble("Total_amount"));
                 order.setNote(rs.getString("Note"));
@@ -569,7 +561,7 @@ public class Shop_DB {
                 Order order = new Order();
                 order.setOrder_ID(rs.getInt("Order_id"));
                 order.setUserID(rs.getInt("User_id"));
-                order.setOrderDate(rs.getDate("Order_date"));
+                order.setOrderDate(rs.getTimestamp("Order_date"));
                 order.setStatus(rs.getString("Order_status"));
                 order.setTotal(rs.getDouble("Total_amount"));
                 order.setNote(rs.getString("Note"));
@@ -599,7 +591,7 @@ public class Shop_DB {
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 int userID = rs.getInt("User_id");
-                Date orderDate = rs.getDate("Order_date");
+                Timestamp orderDate = rs.getTimestamp("Order_date");
                 String orderStatus = rs.getString("Order_status");
                 double totalAmount = rs.getDouble("Total_amount");
                 String note = rs.getString("Note");
@@ -665,7 +657,7 @@ public class Shop_DB {
                     Order order = new Order();
                     order.setOrder_ID(rs.getInt("Order_id"));
                     order.setUserID(rs.getInt("User_id"));
-                    order.setOrderDate(rs.getDate("Order_date"));
+                    order.setOrderDate(rs.getTimestamp("Order_date"));
                     order.setStatus(status);
                     order.setTotal(rs.getDouble("Total_amount"));
                     order.setNote(rs.getString("Note"));

@@ -16,7 +16,14 @@
             document.addEventListener("DOMContentLoaded", (event) => {
                 var errorMessage = "${message}";
                 // Kiểm tra nếu errorMessage không rỗng, hiển thị thông báo lỗi
-                if (errorMessage != "") {
+                if (errorMessage == "Registration Success" && errorMessage != "") {
+                    swal({
+                        title: "Success!",
+                        text: errorMessage,
+                        icon: "success",
+                        button: "OK",
+                    });
+                } else if (errorMessage != "") {
                     swal({
                         title: "Error!",
                         text: errorMessage,

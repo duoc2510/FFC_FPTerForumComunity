@@ -76,7 +76,7 @@ CREATE TABLE [Order] (
     User_id INT NOT NULL, -- ID của người dùng, bắt buộc
     Order_id INT IDENTITY(1,1) PRIMARY KEY, -- ID tự động tăng cho đơn hàng
     Order_date DATETIME DEFAULT GETDATE(), -- Ngày đặt hàng, mặc định là ngày hiện tại
-    Order_status NVARCHAR(50) CHECK (Order_status IN ('null','Pending','Accept','Completed','Cancelled','Success')) NOT NULL, -- Trạng thái của đơn hàng
+    Order_status NVARCHAR(50) CHECK (Order_status IN ('null','Pending','Accept','Completed','Cancelled','Success','Fail')) NOT NULL, -- Trạng thái của đơn hàng
     Total_amount DECIMAL(10, 2) NOT NULL, -- Tổng số tiền của đơn hàng, bắt buộc
     Note NVARCHAR(MAX), -- Ghi chú
     Discount_id INT, -- ID của mã giảm giá
@@ -137,7 +137,7 @@ CREATE TABLE Notification (
     Message NVARCHAR(MAX) NOT NULL, -- Nội dung thông báo, không được null
     Created_at DATETIME DEFAULT GETDATE(), -- Ngày và giờ tạo thông báo, mặc định là ngày và giờ hiện tại
     Status NVARCHAR(50) DEFAULT 'Unread', -- Trạng thái của thông báo, mặc định là 'Unread' (chưa đọc)
-    Notification_link NVARCHAR(100);
+    Notification_link NVARCHAR(100),
     FOREIGN KEY (User_id) REFERENCES Users(User_id) -- Tham chiếu khóa ngoại tới bảng Users
 );
 GO
@@ -187,10 +187,10 @@ CREATE TABLE Message (
     From_id INT NOT NULL, -- id người gửi, không được null
     To_id INT NOT NULL, -- id người nhận, không được null
     MessageText NVARCHAR(255) NOT NULL, -- Nội dung tin nhắn, không được null
-	FromUsername NVARCHAR(255) NOT NULL,
+    FromUsername NVARCHAR(255) NOT NULL,
     TimeStamp DATETIME DEFAULT GETDATE(), -- Thời gian gửi tin nhắn, mặc định là ngày hiện tại
     FOREIGN KEY (From_id) REFERENCES Users(User_id), -- Khóa ngoại tham chiếu đến người gửi
-    FOREIGN KEY (	To_id) REFERENCES Users(User_id) -- Khóa ngoại tham chiếu đến người nhận
+    FOREIGN KEY (To_id) REFERENCES Users(User_id) -- Khóa ngoại tham chiếu đến người nhận
 );
 GO
 -- Tạo bảng Feeback: lưu thông tin về phản hồi
