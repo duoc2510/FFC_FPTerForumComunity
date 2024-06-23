@@ -247,10 +247,10 @@
         <servlet-class>controller.chatAI</servlet-class>
     </servlet>
     <servlet>
-<<<<<<< HEAD
+
         <servlet-name>Advertising_Combo</servlet-name>
         <servlet-class>controller.Advertising_Combo</servlet-class>
-=======
+
         <servlet-name>User_Wallet</servlet-name>
         <servlet-class>controller.User_Wallet</servlet-class>
     </servlet>
@@ -261,7 +261,7 @@
     <servlet>
         <servlet-name>User_Wallet_Withdraw</servlet-name>
         <servlet-class>controller.User_Wallet_Withdraw</servlet-class>
->>>>>>> 973196799ca2cea2a6e0d597c46d7eda35a70a0b
+      
     </servlet>
     <servlet-mapping>
         <servlet-name>PostComment</servlet-name>
@@ -496,10 +496,10 @@
         <url-pattern>/payment</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-<<<<<<< HEAD
+    
         <servlet-name>Advertising_Combo</servlet-name>
         <url-pattern>/advertising/combo</url-pattern>
-=======
+
         <servlet-name>User_Wallet</servlet-name>
         <url-pattern>/wallet</url-pattern>
     </servlet-mapping>
@@ -510,7 +510,7 @@
     <servlet-mapping>
         <servlet-name>User_Wallet_Withdraw</servlet-name>
         <url-pattern>/wallet/withdraw</url-pattern>
->>>>>>> 973196799ca2cea2a6e0d597c46d7eda35a70a0b
+
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index_guest.jsp</welcome-file>
