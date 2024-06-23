@@ -7,12 +7,17 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light px-5">
+    <style>
+    .carousel-item {
+        transition: transform 0.6s ease, opacity 0.6s ease; /* Adjust the timing and easing function for smoother transitions */
+    }
+    </style>
+    <nav id="legends-nav" class="navbar navbar-expand-lg navbar-light bg-light px-5">
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <a class="navbar-brand" href="#"> <img src="${pageContext.request.contextPath}/static/images/logo.png" width="100" alt="" /></a>
-
+        
         <div class="collapse navbar-collapse justify-content-between" id="navbarTogglerDemo03">
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                 <li class="nav-item active">
@@ -28,26 +33,26 @@
         <section id="hero" class="hero section" style="padding-top: 60px;">
             <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
                 <ol class="carousel-indicators">
-                    <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-                    <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+                    <li data-target="#carouselExampleIndicators" data-slide-to="0" ></li>
+                    <li data-target="#carouselExampleIndicators" data-slide-to="1" class="active"></li>
                     <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
                 </ol>
                 <div class="carousel-inner">
-                    <div class="carousel-item active">
+                    <div class="carousel-item">
                         <img class="d-block w-100" src="${pageContext.request.contextPath}/static/images/banner_desktop.jpg" alt="First slide">
                     </div>
-                    <div class="carousel-item">
+                    <div class="carousel-item active">
                         <img class="d-block w-100" src="${pageContext.request.contextPath}/static/images/banner_fpt_v.league.jpg" alt="Second slide">
                     </div>
                     <div class="carousel-item">
                         <img class="d-block w-100" src="${pageContext.request.contextPath}/static/images/2048x560-gtbb_t3-2024.png" alt="Third slide">
                     </div>
                 </div>
-                <a class="carousel-control-prev"  role="button" data-slide="prev">
+                <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                     <span class="sr-only">Previous</span>
                 </a>
-                <a class="carousel-control-next" role="button" data-slide="next">
+                <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
                     <span class="carousel-control-next-icon" aria-hidden="true"></span>
                     <span class="sr-only">Next</span>
                 </a>
@@ -57,7 +62,6 @@
         <section id="about" class="about section">
             <div class="container" data-aos="fade-up">
                 <div class="row gx-0">
-
                     <div class="col-lg-6 d-flex flex-column justify-content-center" data-aos="fade-up" data-aos-delay="200">
                         <div class="content">
                             <h2>Who We Are</h2>
@@ -65,7 +69,6 @@
                             <p>
                                 Where we are dedicated to connecting the world through meaningful conversations and community engagement. Our platform provides a space for individuals from diverse backgrounds to come together, share their experiences, and build lasting connections. 
                             </p>
-
                             <div class="text-center text-lg-start">
                                 <a href="${pageContext.request.contextPath}/logingooglehandler?value=login" class="btn-read-more d-inline-flex align-items-center justify-content-center align-self-center">
                                     <span>Join</span>
@@ -74,64 +77,43 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="col-lg-6 px-4 d-flex align-items-center" data-aos="zoom-out" data-aos-delay="200">
                         <img src="${pageContext.request.contextPath}/static/images/group-27@2x-2.png" class="img-fluid" alt="">
                     </div>
-
                 </div>
             </div>
-
         </section><!-- /About Section -->
 
         <!-- Values Section -->
         <section id="values" class="values section">
-
             <!-- Section Title -->
             <div class="container section-title" data-aos="fade-up">
                 <h2> Values</h2>
                 <p>What we value most<br></p>
             </div><!-- End Section Title -->
-
             <div class="container">
-
                 <div class="row gy-4">
-
                     <div class="col-lg-4 px-2" data-aos="fade-up" data-aos-delay="100">
                         <div class="card">
-                            <img src="assets/img/values-1.png" class="img-fluid" alt="">
                             <h3>Inclusivity</h3>
                             <p>We are committed to creating a welcoming environment where everyone feels valued and respected. We celebrate diversity and ensure that every voice is heard, fostering a community where differences are not only accepted but cherished.</p>
                         </div>
                     </div><!-- End Card Item -->
-
                     <div class="col-lg-4 px-2" data-aos="fade-up" data-aos-delay="200">
                         <div class="card">
-                            <img src="assets/img/values-2.png" class="img-fluid" alt="">
                             <h3>Engagement</h3>
                             <p> We believe in the power of active participation and open dialogue. Our platform encourages members to share their thoughts, experiences, and ideas, promoting meaningful connections and insightful discussions that enrich our collective understanding.</p>
                         </div>
                     </div><!-- End Card Item -->
-
                     <div class="col-lg-4 px-2" data-aos="fade-up" data-aos-delay="300">
                         <div class="card">
-                            <img src="assets/img/values-3.png" class="img-fluid" alt="">
-                            <h3>Empowerment.</h3>
+                            <h3>Empowerment</h3>
                             <p>We strive to empower individuals by providing a supportive space for personal growth and development. By facilitating access to information, resources, and a network of supportive peers, make positive contributions to the world.</p>
                         </div>
                     </div><!-- End Card Item -->
-
                 </div>
-
             </div>
-
         </section><!-- /Values Section -->
-
-
-
-
-
-
 
         <!-- Faq Section -->
         <section id="faq" class="faq section">
@@ -140,7 +122,6 @@
                 <h2>F.A.Q</h2>
                 <p>Frequently Asked Questions</p>
             </div><!-- End Section Title -->
-
             <div class="container">
                 <div class="row">
                     <div class="px-2 col-lg-6" data-aos="fade-up" data-aos-delay="100">
@@ -198,7 +179,7 @@
                                 <div class="accordion-item">
                                     <h2 class="accordion-header" id="headingRightOne">
                                         <button data-mdb-button-init data-mdb-collapse-init class="accordion-button collapsed" type="button"
-                                                data-mdb-target="#collapseRightOne" aria-expanded="false" aria-controls="collapseRightOne">
+                                                data-mdb-target="#collapseRightOne" aria-expanded="false" aria-controls="#collapseRightOne">
                                             What should I do if I encounter inappropriate content?
                                         </button>
                                     </h2>
@@ -243,13 +224,9 @@
                 </div>
             </div>
         </section><!-- /Faq Section -->
-
-
     </main>
 
-
     <footer id="footer" class="footer">
-
         <div class="footer-newsletter">
             <div class="container">
                 <div class="row justify-content-center text-center">
@@ -275,20 +252,42 @@
         </div>
         <div class="container copyright text-center mt-4">
             <p>© <span>Copyright</span> <strong class="px-1 sitename">FPTer Developer Team 2024</strong> <span>All Rights Reserved</span></p>
-
         </div>
     </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.purecounter/0.3.4/jquery.purecounter.min.js"></script>
+
     <script>
         $(document).ready(function () {
-            $('.carousel').carousel({
-                interval: 1000
-            });
+        $('#carouselExampleIndicators').carousel({
+            interval: 3000, // Adjust the interval as needed (3000ms = 3 seconds)
+            ride: 'carousel'
         });
-    </script>
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+    var nav = document.getElementById('legends-nav');
+    var navOffset = nav.offsetTop; // Get the initial offset position of the navbar
 
+    function onScroll() {
+        if (window.pageYOffset > 0) {
+            nav.classList.add('fixed');
+            if (window.pageYOffset >= navOffset) {
+                nav.classList.add('overplay-blur');
+            }
+        } else {
+            nav.classList.remove('fixed');
+            nav.classList.remove('overplay-blur');
+        }
+    }
+
+    window.addEventListener('scroll', onScroll);
+});
+
+
+    </script>
 </body>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.purecounter/0.3.4/jquery.purecounter.min.js"></script>
 
 <%@ include file="include/footer.jsp" %>
