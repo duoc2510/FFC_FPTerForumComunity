@@ -97,4 +97,57 @@ public class Ads {
         this.URI = URI;
     }
 
+    @Override
+    public String toString() {
+        return "Ads{" + "Ads_id=" + Ads_id + ", AdsDetail_id=" + AdsDetail_id + ", Content=" + Content + ", Image=" + Image + ", User_id=" + User_id + ", currentView=" + currentView + ", location=" + location + ", URI=" + URI + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Ads ads = (Ads) o;
+
+        if (Ads_id != ads.Ads_id) {
+            return false;
+        }
+        if (AdsDetail_id != ads.AdsDetail_id) {
+            return false;
+        }
+        if (User_id != ads.User_id) {
+            return false;
+        }
+        if (!Content.equals(ads.Content)) {
+            return false;
+        }
+        if (!Image.equals(ads.Image)) {
+            return false;
+        }
+        if (!currentView.equals(ads.currentView)) {
+            return false;
+        }
+        if (!location.equals(ads.location)) {
+            return false;
+        }
+        return URI.equals(ads.URI);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Ads_id;
+        result = 31 * result + AdsDetail_id;
+        result = 31 * result + Content.hashCode();
+        result = 31 * result + Image.hashCode();
+        result = 31 * result + User_id;
+        result = 31 * result + currentView.hashCode();
+        result = 31 * result + location.hashCode();
+        result = 31 * result + URI.hashCode();
+        return result;
+    }
+
 }

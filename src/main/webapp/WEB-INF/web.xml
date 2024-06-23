@@ -183,8 +183,8 @@
         <servlet-class>controller.Advertising_MyAds</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>Advertising_boost</servlet-name>
-        <servlet-class>controller.Advertising_boost</servlet-class>
+        <servlet-name>Advertising_Boost</servlet-name>
+        <servlet-class>controller.Advertising_Boost</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Manager_report</servlet-name>
@@ -247,10 +247,6 @@
         <servlet-class>controller.chatAI</servlet-class>
     </servlet>
     <servlet>
-
-        <servlet-name>Advertising_Combo</servlet-name>
-        <servlet-class>controller.Advertising_Combo</servlet-class>
-
         <servlet-name>User_Wallet</servlet-name>
         <servlet-class>controller.User_Wallet</servlet-class>
     </servlet>
@@ -261,7 +257,10 @@
     <servlet>
         <servlet-name>User_Wallet_Withdraw</servlet-name>
         <servlet-class>controller.User_Wallet_Withdraw</servlet-class>
-      
+    </servlet>
+    <servlet>
+        <servlet-name>Advertising_Combo</servlet-name>
+        <servlet-class>controller.Advertising_Combo</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>PostComment</servlet-name>
@@ -428,7 +427,7 @@
         <url-pattern>/advertising</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>Advertising_boost</servlet-name>
+        <servlet-name>Advertising_Boost</servlet-name>
         <url-pattern>/advertising/boost</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
@@ -496,10 +495,6 @@
         <url-pattern>/payment</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-    
-        <servlet-name>Advertising_Combo</servlet-name>
-        <url-pattern>/advertising/combo</url-pattern>
-
         <servlet-name>User_Wallet</servlet-name>
         <url-pattern>/wallet</url-pattern>
     </servlet-mapping>
@@ -510,7 +505,10 @@
     <servlet-mapping>
         <servlet-name>User_Wallet_Withdraw</servlet-name>
         <url-pattern>/wallet/withdraw</url-pattern>
-
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Advertising_Combo</servlet-name>
+        <url-pattern>/advertising/combo</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index_guest.jsp</welcome-file>

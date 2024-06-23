@@ -1,11 +1,8 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
@@ -13,57 +10,19 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import java.io.File;
-import java.sql.Timestamp;
-import model.DAO.Event_DB;
-import model.Event;
+import model.Ads;
+import model.DAO.Ads_DB;
 import model.Upload;
 import model.User;
 
 @MultipartConfig(
         maxFileSize = 1024 * 1024 * 10 // 10 MB
 )
+public class Advertising_Boost extends HttpServlet {
 
-/**
- *
- * @author Admin
- */
-public class Advertising_boost extends HttpServlet {
+    private static final Logger logger = Logger.getLogger(Advertising_Boost.class.getName());
+    private static final String UPLOAD_DIR = "upload";
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet Advertising_boost</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet Advertising_boost at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -71,30 +30,54 @@ public class Advertising_boost extends HttpServlet {
         request.getRequestDispatcher("/advertising/boost.jsp").forward(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    private static final String UPLOAD_DIR = "Advertising_Upload";
-
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String title = request.getParameter("title");
-        String description = request.getParameter("description");
-        Timestamp startDate = Timestamp.valueOf(request.getParameter("start_date"));
-        Timestamp endDate = Timestamp.valueOf(request.getParameter("end_date"));
 
-        int userId = ((User) request.getSession().getAttribute("USER")).getUserId(); // Thay đổi từ "userID" sang "USER" và sử dụng phương thức getUserId()
+        String errorMessage = "";
 
-        Part filePart = request.getPart("upload_path");
-//        String fileName = extractFileName(filePart);
+        // Retrieve parameters from the form
+        String title = request.getParameter("productName");
+        String description = request.getParameter("productDescription");
+        String adsDetailIdStr = request.getParameter("adsDetailId");
 
-        // Tạo thư mục lưu trữ nếu chưa tồn tại
+        // Validate and convert adsDetailId
+        int adsDetailId = 0;
+        if (adsDetailIdStr != null && !adsDetailIdStr.isEmpty()) {
+            try {
+                adsDetailId = Integer.parseInt(adsDetailIdStr);
+            } catch (NumberFormatException e) {
+                errorMessage = "Invalid adsDetailId format.";
+                logger.log(Level.SEVERE, errorMessage, e);
+                request.setAttribute("errorMessage", errorMessage);
+                request.getRequestDispatcher("/error.jsp").forward(request, response);
+                return;
+            }
+        } else {
+            errorMessage = "adsDetailId is missing.";
+            logger.log(Level.SEVERE, errorMessage);
+            request.setAttribute("errorMessage", errorMessage);
+            request.getRequestDispatcher("/error.jsp").forward(request, response);
+            return;
+        }
+
+        User user = (User) request.getSession().getAttribute("USER");
+        if (user == null) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
+        int userId = user.getUserId();
+
+        Part filePart = request.getPart("file");
+        if (filePart == null || filePart.getSize() == 0) {
+            errorMessage = "File part is missing or empty.";
+            logger.log(Level.SEVERE, errorMessage);
+            request.setAttribute("errorMessage", errorMessage);
+            request.getRequestDispatcher("/error.jsp").forward(request, response);
+            return;
+        }
+        String fileName = extractFileName(filePart);
+
         String applicationPath = request.getServletContext().getRealPath("");
         String uploadFilePath = applicationPath + File.separator + UPLOAD_DIR;
         File uploadFolder = new File(uploadFilePath);
@@ -102,31 +85,59 @@ public class Advertising_boost extends HttpServlet {
             uploadFolder.mkdirs();
         }
 
-//        String savePath = uploadFilePath + File.separator + fileName;
-//        filePart.write(savePath);
-        // Đường dẫn lưu trong cơ sở dữ liệu
-//        String filePathForDatabase = UPLOAD_DIR + File.separator + fileName;
-        Event event = new Event(0, title, description, startDate, endDate, userId);
-//        Upload upload = new Upload(0, 0, 0, 0, filePathForDatabase); // Thay đổi savePath thành filePathForDatabase
+        String savePath = uploadFilePath + File.separator + fileName;
+        try {
+            filePart.write(savePath);
+        } catch (IOException e) {
+            errorMessage = "Failed to write file to disk.";
+            logger.log(Level.SEVERE, errorMessage, e);
+            request.setAttribute("errorMessage", errorMessage);
+            request.getRequestDispatcher("/error.jsp").forward(request, response);
+            return;
+        }
 
-        Event_DB eventDB = new Event_DB();
-//        if (eventDB.addEvent(event, upload)) {
-//            request.setAttribute("message", "Event added successfully!");
-//        } else {
-//            request.setAttribute("message", "Error adding event.");
-//        }
-        request.getRequestDispatcher("/advertising/boost.jsp").forward(request, response);
+        String filePathForDatabase = UPLOAD_DIR + File.separator + fileName;
 
+        Ads ads = new Ads();
+        ads.setAdsDetail_id(adsDetailId);
+        ads.setContent(description);
+        ads.setImage(filePathForDatabase);
+        ads.setUser_id(userId);
+        ads.setCurrentView(""); // Update as needed
+        ads.setLocation("");    // Update as needed
+        ads.setURI(request.getParameter("URI"));
+
+        Upload upload = new Upload();
+        upload.setEventId(0); // Update as needed
+        upload.setUploadPath(filePathForDatabase);
+
+        Ads_DB adsDB = new Ads_DB();
+        String message;
+        if (adsDB.boostAdsvertising(ads, upload)) {
+            message = "Advertising boosted successfully!";
+        } else {
+            message = "Failed to boost advertising.";
+            errorMessage = message;
+            logger.log(Level.SEVERE, errorMessage);
+        }
+
+        request.getSession().setAttribute("message", message);
+        response.sendRedirect(request.getContextPath() + "/advertising");
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
+    private String extractFileName(Part part) {
+        String contentDisp = part.getHeader("content-disposition");
+        String[] items = contentDisp.split(";");
+        for (String s : items) {
+            if (s.trim().startsWith("filename")) {
+                return s.substring(s.indexOf("=") + 2, s.length() - 1);
+            }
+        }
+        return "";
+    }
+
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
-
+    }
 }

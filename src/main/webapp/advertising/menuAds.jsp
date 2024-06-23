@@ -1,7 +1,7 @@
 <%-- 
     Document   : menuAds
     Created on : Jun 23, 2024, 3:20:38 PM
-    Author     : Admin
+    Author     : mac
 --%>
 
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>

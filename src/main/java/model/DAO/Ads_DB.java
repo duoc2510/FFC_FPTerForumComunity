@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import model.Ads;
 import model.Ads_combo;
+import model.Event;
+import model.Upload;
 
 public class Ads_DB implements DBinfo {
 
@@ -29,7 +31,7 @@ public class Ads_DB implements DBinfo {
 
             while (rs.next()) {
                 Ads_combo adsCombo = new Ads_combo();
-                // Assuming Ads_combo has appropriate setters to set these fields
+                adsCombo.setAdsDetailId(rs.getInt("Adsdetail_id"));
                 adsCombo.setContent(rs.getString("Content"));
                 adsCombo.setBudget(rs.getDouble("budget"));
                 adsCombo.setMaxView(rs.getInt("maxView"));
@@ -71,6 +73,58 @@ public class Ads_DB implements DBinfo {
             System.out.println("getAllAdsByUserID: Query execution failed.");
         }
         return allAds;
+    }
+
+    public boolean boostAdsvertising(Ads ads, Upload upload) {
+        // SQL Queries
+        String INSERT_ADS_QUERY = "INSERT INTO Ads (Adsdetail_id, Content, Image, User_id, currentView, location, URI) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String INSERT_UPLOAD_QUERY = "INSERT INTO Upload (Upload_id, UploadPath) VALUES (?, ?)";
+
+        try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement pstmtEvent = con.prepareStatement(INSERT_ADS_QUERY, PreparedStatement.RETURN_GENERATED_KEYS); PreparedStatement pstmtUpload = con.prepareStatement(INSERT_UPLOAD_QUERY)) {
+
+            con.setAutoCommit(false); // Begin transaction
+
+            // Set parameters for Ads table insertion
+            pstmtEvent.setInt(1, ads.getAdsDetail_id());
+            pstmtEvent.setString(2, ads.getContent());
+            pstmtEvent.setString(3, ads.getImage());
+            pstmtEvent.setInt(4, ads.getUser_id());
+            pstmtEvent.setString(5, ads.getCurrentView());
+            pstmtEvent.setString(6, ads.getLocation());
+            pstmtEvent.setString(7, ads.getURI());
+
+            // Execute insertion into Ads table
+            int affectedRows = pstmtEvent.executeUpdate();
+            if (affectedRows == 0) {
+                con.rollback();
+                return false;
+            }
+
+            // Retrieve the auto-generated Ads_id
+            ResultSet generatedKeys = pstmtEvent.getGeneratedKeys();
+            int adsId;
+            if (generatedKeys.next()) {
+                adsId = generatedKeys.getInt(1);
+            } else {
+                con.rollback();
+                return false;
+            }
+
+            // Set parameters for Upload table insertion
+            pstmtUpload.setInt(1, adsId);
+            pstmtUpload.setString(2, upload.getUploadPath());
+
+            // Execute insertion into Upload table
+            pstmtUpload.executeUpdate();
+
+            // Commit the transaction if everything is successful
+            con.commit();
+            return true;
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return false;
+        }
     }
 
 }

@@ -22,7 +22,7 @@ import model.User;
 
 /**
  *
- * @author Admin
+ * @author mac
  */
 public class Advertising_Combo extends HttpServlet {
 
@@ -64,9 +64,9 @@ public class Advertising_Combo extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         // Get the list of all ads combo
-        List<Ads_combo> allAdsCombo = Ads_DB.getAllAdsCombo();
+        Ads_DB ads_DB = new Ads_DB();
+        List<Ads_combo> allAdsCombo = ads_DB.getAllAdsCombo();
 
         // Set the list of ads combo as an attribute in the request
         request.setAttribute("allAdsCombo", allAdsCombo);
