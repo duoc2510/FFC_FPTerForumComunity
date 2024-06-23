@@ -10,12 +10,17 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.util.List;
+import model.Ads;
+import model.DAO.Ads_DB;
+import model.User;
 
 /**
  *
  * @author Admin
  */
-public class Advertising_allAds extends HttpServlet {
+public class Advertising_MyAds extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -55,9 +60,27 @@ public class Advertising_allAds extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        request.getRequestDispatcher("/advertising/index.jsp").forward(request, response);
+        // Get the session, do not create a new one if it doesn't exist
+        HttpSession session = request.getSession(false);
 
+        // Check if the user is logged in
+        if (session != null && session.getAttribute("USER") != null) {
+            // Retrieve the current user from the session
+            User currentUser = (User) session.getAttribute("USER");
+
+            // Fetch the list of ads for the current user
+            List<Ads> allAds = Ads_DB.getAllAdsByUserID(currentUser.getUserId());
+
+            // Set the list of ads as an attribute in the request
+            request.setAttribute("allAds", allAds);
+
+            // Set the response content type and forward the request to the JSP page
+            response.setContentType("text/html;charset=UTF-8");
+            request.getRequestDispatcher("/advertising/index.jsp").forward(request, response);
+        } else {
+            // If the user is not logged in, redirect to the login page or show an error message
+            response.sendRedirect("login.jsp");
+        }
     }
 
     /**

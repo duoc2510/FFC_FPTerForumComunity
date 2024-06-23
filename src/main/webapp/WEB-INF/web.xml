@@ -179,8 +179,8 @@
     </servlet>
     <!-- Mapping cho các servlet -->
     <servlet>
-        <servlet-name>Advertising_allAds</servlet-name>
-        <servlet-class>controller.Advertising_allAds</servlet-class>
+        <servlet-name>Advertising_MyAds</servlet-name>
+        <servlet-class>controller.Advertising_MyAds</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Advertising_boost</servlet-name>
@@ -245,6 +245,10 @@
     <servlet>
         <servlet-name>chatAI</servlet-name>
         <servlet-class>controller.chatAI</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Advertising_Combo</servlet-name>
+        <servlet-class>controller.Advertising_Combo</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>PostComment</servlet-name>
@@ -407,7 +411,7 @@
         <url-pattern>/search</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>Advertising_allAds</servlet-name>
+        <servlet-name>Advertising_MyAds</servlet-name>
         <url-pattern>/advertising</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
@@ -454,7 +458,7 @@
         <servlet-name>User_registerManager</servlet-name>
         <url-pattern>/registerManager</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>    
+    <servlet-mapping>
         <servlet-name>User_chat</servlet-name>
         <url-pattern>/messenger</url-pattern>
     </servlet-mapping>
@@ -477,6 +481,10 @@
     <servlet-mapping>
         <servlet-name>Payment</servlet-name>
         <url-pattern>/payment</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Advertising_Combo</servlet-name>
+        <url-pattern>/advertising/combo</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index_guest.jsp</welcome-file>

@@ -1,129 +1,76 @@
 <%-- 
     Document   : index
-    Created on : May 25, 2024, 9:43:06 PM
+    Created on : May 25, 2024, 9:43:06 PM
     Author     : mac
 --%>
-
-<%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 <%@ include file="../include/header.jsp" %>
-<style>
-    .card-img-top{
-        height:250px;
-        object-fit: cover;
-    }
-    .card-text{
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        width: 200px;
-        overflow: hidden;
-    }
-    .imgs-grid{
-        display: grid;
-        grid-template-columns: repeat(27, 1fr);
-        position: relative;
-    }
-    .imgs-grid .grid.grid-1 {
-        -ms-grid-column: 1;
-        -ms-grid-column-span: 18;
-        grid-column: 1 / span 18;
-        -ms-grid-row: 1;
-        -ms-grid-row-span: 27;
-        grid-row: 1 / span 27;
-    }
-    .imgs-grid .grid.grid-2 {
-        -ms-grid-column: 19;
-        -ms-grid-column-span: 27;
-        grid-column: 19 / span 27;
-        -ms-grid-row: 1;
-        -ms-grid-row-span: 5;
-        grid-row: 1 / span 5;
-        padding-left: 20px;
-    }
-    .imgs-grid .grid.grid-3 {
-        -ms-grid-column: 14;
-        -ms-grid-column-span: 16;
-        grid-column: 14 / span 16;
-        -ms-grid-row: 6;
-        -ms-grid-row-span: 27;
-        grid-row: 6 / span 27;
-        padding-top: 20px;
-    }
-    .imgs-grid .grid img {
-        border-radius: 20px;
-        max-width: 100%;
-    }
-</style>
 <body>
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
          data-sidebar-position="fixed" data-header-position="fixed">
-        <c:if test="${not empty sessionScope.USER}">
-            <%@ include file="../include/slidebar.jsp" %>
-        </c:if>
-        <c:if test="${empty sessionScope.USER}">
-            <%@ include file="../include/slidebar_guest.jsp" %>
-        </c:if>
+        <%@ include file="../include/slidebar.jsp" %>
         <div class="body-wrapper">
-            <c:if test="${not empty sessionScope.USER}">
-                <%@ include file="../include/navbar.jsp" %>
-            </c:if>
-            <c:if test="${empty sessionScope.USER}">
-                <%@ include file="../include/navbar_guest.jsp" %>
-            </c:if>
-            <div class="container-fluid">
-                <!--Control panel-->
-                <%@ include file="panel.jsp" %>
-
-
-                <div class="col-lg-12">
-                    <div class="w-100 row">
-                        <div class="col-md-12 p-2">
-                            <img class="w-100 rounded" src="${pageContext.request.contextPath}/static/images/bannerShop.jpg"/>
+            <%@ include file="../include/navbar.jsp" %>
+            <div class="container-fluid pb-2">
+                <div class="row">
+                    <div id="profile-wrapper">
+                        <div class="bg-white shadow rounded overflow-hidden">
+                            <div class="px-4 py-4 cover" style="background: url(${pageContext.request.contextPath}/upload/deli-2.png); height:250px;">
+                                <div class="media align-items-end profile-head">
+                                    <div class="profile mr-3 d-flex justify-content-between align-items-end">
+                                        <img src="${pageContext.request.contextPath}/${USER.userAvatar}" class="position-absolute rounded-circle img-thumbnail" style="object-fit: cover;">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-light pt-4 px-4 d-flex justify-content-between text-center">
+                                <div class="media-body mb-5 text-white">
+                                    <h4 class="mt-0 mb-0 position-relative" style="left: 6.5em">${USER.userFullName}</h4>
+                                </div>
+                                <ul class="list-inline mb-0"></ul>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="w-100 row mt-5">
-                        <div class="col-md-5 p-2">
-                            <h3>Boost My Branding</h3>
-                            <p>Growth your business with us, you can:</p>
-                            <ul class="list-unstyled custom-list my-4">
-
-
-                                <li>Giám sát tất cả các Trang, tài khoản và tài sản doanh nghiệp ở cùng một nơi.</li>
-                                <li>Dễ dàng tạo và quản lý quảng cáo cho tất cả các tài khoản.</li>
-                                <li>Theo dõi xem yếu tố nào hoạt động hiệu quả nhất bằng thông tin chi tiết về hiệu quả.</li>
-                            </ul>
-                            <button class="btn btn-primary mt-3">Join with us</button>
-                        </div>
-                        <div class="col-md-7 p-2">
-
-                        </div>
-
-                    </div>
-
-
                 </div>
-                <div>
-                    <!--Tao shop-->
-                    <%--<%@ include file="createShop.jsp" %>--%>
-
-                    <!--Xem tat ca san pham cua minh-->
-                    <%--<%@ include file="myProduct.jsp" %>--%>
-
-                    <!--Tao san pham -->
-                    <%--<%@ include file="createProduct.jsp" %>--%>
-
-                    <!--Xem tat ca san pham-->
-                    <%--<%@ include file="allProduct.jsp" %>--%>
-
-                    <!--Xem tien trinh giao hang -->
-                    <%--<%@ include file="checkProgress.jsp" %>--%>
+            </div>
+            <div class="container-fluid pt-0">
+                <div class="row form-settings d-flex justify-content-between">
+                    <div class="col-12 col-sm-5 px-2">
+                        <%@ include file="menuAds.jsp" %>
+                    </div>
+                    <div class="col-12 col-sm-7 px-2">
+                        <div class="bg-white shadow rounded p-4">
+                            <div>
+                                <div class="mb-4">
+                                    <h3>My Advertising</h3>
+                                    <h6>Payment Method</h6>
+                                </div>
+                                <div class="form-group pb-3">
+                                    <div class="d-flex flex-row align-items-center mb-4 pb-1">
+                                        <%--<c:forEach var="ads" items="${allAds}">--%>
+                                            <div class="card mb-3" style="width: 100%;">
+                                                <div class="row no-gutters">
+                                                    <div class="col-md-4">
+                                                        <img src="${pageContext.request.contextPath}/${ads.image}" class="card-img" alt="${ads.content}">
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        <div class="card-body">
+                                                            <h5 class="card-title">${ads.content}</h5>
+                                                            <p class="card-text"><small class="text-muted">Views: ${ads.currentView}</small></p>
+                                                            <p class="card-text"><small class="text-muted">Location: ${ads.location}</small></p>
+                                                            <p class="card-text"><small class="text-muted">URI: <a href="${ads.uri}" target="_blank">${ads.uri}</a></small></p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <%--</c:forEach>--%>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-
-    <%@ include file="../include/footer.jsp" %>
-
-
-
+</body>
+<%@ include file="../include/footer.jsp" %>
