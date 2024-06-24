@@ -1,15 +1,22 @@
 package controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
-import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.Collection;
 import model.Ads;
 import model.DAO.Ads_DB;
 import model.Upload;
@@ -20,124 +27,118 @@ import model.User;
 )
 public class Advertising_Boost extends HttpServlet {
 
-    private static final Logger logger = Logger.getLogger(Advertising_Boost.class.getName());
-    private static final String UPLOAD_DIR = "upload";
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        request.getRequestDispatcher("/advertising/boost.jsp").forward(request, response);
+        request.getRequestDispatcher("/advertising/index.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String action = request.getParameter("action");
 
-        String errorMessage = "";
+        switch (action) {
+            case "boost":
+                try {
+                    // Path to the directory where images will be stored
+                    String uploadPath = request.getServletContext().getRealPath("/upload");
 
-        // Retrieve parameters from the form
-        String title = request.getParameter("productName");
-        String description = request.getParameter("productDescription");
-        String adsDetailIdStr = request.getParameter("adsDetailId");
+                    // Create the directory if it doesn't exist
+                    File uploadDir = new File(uploadPath);
+                    if (!uploadDir.exists()) {
+                        uploadDir.mkdirs();
+                    }
 
-        // Validate and convert adsDetailId
-        int adsDetailId = 0;
-        if (adsDetailIdStr != null && !adsDetailIdStr.isEmpty()) {
-            try {
-                adsDetailId = Integer.parseInt(adsDetailIdStr);
-            } catch (NumberFormatException e) {
-                errorMessage = "Invalid adsDetailId format.";
-                logger.log(Level.SEVERE, errorMessage, e);
-                request.setAttribute("errorMessage", errorMessage);
-                request.getRequestDispatcher("/error.jsp").forward(request, response);
-                return;
-            }
-        } else {
-            errorMessage = "adsDetailId is missing.";
-            logger.log(Level.SEVERE, errorMessage);
-            request.setAttribute("errorMessage", errorMessage);
-            request.getRequestDispatcher("/error.jsp").forward(request, response);
-            return;
+                    // Retrieve parameters from the form
+                    String title = request.getParameter("Title");
+                    String content = request.getParameter("Content");
+                    int adsDetailId = Integer.parseInt(request.getParameter("adsDetailId"));
+                    String uri = request.getParameter("URI");
+
+                    // Create Ads object and populate it
+                    Ads ads = new Ads();
+                    ads.setAdsDetailId(adsDetailId);
+                    ads.setContent(content);
+                    ads.setImage("");  // Image path will be set later
+                    ads.setTitle(title);
+                    ads.setUserId(6);  // Assuming user ID is static for demo purposes
+                    ads.setCurrentView(0);  // Set initial view count
+                    ads.setLocation("");  // Assuming location will be set later
+                    ads.setUri(uri);
+
+                    // Handle image upload
+                    String fileName = null;
+                    Part filePart = request.getPart("file"); // Assuming the form field name is "file"
+                    if (filePart != null && filePart.getSubmittedFileName() != null && !filePart.getSubmittedFileName().isEmpty()) {
+                        fileName = extractFileName(filePart);
+
+                        // Save the image file
+                        try (InputStream input = filePart.getInputStream()) {
+                            Path filePath = new File(uploadDir, fileName).toPath();
+                            Files.copy(input, filePath, StandardCopyOption.REPLACE_EXISTING);
+
+                            // Set the image path in the Ads object
+                            String relativeImagePath = "upload" + File.separator + fileName;
+                            ads.setImage(relativeImagePath);
+                        }
+                    }
+
+                    ads.setUploadPath(fileName != null ? "upload" + File.separator + fileName : "");
+
+                    // Call boostAdvertising with the Ads object
+                    Ads_DB adsDB = new Ads_DB();
+                    adsDB.boostAdvertising(ads);
+
+                    // Redirect to the advertising page
+                    response.sendRedirect(request.getContextPath() + "/advertising");
+                } catch (Exception e) {
+                    e.printStackTrace(); // Log the exception for debugging
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while processing your request.");
+                }
+                break;
+
+            case "changeActive":
+                try {
+                    int adsId = Integer.parseInt(request.getParameter("adsId"));
+                    int isActive = Integer.parseInt(request.getParameter("isActive"));
+
+                    Ads_DB adsDB = new Ads_DB();
+                    adsDB.changeActive(adsId, isActive);
+
+                    // Respond with JSON
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write("{\"success\": true}");
+                } catch (Exception e) {
+                    e.printStackTrace(); // Log the exception for debugging
+
+                    // Respond with JSON error message
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write("{\"success\": false, \"message\": \"An error occurred while processing your request.\"}");
+                }
+                break;
+
+            default:
+                throw new AssertionError("Unknown action: " + action);
         }
-
-        User user = (User) request.getSession().getAttribute("USER");
-        if (user == null) {
-            response.sendRedirect(request.getContextPath() + "/login.jsp");
-            return;
-        }
-        int userId = user.getUserId();
-
-        Part filePart = request.getPart("file");
-        if (filePart == null || filePart.getSize() == 0) {
-            errorMessage = "File part is missing or empty.";
-            logger.log(Level.SEVERE, errorMessage);
-            request.setAttribute("errorMessage", errorMessage);
-            request.getRequestDispatcher("/error.jsp").forward(request, response);
-            return;
-        }
-        String fileName = extractFileName(filePart);
-
-        String applicationPath = request.getServletContext().getRealPath("");
-        String uploadFilePath = applicationPath + File.separator + UPLOAD_DIR;
-        File uploadFolder = new File(uploadFilePath);
-        if (!uploadFolder.exists()) {
-            uploadFolder.mkdirs();
-        }
-
-        String savePath = uploadFilePath + File.separator + fileName;
-        try {
-            filePart.write(savePath);
-        } catch (IOException e) {
-            errorMessage = "Failed to write file to disk.";
-            logger.log(Level.SEVERE, errorMessage, e);
-            request.setAttribute("errorMessage", errorMessage);
-            request.getRequestDispatcher("/error.jsp").forward(request, response);
-            return;
-        }
-
-        String filePathForDatabase = UPLOAD_DIR + File.separator + fileName;
-
-        Ads ads = new Ads();
-        ads.setAdsDetail_id(adsDetailId);
-        ads.setContent(description);
-        ads.setImage(filePathForDatabase);
-        ads.setUser_id(userId);
-        ads.setCurrentView(""); // Update as needed
-        ads.setLocation("");    // Update as needed
-        ads.setURI(request.getParameter("URI"));
-
-        Upload upload = new Upload();
-        upload.setEventId(0); // Update as needed
-        upload.setUploadPath(filePathForDatabase);
-
-        Ads_DB adsDB = new Ads_DB();
-        String message;
-        if (adsDB.boostAdsvertising(ads, upload)) {
-            message = "Advertising boosted successfully!";
-        } else {
-            message = "Failed to boost advertising.";
-            errorMessage = message;
-            logger.log(Level.SEVERE, errorMessage);
-        }
-
-        request.getSession().setAttribute("message", message);
-        response.sendRedirect(request.getContextPath() + "/advertising");
     }
 
+// Utility method to extract the file name from the Part header
     private String extractFileName(Part part) {
-        String contentDisp = part.getHeader("content-disposition");
-        String[] items = contentDisp.split(";");
-        for (String s : items) {
-            if (s.trim().startsWith("filename")) {
-                return s.substring(s.indexOf("=") + 2, s.length() - 1);
+        String contentDisposition = part.getHeader("content-disposition");
+        for (String cd : contentDisposition.split(";")) {
+            if (cd.trim().startsWith("filename")) {
+                return cd.substring(cd.indexOf('=') + 1).trim().replace("\"", "");
             }
         }
-        return "";
+        return null;
     }
 
     @Override
     public String getServletInfo() {
-        return "Short description";
+        return "Advertising Boost Servlet";
     }
 }

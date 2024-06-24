@@ -5,6 +5,8 @@
 --%>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 <%@ include file="../include/header.jsp" %>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
 <body>
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
          data-sidebar-position="fixed" data-header-position="fixed">
@@ -45,9 +47,12 @@
                                     <h6>Payment Method</h6>
                                 </div>
                                 <div class="form-group pb-3">
-                                    <div class="d-flex flex-row align-items-center mb-4 pb-1">
-                                        <%--<c:forEach var="ads" items="${allAds}">--%>
-                                            <div class="card mb-3" style="width: 100%;">
+                                    <div class="d-flex flex-row align-items-center mb-4 pb-1 row">
+                                        <c:forEach var="entry" items="${adsWithComboData}">
+                                            <c:set var="ads" value="${entry.key}" />
+                                            <c:set var="adsCombo" value="${entry.value}" />
+
+                                            <div class="card mb-3 col-12" style="width: 100%;">
                                                 <div class="row no-gutters">
                                                     <div class="col-md-4">
                                                         <img src="${pageContext.request.contextPath}/${ads.image}" class="card-img" alt="${ads.content}">
@@ -55,14 +60,34 @@
                                                     <div class="col-md-8">
                                                         <div class="card-body">
                                                             <h5 class="card-title">${ads.content}</h5>
-                                                            <p class="card-text"><small class="text-muted">Views: ${ads.currentView}</small></p>
-                                                            <p class="card-text"><small class="text-muted">Location: ${ads.location}</small></p>
-                                                            <p class="card-text"><small class="text-muted">URI: <a href="${ads.uri}" target="_blank">${ads.uri}</a></small></p>
+                                                            <p class="card-text mt-2">
+                                                                <small class="text-muted">Views: ${ads.currentView} / ${adsCombo.maxView}</small>
+                                                            </p>
+                                                            <p class="card-text mt-2">
+                                                                <small class="text-muted">Location: ${ads.location}</small>
+                                                            </p>
+                                                            <p class="card-text mt-2">
+                                                                <small class="text-muted">URL: <a href="${ads.uri}" target="_blank">${ads.uri}</a></small>
+                                                            </p>
+                                                            <p class="card-text mt-2">
+                                                            <div class="form-check form-switch">
+                                                                <input 
+                                                                    class="form-check-input" 
+                                                                    type="checkbox" 
+                                                                    ${ads.isActive == 1 ? 'checked' : ''}
+                                                                    onchange="handleActiveChange(${ads.adsId}, this.checked)"
+                                                                    >
+                                                                <label class="form-check-label" for="flexSwitchCheckChecked_${ads.adsId}">
+                                                                    ${ads.isActive == 1 ? 'Active' : 'Not active'}
+                                                                </label>
+                                                            </div>
+                                                            </p>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        <%--</c:forEach>--%>
+                                        </c:forEach>
+
                                     </div>
                                 </div>
                             </div>
@@ -73,4 +98,39 @@
         </div>
     </div>
 </body>
+<script>
+    function handleActiveChange(adsId, isActive) {
+        if (isActive == false) {
+            isActive = 0;
+        } else {
+            isActive = 1;
+        }
+        var data = {
+            action: "changeActive",
+            adsId: adsId,
+            isActive: isActive  // Convert boolean to integer (1 or 0)
+        };
+
+        $.ajax({
+            url: 'advertising/boost', // Update URL according to your servlet mapping
+            type: 'POST',
+            data: data,
+            dataType: 'json',
+            success: function (response) {
+                if (response.success) {
+                    swal("Success! Your advertising status has been changed!", {
+                        icon: "success",
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    swal("Error!", response.message, "error");
+                }
+            },
+            error: function (xhr, status, error) {
+                swal("Error!", "Unable to update advertising status.", "error");
+            }
+        });
+    }
+</script>
 <%@ include file="../include/footer.jsp" %>

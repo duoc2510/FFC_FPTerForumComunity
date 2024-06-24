@@ -4,6 +4,8 @@
 <%@ include file="../include/header.jsp" %>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
 <body>
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
          data-sidebar-position="fixed" data-header-position="fixed">
@@ -76,7 +78,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Boost your brand</h5>
+                        <h5 class="modal-title">Boost your brand ${adsCombo.content}</h5>
                         <button class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">×</span>
                         </button>
@@ -85,9 +87,9 @@
                         <div class="modal-body">
                             <div class="form-group mb-3">
                                 <label for="productNameInput">Title:</label>
-                                <input type="text" class="form-control" id="productNameInput" name="productName" required>
+                                <input type="text" class="form-control" name="Title" required>
                             </div>
-                            <div class="form-group mb-3">
+                            <div class="form-group mb-3" name="location">
                                 <label for="productPriceInput">Campus:</label>
                                 <div class="form-group">
                                     <div class="checkbox my-2">
@@ -114,18 +116,28 @@
                             </div>
                             <div class="form-group mb-3">
                                 <label for="productDescriptionInput">Content:</label>
-                                <textarea class="form-control" id="productDescriptionInput" name="productDescription" required></textarea>
+                                <textarea class="form-control" name="Content" required></textarea>
                             </div>
                             <div class="form-group mb-3">
                                 <label for="productURIInput">URI:</label>
-                                <input type="text" class="form-control" id="productURIInput" name="productURI" required>
+                                <input type="text" class="form-control" name="URI" required>
                             </div>
-                            <div class="form-group mb-3">
-                                <label for="productQuantityInput">Your wallet need:</label>
-                                <input type="text" class="form-control" id="productQuantityInput" name="productQuantity" value="${adsCombo.budget} VND" readonly>
+                            <div class="d-flex">
+                                <div class="col-6 form-group mb-3" style="padding-right: 2%">
+                                    <label for="productQuantityInput">View can get:</label>
+                                    <input type="text" class="form-control" value="${adsCombo.maxView}" readonly>
+                                </div>
+                                <div class="col-6 form-group mb-3">
+                                    <label for="productQuantityInput">Your wallet need:</label>
+                                    <input type="text" class="form-control" value="${adsCombo.budget} VND" readonly>
+                                </div>
                             </div>
                             <!-- Hidden input field -->
-                            <input type="hidden" name="action" value="add">
+                            <input type="hidden" name="adsDetailId" value="${adsCombo.adsDetailId}"/>
+                            <input type="hidden" id="campusArray" name="campusArray">
+                            <input type="hidden" name="action" value="boost">
+
+                            <!--<input type="hidden" name="action" value="add">-->
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">Pay</button>
@@ -139,6 +151,37 @@
     <script>
         $("#checkAll").click(function () {
             $(".check").prop('checked', $(this).prop('checked'));
+        });
+        $(document).ready(function () {
+            const checkboxes = $('input[name="campus"]');
+            const hiddenInput = $('#campusArray');
+            const checkAllBox = $('#checkAll');
+
+            function updateCampusArray() {
+                let selected = [];
+                checkboxes.each(function () {
+                    if ($(this).is(':checked') && this !== checkAllBox[0]) {
+                        selected.push($(this).val());
+                    }
+                });
+
+                if (checkAllBox.is(':checked')) {
+                    selected = ["All"];
+                }
+
+                hiddenInput.val(JSON.stringify(selected));
+            }
+
+            checkboxes.change(function () {
+                if (this === checkAllBox[0] && $(this).is(':checked')) {
+                    checkboxes.not(checkAllBox).prop('checked', false);
+                } else if (!$(this).is(':checked') && this === checkAllBox[0]) {
+                    checkAllBox.prop('checked', false);
+                }
+                updateCampusArray();
+            });
+
+            updateCampusArray();
         });
     </script>
 </body>

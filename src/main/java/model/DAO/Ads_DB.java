@@ -6,10 +6,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Ads;
 import model.Ads_combo;
-import model.Event;
 import model.Upload;
 
 public class Ads_DB implements DBinfo {
@@ -18,14 +21,14 @@ public class Ads_DB implements DBinfo {
         try {
             Class.forName(DBinfo.driver);
         } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
+            System.err.println("Error loading database driver: " + ex.getMessage());
         }
     }
 
-//    ADS CLASS MODAL ====================================
-    public static List<Ads_combo> getAllAdsCombo() {
+    // Retrieve all AdsCombo records
+    public List<Ads_combo> getAllAdsCombo() {
         List<Ads_combo> allAdsCombo = new ArrayList<>();
-        String query = "SELECT [Adsdetail_id], [Content], [budget], [maxView] FROM Combo_ads ORDER BY [Adsdetail_id] DESC";
+        String query = "SELECT * FROM Combo_ads ORDER BY Adsdetail_id DESC";
 
         try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
 
@@ -37,18 +40,75 @@ public class Ads_DB implements DBinfo {
                 adsCombo.setMaxView(rs.getInt("maxView"));
                 allAdsCombo.add(adsCombo);
             }
-            System.out.println("getAllCombo: Query executed successfully.");
+            System.out.println("getAllAdsCombo: Query executed successfully.");
         } catch (SQLException ex) {
-            ex.printStackTrace();
-            System.out.println("getAllCombo: Query execution failed.");
+            System.err.println("getAllAdsCombo: Query execution failed - " + ex.getMessage());
         }
         return allAdsCombo;
     }
 
-//    ADS CLASS MODAL ====================================
+    // Method to get all ads and their corresponding combo data
+    public Map<Ads, Ads_combo> getAllAdsWithComboData() {
+        Map<Ads, Ads_combo> adsWithComboData = new HashMap<>();
+
+        // Get all ads from the Ads table
+        List<Ads> allAds = getAllAds();
+
+        // Get all combo data from the Combo_ads table
+        List<Ads_combo> allComboAds = getAllComboAds();
+
+        // Create a map of Adsdetail_id to ComboAds
+        Map<Integer, Ads_combo> comboAdsMap = new HashMap<>();
+        for (Ads_combo combo : allComboAds) {
+            comboAdsMap.put(combo.getAdsDetailId(), combo);
+        }
+
+        // Associate each ad with its combo data
+        for (Ads ad : allAds) {
+            Ads_combo combo = comboAdsMap.get(ad.getAdsDetailId());
+            adsWithComboData.put(ad, combo);
+        }
+
+        return adsWithComboData;
+    }
+
+    // Implement method to retrieve all ads
+    public List<Ads> getAllAds() {
+        List<Ads> allAds = new ArrayList<>();
+        String query = "SELECT * FROM Ads";
+
+        try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Ads ads = new Ads();
+                ads.setAdsId(rs.getInt("Ads_id"));
+                ads.setAdsDetailId(rs.getInt("Adsdetail_id"));
+                ads.setContent(rs.getString("Content"));
+                ads.setImage(rs.getString("Image"));
+                ads.setUserId(rs.getInt("User_id"));
+                ads.setCurrentView(rs.getInt("currentView"));
+                ads.setLocation(rs.getString("location"));
+                ads.setTitle(rs.getString("Title"));
+                ads.setUri(rs.getString("URI"));
+                ads.setUploadPath(rs.getString("UploadPath"));
+                ads.setIsActive(rs.getInt("isActive"));
+                allAds.add(ads);
+            }
+            System.out.println("getAllAds: Query executed successfully.");
+        } catch (SQLException ex) {
+            System.err.println("getAllAds: Query execution failed - " + ex.getMessage());
+        }
+        return allAds;
+    }
+
+    public List<Ads_combo> getAllComboAds() {
+        return getAllAdsCombo();
+    }
+
+    // Retrieve all Ads records by User ID
     public static List<Ads> getAllAdsByUserID(int userId) {
         List<Ads> allAds = new ArrayList<>();
-        String query = "SELECT [Ads_id], [Adsdetail_id], [Content], [Image], [User_id], [currentView], [location], [URI] FROM Ads WHERE [User_id] = ?";
+        String query = "SELECT * FROM Ads WHERE User_id = ?";
 
         try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
 
@@ -56,75 +116,65 @@ public class Ads_DB implements DBinfo {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     Ads ads = new Ads();
-                    ads.setAds_id(rs.getInt("Ads_id"));
-                    ads.setAdsDetail_id(rs.getInt("Adsdetail_id"));
+                    ads.setAdsId(rs.getInt("Ads_id"));
+                    ads.setAdsDetailId(rs.getInt("Adsdetail_id"));
                     ads.setContent(rs.getString("Content"));
                     ads.setImage(rs.getString("Image"));
-                    ads.setUser_id(rs.getInt("User_id"));
-                    ads.setCurrentView(rs.getString("currentView"));
+                    ads.setUserId(rs.getInt("User_id"));
+                    ads.setCurrentView(rs.getInt("currentView"));
                     ads.setLocation(rs.getString("location"));
-                    ads.setURI(rs.getString("URI"));
+                    ads.setUri(rs.getString("URI"));
+                    ads.setIsActive(rs.getInt("isActive"));
+
                     allAds.add(ads);
                 }
             }
             System.out.println("getAllAdsByUserID: Query executed successfully.");
         } catch (SQLException ex) {
-            ex.printStackTrace();
-            System.out.println("getAllAdsByUserID: Query execution failed.");
+            System.err.println("getAllAdsByUserID: Query execution failed - " + ex.getMessage());
         }
         return allAds;
     }
 
-    public boolean boostAdsvertising(Ads ads, Upload upload) {
-        // SQL Queries
-        String INSERT_ADS_QUERY = "INSERT INTO Ads (Adsdetail_id, Content, Image, User_id, currentView, location, URI) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        String INSERT_UPLOAD_QUERY = "INSERT INTO Upload (Upload_id, UploadPath) VALUES (?, ?)";
+    // Boost advertising by inserting records into Ads and Upload tables
+    public static void boostAdvertising(Ads ads) {
 
-        try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement pstmtEvent = con.prepareStatement(INSERT_ADS_QUERY, PreparedStatement.RETURN_GENERATED_KEYS); PreparedStatement pstmtUpload = con.prepareStatement(INSERT_UPLOAD_QUERY)) {
+        String insertQuery = "INSERT INTO Ads (Adsdetail_id, Content, Image, User_id, currentView, location, URI, UploadPath,isActive) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)";
 
-            con.setAutoCommit(false); // Begin transaction
-
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(insertQuery)) {
             // Set parameters for Ads table insertion
-            pstmtEvent.setInt(1, ads.getAdsDetail_id());
-            pstmtEvent.setString(2, ads.getContent());
-            pstmtEvent.setString(3, ads.getImage());
-            pstmtEvent.setInt(4, ads.getUser_id());
-            pstmtEvent.setString(5, ads.getCurrentView());
-            pstmtEvent.setString(6, ads.getLocation());
-            pstmtEvent.setString(7, ads.getURI());
-
+            pstmt.setInt(1, ads.getAdsDetailId());
+            pstmt.setString(2, ads.getContent());
+            pstmt.setString(3, ads.getImage());
+            pstmt.setInt(4, ads.getUserId());
+            pstmt.setInt(5, ads.getCurrentView());
+            pstmt.setString(6, ads.getLocation());
+            pstmt.setString(7, ads.getUri());
+            pstmt.setString(8, ads.getUploadPath());
+            pstmt.setInt(9, 1); // active 
             // Execute insertion into Ads table
-            int affectedRows = pstmtEvent.executeUpdate();
-            if (affectedRows == 0) {
-                con.rollback();
-                return false;
-            }
-
-            // Retrieve the auto-generated Ads_id
-            ResultSet generatedKeys = pstmtEvent.getGeneratedKeys();
-            int adsId;
-            if (generatedKeys.next()) {
-                adsId = generatedKeys.getInt(1);
-            } else {
-                con.rollback();
-                return false;
-            }
-
-            // Set parameters for Upload table insertion
-            pstmtUpload.setInt(1, adsId);
-            pstmtUpload.setString(2, upload.getUploadPath());
-
-            // Execute insertion into Upload table
-            pstmtUpload.executeUpdate();
-
-            // Commit the transaction if everything is successful
-            con.commit();
-            return true;
+            pstmt.executeUpdate();
 
         } catch (SQLException ex) {
-            ex.printStackTrace();
-            return false;
+            Logger.getLogger(Ads_DB.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    public void changeActive(int adsId, int isActive) {
+        String sql = "UPDATE Ads SET isActive = ? WHERE Ads_id = ?";
+
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(sql)) {
+
+            pstmt.setInt(1, isActive);
+            pstmt.setInt(2, adsId);
+
+            pstmt.executeUpdate();
+            System.out.println("Advertising status updated successfully.");
+        } catch (SQLException ex) {
+            Logger.getLogger(Ads_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+   
 
 }
