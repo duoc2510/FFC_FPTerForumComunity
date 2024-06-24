@@ -8,16 +8,16 @@
 
 <body>
     <style>
-    .carousel-item {
-        transition: transform 0.6s ease, opacity 0.6s ease; /* Adjust the timing and easing function for smoother transitions */
-    }
+        .carousel-item {
+            transition: transform 0.6s ease, opacity 0.6s ease; /* Adjust the timing and easing function for smoother transitions */
+        }
     </style>
     <nav id="legends-nav" class="navbar navbar-expand-lg navbar-light bg-light px-5">
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <a class="navbar-brand" href="#"> <img src="${pageContext.request.contextPath}/static/images/logo.png" width="100" alt="" /></a>
-        
+
         <div class="collapse navbar-collapse justify-content-between" id="navbarTogglerDemo03">
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                 <li class="nav-item active">
@@ -262,32 +262,18 @@
 
     <script>
         $(document).ready(function () {
-        $('#carouselExampleIndicators').carousel({
-            interval: 3000, // Adjust the interval as needed (3000ms = 3 seconds)
-            ride: 'carousel'
+            $('#carouselExampleIndicators').carousel({
+                interval: 3000, // Adjust the interval as needed (3000ms = 3 seconds)
+                ride: 'carousel'
+            });
         });
-    });
-    document.addEventListener('DOMContentLoaded', function () {
-    var nav = document.getElementById('legends-nav');
-    var navOffset = nav.offsetTop; // Get the initial offset position of the navbar
 
-    function onScroll() {
-        if (window.pageYOffset > 0) {
-            nav.classList.add('fixed');
-            if (window.pageYOffset >= navOffset) {
-                nav.classList.add('overplay-blur');
-            }
-        } else {
-            nav.classList.remove('fixed');
-            nav.classList.remove('overplay-blur');
-        }
-    }
-
-    window.addEventListener('scroll', onScroll);
-});
 
 
     </script>
 </body>
 
 <%@ include file="include/footer.jsp" %>
+document.addEventListener('DOMContentLoaded', function () {
+var nav = document.getElementById('legends-nav');
+var navOffset = nav.offsetTop; // Get the initial offset position of the navbar
