@@ -89,25 +89,15 @@
                                 <label for="productNameInput">Title:</label>
                                 <input type="text" class="form-control" name="Title" required>
                             </div>
-                            <div class="form-group mb-3" name="location">
+                            <div class="form-group mb-3">
                                 <label for="productPriceInput">Campus:</label>
-                                <div class="form-group">
+                                <div class="form-group" id="checkboxLocation">
                                     <div class="checkbox my-2">
                                         <label>
-                                            <input type="checkbox" class="check" id="checkAll" name="campus" value="All"> All campus
+                                            <input type="checkbox" name="campus" class="check" id="checkAll" value="All"> All campus
                                         </label>
                                     </div>
-                                    <div class="checkbox my-2">
-                                        <label>
-                                            <input type="checkbox" class="check" name="campus" value="Ha Noi"> Ha Noi
-                                        </label>
-                                    </div>
-                                    <div class="checkbox my-2">
-                                        <label>
-                                            <input type="checkbox" class="check" name="campus" value="Da Nang"> Da Nang
-                                        </label>
-                                    </div>
-                                    <!-- Add other campus checkboxes as needed -->
+                                    <!-- Add other campus checkboxes as json -->
                                 </div>
                             </div>
                             <div class="form-group mb-3">
@@ -134,7 +124,7 @@
                             </div>
                             <!-- Hidden input field -->
                             <input type="hidden" name="adsDetailId" value="${adsCombo.adsDetailId}"/>
-                            <input type="hidden" id="campusArray" name="campusArray">
+                            <input type="hidden" id="location" name="location">
                             <input type="hidden" name="action" value="boost">
 
                             <!--<input type="hidden" name="action" value="add">-->
@@ -149,40 +139,52 @@
     </c:forEach>
 
     <script>
-        $("#checkAll").click(function () {
-            $(".check").prop('checked', $(this).prop('checked'));
-        });
         $(document).ready(function () {
-            const checkboxes = $('input[name="campus"]');
-            const hiddenInput = $('#campusArray');
-            const checkAllBox = $('#checkAll');
-
-            function updateCampusArray() {
-                let selected = [];
-                checkboxes.each(function () {
-                    if ($(this).is(':checked') && this !== checkAllBox[0]) {
-                        selected.push($(this).val());
-                    }
+            $.getJSON('${pageContext.request.contextPath}/static/json/data.json', function (data) {
+                // Iterate over each campus in the JSON data
+                $.each(data.Campus, function (index, campus) {
+                    // Append a checkbox for each campus
+                    $('#checkboxLocation').append('<div class="checkbox my-2"><label><input type="checkbox" class="check" name="campus" value="' + campus.ID + '">' + campus.Name + '</label></div>');
                 });
 
-                if (checkAllBox.is(':checked')) {
-                    selected = ["All"];
+                // Selectors for dynamically added checkboxes
+                const checkboxes = $('#checkboxLocation input[name="campus"]');
+                const hiddenInput = $('#location');
+                const checkAllBox = $('#checkAll');
+
+                function updateCampusArray() {
+                    let selected = [];
+                    checkboxes.each(function () {
+                        if ($(this).is(':checked') && this !== checkAllBox[0]) {
+                            selected.push($(this).val());
+                        }
+                    });
+
+                    if (checkAllBox.is(':checked')) {
+                        selected = ["All"];
+                    }
+
+                    hiddenInput.val(JSON.stringify(selected));
                 }
 
-                hiddenInput.val(JSON.stringify(selected));
-            }
+                checkboxes.change(function () {
+                    if (this === checkAllBox[0] && $(this).is(':checked')) {
+                        checkboxes.not(checkAllBox).prop('checked', false);
+                    } else if (!$(this).is(':checked') && this === checkAllBox[0]) {
+                        checkAllBox.prop('checked', false);
+                    }
+                    updateCampusArray();
+                });
 
-            checkboxes.change(function () {
-                if (this === checkAllBox[0] && $(this).is(':checked')) {
-                    checkboxes.not(checkAllBox).prop('checked', false);
-                } else if (!$(this).is(':checked') && this === checkAllBox[0]) {
-                    checkAllBox.prop('checked', false);
-                }
-                updateCampusArray();
+                $("#checkAll").click(function () {
+                    checkboxes.not(checkAllBox).prop('checked', $(this).prop('checked'));
+                    updateCampusArray();
+                });
+
+                updateCampusArray(); // Initial update
             });
-
-            updateCampusArray();
         });
+       
     </script>
 </body>
 </html>

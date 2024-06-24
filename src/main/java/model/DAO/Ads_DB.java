@@ -83,12 +83,13 @@ public class Ads_DB implements DBinfo {
                 Ads ads = new Ads();
                 ads.setAdsId(rs.getInt("Ads_id"));
                 ads.setAdsDetailId(rs.getInt("Adsdetail_id"));
+                ads.setTitle(rs.getString("Title"));
                 ads.setContent(rs.getString("Content"));
                 ads.setImage(rs.getString("Image"));
                 ads.setUserId(rs.getInt("User_id"));
                 ads.setCurrentView(rs.getInt("currentView"));
                 ads.setLocation(rs.getString("location"));
-                ads.setTitle(rs.getString("Title"));
+
                 ads.setUri(rs.getString("URI"));
                 ads.setUploadPath(rs.getString("UploadPath"));
                 ads.setIsActive(rs.getInt("isActive"));
@@ -139,7 +140,7 @@ public class Ads_DB implements DBinfo {
     // Boost advertising by inserting records into Ads and Upload tables
     public static void boostAdvertising(Ads ads) {
 
-        String insertQuery = "INSERT INTO Ads (Adsdetail_id, Content, Image, User_id, currentView, location, URI, UploadPath,isActive) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)";
+        String insertQuery = "INSERT INTO Ads (Adsdetail_id, Content, Image, User_id, currentView, location, Title, URI, UploadPath,isActive) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?,?)";
 
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(insertQuery)) {
             // Set parameters for Ads table insertion
@@ -149,9 +150,10 @@ public class Ads_DB implements DBinfo {
             pstmt.setInt(4, ads.getUserId());
             pstmt.setInt(5, ads.getCurrentView());
             pstmt.setString(6, ads.getLocation());
-            pstmt.setString(7, ads.getUri());
-            pstmt.setString(8, ads.getUploadPath());
-            pstmt.setInt(9, 1); // active 
+            pstmt.setString(7, ads.getTitle());
+            pstmt.setString(8, ads.getUri());
+            pstmt.setString(9, ads.getUploadPath());
+            pstmt.setInt(10, 1); // active 
             // Execute insertion into Ads table
             pstmt.executeUpdate();
 
@@ -174,7 +176,5 @@ public class Ads_DB implements DBinfo {
             Logger.getLogger(Ads_DB.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
-   
 
 }

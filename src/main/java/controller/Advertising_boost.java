@@ -38,6 +38,7 @@ public class Advertising_Boost extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
+        User user = (User) request.getSession().getAttribute("USER");
 
         switch (action) {
             case "boost":
@@ -56,16 +57,16 @@ public class Advertising_Boost extends HttpServlet {
                     String content = request.getParameter("Content");
                     int adsDetailId = Integer.parseInt(request.getParameter("adsDetailId"));
                     String uri = request.getParameter("URI");
+                    String location = request.getParameter("location");
 
                     // Create Ads object and populate it
                     Ads ads = new Ads();
                     ads.setAdsDetailId(adsDetailId);
-                    ads.setContent(content);
-                    ads.setImage("");  // Image path will be set later
                     ads.setTitle(title);
-                    ads.setUserId(6);  // Assuming user ID is static for demo purposes
+                    ads.setContent(content);
+                    ads.setUserId(user.getUserId());  // Assuming user ID is static for demo purposes
                     ads.setCurrentView(0);  // Set initial view count
-                    ads.setLocation("");  // Assuming location will be set later
+                    ads.setLocation(location);  // Assuming location will be set later
                     ads.setUri(uri);
 
                     // Handle image upload
