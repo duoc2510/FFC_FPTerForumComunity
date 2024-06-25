@@ -16,10 +16,12 @@
                 <div class="row">
                     <div id="profile-wrapper">
                         <div class="bg-white shadow rounded overflow-hidden">
-                            <div class="px-4 py-4 cover cover" style="background: url(${pageContext.request.contextPath}/upload/deli-2.png); height:250px;">
+                            <div class="px-4 py-4 cover cover"
+                                 style="background: url(${pageContext.request.contextPath}/upload/deli-2.png); height:250px;">
                                 <div class="media align-items-end profile-head">
                                     <div class="profile mr-3 d-flex justify-content-between align-items-end">
-                                        <img src="${pageContext.request.contextPath}/${USER.userAvatar}" class="position-absolute rounded-circle img-thumbnail" style="object-fit: cover;">
+                                        <img src="${pageContext.request.contextPath}/${USER.userAvatar}"
+                                             class="position-absolute rounded-circle img-thumbnail" style="object-fit: cover;">
                                     </div>
                                 </div>
                             </div>
@@ -50,12 +52,20 @@
                                 <div class="form-group pb-3">
                                     <c:forEach var="adsCombo" items="${allAdsCombo}">
                                         <div data-ads="${adsCombo.adsDetailId}" class="d-flex flex-row align-items-center mb-4 pb-1">
-                                            <img class="img-fluid" src="https://nhanhoa.com/templates/images/v2/kim_cuong.png" />
+                                            <img class="img-fluid" src="https://nhanhoa.com/templates/images/v2/kim_cuong.png"/>
                                             <div class="flex-fill mx-3 d-flex">
                                                 <div data-mdb-input-init class="form-outline col-11">
-                                                    <h6>${adsCombo.content}</h6>
+                                                    <h6>${adsCombo.title}</h6>
                                                     <p>View post: ${adsCombo.maxView}</p>
                                                     <p>${adsCombo.budget} VND</p>
+                                                    <p>Rate: <c:choose>
+                                                            <c:when test="${adsCombo.maxView > 0}">
+                                                                ${adsCombo.budget / adsCombo.maxView} VND per view
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                0 VND per view
+                                                            </c:otherwise>
+                                                        </c:choose></p>
                                                 </div>
                                                 <div class="col-1 d-flex justify-content-center align-items-center">
                                                     <a class="btn btn-primary" data-toggle="modal" data-target="#addProduct${adsCombo.adsDetailId}" href="javascript:void(0)">Boost</a>
@@ -72,33 +82,31 @@
         </div>
         <%@ include file="../include/footer.jsp" %>
     </div>
+
     <!-- Modals to add new Advertising by Package -->
     <c:forEach var="adsCombo" items="${allAdsCombo}">
         <div class="modal fade" id="addProduct${adsCombo.adsDetailId}" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Boost your brand ${adsCombo.content}</h5>
-                        <button class="close" data-dismiss="modal" aria-label="Close">
+                        <h5 class="modal-title">Boost your brand ${adsCombo.title}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">×</span>
                         </button>
                     </div>
-                    <form action="boost" method="post" enctype="multipart/form-data">
+                    <form action="${pageContext.request.contextPath}/advertising/boost" method="post" enctype="multipart/form-data">
                         <div class="modal-body">
                             <div class="form-group mb-3">
                                 <label for="productNameInput">Title:</label>
                                 <input type="text" class="form-control" name="Title" required>
                             </div>
-                            <div class="form-group mb-3">
-                                <label for="productPriceInput">Campus:</label>
-                                <div class="form-group" id="checkboxLocation">
-                                    <div class="checkbox my-2">
-                                        <label>
-                                            <input type="checkbox" name="campus" class="check" id="checkAll" value="All"> All campus
-                                        </label>
-                                    </div>
-                                    <!-- Add other campus checkboxes as json -->
+                            <div class="form-group checkboxLocation">
+                                <div class="checkbox my-2">
+                                    <label>
+                                        <input type="checkbox" name="campus" class="check" id="checkAll" value="All"> All campus
+                                    </label>
                                 </div>
+                                <!-- Other checkboxes will be dynamically added here -->
                             </div>
                             <div class="form-group mb-3">
                                 <label for="fileInput">Choose Image File:</label>
@@ -122,14 +130,13 @@
                                     <input type="text" class="form-control" value="${adsCombo.budget} VND" readonly>
                                 </div>
                             </div>
-                            <!-- Hidden input field -->
+                            <!-- Hidden input fields -->
                             <input type="hidden" name="adsDetailId" value="${adsCombo.adsDetailId}"/>
-                            <input type="hidden" id="location" name="location">
+                            <input type="hidden" id="location${adsCombo.adsDetailId}" name="location">
                             <input type="hidden" name="action" value="boost">
-
-                            <!--<input type="hidden" name="action" value="add">-->
                         </div>
                         <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                             <button type="submit" class="btn btn-primary">Pay</button>
                         </div>
                     </form>
@@ -144,11 +151,11 @@
                 // Iterate over each campus in the JSON data
                 $.each(data.Campus, function (index, campus) {
                     // Append a checkbox for each campus
-                    $('#checkboxLocation').append('<div class="checkbox my-2"><label><input type="checkbox" class="check" name="campus" value="' + campus.ID + '">' + campus.Name + '</label></div>');
+                    $('.checkboxLocation').append('<div class="checkbox my-2"><label><input type="checkbox" class="check" name="campus" value="' + campus.ID + '">' + campus.Name + '</label></div>');
                 });
 
                 // Selectors for dynamically added checkboxes
-                const checkboxes = $('#checkboxLocation input[name="campus"]');
+                const checkboxes = $('.checkboxLocation input[name="campus"]');
                 const hiddenInput = $('#location');
                 const checkAllBox = $('#checkAll');
 
@@ -181,10 +188,10 @@
                     updateCampusArray();
                 });
 
-                updateCampusArray(); // Initial update
+                updateCampusArray(); // Initial update  
             });
         });
-       
+
     </script>
 </body>
 </html>

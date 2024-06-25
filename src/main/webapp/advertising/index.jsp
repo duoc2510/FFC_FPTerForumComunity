@@ -53,9 +53,9 @@
                                             <c:set var="adsCombo" value="${entry.value}" />
 
                                             <div class="card mb-3 col-12" style="width: 100%;">
-                                                <div class="row no-gutters">
+                                                <div class="row no-gutters px-3">
                                                     <div class="col-md-4">
-                                                        <img src="${pageContext.request.contextPath}/${ads.image}" class="card-img" alt="${ads.content}">
+                                                        <img src="${pageContext.request.contextPath}/${ads.image}" class="card-img h-100" alt="${ads.content}">
                                                     </div>
                                                     <div class="col-md-8">
                                                         <div class="card-body">

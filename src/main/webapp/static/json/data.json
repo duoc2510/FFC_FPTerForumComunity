@@ -1,24 +1,9 @@
 {
     "Campus": [
-        {
-            "ID": 1,
-            "Name": "Ha Noi"
-        },
-        {
-            "ID": 2,
-            "Name": "Da Nang"
-        },
-        {
-            "ID": 3,
-            "Name": "Quy Nhon"
-        },
-        {
-            "ID": 4,
-            "Name": "Ho Chi Minh"
-        },
-        {
-            "ID": 5,
-            "Name": "Can Tho"
-        }
+        {"ID": 1, "Name": "Ha Noi"},
+        {"ID": 2, "Name": "Da Nang"},
+        {"ID": 3, "Name": "Quy Nhon"},
+        {"ID": 4, "Name": "Ho Chi Minh"},
+        {"ID": 5, "Name": "Can Tho"}
     ]
 }

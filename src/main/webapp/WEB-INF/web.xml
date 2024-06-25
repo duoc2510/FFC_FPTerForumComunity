@@ -266,6 +266,10 @@
         <servlet-name>Advertising_Library</servlet-name>
         <servlet-class>controller.Advertising_Library</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>Advertising_Campaign</servlet-name>
+        <servlet-class>controller.Advertising_Campaign</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>PostComment</servlet-name>
         <url-pattern>/comment</url-pattern>
@@ -517,6 +521,10 @@
     <servlet-mapping>
         <servlet-name>Advertising_Library</servlet-name>
         <url-pattern>/advertising/library</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Advertising_Campaign</servlet-name>
+        <url-pattern>/advertising/campaign</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index_guest.jsp</welcome-file>

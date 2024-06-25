@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Date;
+
 public class Ads {
 
     private int adsId;
@@ -13,11 +15,12 @@ public class Ads {
     private String uri;
     private String uploadPath;
     private int isActive;
+    private Date startDate;
 
     public Ads() {
     }
 
-    public Ads(int adsId, int adsDetailId, String content, String image, int userId, int currentView, String location, String title, String uri, String uploadPath, int isActive) {
+    public Ads(int adsId, int adsDetailId, String content, String image, int userId, int currentView, String location, String title, String uri, String uploadPath, int isActive, Date startDate) {
         this.adsId = adsId;
         this.adsDetailId = adsDetailId;
         this.content = content;
@@ -29,6 +32,7 @@ public class Ads {
         this.uri = uri;
         this.uploadPath = uploadPath;
         this.isActive = isActive;
+        this.startDate = startDate;
     }
 
     public int getAdsId() {
@@ -119,9 +123,18 @@ public class Ads {
         this.isActive = isActive;
     }
 
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
     @Override
     public String toString() {
-        return "Ads{" + "adsId=" + adsId + ", adsDetailId=" + adsDetailId + ", content=" + content + ", image=" + image + ", userId=" + userId + ", currentView=" + currentView + ", location=" + location + ", title=" + title + ", uri=" + uri + ", uploadPath=" + uploadPath + ", isActive=" + isActive + '}';
+        return "Ads{" + "adsId=" + adsId + ", adsDetailId=" + adsDetailId + ", content=" + content + ", image=" + image + ", userId=" + userId + ", currentView=" + currentView + ", location=" + location + ", title=" + title + ", uri=" + uri + ", uploadPath=" + uploadPath + ", isActive=" + isActive + ", startDate=" + startDate + '}';
     }
+    
 
 }
