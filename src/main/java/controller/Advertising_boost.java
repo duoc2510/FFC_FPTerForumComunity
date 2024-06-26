@@ -3,7 +3,6 @@ package controller;
 import java.io.File;
 import java.io.IOException;
 
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
@@ -11,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -111,6 +111,29 @@ public class Advertising_Boost extends HttpServlet {
                     response.setContentType("application/json");
                     response.setCharacterEncoding("UTF-8");
                     response.getWriter().write("{\"success\": true}");
+                } catch (Exception e) {
+                    e.printStackTrace(); // Log the exception for debugging
+
+                    // Respond with JSON error message
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write("{\"success\": false, \"message\": \"An error occurred while processing your request.\"}");
+                }
+                break;
+
+            case "delete":
+                try {
+                    int adsId = Integer.parseInt(request.getParameter("id"));
+                    Ads_DB adsDB = new Ads_DB();
+                    adsDB.removeAdvertising(adsId);
+
+                    // Trả về phản hồi JSON
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    PrintWriter out = response.getWriter();
+                    out.print("{\"success\": true}");
+                    out.flush();
+
                 } catch (Exception e) {
                     e.printStackTrace(); // Log the exception for debugging
 

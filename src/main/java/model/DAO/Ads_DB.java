@@ -325,5 +325,20 @@ public class Ads_DB implements DBinfo {
             Logger.getLogger(Ads_DB.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    
+    public void removeAdvertising(int adsId) {
+        String sql = "DELETE FROM Ads WHERE Ads_id = ?";
+
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(sql)) {
+
+            pstmt.setInt(1, adsId);
+
+            pstmt.executeUpdate();
+            System.out.println("Advertising status updated successfully.");
+        } catch (SQLException ex) {
+            Logger.getLogger(Ads_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
 }

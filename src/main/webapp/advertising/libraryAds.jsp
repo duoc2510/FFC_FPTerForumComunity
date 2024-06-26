@@ -71,39 +71,44 @@
                                                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
                                             </div>
                                         </form>
+                                        <div class=" mb-3 col-12" style="width: 100%;">
+                                            <div class="row no-gutters px-3">
+                                                ${adsWithComboData}
+                                                <c:forEach var="entry" items="${adsWithComboData}">
+                                                    <c:set var="ads" value="${entry.key}" />
+                                                    <c:set var="adsCombo" value="${entry.value}" />
 
-                                        <c:forEach var="entry" items="${adsWithComboData}">
-                                            <c:set var="ads" value="${entry.key}" />
-                                            <c:set var="adsCombo" value="${entry.value}" />
+                                                    <c:if test="${ads.isActive ==1}">
+                                                        <div class="col-6 px-2">
+                                                            <img src="${pageContext.request.contextPath}/${ads.image}" class=" card-img w-100" alt="${ads.content}" style="height: 300px; object-fit: cover; border: 0px solid;border-radius:10px 10px 0 0; ">
 
-                                            <div class="card mb-3 col-12" style="width: 100%;">
-                                                <div class="row no-gutters">
-                                                    <div class="col-md-4">
-                                                        <img src="${pageContext.request.contextPath}/${ads.image}" class="card-img" alt="${ads.content}">
-                                                    </div>
-                                                    <div class="col-md-8">
-                                                        <div class="card-body">
-                                                            <h5 class="card-title">${ads.content}</h5>
-                                                            <p class="card-text mt-2">
-                                                                <small class="text-muted">Views: ${ads.currentView} / ${adsCombo.maxView}</small>
-                                                            </p>
-                                                            <p class="card-text mt-2">
-                                                                <small class="text-muted">Location: ${ads.location}</small>
-                                                            </p>
-                                                            <p class="card-text mt-2">
-                                                                <small class="text-muted">URL: <a href="${ads.uri}" target="_blank">${ads.uri}</a></small>
-                                                            </p>
-                                                            <p class="card-text mt-2">
-                                                              
-                                                                <label class="form-check-label" for="flexSwitchCheckChecked_${ads.adsId}">
+                                                            <div class="card p-4">
+                                                                <p>Adsvertising ID: ${ads.adsId}</p>
+
+                                                                <h5 class="card-title mt-2">${ads.title}</h5>
+                                                                <p class="card-text mt-1">
+                                                                    <small class="text-muted">Started running on ${ads.startDate}</small>
+                                                                </p>
+                                                                <p class="card-text mt-2">
+                                                                    <small class="text-muted">${ads.title}</small>
+                                                                </p>
+
+                                                                <p class="card-text mt-2">
+                                                                    <small class="text-muted">URL: <a href="${ads.uri}" target="_blank">${ads.uri}</a></small>
+                                                                </p>
+                                                                <p class="card-text mt-2">
+
                                                                     ${ads.isActive == 1 ? 'Active' : 'Not active'}
-                                                                </label>
-                                                            </p>
+                                                                </p>
+                                                               
+                                                                
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </div>
+                                                    </c:if>
+                                                </c:forEach>
+
                                             </div>
-                                        </c:forEach>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -124,6 +129,9 @@
                 $('#location').append('<option value="' + campus.ID + '">' + campus.Name + '</option>');
             });
         });
+
+
+        
     });
 </script>
 <%@ include file="../include/footer.jsp" %>

@@ -73,7 +73,7 @@
                                             <div class="card-body">
                                                 <h5 class="card-title">${ads.content}</h5>
                                                 <p class="card-text mt-2">
-                                                    <small class="text-muted">Views: ${ads.currentView} / ${adsCombo.maxView}</small>
+                                                    <small class="text-muted">Views: ${ads.currentView} </small>
                                                 </p>
                                                 <p class="card-text mt-2">
                                                     <small class="text-muted">Location: ${ads.location}</small>
@@ -93,14 +93,17 @@
                                                         ${ads.isActive == 1 ? 'Active' : 'Not active'}
                                                     </label>
                                                 </div>
+                                                <div class="mt-3"> 
+                                                    <button class="btn btn-dark" onclick="removeAdvertising(${ads.adsId})">Remove</button>
+                                                </div>
                                             </div>
                                         </div>
                                     </c:forEach>
-                                   
+
                                 </div>
-                                     <div class="d-flex">
-                                        <button class="btn btn-primary" data-toggle="modal" data-target="#addProduct">Create advertising</button>
-                                    </div>
+                                <div class="d-flex">
+                                    <button class="btn btn-primary" data-toggle="modal" data-target="#addProduct">Create advertising</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -161,40 +164,84 @@
                 </div>
             </div>
         </div>
-<script>
-    function handleActiveChange(adsId, isActive) {
-        if (isActive == false) {
-            isActive = 0;
-        } else {
-            isActive = 1;
-        }
-        var data = {
-            action: "changeActive",
-            adsId: adsId,
-            isActive: isActive  // Convert boolean to integer (1 or 0)
-        };
+        <script>
 
-        $.ajax({
-            url: '${pageContext.request.contextPath}/advertising/boost', // Update URL according to your servlet mapping
-            type: 'POST',
-            data: data,
-            dataType: 'json',
-            success: function (response) {
-                if (response.success) {
-                    swal("Success! Your advertising status has been changed!", {
-                        icon: "success",
-                    }).then(() => {
-                        location.reload();
-                    });
+
+            function handleActiveChange(adsId, isActive) {
+                if (isActive == false) {
+                    isActive = 0;
                 } else {
-                    swal("Error!", response.message, "error");
+                    isActive = 1;
                 }
-            },
-            error: function (xhr, status, error) {
-                swal("Error!", "Unable to update advertising status.", "error");
+                var data = {
+                    action: "changeActive",
+                    adsId: adsId,
+                    isActive: isActive  // Convert boolean to integer (1 or 0)
+                };
+
+                $.ajax({
+                    url: '${pageContext.request.contextPath}/advertising/boost', // Update URL according to your servlet mapping
+                    type: 'POST',
+                    data: data,
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.success) {
+                            swal("Success! Your advertising status has been changed!", {
+                                icon: "success",
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            swal("Error!", response.message, "error");
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        swal("Error!", "Unable to update advertising status.", "error");
+                    }
+                });
             }
-        });
-    }
-</script>
+
+
+            // DELETE Ads
+
+            function removeAdvertising(id) {
+                swal({
+                    title: "Are you sure?",
+                    text: "Once deleted, you will not be able to recover this item!",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                }).then((willDelete) => {
+                    if (willDelete) {
+                        $.ajax({
+                            url: '${pageContext.request.contextPath}/advertising/boost',
+                            type: 'POST',
+                            data: {id: id, action: 'delete'},
+                            dataType: 'json',
+                            success: function (response) {
+                                if (response.success) {
+                                    swal("The advertising has been removed.", {
+                                        icon: "success",
+                                    }).then(() => {
+                                        location.reload();
+                                    });
+                                } else {
+                                    swal("Error! Unable to remove the item from the cart.", {
+                                        icon: "error",
+                                    });
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                swal("Error! Unable to remove the item from the cart.", {
+                                    icon: "error",
+                                });
+                            }
+                        });
+                    } else {
+                        swal("The advertising have no changes!");
+                    }
+                });
+            }
+        </script>
 </body>
 </html>
