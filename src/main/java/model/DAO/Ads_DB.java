@@ -32,7 +32,9 @@ public class Ads_DB implements DBinfo {
         List<Ads_combo> allAdsCombo = new ArrayList<>();
         String query = "SELECT * FROM Combo_ads ORDER BY Adsdetail_id DESC";
 
-        try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
+        try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); 
+             PreparedStatement stmt = conn.prepareStatement(query); 
+             ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 Ads_combo adsCombo = new Ads_combo();
@@ -51,8 +53,35 @@ public class Ads_DB implements DBinfo {
         }
         return allAdsCombo;
     }
-    
-    
+
+    public List<Ads_combo> getComboByID(int comboID) {
+        List<Ads_combo> allAdsCombo = new ArrayList<>();
+        String query = "SELECT * FROM Combo_ads WHERE Adsdetail_id = ?";
+
+        try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); 
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, comboID);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Ads_combo adsCombo = new Ads_combo();
+                    adsCombo.setAdsDetailId(rs.getInt("Adsdetail_id"));
+                    adsCombo.setTitle(rs.getString("Title"));
+                    adsCombo.setBudget(rs.getInt("budget"));
+                    adsCombo.setMaxView(rs.getInt("maxView"));
+                    adsCombo.setDurationDay(rs.getInt("durationDay"));
+                    adsCombo.setUser_id(rs.getInt("User_Id"));
+
+                    allAdsCombo.add(adsCombo);
+                }
+            }
+            System.out.println("getComboByID: Query executed successfully.");
+        } catch (SQLException ex) {
+            System.err.println("getComboByID: Query execution failed - " + ex.getMessage());
+        }
+        return allAdsCombo;
+    }
+
     // Retrieve all AdsCombo records system 
     public List<Ads_combo> getAllAdsComboSystem() {
         List<Ads_combo> allAdsCombo = new ArrayList<>();
@@ -192,6 +221,42 @@ public class Ads_DB implements DBinfo {
             System.out.println("getAllAdsByUserID: Query executed successfully.");
         } catch (SQLException ex) {
             System.err.println("getAllAdsByUserID: Query execution failed - " + ex.getMessage());
+        }
+        return allAds;
+    }
+
+    // Retrieve all AdsCombo records system 
+    public List<Ads> getAllAdsUserInComboID(int userId, int comboID) {
+        List<Ads> allAds = new ArrayList<>();
+        String query = "SELECT * FROM Ads WHERE User_id = ? AND Adsdetail_id = ?";
+
+        try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); 
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, userId);
+            stmt.setInt(2, comboID);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Ads ads = new Ads();
+                    ads.setAdsId(rs.getInt("Ads_id"));
+                    ads.setAdsDetailId(rs.getInt("Adsdetail_id"));
+                    ads.setTitle(rs.getString("Title"));
+                    ads.setContent(rs.getString("Content"));
+                    ads.setImage(rs.getString("Image"));
+                    ads.setUserId(rs.getInt("User_id"));
+                    ads.setCurrentView(rs.getInt("currentView"));
+                    ads.setLocation(rs.getString("location"));
+                    ads.setUri(rs.getString("URI"));
+                    ads.setUploadPath(rs.getString("UploadPath"));
+                    ads.setIsActive(rs.getInt("isActive"));
+                    ads.setStartDate(rs.getDate("startDate"));
+
+                    allAds.add(ads);
+                }
+            }
+            System.out.println("getAllAdsUserInComboID: Query executed successfully.");
+        } catch (SQLException ex) {
+            System.err.println("getAllAdsUserInComboID: Query execution failed - " + ex.getMessage());
         }
         return allAds;
     }

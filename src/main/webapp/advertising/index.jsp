@@ -112,7 +112,7 @@
         };
 
         $.ajax({
-            url: 'advertising/boost', // Update URL according to your servlet mapping
+            url: '${pageContext.request.contextPath}/advertising/boost', // Update URL according to your servlet mapping
             type: 'POST',
             data: data,
             dataType: 'json',

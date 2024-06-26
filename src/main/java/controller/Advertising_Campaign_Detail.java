@@ -11,6 +11,11 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.List;
+import model.Ads;
+import model.Ads_combo;
+import model.DAO.Ads_DB;
+import model.User;
 
 /**
  *
@@ -58,12 +63,12 @@ public class Advertising_Campaign_Detail extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
 
-        String idParam = request.getParameter("id");
-        int id = 0; // default value or you can handle it differently
+        String idComboParam = request.getParameter("id");
+        int idCombo = 0; // default value or you can handle it differently
 
-        if (idParam != null) {
+        if (idComboParam != null) {
             try {
-                id = Integer.parseInt(idParam);
+                idCombo = Integer.parseInt(idComboParam);
             } catch (NumberFormatException e) {
                 e.printStackTrace();
                 // Handle the exception, e.g., set an error message or set a default value
@@ -73,9 +78,20 @@ public class Advertising_Campaign_Detail extends HttpServlet {
         // Check if the user is logged in
         if (session != null && session.getAttribute("USER") != null) {
             // Set the response content type and forward the request to the JSP page
+            User currentUser = (User) session.getAttribute("USER");
 
-            request.setAttribute("AdsComboID", id);
+            Ads_DB ads_DB = new Ads_DB();
 
+            request.setAttribute("AdsComboID", idCombo);
+            List<Ads_combo> comboInformation = ads_DB.getComboByID(idCombo);
+            request.setAttribute("comboInformation", comboInformation);
+
+            List<Ads> allAdsUserInCombo = ads_DB.getAllAdsUserInComboID(currentUser.getUserId(), idCombo);
+
+            // Set the list of ads combo as an attribute in the request
+            session.setAttribute("allAdsUserInCombo", allAdsUserInCombo);
+
+            // Forward the request to the JSP page
             response.setContentType("text/html;charset=UTF-8");
             request.getRequestDispatcher("/advertising/campaignDetailAds.jsp").forward(request, response);
         } else {
