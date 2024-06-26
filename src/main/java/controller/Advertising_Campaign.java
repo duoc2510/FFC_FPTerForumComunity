@@ -73,8 +73,12 @@ public class Advertising_Campaign extends HttpServlet {
             // Set the list of ads combo as an attribute in the request
             request.setAttribute("allAdsCombo", allAdsCombo);
 
+            request.setAttribute("USER_IDD", currentUser);
+
             // Forward the request to the JSP page
             request.getRequestDispatcher("/advertising/campaignAds.jsp").forward(request, response);
+        } else {
+            response.sendRedirect("login.jsp"); // Redirect to login page if not logged in
         }
     }
 
@@ -88,34 +92,25 @@ public class Advertising_Campaign extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Retrieve user from session
         User user = (User) request.getSession().getAttribute("USER");
+        Ads_DB adsDB = new Ads_DB();
+
         try {
-            // Retrieve parameters from the form
+
             String title = request.getParameter("title");
             int budget = Integer.parseInt(request.getParameter("budget"));
             int maxView = Integer.parseInt(request.getParameter("maxView"));
             int durationDay = Integer.parseInt(request.getParameter("durationDay"));
 
-            // Create Ads_combo object and populate it
-            Ads_combo ads_combo = new Ads_combo();
-            ads_combo.setTitle(title);
-            ads_combo.setBudget(budget);
-            ads_combo.setMaxView(maxView);
-            ads_combo.setDurationDay(durationDay);
-            ads_combo.setUser_id(user.getUserId());
-
-            // Call Ads_DB method to create campaign
-            Ads_DB adsDB = new Ads_DB();
+            Ads_combo ads_combo = new Ads_combo(1, title, budget, maxView, durationDay, user.getUserId());
             adsDB.createCampaign(ads_combo);
 
-            // Redirect to the advertising page
             response.sendRedirect(request.getContextPath() + "/advertising/campaign");
         } catch (NumberFormatException | NullPointerException e) {
-            e.printStackTrace(); // Log the exception for debugging
+            e.printStackTrace();
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid parameter format or missing parameter.");
         } catch (Exception e) {
-            e.printStackTrace(); // Log the exception for debugging
+            e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while processing your request.");
         }
     }

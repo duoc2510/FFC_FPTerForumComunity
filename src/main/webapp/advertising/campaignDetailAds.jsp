@@ -1,6 +1,6 @@
 <%-- 
-    Document   : campaignAds
-    Created on : Jun 25, 2024, 10:49:33 AM
+    Document   : campaignDetailAds.jsp
+    Created on : Jun 26, 2024, 7:12:37 PM
     Author     : mac
 --%>
 
@@ -68,6 +68,7 @@
                                         </div>
                                     </div>
                                 </c:if>
+                                    ${AdsComboID}
                                 <c:if test="${not empty allAdsCombo}">
                                     <c:forEach var="adsCombo" items="${allAdsCombo}">
                                         <div class="row mb-4 card py-3 px-2">

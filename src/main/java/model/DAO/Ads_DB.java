@@ -51,15 +51,40 @@ public class Ads_DB implements DBinfo {
         }
         return allAdsCombo;
     }
-
-    // Retrieve all Ads records by User ID
-    public static List<Ads_combo> getAllAdsComboByUserID(int userId) {
+    
+    
+    // Retrieve all AdsCombo records system 
+    public List<Ads_combo> getAllAdsComboSystem() {
         List<Ads_combo> allAdsCombo = new ArrayList<>();
-        String query = "SELECT * FROM Combo_ads WHERE User_id = ? ORDER BY adsDetailId DESC";
+        String query = "SELECT * FROM Combo_ads WHERE User_id IS NULL ORDER BY Adsdetail_id DESC";
+
+        try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Ads_combo adsCombo = new Ads_combo();
+                adsCombo.setAdsDetailId(rs.getInt("Adsdetail_id"));
+                adsCombo.setTitle(rs.getString("Title"));
+                adsCombo.setBudget(rs.getInt("budget"));
+                adsCombo.setMaxView(rs.getInt("maxView"));
+                adsCombo.setDurationDay(rs.getInt("durationDay"));
+                adsCombo.setUser_id(rs.getInt("User_Id"));
+
+                allAdsCombo.add(adsCombo);
+            }
+            System.out.println("getAllAdsCombo: Query executed successfully.");
+        } catch (SQLException ex) {
+            System.err.println("getAllAdsCombo: Query execution failed - " + ex.getMessage());
+        }
+        return allAdsCombo;
+    }
+
+    public List<Ads_combo> getAllAdsComboByUserID(int userId) {
+        List<Ads_combo> allAdsCombo = new ArrayList<>();
+        String query = "SELECT * FROM Combo_ads WHERE User_id = ? ORDER BY Adsdetail_id DESC";
 
         try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
-
             stmt.setInt(1, userId);
+
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     Ads_combo adsCombo = new Ads_combo();
@@ -73,9 +98,9 @@ public class Ads_DB implements DBinfo {
                     allAdsCombo.add(adsCombo);
                 }
             }
-            System.out.println("getAllAdsByUserID: Query executed successfully.");
+            System.out.println("getAllAdsComboByUserID: Query executed successfully.");
         } catch (SQLException ex) {
-            System.err.println("getAllAdsByUserID: Query execution failed - " + ex.getMessage());
+            System.err.println("getAllAdsComboByUserID: Query execution failed - " + ex.getMessage());
         }
         return allAdsCombo;
     }
@@ -205,10 +230,8 @@ public class Ads_DB implements DBinfo {
         }
     }
 
-    public void createCampaign(Ads_combo ads_combo){
+    public void createCampaign(Ads_combo ads_combo) {
         String insertQuery = "INSERT INTO Combo_ads (Title, budget, maxView, durationDay, User_id) VALUES(?,?,?,?,?) ";
-
-
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(insertQuery)) {
             pstmt.setString(1, ads_combo.getTitle());
             pstmt.setInt(2, ads_combo.getBudget());
@@ -216,7 +239,6 @@ public class Ads_DB implements DBinfo {
             pstmt.setInt(4, ads_combo.getDurationDay());
             pstmt.setInt(5, ads_combo.getUser_id());
 
-            // Execute insertion into Ads table
             pstmt.executeUpdate();
 
         } catch (SQLException ex) {
