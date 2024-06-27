@@ -10,21 +10,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import model.Ads;
-import model.Ads_combo;
-import model.DAO.Ads_DB;
-import model.DAO.User_DB;
-import model.User;
 
 /**
  *
  * @author mac
  */
-public class Advertising_Library extends HttpServlet {
+public class Redirect extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -43,10 +34,10 @@ public class Advertising_Library extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Advertising_Library</title>");
+            out.println("<title>Servlet Redirect</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Advertising_Library at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet Redirect at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -64,53 +55,7 @@ public class Advertising_Library extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Get the session, do not create a new one if it doesn't exist
-        HttpSession session = request.getSession(false);
-
-        // Check if the user is logged in
-        if (session != null && session.getAttribute("USER") != null) {
-            // Retrieve the current user from the session
-            User currentUser = (User) session.getAttribute("USER");
-
-            // Fetch the list of ads for the current user
-            Ads_DB adsDB = new Ads_DB();
-            List<Ads> allAds = adsDB.getAllAds();
-
-            // Fetch all combo data
-            List<Ads_combo> allComboAds = adsDB.getAllComboAds();
-
-            // Create a map of Adsdetail_id to ComboAds
-            Map<Integer, Ads_combo> comboAdsMap = new HashMap<>();
-            for (Ads_combo combo : allComboAds) {
-                comboAdsMap.put(combo.getAdsDetailId(), combo);
-            }
-
-            // Associate each ad with its combo data
-            Map<Ads, Ads_combo> adsWithComboData = new HashMap<>();
-
-            for (Ads ad : allAds) {
-                Ads_combo combo = comboAdsMap.get(ad.getAdsDetailId());
-                adsWithComboData.put(ad, combo);
-            }
-
-            // Fetch user details for each ad and add to request attributes
-            Map<Integer, User> adUserMap = new HashMap<>();
-            for (Ads ad : allAds) {
-                User adUser = User_DB.getUserById(ad.getUserId());
-                adUserMap.put(ad.getAdsDetailId(), adUser);
-            }
-
-            // Set the maps of ads with combo data and user data as attributes in the request
-            request.setAttribute("adsWithComboData", adsWithComboData);
-            request.setAttribute("adUserMap", adUserMap);
-
-            // Set the response content type and forward the request to the JSP page
-            response.setContentType("text/html;charset=UTF-8");
-            request.getRequestDispatcher("/advertising/libraryAds.jsp").forward(request, response);
-        } else {
-            // If the user is not logged in, redirect to the login page or show an error message
-            response.sendRedirect("/login");
-        }
+        processRequest(request, response);
     }
 
     /**

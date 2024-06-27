@@ -56,11 +56,11 @@
                                             <div class="flex-fill mx-3 d-flex">
                                                 <div data-mdb-input-init class="form-outline col-11">
                                                     <h6>${adsCombo.title}</h6>
-                                                    <p>View post: ${adsCombo.maxView}</p>
+                                                    <p>View post: ${adsCombo.maxReact}</p>
                                                     <p>${adsCombo.budget} VND</p>
                                                     <p>Rate: <c:choose>
-                                                            <c:when test="${adsCombo.maxView > 0}">
-                                                                ${adsCombo.budget / adsCombo.maxView} VND per view
+                                                            <c:when test="${adsCombo.maxReact > 0}">
+                                                                ${adsCombo.budget / adsCombo.maxReact} VND per view
                                                             </c:when>
                                                             <c:otherwise>
                                                                 0 VND per view
@@ -123,7 +123,7 @@
                             <div class="d-flex">
                                 <div class="col-6 form-group mb-3" style="padding-right: 2%">
                                     <label for="productQuantityInput">View can get:</label>
-                                    <input type="text" class="form-control" value="${adsCombo.maxView}" readonly>
+                                    <input type="text" class="form-control" value="${adsCombo.maxReact}" readonly>
                                 </div>
                                 <div class="col-6 form-group mb-3">
                                     <label for="productQuantityInput">Your wallet need:</label>

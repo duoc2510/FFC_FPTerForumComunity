@@ -9,7 +9,7 @@ public class Ads {
     private String content;
     private String image;
     private int userId;
-    private int currentView;
+    private int currentReact;
     private String location;
     private String title;
     private String uri;
@@ -20,13 +20,13 @@ public class Ads {
     public Ads() {
     }
 
-    public Ads(int adsId, int adsDetailId, String content, String image, int userId, int currentView, String location, String title, String uri, String uploadPath, int isActive, Date startDate) {
+    public Ads(int adsId, int adsDetailId, String content, String image, int userId, int currentReact, String location, String title, String uri, String uploadPath, int isActive, Date startDate) {
         this.adsId = adsId;
         this.adsDetailId = adsDetailId;
         this.content = content;
         this.image = image;
         this.userId = userId;
-        this.currentView = currentView;
+        this.currentReact = currentReact;
         this.location = location;
         this.title = title;
         this.uri = uri;
@@ -75,12 +75,12 @@ public class Ads {
         this.userId = userId;
     }
 
-    public int getCurrentView() {
-        return currentView;
+    public int getCurrentReact() {
+        return currentReact;
     }
 
-    public void setCurrentView(int currentView) {
-        this.currentView = currentView;
+    public void setCurrentReact(int currentReact) {
+        this.currentReact = currentReact;
     }
 
     public String getLocation() {
@@ -133,8 +133,7 @@ public class Ads {
 
     @Override
     public String toString() {
-        return "Ads{" + "adsId=" + adsId + ", adsDetailId=" + adsDetailId + ", content=" + content + ", image=" + image + ", userId=" + userId + ", currentView=" + currentView + ", location=" + location + ", title=" + title + ", uri=" + uri + ", uploadPath=" + uploadPath + ", isActive=" + isActive + ", startDate=" + startDate + '}';
+        return "Ads{" + "adsId=" + adsId + ", adsDetailId=" + adsDetailId + ", content=" + content + ", image=" + image + ", userId=" + userId + ", currentReact=" + currentReact + ", location=" + location + ", title=" + title + ", uri=" + uri + ", uploadPath=" + uploadPath + ", isActive=" + isActive + ", startDate=" + startDate + '}';
     }
-    
 
 }

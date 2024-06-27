@@ -13,20 +13,23 @@ public class Ads_combo {
     private int adsDetailId;
     private String title;
     private int budget;
-    private int maxView;
+    private int maxReact;
     private int durationDay;
     private int User_id;
+    private String comboType;
 
     public Ads_combo() {
     }
 
-    public Ads_combo(int adsDetailId, String title, int budget, int maxView, int durationDay, int User_id) {
+    
+    public Ads_combo(int adsDetailId, String title, int budget, int maxReact, int durationDay, int User_id, String comboType) {
         this.adsDetailId = adsDetailId;
         this.title = title;
         this.budget = budget;
-        this.maxView = maxView;
+        this.maxReact = maxReact;
         this.durationDay = durationDay;
         this.User_id = User_id;
+        this.comboType = comboType;
     }
 
     public int getAdsDetailId() {
@@ -53,12 +56,12 @@ public class Ads_combo {
         this.budget = budget;
     }
 
-    public int getMaxView() {
-        return maxView;
+    public int getMaxReact() {
+        return maxReact;
     }
 
-    public void setMaxView(int maxView) {
-        this.maxView = maxView;
+    public void setMaxReact(int maxReact) {
+        this.maxReact = maxReact;
     }
 
     public int getDurationDay() {
@@ -77,9 +80,17 @@ public class Ads_combo {
         this.User_id = User_id;
     }
 
-    @Override
-    public String toString() {
-        return "Ads_combo{" + "adsDetailId=" + adsDetailId + ", title=" + title + ", budget=" + budget + ", maxView=" + maxView + ", durationDay=" + durationDay + ", User_id=" + User_id + '}';
+    public String getComboType() {
+        return comboType;
     }
 
+    public void setComboType(String comboType) {
+        this.comboType = comboType;
+    }
+
+    @Override
+    public String toString() {
+        return "Ads_combo{" + "adsDetailId=" + adsDetailId + ", title=" + title + ", budget=" + budget + ", maxReact=" + maxReact + ", durationDay=" + durationDay + ", User_id=" + User_id + ", comboType=" + comboType + '}';
+    }
+    
 }

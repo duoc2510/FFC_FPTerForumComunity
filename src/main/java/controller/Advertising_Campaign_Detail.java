@@ -80,7 +80,13 @@ public class Advertising_Campaign_Detail extends HttpServlet {
             // Set the response content type and forward the request to the JSP page
             User currentUser = (User) session.getAttribute("USER");
 
+            // Get the list of all ads combo
             Ads_DB ads_DB = new Ads_DB();
+            
+//            List<Ads_combo> allAdsCombo = ads_DB.getAllAdsComboSystem();
+
+            // Set the list of ads combo as an attribute in the request
+//            request.setAttribute("allAdsCombo", allAdsCombo);
 
             request.setAttribute("AdsComboID", idCombo);
             List<Ads_combo> comboInformation = ads_DB.getComboByID(idCombo);
@@ -89,7 +95,7 @@ public class Advertising_Campaign_Detail extends HttpServlet {
             List<Ads> allAdsUserInCombo = ads_DB.getAllAdsUserInComboID(currentUser.getUserId(), idCombo);
 
             // Set the list of ads combo as an attribute in the request
-            session.setAttribute("allAdsUserInCombo", allAdsUserInCombo);
+            request.setAttribute("allAdsUserInCombo", allAdsUserInCombo);
 
             // Forward the request to the JSP page
             response.setContentType("text/html;charset=UTF-8");

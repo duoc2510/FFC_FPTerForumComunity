@@ -73,40 +73,39 @@
                                         </form>
                                         <div class=" mb-3 col-12" style="width: 100%;">
                                             <div class="row no-gutters px-3">
-                                                ${adsWithComboData}
+                                                <!--${adUserMap}-->
                                                 <c:forEach var="entry" items="${adsWithComboData}">
                                                     <c:set var="ads" value="${entry.key}" />
                                                     <c:set var="adsCombo" value="${entry.value}" />
+                                                    <!-- Fetch user details from adUserMap using ads.adsDetailId -->
+                                                    <c:set var="adUser" value="${adUserMap[ads.adsDetailId]}" />
 
-                                                    <c:if test="${ads.isActive ==1}">
+                                                    <c:if test="${ads.isActive == 1}">
                                                         <div class="col-6 px-2">
-                                                            <img src="${pageContext.request.contextPath}/${ads.image}" class=" card-img w-100" alt="${ads.content}" style="height: 300px; object-fit: cover; border: 0px solid;border-radius:10px 10px 0 0; ">
+                                                            <img src="${pageContext.request.contextPath}/${ads.image}" class="card-img w-100" alt="${ads.content}" style="height: 300px; object-fit: cover; border: 0px solid; border-radius: 10px 10px 0 0;">
 
                                                             <div class="card p-4">
-                                                                <p>Adsvertising ID: ${ads.adsId}</p>
-
+                                                                <p>Advertising ID: ${ads.adsId}</p>
                                                                 <h5 class="card-title mt-2">${ads.title}</h5>
+                                                                <p class="ml-auto">User: ${adUser.userFullName}</p>
+                                                                <img src="${pageContext.request.contextPath}/${adUser.userAvatar}" class="card-img" alt="avatarUser" style="height: 50px; width: 50px; object-fit: cover; border: 0px solid; border-radius: 50%;">
+
                                                                 <p class="card-text mt-1">
                                                                     <small class="text-muted">Started running on ${ads.startDate}</small>
                                                                 </p>
                                                                 <p class="card-text mt-2">
                                                                     <small class="text-muted">${ads.title}</small>
                                                                 </p>
-
                                                                 <p class="card-text mt-2">
                                                                     <small class="text-muted">URL: <a href="${ads.uri}" target="_blank">${ads.uri}</a></small>
                                                                 </p>
                                                                 <p class="card-text mt-2">
-
                                                                     ${ads.isActive == 1 ? 'Active' : 'Not active'}
                                                                 </p>
-                                                               
-                                                                
                                                             </div>
                                                         </div>
                                                     </c:if>
                                                 </c:forEach>
-
                                             </div>
                                         </div>
                                     </div>
@@ -131,7 +130,7 @@
         });
 
 
-        
+
     });
 </script>
 <%@ include file="../include/footer.jsp" %>

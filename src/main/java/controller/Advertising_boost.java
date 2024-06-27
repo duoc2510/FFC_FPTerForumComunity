@@ -64,7 +64,7 @@ public class Advertising_Boost extends HttpServlet {
                     ads.setTitle(title);
                     ads.setContent(content);
                     ads.setUserId(user.getUserId());  // Assuming user ID is static for demo purposes
-                    ads.setCurrentView(0);  // Set initial view count
+                    ads.setCurrentReact(0);  // Set initial view count
                     ads.setLocation(location);  // Assuming location will be set later
                     ads.setUri(uri);
 
@@ -93,6 +93,66 @@ public class Advertising_Boost extends HttpServlet {
 
                     // Redirect to the advertising page
                     response.sendRedirect(request.getContextPath() + "/advertising");
+                } catch (Exception e) {
+                    e.printStackTrace(); // Log the exception for debugging
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while processing your request.");
+                }
+                break;
+                
+            case "boostInCampaign":
+                try {
+                    // Path to the directory where images will be stored
+                    String uploadPath = request.getServletContext().getRealPath("/upload");
+
+                    // Create the directory if it doesn't exist
+                    File uploadDir = new File(uploadPath);
+                    if (!uploadDir.exists()) {
+                        uploadDir.mkdirs();
+                    }
+
+                    // Retrieve parameters from the form
+                    String title = request.getParameter("Title");
+                    String content = request.getParameter("Content");
+                    int adsDetailId = Integer.parseInt(request.getParameter("adsDetailId"));
+                    String uri = request.getParameter("URI");
+                    String location = request.getParameter("location");
+
+                    // Create Ads object and populate it
+                    Ads ads = new Ads();
+                    ads.setAdsDetailId(adsDetailId);
+                    ads.setTitle(title);
+                    ads.setContent(content);
+                    ads.setUserId(user.getUserId());  // Assuming user ID is static for demo purposes
+                    ads.setCurrentReact(0);  // Set initial view count
+                    ads.setLocation(location);  // Assuming location will be set later
+                    ads.setUri(uri);
+
+                    // Handle image upload
+                    String fileName = null;
+                    Part filePart = request.getPart("file"); // Assuming the form field name is "file"
+                    if (filePart != null && filePart.getSubmittedFileName() != null && !filePart.getSubmittedFileName().isEmpty()) {
+                        fileName = extractFileName(filePart);
+
+                        // Save the image file
+                        try (InputStream input = filePart.getInputStream()) {
+                            Path filePath = new File(uploadDir, fileName).toPath();
+                            Files.copy(input, filePath, StandardCopyOption.REPLACE_EXISTING);
+
+                            // Set the image path in the Ads object
+                            String relativeImagePath = "upload" + File.separator + fileName;
+                            ads.setImage(relativeImagePath);
+                        }
+                    }
+
+                    ads.setUploadPath(fileName != null ? "upload" + File.separator + fileName : "");
+
+                    // Call boostAdvertising with the Ads object
+                    Ads_DB adsDB = new Ads_DB();
+                    adsDB.boostAdvertising(ads);
+
+                    // Redirect to the advertising page
+                    response.sendRedirect(request.getContextPath() + "/advertising/campaign/detail?id="+ads.getAdsDetailId());
+                    
                 } catch (Exception e) {
                     e.printStackTrace(); // Log the exception for debugging
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while processing your request.");

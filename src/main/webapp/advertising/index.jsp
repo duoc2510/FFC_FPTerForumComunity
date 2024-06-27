@@ -61,7 +61,7 @@
                                                         <div class="card-body">
                                                             <h5 class="card-title">${ads.content}</h5>
                                                             <p class="card-text mt-2">
-                                                                <small class="text-muted">Views: ${ads.currentView} / ${adsCombo.maxView}</small>
+                                                                <small class="text-muted">Views: ${ads.currentReact} / ${adsCombo.maxReact}</small>
                                                             </p>
                                                             <p class="card-text mt-2">
                                                                 <small class="text-muted">Location: ${ads.location}</small>

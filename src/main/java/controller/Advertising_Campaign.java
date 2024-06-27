@@ -99,10 +99,11 @@ public class Advertising_Campaign extends HttpServlet {
 
             String title = request.getParameter("title");
             int budget = Integer.parseInt(request.getParameter("budget"));
-            int maxView = Integer.parseInt(request.getParameter("maxView"));
+            int maxReact = Integer.parseInt(request.getParameter("maxReact"));
             int durationDay = Integer.parseInt(request.getParameter("durationDay"));
+            String comboType = request.getParameter("comboType");
 
-            Ads_combo ads_combo = new Ads_combo(1, title, budget, maxView, durationDay, user.getUserId());
+            Ads_combo ads_combo = new Ads_combo(1, title, budget, maxReact, durationDay, user.getUserId(), comboType);
             adsDB.createCampaign(ads_combo);
 
             response.sendRedirect(request.getContextPath() + "/advertising/campaign");

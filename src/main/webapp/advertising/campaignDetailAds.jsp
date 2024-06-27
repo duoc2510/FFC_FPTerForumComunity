@@ -57,11 +57,6 @@
 
                                 <c:if test="${empty allAdsUserInCombo}">
                                     <p class="mb-4">You have no advertising for ${comboInformation[0].title} campaign.</p>
-                                    <div class="d-flex justify-content-end">
-                                        <div class="col-6" style="margin-right: 2%;">
-                                            <button class="btn btn-primary w-100" data-toggle="modal" data-target="#createCampaign">New advertising</button>
-                                        </div>
-                                    </div>
                                 </c:if>
 
                                 <c:forEach var="ads" items="${allAdsUserInCombo}">
@@ -73,7 +68,7 @@
                                             <div class="card-body">
                                                 <h5 class="card-title">${ads.content}</h5>
                                                 <p class="card-text mt-2">
-                                                    <small class="text-muted">Views: ${ads.currentView} </small>
+                                                    <small class="text-muted">Views: ${ads.currentReact} </small>
                                                 </p>
                                                 <p class="card-text mt-2">
                                                     <small class="text-muted">Location: ${ads.location}</small>
@@ -93,16 +88,14 @@
                                                         ${ads.isActive == 1 ? 'Active' : 'Not active'}
                                                     </label>
                                                 </div>
-                                                <div class="mt-3"> 
-                                                    <button class="btn btn-dark" onclick="removeAdvertising(${ads.adsId})">Remove</button>
-                                                </div>
+
                                             </div>
                                         </div>
                                     </c:forEach>
 
                                 </div>
                                 <div class="d-flex">
-                                    <button class="btn btn-primary" data-toggle="modal" data-target="#addProduct">Create advertising</button>
+                                    <button class="btn btn-primary" data-toggle="modal" data-target="#createCampaign">Create advertising</button>
                                 </div>
                             </div>
                         </div>
@@ -116,48 +109,54 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Create campagin</h5>
-                        <button class="close" data-dismiss="modal" aria-label="Close">
+                        <h5 class="modal-title">Create advertising for ${comboInformation[0].title} campaign</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">×</span>
                         </button>
                     </div>
-                    <form action="${pageContext.request.contextPath}/advertising/campaign" method="post">
+                    <form action="${pageContext.request.contextPath}/advertising/boost" method="post" enctype="multipart/form-data">
                         <div class="modal-body">
                             <div class="form-group mb-3">
-                                <label for="productNameInput">Campaign name</label>
-                                <input type="text" class="form-control" name="title" required>
+                                <label for="productNameInput">Title:</label>
+                                <input type="text" class="form-control" name="Title" required>
                             </div>
-
+                            <div class="form-group checkboxLocation">
+                                <div class="checkbox my-2">
+                                    <label>
+                                        <input type="checkbox" name="campus" class="check" id="checkAll" value="All"> All campus
+                                    </label>
+                                </div>
+                                <!-- Other checkboxes will be dynamically added here -->
+                            </div>
                             <div class="form-group mb-3">
-                                <label for="budgetInput">Budget:</label>
-                                <input type="range" class="form-control" id="budgetInput" name="budget" min="10000" max="5000000" step="10000" required>
-                                <span id="budgetValue">10,000 VND</span>
+                                <label for="fileInput">Choose Image File:</label>
+                                <input type="file" class="form-control-file" id="fileInput" name="file" accept="image/*" required>
                             </div>
-
+                            <div class="form-group mb-3">
+                                <label for="productDescriptionInput">Content:</label>
+                                <textarea class="form-control" name="Content" required></textarea>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="productURIInput">URI:</label>
+                                <input type="text" class="form-control" name="URI" required>
+                            </div>
                             <div class="d-flex">
                                 <div class="col-6 form-group mb-3" style="padding-right: 2%">
-                                    <label for="durationDayInput">Days:</label>
-                                    <input type="number" class="form-control" id="durationDayInput" name="durationDay" min="4" max="365" value="30" required>
-                                    <p id="dayErrorMessage" class="error-message">Duration between 4 and 365 days.</p>
-
-
+                                    <label for="productQuantityInput">View can get:</label>
+                                    <input type="text" class="form-control" value="${adsCombo.maxReact}" readonly>
                                 </div>
                                 <div class="col-6 form-group mb-3">
-                                    <label for="productQuantityInput">View:</label>
-                                    <input type="number" class="form-control" value="${adsCombo.maxView}" id="maxView" name="maxView" placeholder="Views want to auction">
-
+                                    <label for="productQuantityInput">Your wallet need:</label>
+                                    <input type="text" class="form-control" value="${adsCombo.budget} VND" readonly>
                                 </div>
                             </div>
-                            <div class="form-group mb-3">
-                                <label for="productQuantityInput">Your wallet need:</label>
-                                <input id="walletNeed" type="text" class="form-control" value="" readonly>
-                                <p class="mt-2">Rate: <span id="caculateRate"></span></p>
-                            </div>
-                            <!-- Hidden input field -->
-                            <input type="hidden" name="action" value="createCampaign">
-
+                            <!-- Hidden input fields -->
+                            <input type="hidden" name="adsDetailId" value="${adsCombo.adsDetailId}"/>
+                            <input type="hidden" id="location${adsCombo.adsDetailId}" name="location">
+                            <input type="hidden" name="action" value="boost">
                         </div>
                         <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                             <button type="submit" class="btn btn-primary">Pay</button>
                         </div>
                     </form>
@@ -165,7 +164,51 @@
             </div>
         </div>
         <script>
+$(document).ready(function () {
+            $.getJSON('${pageContext.request.contextPath}/static/json/data.json', function (data) {
+                // Iterate over each campus in the JSON data
+                $.each(data.Campus, function (index, campus) {
+                    // Append a checkbox for each campus
+                    $('.checkboxLocation').append('<div class="checkbox my-2"><label><input type="checkbox" class="check" name="campus" value="' + campus.ID + '">' + campus.Name + '</label></div>');
+                });
 
+                // Selectors for dynamically added checkboxes
+                const checkboxes = $('.checkboxLocation input[name="campus"]');
+                const hiddenInput = $('#location');
+                const checkAllBox = $('#checkAll');
+
+                function updateCampusArray() {
+                    let selected = [];
+                    checkboxes.each(function () {
+                        if ($(this).is(':checked') && this !== checkAllBox[0]) {
+                            selected.push($(this).val());
+                        }
+                    });
+
+                    if (checkAllBox.is(':checked')) {
+                        selected = ["All"];
+                    }
+
+                    hiddenInput.val(JSON.stringify(selected));
+                }
+
+                checkboxes.change(function () {
+                    if (this === checkAllBox[0] && $(this).is(':checked')) {
+                        checkboxes.not(checkAllBox).prop('checked', false);
+                    } else if (!$(this).is(':checked') && this === checkAllBox[0]) {
+                        checkAllBox.prop('checked', false);
+                    }
+                    updateCampusArray();
+                });
+
+                $("#checkAll").click(function () {
+                    checkboxes.not(checkAllBox).prop('checked', $(this).prop('checked'));
+                    updateCampusArray();
+                });
+
+                updateCampusArray(); // Initial update  
+            });
+        });
 
             function handleActiveChange(adsId, isActive) {
                 if (isActive == false) {
@@ -202,46 +245,7 @@
             }
 
 
-            // DELETE Ads
 
-            function removeAdvertising(id) {
-                swal({
-                    title: "Are you sure?",
-                    text: "Once deleted, you will not be able to recover this item!",
-                    icon: "warning",
-                    buttons: true,
-                    dangerMode: true,
-                }).then((willDelete) => {
-                    if (willDelete) {
-                        $.ajax({
-                            url: '${pageContext.request.contextPath}/advertising/boost',
-                            type: 'POST',
-                            data: {id: id, action: 'delete'},
-                            dataType: 'json',
-                            success: function (response) {
-                                if (response.success) {
-                                    swal("The advertising has been removed.", {
-                                        icon: "success",
-                                    }).then(() => {
-                                        location.reload();
-                                    });
-                                } else {
-                                    swal("Error! Unable to remove the item from the cart.", {
-                                        icon: "error",
-                                    });
-                                }
-                            },
-                            error: function (xhr, status, error) {
-                                swal("Error! Unable to remove the item from the cart.", {
-                                    icon: "error",
-                                });
-                            }
-                        });
-                    } else {
-                        swal("The advertising have no changes!");
-                    }
-                });
-            }
         </script>
 </body>
 </html>

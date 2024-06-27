@@ -68,37 +68,57 @@
                                         </div>
                                     </div>
                                 </c:if>
+                                ${allAdsCombo}
                                 <c:if test="${not empty allAdsCombo}">
                                     <c:forEach var="adsCombo" items="${allAdsCombo}">
                                         <div class="row mb-4 card py-3 px-2">
                                             <div class=col-12"> 
+
                                                 <div data-ads="${adsCombo.adsDetailId}" class="d-flex flex-row align-items-center mb-4 pb-1">
                                                     <div class="border px-3 py-2 mx-2 rounded">
-                                                        <i class="ti ti-eye d-inline"></i> <p class="d-inline">Awareness</p>
+                                                        <c:if test="${adsCombo.comboType == 'view'}">
+                                                            <i class="ti ti-eye d-inline"></i> <p class="d-inline">Awareness</p>
+                                                        </c:if>
+                                                        <c:if test="${adsCombo.comboType == 'click'}">
+                                                            <i class="ti ti-location d-inline"></i> <p class="d-inline">Traffic</p>
+                                                        </c:if>
+                                                        <c:if test="${adsCombo.comboType == 'message'}">
+                                                            <i class="ti ti-comment d-inline"></i> <p class="d-inline">Message</p>
+                                                        </c:if>
                                                     </div>
-
                                                     <h6 class="mt-1">${adsCombo.title}</h6>
-
                                                 </div>
+
                                             </div>
                                             <div class="col-12 mx-3 mb-3 d-flex"> 
                                                 <div class="col-6">
-                                                    <p>Total views: ${adsCombo.maxView}</p>
+
+                                                    <p>Total 
+                                                        <c:if test="${adsCombo.comboType == 'view'}">views</c:if>
+                                                        <c:if test="${adsCombo.comboType == 'click'}">clicks</c:if>
+                                                        <c:if test="${adsCombo.comboType == 'message'}">messages</c:if>
+                                                        : ${adsCombo.maxReact}</p>
+
+
+
                                                     <p>Budget: ${adsCombo.budget} VND</p>
                                                 </div>
                                                 <div class="col-6">
                                                     <p>Duration day: ${adsCombo.durationDay}</p>
-                                                    <p>Rate: <span id="rate">${adsCombo.budget / adsCombo.maxView / adsCombo.durationDay}</span> VND/view</p>
+                                                    <p>Rate: <span id="rate">${adsCombo.budget / adsCombo.maxReact / adsCombo.durationDay}</span> VND /
+                                                        <c:if test="${adsCombo.comboType == 'view'}">view</c:if>
+                                                        <c:if test="${adsCombo.comboType == 'click'}">click</c:if>
+                                                        <c:if test="${adsCombo.comboType == 'message'}">message</c:if></p>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-12 mt-2 mx-2 d-flex justify-content-end"> 
-                                                <a class="btn btn-light" data-toggle="modal" data-target="#addProduct${adsCombo.adsDetailId}" href="javascript:void(0)">View</a>
+                                                <div class="col-12 mt-2 mx-2 d-flex justify-content-end"> 
+                                                    <a class="btn btn-light" data-toggle="modal" data-target="#addProduct${adsCombo.adsDetailId}" href="javascript:void(0)">View</a>
                                                 <a class="btn btn-primary mx-2" href="campaign/detail?id=${adsCombo.adsDetailId}">Continue</a>
                                             </div>
                                         </div>
                                     </c:forEach>
                                     <div class="d-flex">
-                                        <button class="btn btn-primary" data-toggle="modal" data-target="#addCampaign" href="javascript:void(0)">Create new campaign</button>
+                                        <button class="btn btn-primary" data-toggle="modal" data-target="#createCampaign" href="javascript:void(0)">Create new campaign</button>
                                     </div>
                                 </c:if>
 
@@ -128,6 +148,15 @@
                         </div>
 
                         <div class="form-group mb-3">
+                            <label for="budgetInput">Campaign type</label>
+                            <select class="form-select" name="comboType">
+                                <option value="like">Awareness</option>
+                                <option value="click">Traffic</option>
+                                <option value="message">Message</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group mb-3">
                             <label for="budgetInput">Budget:</label>
                             <input type="range" class="form-control" id="budgetInput" name="budget" min="10000" max="5000000" step="10000" required>
                             <span id="budgetValue">10,000 VND</span>
@@ -143,8 +172,7 @@
                             </div>
                             <div class="col-6 form-group mb-3">
                                 <label for="productQuantityInput">View:</label>
-                                <input type="number" class="form-control" value="${adsCombo.maxView}" id="maxView" name="maxView" placeholder="Views want to auction">
-
+                                <input type="number" class="form-control" value="${adsCombo.maxReact}" id="maxReact" name="maxReact" placeholder="Views want to auction">
                             </div>
                         </div>
                         <div class="form-group mb-3">
@@ -206,7 +234,7 @@
 
 
 
-            const $maxViewInput = $('#maxView');
+            const $maxReactInput = $('#maxReact');
             const $caculateRate = $('#caculateRate');
 
             // Function to format number as currency VND
@@ -217,7 +245,7 @@
             // Function to calculate and update the rate
             function updateRate() {
                 const budget = Number($budgetInput.val());
-                const views = Number($maxViewInput.val());
+                const views = Number($maxReactInput.val());
                 if (views > 0) {
                     const rate = budget / views;
                     $caculateRate.text(formatCurrencyVND(rate) + ' per view');
@@ -235,7 +263,7 @@
                 updateRate();
             });
 
-            $maxViewInput.on('input', function () {
+            $maxReactInput.on('input', function () {
                 updateRate();
             });
 

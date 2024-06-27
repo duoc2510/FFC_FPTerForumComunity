@@ -32,18 +32,17 @@ public class Ads_DB implements DBinfo {
         List<Ads_combo> allAdsCombo = new ArrayList<>();
         String query = "SELECT * FROM Combo_ads ORDER BY Adsdetail_id DESC";
 
-        try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); 
-             PreparedStatement stmt = conn.prepareStatement(query); 
-             ResultSet rs = stmt.executeQuery()) {
+        try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 Ads_combo adsCombo = new Ads_combo();
                 adsCombo.setAdsDetailId(rs.getInt("Adsdetail_id"));
                 adsCombo.setTitle(rs.getString("Title"));
                 adsCombo.setBudget(rs.getInt("budget"));
-                adsCombo.setMaxView(rs.getInt("maxView"));
+                adsCombo.setMaxReact(rs.getInt("maxReact"));
                 adsCombo.setDurationDay(rs.getInt("durationDay"));
                 adsCombo.setUser_id(rs.getInt("User_Id"));
+                 adsCombo.setComboType(rs.getString("comboType"));
 
                 allAdsCombo.add(adsCombo);
             }
@@ -58,8 +57,7 @@ public class Ads_DB implements DBinfo {
         List<Ads_combo> allAdsCombo = new ArrayList<>();
         String query = "SELECT * FROM Combo_ads WHERE Adsdetail_id = ?";
 
-        try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); 
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, comboID);
 
             try (ResultSet rs = stmt.executeQuery()) {
@@ -68,9 +66,10 @@ public class Ads_DB implements DBinfo {
                     adsCombo.setAdsDetailId(rs.getInt("Adsdetail_id"));
                     adsCombo.setTitle(rs.getString("Title"));
                     adsCombo.setBudget(rs.getInt("budget"));
-                    adsCombo.setMaxView(rs.getInt("maxView"));
+                    adsCombo.setMaxReact(rs.getInt("maxReact"));
                     adsCombo.setDurationDay(rs.getInt("durationDay"));
                     adsCombo.setUser_id(rs.getInt("User_Id"));
+                     adsCombo.setComboType(rs.getString("comboType"));
 
                     allAdsCombo.add(adsCombo);
                 }
@@ -94,9 +93,10 @@ public class Ads_DB implements DBinfo {
                 adsCombo.setAdsDetailId(rs.getInt("Adsdetail_id"));
                 adsCombo.setTitle(rs.getString("Title"));
                 adsCombo.setBudget(rs.getInt("budget"));
-                adsCombo.setMaxView(rs.getInt("maxView"));
+                adsCombo.setMaxReact(rs.getInt("maxReact"));
                 adsCombo.setDurationDay(rs.getInt("durationDay"));
                 adsCombo.setUser_id(rs.getInt("User_Id"));
+                 adsCombo.setComboType(rs.getString("comboType"));
 
                 allAdsCombo.add(adsCombo);
             }
@@ -120,9 +120,10 @@ public class Ads_DB implements DBinfo {
                     adsCombo.setAdsDetailId(rs.getInt("Adsdetail_id"));
                     adsCombo.setTitle(rs.getString("Title"));
                     adsCombo.setBudget(rs.getInt("budget"));
-                    adsCombo.setMaxView(rs.getInt("maxView"));
+                    adsCombo.setMaxReact(rs.getInt("maxReact"));
                     adsCombo.setDurationDay(rs.getInt("durationDay"));
                     adsCombo.setUser_id(rs.getInt("User_Id"));
+                    adsCombo.setComboType(rs.getString("comboType"));
 
                     allAdsCombo.add(adsCombo);
                 }
@@ -174,7 +175,7 @@ public class Ads_DB implements DBinfo {
                 ads.setContent(rs.getString("Content"));
                 ads.setImage(rs.getString("Image"));
                 ads.setUserId(rs.getInt("User_id"));
-                ads.setCurrentView(rs.getInt("currentView"));
+                ads.setCurrentReact(rs.getInt("currentReact"));
                 ads.setLocation(rs.getString("location"));
                 ads.setUri(rs.getString("URI"));
                 ads.setUploadPath(rs.getString("UploadPath"));
@@ -209,7 +210,7 @@ public class Ads_DB implements DBinfo {
                     ads.setContent(rs.getString("Content"));
                     ads.setImage(rs.getString("Image"));
                     ads.setUserId(rs.getInt("User_id"));
-                    ads.setCurrentView(rs.getInt("currentView"));
+                    ads.setCurrentReact(rs.getInt("currentReact"));
                     ads.setLocation(rs.getString("location"));
                     ads.setUri(rs.getString("URI"));
                     ads.setIsActive(rs.getInt("isActive"));
@@ -230,8 +231,7 @@ public class Ads_DB implements DBinfo {
         List<Ads> allAds = new ArrayList<>();
         String query = "SELECT * FROM Ads WHERE User_id = ? AND Adsdetail_id = ?";
 
-        try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); 
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setInt(1, userId);
             stmt.setInt(2, comboID);
@@ -244,7 +244,7 @@ public class Ads_DB implements DBinfo {
                     ads.setContent(rs.getString("Content"));
                     ads.setImage(rs.getString("Image"));
                     ads.setUserId(rs.getInt("User_id"));
-                    ads.setCurrentView(rs.getInt("currentView"));
+                    ads.setCurrentReact(rs.getInt("currentReact"));
                     ads.setLocation(rs.getString("location"));
                     ads.setUri(rs.getString("URI"));
                     ads.setUploadPath(rs.getString("UploadPath"));
@@ -264,7 +264,7 @@ public class Ads_DB implements DBinfo {
     // Boost advertising by inserting records into Ads and Upload tables
     public static void boostAdvertising(Ads ads) throws ParseException {
 
-        String insertQuery = "INSERT INTO Ads (Adsdetail_id, Content, Image, User_id, currentView, location, Title, URI, UploadPath,isActive, startDate) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?,?,?)";
+        String insertQuery = "INSERT INTO Ads (Adsdetail_id, Content, Image, User_id, currentReact, location, Title, URI, UploadPath,isActive, startDate) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?,?,?)";
 
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(insertQuery)) {
 
@@ -279,7 +279,7 @@ public class Ads_DB implements DBinfo {
             pstmt.setString(2, ads.getContent());
             pstmt.setString(3, ads.getImage());
             pstmt.setInt(4, ads.getUserId());
-            pstmt.setInt(5, ads.getCurrentView());
+            pstmt.setInt(5, ads.getCurrentReact());
             pstmt.setString(6, ads.getLocation());
             pstmt.setString(7, ads.getTitle());
             pstmt.setString(8, ads.getUri());
@@ -296,13 +296,14 @@ public class Ads_DB implements DBinfo {
     }
 
     public void createCampaign(Ads_combo ads_combo) {
-        String insertQuery = "INSERT INTO Combo_ads (Title, budget, maxView, durationDay, User_id) VALUES(?,?,?,?,?) ";
+        String insertQuery = "INSERT INTO Combo_ads (Title, budget, maxReact, durationDay, User_id, comboType) VALUES(?,?,?,?,?,?) ";
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(insertQuery)) {
             pstmt.setString(1, ads_combo.getTitle());
             pstmt.setInt(2, ads_combo.getBudget());
-            pstmt.setInt(3, ads_combo.getMaxView());
+            pstmt.setInt(3, ads_combo.getMaxReact());
             pstmt.setInt(4, ads_combo.getDurationDay());
             pstmt.setInt(5, ads_combo.getUser_id());
+            pstmt.setString(6, ads_combo.getComboType());
 
             pstmt.executeUpdate();
 
@@ -325,8 +326,7 @@ public class Ads_DB implements DBinfo {
             Logger.getLogger(Ads_DB.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    
+
     public void removeAdvertising(int adsId) {
         String sql = "DELETE FROM Ads WHERE Ads_id = ?";
 
