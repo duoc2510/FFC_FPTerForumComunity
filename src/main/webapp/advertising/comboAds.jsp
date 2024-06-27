@@ -39,10 +39,10 @@
             </div>
             <div class="container-fluid pt-0">
                 <div class="row form-settings d-flex justify-content-between">
-                    <div class="col-12 col-sm-5 px-2">
+                     <div class="col-12 col-sm-3 px-2">
                         <%@include file="menuAds.jsp" %>
                     </div>
-                    <div class="col-12 col-sm-7 px-2">
+                    <div class="col-12 col-sm-9 px-2">
                         <div class="bg-white shadow rounded p-4">
                             <div>
                                 <div class="mb-4">

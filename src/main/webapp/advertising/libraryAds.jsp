@@ -36,10 +36,10 @@
             </div>
             <div class="container-fluid pt-0">
                 <div class="row form-settings d-flex justify-content-between">
-                    <div class="col-12 col-sm-5 px-2">
-                        <%@ include file="menuAds.jsp" %>
+                     <div class="col-12 col-sm-3 px-2">
+                        <%@include file="menuAds.jsp" %>
                     </div>
-                    <div class="col-12 col-sm-7 px-2">
+                    <div class="col-12 col-sm-9 px-2">
                         <div class="bg-white shadow rounded p-4">
                             <div>
                                 <div class="mb-4">
@@ -73,7 +73,6 @@
                                         </form>
                                         <div class=" mb-3 col-12" style="width: 100%;">
                                             <div class="row no-gutters px-3">
-                                                <!--${adUserMap}-->
                                                 <c:forEach var="entry" items="${adsWithComboData}">
                                                     <c:set var="ads" value="${entry.key}" />
                                                     <c:set var="adsCombo" value="${entry.value}" />
@@ -84,7 +83,7 @@
                                                         <div class="col-6 px-2">
                                                             <img src="${pageContext.request.contextPath}/${ads.image}" class="card-img w-100" alt="${ads.content}" style="height: 300px; object-fit: cover; border: 0px solid; border-radius: 10px 10px 0 0;">
 
-                                                            <div class="card p-3">
+                                                            <div class="card p-4">
                                                                 <p>Advertising ID: ${ads.adsId}</p>
                                                                 <h5 class="card-title mt-2">${ads.title}</h5>
 

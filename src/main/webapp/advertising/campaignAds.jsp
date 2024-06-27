@@ -45,10 +45,10 @@
             </div>
             <div class="container-fluid pt-0">
                 <div class="row form-settings d-flex justify-content-between">
-                    <div class="col-12 col-sm-5 px-2">
+                    <div class="col-12 col-sm-3 px-2">
                         <%@include file="menuAds.jsp" %>
                     </div>
-                    <div class="col-12 col-sm-7 px-2">
+                    <div class="col-12 col-sm-9 px-2">
                         <div class="bg-white shadow rounded p-4">
                             <div class="mb-4">
                                 <h3>Campaign advertising</h3>
@@ -88,19 +88,15 @@
                                                 </div>
                                             </div>
                                             <div class="col-12 mx-3 mb-3 d-flex align-items-end"> 
-
                                                 <div class="col-6">
-                                                    <div class="progress mb-1" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="margin-right:10%;">
-                                                        <div class="progress-bar w-75"></div>
+                                                    <div class="progress mb-1" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="margin-right:10%;">
+                                                        <div class="progress-bar" style="width: ${(adsCombo.totalReact / adsCombo.maxReact) * 100}%;"></div>
                                                     </div>
-
-
                                                     <p>Reacted 
                                                         <c:if test="${adsCombo.comboType == 'view'}">views</c:if>
                                                         <c:if test="${adsCombo.comboType == 'click'}">clicks</c:if>
                                                         <c:if test="${adsCombo.comboType == 'message'}">messages</c:if>
                                                         : ${adsCombo.totalReact}</p>
-
                                                     <p>Budget: ${adsCombo.budget} VND</p>
                                                 </div>
                                                 <div class="col-6">
@@ -122,6 +118,7 @@
                                             </div>
                                         </div>
                                     </c:forEach>
+
 
                                     <div class="d-flex">
                                         <button class="btn btn-primary" data-toggle="modal" data-target="#createCampaign" href="javascript:void(0)">Create new campaign</button>

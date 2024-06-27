@@ -8,6 +8,7 @@ import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -16,7 +17,11 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import model.Ads;
+import model.Ads_combo;
 import model.DAO.Ads_DB;
 import model.Upload;
 import model.User;
@@ -29,8 +34,41 @@ public class Advertising_Boost extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        request.getRequestDispatcher("/advertising/index.jsp").forward(request, response);
+        // Get the session, do not create a new one if it doesn't exist
+        HttpSession session = request.getSession(false);
+
+        // Check if the user is logged in
+        if (session != null && session.getAttribute("USER") != null) {
+            // Retrieve the current user from the session
+            User currentUser = (User) session.getAttribute("USER");
+
+            // Fetch the list of ads for the current user
+            Ads_DB adsDB = new Ads_DB();
+            List<Ads> allAds = adsDB.getAllAdsByUserID(currentUser.getUserId());
+
+            // Fetch all combo data
+            List<Ads_combo> allComboAds = adsDB.getAllComboAds();
+
+            // Create a map of Adsdetail_id to ComboAds
+            Map<Integer, Ads_combo> comboAdsMap = new HashMap<>();
+            for (Ads_combo combo : allComboAds) {
+                comboAdsMap.put(combo.getAdsDetailId(), combo);
+            }
+
+            // Associate each ad with its combo data
+            Map<Ads, Ads_combo> adsWithComboData = new HashMap<>();
+            for (Ads ad : allAds) {
+                Ads_combo combo = comboAdsMap.get(ad.getAdsDetailId());
+                adsWithComboData.put(ad, combo);
+            }
+
+            // Set the map of ads with combo data as an attribute in the request
+            request.setAttribute("adsWithComboData", adsWithComboData);
+
+            // Set the response content type and forward the request to the JSP page
+            response.setContentType("text/html;charset=UTF-8");
+            request.getRequestDispatcher("/advertising/boostAds.jsp").forward(request, response);
+        }
     }
 
     @Override
@@ -98,8 +136,8 @@ public class Advertising_Boost extends HttpServlet {
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while processing your request.");
                 }
                 break;
-                
-                case "boostInCampaign":
+
+            case "boostInCampaign":
                 try {
                     // Path to the directory where images will be stored
                     String uploadPath = request.getServletContext().getRealPath("/upload");
@@ -151,8 +189,8 @@ public class Advertising_Boost extends HttpServlet {
                     adsDB.boostAdvertising(ads);
 
                     // Redirect to the advertising page
-                    response.sendRedirect(request.getContextPath() + "/advertising/campaign/detail?id="+ads.getAdsDetailId());
-                    
+                    response.sendRedirect(request.getContextPath() + "/advertising/campaign/detail?id=" + ads.getAdsDetailId());
+
                 } catch (Exception e) {
                     e.printStackTrace(); // Log the exception for debugging
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while processing your request.");
