@@ -72,8 +72,8 @@ public class Advertising_Campaign extends HttpServlet {
 
             // Set the list of ads combo as an attribute in the request
             request.setAttribute("allAdsCombo", allAdsCombo);
-
             request.setAttribute("USER_IDD", currentUser);
+         
 
             // Forward the request to the JSP page
             request.getRequestDispatcher("/advertising/campaignAds.jsp").forward(request, response);
@@ -96,12 +96,12 @@ public class Advertising_Campaign extends HttpServlet {
         Ads_DB adsDB = new Ads_DB();
 
         try {
-
             String title = request.getParameter("title");
             int budget = Integer.parseInt(request.getParameter("budget"));
             int maxReact = Integer.parseInt(request.getParameter("maxReact"));
             int durationDay = Integer.parseInt(request.getParameter("durationDay"));
             String comboType = request.getParameter("comboType");
+//            int totalReact = Integer.parseInt(request.getParameter("totalReact"));
 
             Ads_combo ads_combo = new Ads_combo(1, title, budget, maxReact, durationDay, user.getUserId(), comboType);
             adsDB.createCampaign(ads_combo);

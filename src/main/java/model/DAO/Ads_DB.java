@@ -42,7 +42,7 @@ public class Ads_DB implements DBinfo {
                 adsCombo.setMaxReact(rs.getInt("maxReact"));
                 adsCombo.setDurationDay(rs.getInt("durationDay"));
                 adsCombo.setUser_id(rs.getInt("User_Id"));
-                 adsCombo.setComboType(rs.getString("comboType"));
+                adsCombo.setComboType(rs.getString("comboType"));
 
                 allAdsCombo.add(adsCombo);
             }
@@ -69,7 +69,7 @@ public class Ads_DB implements DBinfo {
                     adsCombo.setMaxReact(rs.getInt("maxReact"));
                     adsCombo.setDurationDay(rs.getInt("durationDay"));
                     adsCombo.setUser_id(rs.getInt("User_Id"));
-                     adsCombo.setComboType(rs.getString("comboType"));
+                    adsCombo.setComboType(rs.getString("comboType"));
 
                     allAdsCombo.add(adsCombo);
                 }
@@ -96,7 +96,7 @@ public class Ads_DB implements DBinfo {
                 adsCombo.setMaxReact(rs.getInt("maxReact"));
                 adsCombo.setDurationDay(rs.getInt("durationDay"));
                 adsCombo.setUser_id(rs.getInt("User_Id"));
-                 adsCombo.setComboType(rs.getString("comboType"));
+                adsCombo.setComboType(rs.getString("comboType"));
 
                 allAdsCombo.add(adsCombo);
             }
@@ -109,7 +109,7 @@ public class Ads_DB implements DBinfo {
 
     public List<Ads_combo> getAllAdsComboByUserID(int userId) {
         List<Ads_combo> allAdsCombo = new ArrayList<>();
-        String query = "SELECT * FROM Combo_ads WHERE User_id = ? ORDER BY Adsdetail_id DESC";
+        String query = "SELECT a.*, (SELECT SUM(currentReact) FROM Ads WHERE Adsdetail_id = a.Adsdetail_id) AS totalReact FROM Combo_ads a WHERE a.User_id =?";
 
         try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, userId);
@@ -124,6 +124,8 @@ public class Ads_DB implements DBinfo {
                     adsCombo.setDurationDay(rs.getInt("durationDay"));
                     adsCombo.setUser_id(rs.getInt("User_Id"));
                     adsCombo.setComboType(rs.getString("comboType"));
+
+                    adsCombo.setTotalReact(rs.getInt("totalReact"));
 
                     allAdsCombo.add(adsCombo);
                 }
@@ -312,6 +314,26 @@ public class Ads_DB implements DBinfo {
         }
     }
 
+    public int totalReact(int comboID) {
+        int totalReacted = 0;
+        String sql = "SELECT SUM(currentReact) AS totalReact FROM Ads WHERE Adsdetail_id = ?";
+
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(sql)) {
+
+            pstmt.setInt(1, comboID);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    totalReacted = rs.getInt("totalReact");
+                }
+            }
+            System.out.println("Advertising status updated successfully.");
+        } catch (SQLException ex) {
+            Logger.getLogger(Ads_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return totalReacted;
+    }
+
     public void changeActive(int adsId, int isActive) {
         String sql = "UPDATE Ads SET isActive = ? WHERE Ads_id = ?";
 
@@ -322,6 +344,20 @@ public class Ads_DB implements DBinfo {
 
             pstmt.executeUpdate();
             System.out.println("Advertising status updated successfully.");
+        } catch (SQLException ex) {
+            Logger.getLogger(Ads_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void upCurrentReact(int adsId) {
+        String sql = "UPDATE Ads SET currentReact = currentReact + 1 WHERE Ads_id = ?";
+
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(sql)) {
+
+            pstmt.setInt(1, adsId);
+
+            pstmt.executeUpdate();
+            System.out.println("Advertising traffic updated successfully.");
         } catch (SQLException ex) {
             Logger.getLogger(Ads_DB.class.getName()).log(Level.SEVERE, null, ex);
         }

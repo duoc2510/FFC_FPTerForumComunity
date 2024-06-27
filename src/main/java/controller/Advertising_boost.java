@@ -99,7 +99,7 @@ public class Advertising_Boost extends HttpServlet {
                 }
                 break;
                 
-            case "boostInCampaign":
+                case "boostInCampaign":
                 try {
                     // Path to the directory where images will be stored
                     String uploadPath = request.getServletContext().getRealPath("/upload");

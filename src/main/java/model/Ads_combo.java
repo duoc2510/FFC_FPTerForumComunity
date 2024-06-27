@@ -17,11 +17,24 @@ public class Ads_combo {
     private int durationDay;
     private int User_id;
     private String comboType;
+    private int totalReact;
 
     public Ads_combo() {
     }
 
-    
+    //view
+    public Ads_combo(int adsDetailId, String title, int budget, int maxReact, int durationDay, int User_id, String comboType, int totalReact) {
+        this.adsDetailId = adsDetailId;
+        this.title = title;
+        this.budget = budget;
+        this.maxReact = maxReact;
+        this.durationDay = durationDay;
+        this.User_id = User_id;
+        this.comboType = comboType;
+        this.totalReact = totalReact;
+    }
+
+    //add
     public Ads_combo(int adsDetailId, String title, int budget, int maxReact, int durationDay, int User_id, String comboType) {
         this.adsDetailId = adsDetailId;
         this.title = title;
@@ -31,6 +44,9 @@ public class Ads_combo {
         this.User_id = User_id;
         this.comboType = comboType;
     }
+    
+    
+    
 
     public int getAdsDetailId() {
         return adsDetailId;
@@ -88,9 +104,18 @@ public class Ads_combo {
         this.comboType = comboType;
     }
 
+    public int getTotalReact() {
+        return totalReact;
+    }
+
+    public void setTotalReact(int totalReact) {
+        this.totalReact = totalReact;
+    }
+
     @Override
     public String toString() {
-        return "Ads_combo{" + "adsDetailId=" + adsDetailId + ", title=" + title + ", budget=" + budget + ", maxReact=" + maxReact + ", durationDay=" + durationDay + ", User_id=" + User_id + ", comboType=" + comboType + '}';
+        return "Ads_combo{" + "adsDetailId=" + adsDetailId + ", title=" + title + ", budget=" + budget + ", maxReact=" + maxReact + ", durationDay=" + durationDay + ", User_id=" + User_id + ", comboType=" + comboType + ", totalReact=" + totalReact + '}';
     }
+
     
 }

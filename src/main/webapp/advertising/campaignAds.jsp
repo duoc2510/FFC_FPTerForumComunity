@@ -68,12 +68,10 @@
                                         </div>
                                     </div>
                                 </c:if>
-                                ${allAdsCombo}
                                 <c:if test="${not empty allAdsCombo}">
                                     <c:forEach var="adsCombo" items="${allAdsCombo}">
                                         <div class="row mb-4 card py-3 px-2">
-                                            <div class=col-12"> 
-
+                                            <div class="col-12"> 
                                                 <div data-ads="${adsCombo.adsDetailId}" class="d-flex flex-row align-items-center mb-4 pb-1">
                                                     <div class="border px-3 py-2 mx-2 rounded">
                                                         <c:if test="${adsCombo.comboType == 'view'}">
@@ -88,22 +86,29 @@
                                                     </div>
                                                     <h6 class="mt-1">${adsCombo.title}</h6>
                                                 </div>
-
                                             </div>
-                                            <div class="col-12 mx-3 mb-3 d-flex"> 
-                                                <div class="col-6">
+                                            <div class="col-12 mx-3 mb-3 d-flex align-items-end"> 
 
+                                                <div class="col-6">
+                                                    <div class="progress mb-1" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="margin-right:10%;">
+                                                        <div class="progress-bar w-75"></div>
+                                                    </div>
+
+
+                                                    <p>Reacted 
+                                                        <c:if test="${adsCombo.comboType == 'view'}">views</c:if>
+                                                        <c:if test="${adsCombo.comboType == 'click'}">clicks</c:if>
+                                                        <c:if test="${adsCombo.comboType == 'message'}">messages</c:if>
+                                                        : ${adsCombo.totalReact}</p>
+
+                                                    <p>Budget: ${adsCombo.budget} VND</p>
+                                                </div>
+                                                <div class="col-6">
                                                     <p>Total 
                                                         <c:if test="${adsCombo.comboType == 'view'}">views</c:if>
                                                         <c:if test="${adsCombo.comboType == 'click'}">clicks</c:if>
                                                         <c:if test="${adsCombo.comboType == 'message'}">messages</c:if>
                                                         : ${adsCombo.maxReact}</p>
-
-
-
-                                                    <p>Budget: ${adsCombo.budget} VND</p>
-                                                </div>
-                                                <div class="col-6">
                                                     <p>Duration day: ${adsCombo.durationDay}</p>
                                                     <p>Rate: <span id="rate">${adsCombo.budget / adsCombo.maxReact / adsCombo.durationDay}</span> VND /
                                                         <c:if test="${adsCombo.comboType == 'view'}">view</c:if>
@@ -112,11 +117,12 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-12 mt-2 mx-2 d-flex justify-content-end"> 
-                                                    <a class="btn btn-light" data-toggle="modal" data-target="#addProduct${adsCombo.adsDetailId}" href="javascript:void(0)">View</a>
+                                                    <a class="btn btn-light" data-toggle="modal" data-target="#view${adsCombo.adsDetailId}" href="javascript:void(0)">View</a>
                                                 <a class="btn btn-primary mx-2" href="campaign/detail?id=${adsCombo.adsDetailId}">Continue</a>
                                             </div>
                                         </div>
                                     </c:forEach>
+
                                     <div class="d-flex">
                                         <button class="btn btn-primary" data-toggle="modal" data-target="#createCampaign" href="javascript:void(0)">Create new campaign</button>
                                     </div>
@@ -130,6 +136,60 @@
         </div>
     </div>
     <%@ include file="../include/footer.jsp" %>    
+    <c:if test="${not empty allAdsCombo}">
+        <c:forEach var="adsCombo" items="${allAdsCombo}">
+            <div class="modal fade" id="view${adsCombo.adsDetailId}" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <div data-ads="${adsCombo.adsDetailId}" class="d-flex flex-row align-items-center pb-1">
+                                <div class="border px-3 py-2 mx-2 rounded">
+                                    <c:if test="${adsCombo.comboType == 'view'}">
+                                        <i class="ti ti-eye d-inline"></i> <p class="d-inline">Awareness</p>
+                                    </c:if>
+                                    <c:if test="${adsCombo.comboType == 'click'}">
+                                        <i class="ti ti-location d-inline"></i> <p class="d-inline">Traffic</p>
+                                    </c:if>
+                                    <c:if test="${adsCombo.comboType == 'message'}">
+                                        <i class="ti ti-comment d-inline"></i> <p class="d-inline">Message</p>
+                                    </c:if>
+                                </div>
+                                <h5 class="mt-1">${adsCombo.title}</h5>
+                            </div>
+
+                            <button class="close btn-close" data-dismiss="modal" aria-label="Close">
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group mb-3">
+                                <div class="col-12 mx-3 mb-3 d-flex"> 
+                                    <div class="col-6">
+
+                                        <p>Total 
+                                            <c:if test="${adsCombo.comboType == 'view'}">views</c:if>
+                                            <c:if test="${adsCombo.comboType == 'click'}">clicks</c:if>
+                                            <c:if test="${adsCombo.comboType == 'message'}">messages</c:if>
+                                            : ${adsCombo.maxReact}</p>
+
+                                        <p>Budget: ${adsCombo.budget} VND</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <p>Duration day: ${adsCombo.durationDay}</p>
+                                        <p>Rate: <span id="rate">${adsCombo.budget / adsCombo.maxReact / adsCombo.durationDay}</span> VND /
+                                            <c:if test="${adsCombo.comboType == 'view'}">view</c:if>
+                                            <c:if test="${adsCombo.comboType == 'click'}">click</c:if>
+                                            <c:if test="${adsCombo.comboType == 'message'}">message</c:if></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </c:forEach>
+    </c:if>
+
+
     <!-- Modal to add new campaign -->
     <div class="modal fade" id="createCampaign" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">

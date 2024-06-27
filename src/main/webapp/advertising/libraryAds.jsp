@@ -84,20 +84,28 @@
                                                         <div class="col-6 px-2">
                                                             <img src="${pageContext.request.contextPath}/${ads.image}" class="card-img w-100" alt="${ads.content}" style="height: 300px; object-fit: cover; border: 0px solid; border-radius: 10px 10px 0 0;">
 
-                                                            <div class="card p-4">
+                                                            <div class="card p-3">
                                                                 <p>Advertising ID: ${ads.adsId}</p>
                                                                 <h5 class="card-title mt-2">${ads.title}</h5>
-                                                                <p class="ml-auto">User: ${adUser.userFullName}</p>
-                                                                <img src="${pageContext.request.contextPath}/${adUser.userAvatar}" class="card-img" alt="avatarUser" style="height: 50px; width: 50px; object-fit: cover; border: 0px solid; border-radius: 50%;">
 
-                                                                <p class="card-text mt-1">
-                                                                    <small class="text-muted">Started running on ${ads.startDate}</small>
+                                                                <div class="row mb-1 align-items-center">
+                                                                    <div class="col-3">
+                                                                        <img src="${pageContext.request.contextPath}/${adUser.userAvatar}" class="card-img px-2" alt="avatarUser" style="object-fit: cover; border: 0px solid; border-radius: 50%;">
+                                                                    </div>
+                                                                    <div class="col-9">
+                                                                        <p class="ml-auto"><b> ${adUser.userFullName}</b></p>
+                                                                        <span>Sponsored</span>
+                                                                    </div>
+                                                                </div>
+
+                                                                <p class="mt-1">
+                                                                    Started running on ${ads.startDate}
                                                                 </p>
                                                                 <p class="card-text mt-2">
-                                                                    <small class="text-muted">${ads.title}</small>
+                                                                    ${ads.title}
                                                                 </p>
                                                                 <p class="card-text mt-2">
-                                                                    <small class="text-muted">URL: <a href="${ads.uri}" target="_blank">${ads.uri}</a></small>
+                                                                    URL: <a href="${pageContext.request.contextPath}/redirect?to=${ads.uri}&a=${ads.adsId}" target="_blank">${ads.uri}</a>
                                                                 </p>
                                                                 <p class="card-text mt-2">
                                                                     ${ads.isActive == 1 ? 'Active' : 'Not active'}

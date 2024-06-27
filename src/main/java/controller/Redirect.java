@@ -10,6 +10,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import model.DAO.Ads_DB;
 
 /**
  *
@@ -34,7 +35,7 @@ public class Redirect extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Redirect</title>");            
+            out.println("<title>Servlet Redirect</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet Redirect at " + request.getContextPath() + "</h1>");
@@ -55,28 +56,31 @@ public class Redirect extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        response.setContentType("text/html;charset=UTF-8");
+        String redirectTo = request.getParameter("to");
+        String adsIDParam = request.getParameter("a");
+
+        int adsID = 0; // default value or you can handle it differently
+
+        Ads_DB adsDB = new Ads_DB();
+        // Call up Traffic +1  with the Ads id
+        adsDB.upCurrentReact(adsID);
+
+        if (adsIDParam != null) {
+            try {
+                adsID = Integer.parseInt(adsIDParam);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                // Handle the exception, e.g., set an error message or set a default value
+            }
+        }
+
+     
+
+        request.setAttribute("redirectTo", redirectTo);
+        request.getRequestDispatcher("/redirect.jsp").forward(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
         return "Short description";

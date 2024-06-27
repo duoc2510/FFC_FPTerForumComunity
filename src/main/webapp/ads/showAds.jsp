@@ -3,8 +3,14 @@
     Created on : May 15, 2024, 4:26:01â¯PM
     Author     : mac
 show this in right index
+
+Không pull cái này lên chỉ test Advertising
+
 --%>
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
+
+
+
 
 <div class="showAds card">
     <img src="/FPTer/upload/eda49b3478bea2565bcc9a5ec538b84b.png" class="card-img-top event-img" alt="...">

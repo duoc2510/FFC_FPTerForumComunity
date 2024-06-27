@@ -44,7 +44,7 @@
                             <div>
                                 <div class="mb-4">
                                     <h3>My Advertising</h3>
-                                    <h6>Payment Method</h6>
+                                    <h6>All advertising activity running</h6>
                                 </div>
                                 <div class="form-group pb-3">
                                     <div class="d-flex flex-row align-items-center mb-4 pb-1 row">
@@ -61,15 +61,20 @@
                                                         <div class="card-body">
                                                             <h5 class="card-title">${ads.content}</h5>
                                                             <p class="card-text mt-2">
-                                                                <small class="text-muted">Views: ${ads.currentReact} / ${adsCombo.maxReact}</small>
+                                                               Views: ${ads.currentReact} / ${adsCombo.maxReact}
+                                                            </p>
+
+                                                            <p class="card-text mt-2">
+                                                               Location: ${ads.location}
                                                             </p>
                                                             <p class="card-text mt-2">
-                                                                <small class="text-muted">Location: ${ads.location}</small>
+                                                                URL: <a href="${pageContext.request.contextPath}/redirect?to=${ads.uri}&a=${ads.adsId}" target="_blank">${ads.uri}</a>
+                                                            </p>
+                                                            <p class="mt-1">
+                                                                Started running on ${ads.startDate}
                                                             </p>
                                                             <p class="card-text mt-2">
-                                                                <small class="text-muted">URL: <a href="${ads.uri}" target="_blank">${ads.uri}</a></small>
-                                                            </p>
-                                                            <p class="card-text mt-2">
+
                                                             <div class="form-check form-switch">
                                                                 <input 
                                                                     class="form-check-input" 
