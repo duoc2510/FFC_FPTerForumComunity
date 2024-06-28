@@ -7,12 +7,34 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ page import="java.util.Date" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+<%
+    // Get the current date
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    String getdaynowStr = sdf.format(new Date());
+    Date getdaynow = sdf.parse(getdaynowStr);
+
+    // Setting the current date in the request for use in JSTL
+    request.setAttribute("getdaynow", getdaynow);
+%>
+
 
 <%@ include file="../include/header.jsp" %>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
+
+<style>
+    .no-available{
+        background: #eeeeee;
+    }
+    .no-available .btn-primary{
+        display: none;
+    }
+</style>
 <body>
 
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
@@ -54,7 +76,10 @@
                                 <h3>Campaign advertising</h3>
                                 <h6>you can keep an eye on your campaign while you’re on the go. Wherever you are, you’ll have the power to create and edit ads, track their performance, and manage ad budgets and schedules.</h6>
                             </div>
-                            <div class="form-group pb-3">
+                            <div class="d-flex mb-4">
+                                <button class="btn btn-primary" data-toggle="modal" data-target="#createCampaign" href="javascript:void(0)">Create new campaign</button>
+                            </div>
+                            <div class="form-group mx-2">
                                 <c:if test="${empty allAdsCombo}">
                                     <p class="mb-4">You have no campaigns.</p>
                                     <div class="d-flex">
@@ -68,61 +93,77 @@
                                         </div>
                                     </div>
                                 </c:if>
-                                <c:if test="${not empty allAdsCombo}">
+                                <c:if test="${not empty allAdsCombo}"> 
                                     <c:forEach var="adsCombo" items="${allAdsCombo}">
-                                        <div class="row mb-4 card py-3 px-2">
-                                            <div class="col-12"> 
-                                                <div data-ads="${adsCombo.adsDetailId}" class="d-flex flex-row align-items-center mb-4 pb-1">
+                                        <c:set var="createDate" value="${adsCombo.createDate}" />
+                                        <fmt:parseDate var="parsedCreateDate" value="${createDate}" pattern="yyyy-MM-dd" />
+                                        <c:set var="diffInMillies" value="${getdaynow.time - parsedCreateDate.time}" />
+                                        <c:set var="diff" value="${diffInMillies / (1000 * 60 * 60 * 24)}" />
+                                        <c:set var="durationDay" value="${adsCombo.durationDay}" />
+
+                                        <div class="row mb-4 card py-3 px-3 <c:if test="${diff > durationDay}"> no-available </c:if>">
+                                                <div class="col-12">
+                                                    <div data-ads="${adsCombo.adsDetailId}" class="d-flex flex-row align-items-center mb-4 pb-1">
                                                     <div class="border px-3 py-2 mx-2 rounded">
-                                                        <c:if test="${adsCombo.comboType == 'view'}">
-                                                            <i class="ti ti-eye d-inline"></i> <p class="d-inline">Awareness</p>
-                                                        </c:if>
-                                                        <c:if test="${adsCombo.comboType == 'click'}">
-                                                            <i class="ti ti-location d-inline"></i> <p class="d-inline">Traffic</p>
-                                                        </c:if>
-                                                        <c:if test="${adsCombo.comboType == 'message'}">
-                                                            <i class="ti ti-comment d-inline"></i> <p class="d-inline">Message</p>
-                                                        </c:if>
+                                                        <c:choose>
+                                                            <c:when test="${adsCombo.comboType == 'view'}">
+                                                                <i class="ti ti-eye d-inline"></i> <p class="d-inline">Awareness</p>
+                                                            </c:when>
+                                                            <c:when test="${adsCombo.comboType == 'click'}">
+                                                                <i class="ti ti-location d-inline"></i> <p class="d-inline">Traffic</p>
+                                                            </c:when>
+                                                            <c:when test="${adsCombo.comboType == 'message'}">
+                                                                <i class="ti ti-comment d-inline"></i> <p class="d-inline">Message</p>
+                                                            </c:when>
+                                                        </c:choose>
                                                     </div>
                                                     <h6 class="mt-1">${adsCombo.title}</h6>
                                                 </div>
                                             </div>
-                                            <div class="col-12 mx-3 mb-3 d-flex align-items-end"> 
+
+
+
+                                            <div class="col-12 mx-3 mb-3 d-flex align-items-end">
                                                 <div class="col-6">
                                                     <div class="progress mb-1" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="margin-right:10%;">
                                                         <div class="progress-bar" style="width: ${(adsCombo.totalReact / adsCombo.maxReact) * 100}%;"></div>
                                                     </div>
-                                                    <p>Reacted 
-                                                        <c:if test="${adsCombo.comboType == 'view'}">views</c:if>
-                                                        <c:if test="${adsCombo.comboType == 'click'}">clicks</c:if>
-                                                        <c:if test="${adsCombo.comboType == 'message'}">messages</c:if>
+                                                    <p>Reacted
+                                                        <c:choose>
+                                                            <c:when test="${adsCombo.comboType == 'view'}">views</c:when>
+                                                            <c:when test="${adsCombo.comboType == 'click'}">clicks</c:when>
+                                                            <c:when test="${adsCombo.comboType == 'message'}">messages</c:when>
+                                                        </c:choose>
                                                         : ${adsCombo.totalReact}</p>
+                                                    <p>Total
+                                                        <c:choose>
+                                                            <c:when test="${adsCombo.comboType == 'view'}">views</c:when>
+                                                            <c:when test="${adsCombo.comboType == 'click'}">clicks</c:when>
+                                                            <c:when test="${adsCombo.comboType == 'message'}">messages</c:when>
+                                                        </c:choose>
+                                                        : ${adsCombo.maxReact}</p>
                                                     <p>Budget: ${adsCombo.budget} VND</p>
                                                 </div>
                                                 <div class="col-6">
-                                                    <p>Total 
-                                                        <c:if test="${adsCombo.comboType == 'view'}">views</c:if>
-                                                        <c:if test="${adsCombo.comboType == 'click'}">clicks</c:if>
-                                                        <c:if test="${adsCombo.comboType == 'message'}">messages</c:if>
-                                                        : ${adsCombo.maxReact}</p>
                                                     <p>Duration day: ${adsCombo.durationDay}</p>
                                                     <p>Rate: <span id="rate">${adsCombo.budget / adsCombo.maxReact / adsCombo.durationDay}</span> VND /
-                                                        <c:if test="${adsCombo.comboType == 'view'}">view</c:if>
-                                                        <c:if test="${adsCombo.comboType == 'click'}">click</c:if>
-                                                        <c:if test="${adsCombo.comboType == 'message'}">message</c:if></p>
-                                                    </div>
+                                                        <c:choose>
+                                                            <c:when test="${adsCombo.comboType == 'view'}">view</c:when>
+                                                            <c:when test="${adsCombo.comboType == 'click'}">click</c:when>
+                                                            <c:when test="${adsCombo.comboType == 'message'}">message</c:when>
+                                                        </c:choose></p>
+                                                    <p>Created on: ${adsCombo.createDate}</p>
                                                 </div>
-                                                <div class="col-12 mt-2 mx-2 d-flex justify-content-end"> 
-                                                    <a class="btn btn-light" data-toggle="modal" data-target="#view${adsCombo.adsDetailId}" href="javascript:void(0)">View</a>
-                                                <a class="btn btn-primary mx-2" href="campaign/detail?id=${adsCombo.adsDetailId}">Continue</a>
+                                            </div>
+                                            <div class="col-12 mt-2 mx-2 d-flex justify-content-end">
+                                                <a class="btn btn-light mx-3" data-toggle="modal" data-target="#view${adsCombo.adsDetailId}" href="javascript:void(0)">View</a>
+                                                <a class="btn btn-primary mx-3" href="campaign/detail?id=${adsCombo.adsDetailId}">Continue</a>
                                             </div>
                                         </div>
                                     </c:forEach>
 
 
-                                    <div class="d-flex">
-                                        <button class="btn btn-primary" data-toggle="modal" data-target="#createCampaign" href="javascript:void(0)">Create new campaign</button>
-                                    </div>
+
                                 </c:if>
 
                             </div>
@@ -177,6 +218,8 @@
                                             <c:if test="${adsCombo.comboType == 'click'}">click</c:if>
                                             <c:if test="${adsCombo.comboType == 'message'}">message</c:if></p>
                                         </div>
+
+
                                     </div>
                                 </div>
                             </div>
@@ -193,8 +236,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Create campagin</h5>
-                    <button class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
+                    <button class="btn-close" data-dismiss="modal" aria-label="Close">
                     </button>
                 </div>
                 <form action="${pageContext.request.contextPath}/advertising/campaign" method="post">

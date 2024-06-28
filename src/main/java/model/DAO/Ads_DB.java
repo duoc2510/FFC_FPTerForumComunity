@@ -43,6 +43,7 @@ public class Ads_DB implements DBinfo {
                 adsCombo.setDurationDay(rs.getInt("durationDay"));
                 adsCombo.setUser_id(rs.getInt("User_Id"));
                 adsCombo.setComboType(rs.getString("comboType"));
+                adsCombo.setCreateDate(rs.getDate("createDate"));
 
                 allAdsCombo.add(adsCombo);
             }
@@ -70,6 +71,7 @@ public class Ads_DB implements DBinfo {
                     adsCombo.setDurationDay(rs.getInt("durationDay"));
                     adsCombo.setUser_id(rs.getInt("User_Id"));
                     adsCombo.setComboType(rs.getString("comboType"));
+                    adsCombo.setCreateDate(rs.getDate("createDate"));
 
                     allAdsCombo.add(adsCombo);
                 }
@@ -97,6 +99,7 @@ public class Ads_DB implements DBinfo {
                 adsCombo.setDurationDay(rs.getInt("durationDay"));
                 adsCombo.setUser_id(rs.getInt("User_Id"));
                 adsCombo.setComboType(rs.getString("comboType"));
+                adsCombo.setCreateDate(rs.getDate("createDate"));
 
                 allAdsCombo.add(adsCombo);
             }
@@ -109,7 +112,7 @@ public class Ads_DB implements DBinfo {
 
     public List<Ads_combo> getAllAdsComboByUserID(int userId) {
         List<Ads_combo> allAdsCombo = new ArrayList<>();
-        String query = "SELECT a.*, (SELECT SUM(currentReact) FROM Ads WHERE Adsdetail_id = a.Adsdetail_id) AS totalReact FROM Combo_ads a WHERE a.User_id =?";
+        String query = "SELECT a.*, (SELECT SUM(currentReact) FROM Ads WHERE Adsdetail_id = a.Adsdetail_id) AS totalReact FROM Combo_ads a WHERE a.User_id =? ORDER BY createDate DESC";
 
         try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, userId);
@@ -124,8 +127,8 @@ public class Ads_DB implements DBinfo {
                     adsCombo.setDurationDay(rs.getInt("durationDay"));
                     adsCombo.setUser_id(rs.getInt("User_Id"));
                     adsCombo.setComboType(rs.getString("comboType"));
-
                     adsCombo.setTotalReact(rs.getInt("totalReact"));
+                    adsCombo.setCreateDate(rs.getDate("createDate"));
 
                     allAdsCombo.add(adsCombo);
                 }
@@ -183,6 +186,7 @@ public class Ads_DB implements DBinfo {
                 ads.setUploadPath(rs.getString("UploadPath"));
                 ads.setIsActive(rs.getInt("isActive"));
                 ads.setStartDate(rs.getDate("startDate"));
+                ads.setTargetSex(rs.getString("targetSex"));
                 allAds.add(ads);
             }
             System.out.println("getAllAds: Query executed successfully.");
@@ -217,6 +221,7 @@ public class Ads_DB implements DBinfo {
                     ads.setUri(rs.getString("URI"));
                     ads.setIsActive(rs.getInt("isActive"));
                     ads.setStartDate(rs.getDate("startDate"));
+                    ads.setTargetSex(rs.getString("targetSex"));
 
                     allAds.add(ads);
                 }
@@ -252,6 +257,7 @@ public class Ads_DB implements DBinfo {
                     ads.setUploadPath(rs.getString("UploadPath"));
                     ads.setIsActive(rs.getInt("isActive"));
                     ads.setStartDate(rs.getDate("startDate"));
+                    ads.setTargetSex(rs.getString("targetSex"));
 
                     allAds.add(ads);
                 }
@@ -266,7 +272,7 @@ public class Ads_DB implements DBinfo {
     // Boost advertising by inserting records into Ads and Upload tables
     public static void boostAdvertising(Ads ads) throws ParseException {
 
-        String insertQuery = "INSERT INTO Ads (Adsdetail_id, Content, Image, User_id, currentReact, location, Title, URI, UploadPath,isActive, startDate) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?,?,?)";
+        String insertQuery = "INSERT INTO Ads (Adsdetail_id, Content, Image, User_id, currentReact, location, Title, URI, UploadPath,isActive, startDate, targetSex) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?,?,?,?)";
 
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(insertQuery)) {
 
@@ -288,6 +294,7 @@ public class Ads_DB implements DBinfo {
             pstmt.setString(9, ads.getUploadPath());
             pstmt.setInt(10, 1); // active 
             pstmt.setDate(11, sqlDate); // date tao ads 
+            pstmt.setString(12, ads.getTargetSex());
 
             // Execute insertion into Ads table
             pstmt.executeUpdate();
@@ -297,18 +304,25 @@ public class Ads_DB implements DBinfo {
         }
     }
 
-    public void createCampaign(Ads_combo ads_combo) {
-        String insertQuery = "INSERT INTO Combo_ads (Title, budget, maxReact, durationDay, User_id, comboType) VALUES(?,?,?,?,?,?) ";
+    public void createCampaign(Ads_combo ads_combo) throws ParseException {
+        String insertQuery = "INSERT INTO Combo_ads (Title, budget, maxReact, durationDay, User_id, comboType, createDate) VALUES(?,?,?,?,?,?,?)";
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(insertQuery)) {
+            // Lấy ngày hiện tại và định dạng theo dd/MM/yyyy
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            String currentDate = formatter.format(new Date());
+
+            // Chuyển đổi lại ngày sang kiểu Date của SQL Server
+            java.sql.Date sqlDate = new java.sql.Date(formatter.parse(currentDate).getTime());
+
             pstmt.setString(1, ads_combo.getTitle());
             pstmt.setInt(2, ads_combo.getBudget());
             pstmt.setInt(3, ads_combo.getMaxReact());
             pstmt.setInt(4, ads_combo.getDurationDay());
             pstmt.setInt(5, ads_combo.getUser_id());
             pstmt.setString(6, ads_combo.getComboType());
+            pstmt.setDate(7, sqlDate); // date tạo combo
 
             pstmt.executeUpdate();
-
         } catch (SQLException ex) {
             Logger.getLogger(Ads_DB.class.getName()).log(Level.SEVERE, null, ex);
         }

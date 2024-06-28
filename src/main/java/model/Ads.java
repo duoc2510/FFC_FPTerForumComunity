@@ -16,11 +16,12 @@ public class Ads {
     private String uploadPath;
     private int isActive;
     private Date startDate;
+    private String targetSex;
 
     public Ads() {
     }
 
-    public Ads(int adsId, int adsDetailId, String content, String image, int userId, int currentReact, String location, String title, String uri, String uploadPath, int isActive, Date startDate) {
+    public Ads(int adsId, int adsDetailId, String content, String image, int userId, int currentReact, String location, String title, String uri, String uploadPath, int isActive, Date startDate, String targetSex) {
         this.adsId = adsId;
         this.adsDetailId = adsDetailId;
         this.content = content;
@@ -33,6 +34,7 @@ public class Ads {
         this.uploadPath = uploadPath;
         this.isActive = isActive;
         this.startDate = startDate;
+        this.targetSex = targetSex;
     }
 
     public int getAdsId() {
@@ -131,9 +133,17 @@ public class Ads {
         this.startDate = startDate;
     }
 
+    public String getTargetSex() {
+        return targetSex;
+    }
+
+    public void setTargetSex(String targetSex) {
+        this.targetSex = targetSex;
+    }
+
     @Override
     public String toString() {
-        return "Ads{" + "adsId=" + adsId + ", adsDetailId=" + adsDetailId + ", content=" + content + ", image=" + image + ", userId=" + userId + ", currentReact=" + currentReact + ", location=" + location + ", title=" + title + ", uri=" + uri + ", uploadPath=" + uploadPath + ", isActive=" + isActive + ", startDate=" + startDate + '}';
+        return "Ads{" + "adsId=" + adsId + ", adsDetailId=" + adsDetailId + ", content=" + content + ", image=" + image + ", userId=" + userId + ", currentReact=" + currentReact + ", location=" + location + ", title=" + title + ", uri=" + uri + ", uploadPath=" + uploadPath + ", isActive=" + isActive + ", startDate=" + startDate + ", targetSex=" + targetSex + '}';
     }
 
 }

@@ -11,6 +11,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import model.Ads_combo;
 import model.DAO.Ads_DB;
@@ -65,6 +67,8 @@ public class Advertising_Campaign extends HttpServlet {
         if (session != null && session.getAttribute("USER") != null) {
             // Retrieve the current user from the session
             User currentUser = (User) session.getAttribute("USER");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date getdaynow = new Date();
 
             // Get the list of all ads combo
             Ads_DB ads_DB = new Ads_DB();
@@ -73,7 +77,6 @@ public class Advertising_Campaign extends HttpServlet {
             // Set the list of ads combo as an attribute in the request
             request.setAttribute("allAdsCombo", allAdsCombo);
             request.setAttribute("USER_IDD", currentUser);
-         
 
             // Forward the request to the JSP page
             request.getRequestDispatcher("/advertising/campaignAds.jsp").forward(request, response);
@@ -101,9 +104,16 @@ public class Advertising_Campaign extends HttpServlet {
             int maxReact = Integer.parseInt(request.getParameter("maxReact"));
             int durationDay = Integer.parseInt(request.getParameter("durationDay"));
             String comboType = request.getParameter("comboType");
-//            int totalReact = Integer.parseInt(request.getParameter("totalReact"));
 
-            Ads_combo ads_combo = new Ads_combo(1, title, budget, maxReact, durationDay, user.getUserId(), comboType);
+            Ads_combo ads_combo = new Ads_combo();
+
+            ads_combo.setTitle(title);
+            ads_combo.setBudget(budget);
+            ads_combo.setMaxReact(maxReact);
+            ads_combo.setDurationDay(durationDay);
+            ads_combo.setUser_id(user.getUserId());
+            ads_combo.setComboType(comboType);
+
             adsDB.createCampaign(ads_combo);
 
             response.sendRedirect(request.getContextPath() + "/advertising/campaign");

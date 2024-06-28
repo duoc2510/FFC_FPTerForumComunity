@@ -4,6 +4,8 @@
  */
 package model;
 
+import java.util.Date;
+
 /**
  *
  * @author mac
@@ -18,12 +20,13 @@ public class Ads_combo {
     private int User_id;
     private String comboType;
     private int totalReact;
+    private Date createDate;
 
     public Ads_combo() {
     }
 
     //view
-    public Ads_combo(int adsDetailId, String title, int budget, int maxReact, int durationDay, int User_id, String comboType, int totalReact) {
+    public Ads_combo(int adsDetailId, String title, int budget, int maxReact, int durationDay, int User_id, String comboType, int totalReact, Date createDate) {
         this.adsDetailId = adsDetailId;
         this.title = title;
         this.budget = budget;
@@ -32,10 +35,11 @@ public class Ads_combo {
         this.User_id = User_id;
         this.comboType = comboType;
         this.totalReact = totalReact;
+        this.createDate = createDate;
     }
 
     //add
-    public Ads_combo(int adsDetailId, String title, int budget, int maxReact, int durationDay, int User_id, String comboType) {
+    public Ads_combo(int adsDetailId, String title, int budget, int maxReact, int durationDay, int User_id, String comboType, Date createDate) {
         this.adsDetailId = adsDetailId;
         this.title = title;
         this.budget = budget;
@@ -43,10 +47,8 @@ public class Ads_combo {
         this.durationDay = durationDay;
         this.User_id = User_id;
         this.comboType = comboType;
+        this.createDate = createDate;
     }
-    
-    
-    
 
     public int getAdsDetailId() {
         return adsDetailId;
@@ -112,10 +114,17 @@ public class Ads_combo {
         this.totalReact = totalReact;
     }
 
-    @Override
-    public String toString() {
-        return "Ads_combo{" + "adsDetailId=" + adsDetailId + ", title=" + title + ", budget=" + budget + ", maxReact=" + maxReact + ", durationDay=" + durationDay + ", User_id=" + User_id + ", comboType=" + comboType + ", totalReact=" + totalReact + '}';
+    public Date getCreateDate() {
+        return createDate;
     }
 
-    
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
+    @Override
+    public String toString() {
+        return "Ads_combo{" + "adsDetailId=" + adsDetailId + ", title=" + title + ", budget=" + budget + ", maxReact=" + maxReact + ", durationDay=" + durationDay + ", User_id=" + User_id + ", comboType=" + comboType + ", totalReact=" + totalReact + ", createDate=" + createDate + '}';
+    }
+
 }

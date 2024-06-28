@@ -53,7 +53,7 @@
                                 <h3>Advertising for ${comboInformation[0].title} campaign</h3>
                                 <h6>you can keep an eye on your campaign while you’re on the go. Wherever you are, you’ll have the power to create and edit ads, track their performance, and manage ad budgets and schedules.</h6>
                             </div>
-                            <div class="form-group pb-3 d-flex">
+                            <div class="form-group pb-3 d-flex flex-wrap">
 
                                 <c:if test="${empty allAdsUserInCombo}">
                                     <p class="mb-4">You have no advertising for ${comboInformation[0].title} campaign.</p>
@@ -145,6 +145,14 @@
                         <div class="form-group mb-3">
                             <label for="productDescriptionInput">Content:</label>
                             <textarea class="form-control" name="Content" required></textarea>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="budgetInput">Gender</label>
+                            <select class="form-select" name="targetSex">
+                                <option value="all">All</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
                         </div>
                         <div class="form-group mb-3">
                             <label for="productURIInput">URI:</label>

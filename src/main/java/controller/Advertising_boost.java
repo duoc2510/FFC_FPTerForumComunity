@@ -79,6 +79,7 @@ public class Advertising_Boost extends HttpServlet {
 
         switch (action) {
             case "boost":
+                // Quick Boost By combo 
                 try {
                     // Path to the directory where images will be stored
                     String uploadPath = request.getServletContext().getRealPath("/upload");
@@ -95,6 +96,7 @@ public class Advertising_Boost extends HttpServlet {
                     int adsDetailId = Integer.parseInt(request.getParameter("adsDetailId"));
                     String uri = request.getParameter("URI");
                     String location = request.getParameter("location");
+//                    String targetSex = request.getParameter("targetSex");
 
                     // Create Ads object and populate it
                     Ads ads = new Ads();
@@ -105,6 +107,7 @@ public class Advertising_Boost extends HttpServlet {
                     ads.setCurrentReact(0);  // Set initial view count
                     ads.setLocation(location);  // Assuming location will be set later
                     ads.setUri(uri);
+                    ads.setTargetSex(null);
 
                     // Handle image upload
                     String fileName = null;
@@ -130,7 +133,7 @@ public class Advertising_Boost extends HttpServlet {
                     adsDB.boostAdvertising(ads);
 
                     // Redirect to the advertising page
-                    response.sendRedirect(request.getContextPath() + "/advertising");
+                    response.sendRedirect(request.getContextPath() + "/advertising/boost");
                 } catch (Exception e) {
                     e.printStackTrace(); // Log the exception for debugging
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while processing your request.");
@@ -154,6 +157,7 @@ public class Advertising_Boost extends HttpServlet {
                     int adsDetailId = Integer.parseInt(request.getParameter("adsDetailId"));
                     String uri = request.getParameter("URI");
                     String location = request.getParameter("location");
+                    String targetSex = request.getParameter("targetSex");
 
                     // Create Ads object and populate it
                     Ads ads = new Ads();
@@ -164,6 +168,12 @@ public class Advertising_Boost extends HttpServlet {
                     ads.setCurrentReact(0);  // Set initial view count
                     ads.setLocation(location);  // Assuming location will be set later
                     ads.setUri(uri);
+
+                    if (targetSex == "all") {
+                        ads.setTargetSex(null);
+                    } else {
+                        ads.setTargetSex(targetSex);
+                    }
 
                     // Handle image upload
                     String fileName = null;
