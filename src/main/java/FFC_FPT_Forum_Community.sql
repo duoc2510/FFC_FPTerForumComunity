@@ -324,6 +324,38 @@ CREATE TABLE ATMInfo (
     Status NVARCHAR(255)
 );
 GO
+
+
+
+---------------- Table: ADS ----------------
+SELECT * FROM Ads
+
+ALTER TABLE Ads add currentView int
+ALTER TABLE Ads add location nvarchar(255)
+ALTER TABLE Ads ADD Title NVARCHAR(255);
+ALTER TABLE Ads ADD URI NVARCHAR(255);
+ALTER TABLE Ads ADD UploadPath NVARCHAR(255);
+ALTER TABLE Ads ADD isActive int;
+ALTER TABLE Ads ADD startDate DATE NULL; -- Ngày tạo quảng cáo, bắt buộc
+EXEC sp_rename 'Ads.currentView', 'currentReact', 'COLUMN'; -- rename maxView -> maxReact
+ALTER TABLE Ads add targetSex NVARCHAR(20)  
+
+---------------- Table: Combo_ads ----------------
+SELECT * FROM Combo_ads
+
+ALTER TABLE Combo_ads add maxView int
+ALTER TABLE Combo_ads add durationDate int -- Số ngày + date create -> date end 
+EXEC sp_rename 'Combo_ads.durationDate', 'durationDay', 'COLUMN'; -- rename Date -> Day
+EXEC sp_rename 'Combo_ads.Content', 'Title', 'COLUMN'; -- rename Content -> Title
+ALTER TABLE Combo_ads add User_id int
+ALTER TABLE Combo_ads ALTER COLUMN budget int; -- change data type decimal -> int
+ALTER TABLE Combo_ads ADD comboType NVARCHAR(20); -- Thể loại combo quảng cáo LIKE, CLICK, MESSAGE
+EXEC sp_rename 'Combo_ads.maxView', 'maxReact', 'COLUMN'; -- rename maxView -> maxReact
+ALTER TABLE Combo_ads ADD createDate DATE NULL;
+
+
+
+	
 -- Insert sample data into the ATMInfo table
 INSERT INTO ATMInfo (ATMNumber, username, BankName, Money, CODE,Status) VALUES
 ('25102003221', 'Nguyen Van A', 'MBBank', 0, 1234, 'Admin'), --Thẻ admin
