@@ -13,9 +13,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author Admin
+ * @author mac
  */
-public class Advertising_allAds extends HttpServlet {
+public class Advertising_Report extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -34,10 +34,10 @@ public class Advertising_allAds extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Advertising_allAds</title>");
+            out.println("<title>Servlet Advertising_Report</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Advertising_allAds at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet Advertising_Report at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -55,9 +55,8 @@ public class Advertising_allAds extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        request.getRequestDispatcher("/advertising/index.jsp").forward(request, response);
-
+      response.setContentType("text/html;charset=UTF-8");
+            request.getRequestDispatcher("/advertising/reportAds.jsp").forward(request, response);
     }
 
     /**

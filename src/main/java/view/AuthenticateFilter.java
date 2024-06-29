@@ -63,7 +63,7 @@ public class AuthenticateFilter implements Filter {
                 }
             } else if (uri.startsWith(contextPath + "/manager/")) {
                 // Kiểm tra userRole của người dùng
-                if (user == null || user.getUserRole() != 2) {
+                if (user == null || user.getUserRole() ==1) {
                     // Nếu không có quyền, chuyển hướng về trang home
                     httpResponse.sendRedirect(contextPath + "/home");
                     return;
