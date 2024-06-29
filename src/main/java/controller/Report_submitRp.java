@@ -12,9 +12,13 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.List;
 import model.DAO.Report_DB;
+import model.DAO.User_DB;
 import model.Report;
 import model.User;
+import notifications.NotificationWebSocket;
 
 /**
  *
@@ -77,7 +81,7 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response) 
     User currentUser = (User) session.getAttribute("USER");
     int reporterId = currentUser.getUserId();
     String action = request.getParameter("action");
-
+NotificationWebSocket nw = new NotificationWebSocket();
     if (action != null && !action.isEmpty()) {
         if ("cancelReportPost".equals(action)) {
             int postId = Integer.parseInt(request.getParameter("postId"));
@@ -151,8 +155,16 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             
             boolean success = false;
             String msg = "";
+            List<User> manager = User_DB.getAllUsers();
+            List<Integer> managerIds = new ArrayList<>();
 
+                for (User user : manager) {
+                    if (user.getUserRole() == 2) {
+                        managerIds.add(user.getUserId());
+                    }
+                }
             if ("rpUser".equals(action)) {
+                
                 int userId = Integer.parseInt(request.getParameter("userId"));
                 report.setUserId(userId);
                 report.setShopId(0);
@@ -168,6 +180,10 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             }
 
             if (success) {
+                for (Integer managerId : managerIds) {
+                        nw.saveNotificationToDatabase(managerId, "You have a new report to process!", "/manager/report");
+                        nw.sendNotificationToClient(managerId, "You have a new report to process!", "/manager/report");
+                    }
                 msg = "Report submitted successfully.";
             } else {
                 msg = "Failed to submit report. Please try again later.";

@@ -552,3 +552,35 @@ VALUES
 (1, NULL, 1),
 (2, NULL, 2),
 (3, NULL, 1);
+
+UPDATE dbo.Users SET User_rank = '3' WHERE USER_ID = 3;
+SELECT * FROM dbo.Users
+SELECT * FROM dbo.Report 
+SELECT * FROM dbo.Post
+SELECT * FROM dbo.Notification
+INSERT INTO Report (Reporter_id, User_id, Shop_id, Post_id, Reason, Status)
+VALUES (2, 3, NULL, NULL, N'quá tệ', N'pending');
+
+INSERT INTO Report (Reporter_id, User_id, Shop_id, Post_id, Reason, Status)
+VALUES (2, 3, NULL, NULL, N'quá tệ', N'pending');
+
+INSERT INTO Report (Reporter_id, User_id, Shop_id, Post_id, Reason, Status)
+VALUES (2, 3, NULL, NULL, N'quá tệ', N'pending');
+
+
+INSERT INTO Report (Reporter_id, User_id, Shop_id, Post_id, Reason, Status)
+VALUES (2, 3, NULL, 8, N'quá tệ', N'pending');
+
+INSERT INTO Report (Reporter_id, User_id, Shop_id, Post_id, Reason, Status)
+VALUES (2, 3, NULL, 8, N'quá tệ', N'pending');
+
+INSERT INTO Report (Reporter_id, User_id, Shop_id, Post_id, Reason, Status)
+VALUES (2, 3, NULL, 8, N'quá tệ', N'pending');
+
+SELECT * FROM dbo.Feedback
+SELECT * FROM dbo.Users
+ALTER TABLE Feedback
+ADD CONSTRAINT FK_User_Feedback
+FOREIGN KEY (User_id)
+REFERENCES Users(User_id)
+ON DELETE CASCADE;

@@ -20,6 +20,7 @@ import model.DAO.User_DB;
 import model.Post;
 import model.Report;
 import model.User;
+import notifications.NotificationWebSocket;
 
 /**
  *
@@ -63,40 +64,52 @@ public class Manager_report extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-  protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    List<Report> reports = Report_DB.getAllReports();
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        User currentUser = (User) session.getAttribute("USER");
 
-    // Lọc và chỉ lấy các report có status là "pending" cho từng danh sách
-    List<Report> pendingAllReports = reports.stream()
-            .filter(report -> "Pending".equalsIgnoreCase(report.getStatus()))
-            .collect(Collectors.toList());
+        // Làm mới thông tin người dùng từ cơ sở dữ liệu (giả sử có phương thức getUserById)
+        if (currentUser != null) {
+            User refreshedUser = User_DB.getUserById(currentUser.getUserId());
+            if (refreshedUser != null) {
+                // Cập nhật lại session với thông tin người dùng mới
+                session.setAttribute("USER", refreshedUser);
+            }
+        }
 
-    List<Report> pendingAllPostReports = reports.stream()
-            .filter(report -> report.getPostId() != 0 && "pending".equalsIgnoreCase(report.getStatus()))
-            .collect(Collectors.toList());
+        List<Report> reports = Report_DB.getAllReports();
 
-    List<Report> pendingAllUserReports = reports.stream()
-            .filter(report -> report.getPostId() == 0 && "pending".equalsIgnoreCase(report.getStatus()))
-            .collect(Collectors.toList());
+        // Lọc và chỉ lấy các report có status là "pending" cho từng danh sách
+        List<Report> pendingAllReports = reports.stream()
+                .filter(report -> "Pending".equalsIgnoreCase(report.getStatus()))
+                .collect(Collectors.toList());
 
-    List<Report> pendingReportedPosts = Report_DB.getPostsReportedAtLeastThreeTimesWithReasons().stream()
-            .filter(report -> "pending".equalsIgnoreCase(report.getStatus()))
-            .collect(Collectors.toList());
+        List<Report> pendingAllPostReports = reports.stream()
+                .filter(report -> report.getPostId() != 0 && "pending".equalsIgnoreCase(report.getStatus()))
+                .collect(Collectors.toList());
 
-    List<Report> pendingReportedUsers = Report_DB.getUsersReportedAtLeastThreeTimesWithReasons().stream()
-            .filter(report -> "pending".equalsIgnoreCase(report.getStatus()))
-            .collect(Collectors.toList());
+        List<Report> pendingAllUserReports = reports.stream()
+                .filter(report -> report.getPostId() == 0 && "pending".equalsIgnoreCase(report.getStatus()))
+                .collect(Collectors.toList());
 
-    // Đưa danh sách reports vào trong attribute của request để chuyển cho JSP
-    request.setAttribute("reports", pendingAllReports);
-    request.setAttribute("allPostReports", pendingAllPostReports);
-    request.setAttribute("allUserReports", pendingAllUserReports);
-    request.setAttribute("reportedPosts", pendingReportedPosts);
-    request.setAttribute("reportedUsers", pendingReportedUsers);
+        List<Report> pendingReportedPosts = Report_DB.getPostsReportedAtLeastThreeTimesWithReasons().stream()
+                .filter(report -> "pending".equalsIgnoreCase(report.getStatus()))
+                .collect(Collectors.toList());
 
-    // Forward đến trang JSP để hiển thị danh sách reports
-    request.getRequestDispatcher("/manager/report.jsp").forward(request, response);
-}
+        List<Report> pendingReportedUsers = Report_DB.getUsersReportedAtLeastThreeTimesWithReasons().stream()
+                .filter(report -> "pending".equalsIgnoreCase(report.getStatus()))
+                .collect(Collectors.toList());
+
+        // Đưa danh sách reports vào trong attribute của request để chuyển cho JSP
+        request.setAttribute("reports", pendingAllReports);
+        request.setAttribute("allPostReports", pendingAllPostReports);
+        request.setAttribute("allUserReports", pendingAllUserReports);
+        request.setAttribute("reportedPosts", pendingReportedPosts);
+        request.setAttribute("reportedUsers", pendingReportedUsers);
+
+        // Forward đến trang JSP để hiển thị danh sách reports
+        request.getRequestDispatcher("/manager/report.jsp").forward(request, response);
+    }
 
     /**
      * Handles the HTTP <code>POST</code> method.
@@ -107,139 +120,150 @@ public class Manager_report extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-protected void doPost(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-    String action = request.getParameter("action");
-    String msg = null;
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String action = request.getParameter("action");
+        String msg = null;
+        NotificationWebSocket nw = new NotificationWebSocket();
+        if (action != null && !action.isEmpty()) {
+            if (action.equals("banPost")) {
+                int postId = Integer.parseInt(request.getParameter("postId"));
+                int reporterId = Integer.parseInt(request.getParameter("reporterId"));
+                int reportedId = Integer.parseInt(request.getParameter("reportedId"));
+                String reason = request.getParameter("banReason");
+                boolean postBanned = Report_DB.banPost(postId, reason);
+                String postContent = request.getParameter("postContent");
+                if (postBanned) {
+                    nw.saveNotificationToDatabase(reporterId, "Report on post " + postContent + " processed!", "/#");
+                    nw.sendNotificationToClient(reporterId, "Report on post " + postContent + " processed!", "/#");
+                    nw.saveNotificationToDatabase(reportedId, "Your post " + postContent + " has been banned for a reason " + reason, "/#");
+                    nw.sendNotificationToClient(reportedId, "Your post " + postContent + " has been banned for a reason " + reason, "/#");
+                    msg = "Post has been banned successfully.";
+                } else {
+                    msg = "Failed to ban the post.";
+                }
+            } else if (action.equals("banUser")) {
+                int userId = Integer.parseInt(request.getParameter("userId"));
+                boolean userBanned = Report_DB.banUser(userId);
+                String username = request.getParameter("username");
+                  int reporterId = Integer.parseInt(request.getParameter("reporterId"));
+                if (userBanned) {
+                     nw.saveNotificationToDatabase(reporterId, "Report on user " + username + " processed!", "/#");
+                    nw.sendNotificationToClient(reporterId, "Report on user " + username + " processed!", "/#");
+                    msg = "User has been banned successfully.";
+                } else {
+                    msg = "Failed to ban the user.";
+                }
+            } else if (action.equals("banUserByAd")) {
+                int userId = Integer.parseInt(request.getParameter("userId"));
+                String username = request.getParameter("username");
+                boolean userBanned = Report_DB.banUserByAd(userId);
 
-    if (action != null && !action.isEmpty()) {
-        if (action.equals("banPost")) {
-            int postId = Integer.parseInt(request.getParameter("postId"));
-            String reason = request.getParameter("banReason");
-            boolean postBanned = Report_DB.banPost(postId, reason);
-            
-            if (postBanned) {
-                msg = "Post has been banned successfully.";
+                if (userBanned) {
+                    msg = "User has been banned successfully.";
+                } else {
+                    msg = "Failed to ban the user.";
+                }
+                // Set msg attribute in session
+                request.getSession().setAttribute("msg", msg);
+                // Redirect to the profile page with the username
+                response.sendRedirect(request.getContextPath() + "/profile?username=" + username);
+                return; // Exit the method to prevent further processing
+            } else if (action.equals("banUserByM")) {
+                int userId = Integer.parseInt(request.getParameter("userId"));
+                String username = request.getParameter("username");
+                boolean userBanned = Report_DB.banUser(userId);
+
+                if (userBanned) {
+                    msg = "User has been banned successfully.";
+                } else {
+                    msg = "Failed to ban the user.";
+                }
+                // Set msg attribute in session
+                request.getSession().setAttribute("msg", msg);
+                // Redirect to the profile page with the username
+                response.sendRedirect(request.getContextPath() + "/profile?username=" + username);
+                return; // Exit the method to prevent further processing
+            } else if (action.equals("banPostByAd")) {
+                int postId = Integer.parseInt(request.getParameter("postId"));
+                int userId = Integer.parseInt(request.getParameter("userId"));
+                String reason = request.getParameter("banReason");
+                boolean postBanned = Report_DB.banPostByAd(postId, reason);
+                String postContent = request.getParameter("postContent");
+                if (postBanned) {
+                    nw.saveNotificationToDatabase(userId, "Your post " + postContent + " has been banned for a reason " + reason, "/#");
+                    nw.sendNotificationToClient(userId, "Your post " + postContent + " has been banned for a reason " + reason, "/#");
+                    msg = "Post has been banned successfully.";
+                } else {
+                    msg = "Failed to ban the post.";
+                }
+                // Set msg attribute in session
+                request.getSession().setAttribute("msg", msg);
+                // Redirect to the post page with the postId
+                response.sendRedirect(request.getContextPath() + "/post");
+                return; // Exit the method to prevent further processing
+
+            } else if (action.equals("cancelReportMgP")) {
+                int postId = Integer.parseInt(request.getParameter("postId"));
+                boolean reportCancelled = Report_DB.cancelReportMgP(postId);
+
+                if (reportCancelled) {
+                    msg = "Report for the post has been cancelled successfully.";
+                } else {
+                    msg = "Failed to cancel the report for the post.";
+                }
+            } else if (action.equals("cancelReportMgU")) {
+                int userId = Integer.parseInt(request.getParameter("userId"));
+                boolean reportCancelled = Report_DB.cancelReportMgU(userId);
+
+                if (reportCancelled) {
+                    msg = "Report for the user has been cancelled successfully.";
+                } else {
+                    msg = "Failed to cancel the report for the user.";
+                }
+            } else if (action.equals("setM")) {
+                int userId = Integer.parseInt(request.getParameter("userId"));
+                boolean setM = Report_DB.setManager(userId);
+                String username = request.getParameter("username");
+                if (setM) {
+                    msg = "Manager status has been set successfully.";
+                } else {
+                    msg = "Failed to set manager status.";
+                }
+                // Set msg attribute in session
+                request.getSession().setAttribute("msg", msg);
+                // Redirect to the profile page with the username
+                response.sendRedirect(request.getContextPath() + "/profile?username=" + username);
+                return; // Exit the method to prevent further processing  
+            } else if (action.equals("revokeM")) {
+                int userId = Integer.parseInt(request.getParameter("userId"));
+                boolean managerRevoked = Report_DB.revokeManager(userId);
+                String username = request.getParameter("username");
+                if (managerRevoked) {
+                    msg = "Manager status has been revoked successfully.";
+                } else {
+                    msg = "Failed to revoke manager status.";
+                }
+                // Set msg attribute in session
+                request.getSession().setAttribute("msg", msg);
+                // Redirect to the profile page with the username
+                response.sendRedirect(request.getContextPath() + "/profile?username=" + username);
+                return; // Exit the method to prevent further processing
             } else {
-                msg = "Failed to ban the post.";
+                msg = "Invalid action.";
             }
-        } else if (action.equals("banUser")) {
-            int userId = Integer.parseInt(request.getParameter("userId"));
-            boolean userBanned = Report_DB.banUser(userId);
-
-            if (userBanned) {
-                msg = "User has been banned successfully.";
-            } else {
-                msg = "Failed to ban the user.";
-            }
-        } else if (action.equals("banUserByAd")) {
-            int userId = Integer.parseInt(request.getParameter("userId"));
-            String username = request.getParameter("username");
-            boolean userBanned = Report_DB.banUserByAd(userId);
-
-            if (userBanned) {
-                msg = "User has been banned successfully.";
-            } else {
-                msg = "Failed to ban the user.";
-            }
-            // Set msg attribute in session
-            request.getSession().setAttribute("msg", msg);
-            // Redirect to the profile page with the username
-            response.sendRedirect(request.getContextPath() + "/profile?username=" + username);
-            return; // Exit the method to prevent further processing
-        }else if (action.equals("banUserByM")) {
-            int userId = Integer.parseInt(request.getParameter("userId"));
-            String username = request.getParameter("username");
-            boolean userBanned = Report_DB.banUser(userId);
-
-            if (userBanned) {
-                msg = "User has been banned successfully.";
-            } else {
-                msg = "Failed to ban the user.";
-            }
-            // Set msg attribute in session
-            request.getSession().setAttribute("msg", msg);
-            // Redirect to the profile page with the username
-            response.sendRedirect(request.getContextPath() + "/profile?username=" + username);
-            return; // Exit the method to prevent further processing
-        } else if (action.equals("banPostByAd")) {
-            int postId = Integer.parseInt(request.getParameter("postId"));
-            String reason = request.getParameter("banReason");
-            boolean postBanned = Report_DB.banPostByAd(postId, reason);
-
-            if (postBanned) {
-                msg = "Post has been banned successfully.";
-            } else {
-                msg = "Failed to ban the post.";
-            }
-            // Set msg attribute in session
-            request.getSession().setAttribute("msg", msg);
-            // Redirect to the post page with the postId
-            response.sendRedirect(request.getContextPath() + "/post");
-            return; // Exit the method to prevent further processing
-
-        } else if (action.equals("cancelReportMgP")) {
-            int postId = Integer.parseInt(request.getParameter("postId"));
-            boolean reportCancelled = Report_DB.cancelReportMgP(postId);
-
-            if (reportCancelled) {
-                msg = "Report for the post has been cancelled successfully.";
-            } else {
-                msg = "Failed to cancel the report for the post.";
-            }
-        } else if (action.equals("cancelReportMgU")) {
-            int userId = Integer.parseInt(request.getParameter("userId"));
-            boolean reportCancelled = Report_DB.cancelReportMgU(userId);
-
-            if (reportCancelled) {
-                msg = "Report for the user has been cancelled successfully.";
-            } else {
-                msg = "Failed to cancel the report for the user.";
-            }
-        } else if (action.equals("setM")) {
-            int userId = Integer.parseInt(request.getParameter("userId"));
-            boolean setM = Report_DB.setManager(userId);
-            String username = request.getParameter("username");
-            if (setM) {
-                msg = "Manager status has been set successfully.";
-            } else {
-                msg = "Failed to set manager status.";
-            }   
-             // Set msg attribute in session
-            request.getSession().setAttribute("msg", msg);
-            // Redirect to the profile page with the username
-            response.sendRedirect(request.getContextPath() + "/profile?username=" + username);
-            return; // Exit the method to prevent further processing  
-         } else if (action.equals("revokeM")) {
-            int userId = Integer.parseInt(request.getParameter("userId"));
-            boolean managerRevoked = Report_DB.revokeManager(userId);
-            String username = request.getParameter("username");
-            if (managerRevoked) {
-                msg = "Manager status has been revoked successfully.";
-            } else {
-                msg = "Failed to revoke manager status.";
-            }   
-             // Set msg attribute in session
-            request.getSession().setAttribute("msg", msg);
-            // Redirect to the profile page with the username
-            response.sendRedirect(request.getContextPath() + "/profile?username=" + username);
-            return; // Exit the method to prevent further processing
         } else {
-            msg = "Invalid action.";
+            msg = "Action parameter is missing.";
         }
-    } else {
-        msg = "Action parameter is missing.";
+
+        // Set msg attribute in session if not already set
+        if (request.getSession().getAttribute("msg") == null) {
+            request.getSession().setAttribute("msg", msg);
+        }
+
+        // Redirect to the report page
+        response.sendRedirect(request.getContextPath() + "/manager/report");
     }
-
-    // Set msg attribute in session if not already set
-    if (request.getSession().getAttribute("msg") == null) {
-        request.getSession().setAttribute("msg", msg);
-    }
-
-    // Redirect to the report page
-    response.sendRedirect(request.getContextPath() + "/manager/report");
-}
-
 
     /**
      * Returns a short description of the servlet.

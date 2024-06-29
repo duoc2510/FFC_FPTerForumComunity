@@ -61,19 +61,27 @@ public class AuthenticateFilter implements Filter {
                     httpResponse.sendRedirect(contextPath + "/home");
                     return;
                 }
+            } else if (uri.startsWith(contextPath + "/manager/")) {
+                // Kiểm tra userRole của người dùng
+                if (user == null || user.getUserRole() != 2) {
+                    // Nếu không có quyền, chuyển hướng về trang home
+                    httpResponse.sendRedirect(contextPath + "/home");
+                    return;
+                }
             }
-        }
 
-        // Kiểm tra nếu người dùng đã đăng nhập và cố truy cập vào trang login hoặc register
-        if ((uri.equals(contextPath + "/login") || uri.equals(contextPath + "/register")) && user != null) {
-            // Chuyển hướng đến trang chủ
-            httpResponse.sendRedirect(contextPath + "/home");
-            return;
-        }
+            // Kiểm tra nếu người dùng đã đăng nhập và cố truy cập vào trang login hoặc register
+            if ((uri.equals(contextPath + "/login") || uri.equals(contextPath + "/register")) && user != null) {
+                // Chuyển hướng đến trang chủ
+                httpResponse.sendRedirect(contextPath + "/home");
+                return;
+            }
 
-        // Tiếp tục với các filter khác hoặc servlet đích
-        chain.doFilter(request, response);
+            // Tiếp tục với các filter khác hoặc servlet đích
+            chain.doFilter(request, response);
+        }
     }
+    
 
     public void destroy() {
         // Hủy filter nếu cần thiết

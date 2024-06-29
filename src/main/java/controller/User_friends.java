@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import model.DAO.User_DB;
 import model.User;
+import notifications.NotificationWebSocket;
 
 /**
  *
@@ -86,7 +87,8 @@ public class User_friends extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        NotificationWebSocket nw = new NotificationWebSocket();
+        
         String action = request.getParameter("action");
         HttpSession session = request.getSession(false);
         User user = (User) session.getAttribute("USER");
@@ -101,6 +103,8 @@ public class User_friends extends HttpServlet {
             case "accept":
                 success = User_DB.acceptFriendRequest(userId, friendId);
                 redirectUrl = request.getContextPath() + "/friends";
+                nw.saveNotificationToDatabase(friendId, user.getUserFullName() + " đã chấp nhận lời mời kết bạn!", "/friends");
+                nw.sendNotificationToClient(friendId, user.getUserFullName() + " đã chấp nhận lời mời kết bạn!", "/friends");
                 break;
             case "deny":
                 success = User_DB.rejectFriendRequest(userId, friendId);
@@ -118,6 +122,8 @@ public class User_friends extends HttpServlet {
             case "acceptFr":
                 success = User_DB.acceptFriendRequest(userId, friendId);
                 String friendName2 = request.getParameter("friendName");
+                nw.saveNotificationToDatabase(friendId, user.getUserFullName() + " đã chấp nhận lời mời kết bạn!", "/friends");
+                nw.sendNotificationToClient(friendId, user.getUserFullName() + " đã chấp nhận lời mời kết bạn!", "/friends");
                 redirectUrl = request.getContextPath() + "/profile?username=" + friendName2;
                 break;
             case "acceptFrSearch":

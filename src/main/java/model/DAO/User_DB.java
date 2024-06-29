@@ -126,7 +126,7 @@ public class User_DB implements DBinfo {
         }
     }
 
-    public static boolean changePass(String email, String newPassword) {
+        public static boolean changePass(String email, String newPassword) {
         String query = "UPDATE Users SET User_password = ? WHERE User_email = ?";
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
 
@@ -442,19 +442,25 @@ public class User_DB implements DBinfo {
         }
     }
 
-    public static boolean cancelFriendRequest(int userId, int friendId) {
-        String query = "UPDATE FriendShip SET Request_status = 'cancelled' WHERE (User_id = ? AND Friend_id = ? AND Request_status = 'sent')";
+  public static boolean cancelFriendRequest(int userId, int friendId) {
+    String query = "UPDATE FriendShip SET Request_status = 'cancelled' WHERE " +
+                   "((User_id = ? AND Friend_id = ? AND Request_status = 'sent') OR " +
+                   "(User_id = ? AND Friend_id = ? AND Request_status = 'received'))";
 
-        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, userId);
-            stmt.setInt(2, friendId);
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0; // Return true if at least one row was updated
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false; // Return false if an error occurred
-        }
+    try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass);
+         PreparedStatement stmt = conn.prepareStatement(query)) {
+        stmt.setInt(1, userId);
+        stmt.setInt(2, friendId);
+        stmt.setInt(3, friendId);
+        stmt.setInt(4, userId);
+        int rowsAffected = stmt.executeUpdate();
+        return rowsAffected > 0; // Return true if at least one row was updated
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false; // Return false if an error occurred
     }
+}
+
 
     public static String getFriendRequestStatus(int userId, String userName) {
         String getUserIdQuery = "SELECT User_id FROM Users WHERE Username = ?";
@@ -744,6 +750,59 @@ public class User_DB implements DBinfo {
             e.printStackTrace();
             System.err.println("Database error: " + e.getMessage());
             return false; // Trả về false nếu có lỗi xảy ra
+        }
+    }
+    public static boolean addFeedback(Feedback feedback) {
+    String query = "INSERT INTO Feedback (Feedback_detail, Feedback_title, User_id) VALUES (?, ?, ?)";
+
+    try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
+        stmt.setString(1, feedback.getFeedbackDetail());
+        stmt.setString(2, feedback.getFeedbackTitle());
+        stmt.setInt(3, feedback.getUserId());
+        int rowsAffected = stmt.executeUpdate();
+        return rowsAffected > 0; // Return true if at least one row was inserted
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false; // Return false if an error occurred
+    }
+}
+     public static List<Feedback> getAllFeedback() {
+        List<Feedback> feedbackList = new ArrayList<>();
+        String selectQuery = "SELECT Feedback_id, Feedback_title, Feedback_detail, User_id FROM Feedback";
+
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass);
+             PreparedStatement stmt = conn.prepareStatement(selectQuery);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                int feedbackId = rs.getInt("Feedback_id");
+                String feedbackTitle = rs.getString("Feedback_detail");
+                String feedbackDetail = rs.getString("Feedback_title");
+                int userId = rs.getInt("User_id");
+
+                Feedback feedback = new Feedback(feedbackId, feedbackTitle, feedbackDetail, userId);
+                feedbackList.add(feedback);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Logger.getLogger(User_DB.class.getName()).log(Level.SEVERE, "Error occurred while fetching feedback", e);
+        }
+
+        return feedbackList;
+    }
+      public static boolean deleteFeedback(int feedbackId) {
+        String deleteQuery = "DELETE FROM Feedback WHERE Feedback_id = ?";
+
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass);
+             PreparedStatement stmt = conn.prepareStatement(deleteQuery)) {
+             
+            stmt.setInt(1, feedbackId);
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0; // Return true if at least one row was deleted
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Logger.getLogger(User_DB.class.getName()).log(Level.SEVERE, "Error occurred while deleting feedback", e);
+            return false; // Return false if an error occurred
         }
     }
 }
