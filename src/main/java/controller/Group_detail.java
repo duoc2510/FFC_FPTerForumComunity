@@ -23,6 +23,7 @@ import model.Group;
 import model.Group_member;
 import model.Post;
 import model.User;
+import notifications.NotificationWebSocket;
 
 /**
  *
@@ -143,6 +144,7 @@ public class Group_detail extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("USER");
         String action = request.getParameter("action");
+        NotificationWebSocket nw = new NotificationWebSocket();
 
         boolean redirectToReferer = false; // Biến trạng thái để kiểm soát việc gọi sendRedirect()
         boolean result = false;
@@ -157,7 +159,11 @@ public class Group_detail extends HttpServlet {
                     return;
                 }
                 if ("accept".equals(action)) {
+                    int groupId = Integer.parseInt(request.getParameter("groupId"));
+                    Group group = Group_DB.getGroupById(groupId);
                     result = Group_DB.accept(memberGroupId);
+                    nw.saveNotificationToDatabase(memberGroupId, "Chủ group "+group.getGroupName()+ " đã duyệt bạn vào nhóm!", "/group/detail?groupId="+groupId);
+                    nw.sendNotificationToClient(memberGroupId, "Chủ group "+ group.getGroupName()+ " đã duyệt bạn vào nhóm!", "/group/detail?groupId="+groupId);
                     messageOfApprove = result ? "Member approved successfully!" : "Failed to approve member.";
                 } else if ("deny".equals(action)) {
                     result = Group_DB.deny(memberGroupId);

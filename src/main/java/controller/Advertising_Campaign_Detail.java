@@ -10,21 +10,18 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
+import model.Ads;
 import model.Ads_combo;
-import model.Comment;
 import model.DAO.Ads_DB;
-import model.DAO.Comment_DB;
-import model.DAO.Post_DB;
-import model.DAO.User_DB;
-import model.Post;
 import model.User;
 
 /**
  *
  * @author mac
  */
-public class Advertising_Combo extends HttpServlet {
+public class Advertising_Campaign_Detail extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -43,10 +40,10 @@ public class Advertising_Combo extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Advertising_Combo</title>");
+            out.println("<title>Servlet Advertising_Campaign_Detail</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Advertising_Combo at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet Advertising_Campaign_Detail at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -64,15 +61,48 @@ public class Advertising_Combo extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Get the list of all ads combo
-        Ads_DB ads_DB = new Ads_DB();
-        List<Ads_combo> allAdsCombo = ads_DB.getAllAdsComboSystem();
+        HttpSession session = request.getSession(false);
 
-        // Set the list of ads combo as an attribute in the request
-        request.setAttribute("allAdsCombo", allAdsCombo);
+        String idComboParam = request.getParameter("id");
+        int idCombo = 0; // default value or you can handle it differently
 
-        // Forward the request to the JSP page
-        request.getRequestDispatcher("/advertising/comboAds.jsp").forward(request, response);
+        if (idComboParam != null) {
+            try {
+                idCombo = Integer.parseInt(idComboParam);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                // Handle the exception, e.g., set an error message or set a default value
+            }
+        }
+
+        // Check if the user is logged in
+        if (session != null && session.getAttribute("USER") != null) {
+            // Set the response content type and forward the request to the JSP page
+            User currentUser = (User) session.getAttribute("USER");
+
+            // Get the list of all ads combo
+            Ads_DB ads_DB = new Ads_DB();
+            
+//            List<Ads_combo> allAdsCombo = ads_DB.getAllAdsComboSystem();
+
+            // Set the list of ads combo as an attribute in the request
+//            request.setAttribute("allAdsCombo", allAdsCombo);
+
+            request.setAttribute("AdsComboID", idCombo);
+            List<Ads_combo> comboInformation = ads_DB.getComboByID(idCombo);
+            request.setAttribute("comboInformation", comboInformation);
+
+            List<Ads> allAdsUserInCombo = ads_DB.getAllAdsUserInComboID(currentUser.getUserId(), idCombo);
+
+            // Set the list of ads combo as an attribute in the request
+            request.setAttribute("allAdsUserInCombo", allAdsUserInCombo);
+
+            // Forward the request to the JSP page
+            response.setContentType("text/html;charset=UTF-8");
+            request.getRequestDispatcher("/advertising/campaignDetailAds.jsp").forward(request, response);
+        } else {
+            response.sendRedirect("login.jsp"); // Redirect to login page if not logged in
+        }
     }
 
     /**

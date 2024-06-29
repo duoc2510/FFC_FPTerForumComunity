@@ -1,5 +1,7 @@
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" import="model.*" import="model.DAO.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page import="java.util.List" %>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <style>
@@ -43,6 +45,7 @@
         font-size: 0.8em;
         color: #888;
     }
+  
 </style>
 
 <header class="app-header">
@@ -140,17 +143,14 @@
     <script>
         var contextPath = '<%= request.getContextPath() %>';
         var oldNotificationCount = 0;
-
         $(document).ready(function () {
             var socket = new WebSocket("ws://" + window.location.host + contextPath + "/notifications");
-
             socket.onmessage = function (event) {
                 var data = JSON.parse(event.data);
                 if (data.type === "notification") {
                     loadNotifications();
                 }
             };
-
             function loadNotifications() {
                 $.ajax({
                     url: contextPath + '/notifications',
@@ -160,14 +160,12 @@
                         if (data.length > 0) {
                             var newNotificationCount = data.length;
                             var newNotifications = newNotificationCount - oldNotificationCount;
-
                             if (newNotifications != oldNotificationCount) {
                                 $('#notificationCount').text(newNotifications).show();
                             } else {
                                 $('#notificationCount').text(oldNotificationCount).show();
                             }
                             $('#notificationList').prepend('<li class="notification-item text-center"><p class="text-danger mb-0">Bạn có ' + newNotificationCount + ' thông báo chưa đọc</p></li>');
-
                             var notificationsToShow = data.slice(0, 10);
                             $.each(notificationsToShow, function (index, notification) {
                                 var listItem = $('<li class="notification-item"></li>');
@@ -179,9 +177,7 @@
                                 listItem.append(link);
                                 $('#notificationList').append(listItem);
                             });
-
                             $('#notificationList').append('<li class="text-center mt-2"><a href="' + contextPath + '/allnotifications" id="showMoreButton" class="btn btn-link text-decoration-none">Show All</a></li>');
-
                         } else {
                             $('#notificationList').empty();
                             $('#notificationCount').text(oldNotificationCount).show();
@@ -231,7 +227,6 @@
                     $('#notificationCount').text(oldNotificationCount).show();
                 }
             });
-
             loadNotifications();
 //            setInterval(loadNotifications, 2000);
 
@@ -239,7 +234,6 @@
             var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);
             });
-
             $('#dropdownMenuLink').on('click', function () {
                 $('#notificationCount').hide();
                 oldNotificationCount = 0;
@@ -255,7 +249,7 @@
                 loadNotifications();
             });
         });
-
+  
     </script>
 
 

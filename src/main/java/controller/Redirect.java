@@ -10,21 +10,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
-import model.Ads_combo;
-import model.Comment;
 import model.DAO.Ads_DB;
-import model.DAO.Comment_DB;
-import model.DAO.Post_DB;
-import model.DAO.User_DB;
-import model.Post;
-import model.User;
 
 /**
  *
  * @author mac
  */
-public class Advertising_Combo extends HttpServlet {
+public class Redirect extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -43,10 +35,10 @@ public class Advertising_Combo extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Advertising_Combo</title>");
+            out.println("<title>Servlet Redirect</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Advertising_Combo at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet Redirect at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -64,36 +56,31 @@ public class Advertising_Combo extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Get the list of all ads combo
-        Ads_DB ads_DB = new Ads_DB();
-        List<Ads_combo> allAdsCombo = ads_DB.getAllAdsComboSystem();
+        response.setContentType("text/html;charset=UTF-8");
+        String redirectTo = request.getParameter("to");
+        String adsIDParam = request.getParameter("a");
 
-        // Set the list of ads combo as an attribute in the request
-        request.setAttribute("allAdsCombo", allAdsCombo);
+        int adsID = 0; // default value or you can handle it differently
 
-        // Forward the request to the JSP page
-        request.getRequestDispatcher("/advertising/comboAds.jsp").forward(request, response);
+        Ads_DB adsDB = new Ads_DB();
+        // Call up Traffic +1  with the Ads id
+        adsDB.upCurrentReact(adsID);
+
+        if (adsIDParam != null) {
+            try {
+                adsID = Integer.parseInt(adsIDParam);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                // Handle the exception, e.g., set an error message or set a default value
+            }
+        }
+
+     
+
+        request.setAttribute("redirectTo", redirectTo);
+        request.getRequestDispatcher("/redirect.jsp").forward(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
         return "Short description";

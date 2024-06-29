@@ -269,13 +269,15 @@
             <div class="modal-body">
                 <form id="confirmBanPostForm_${post.postId}" action="${pageContext.request.contextPath}/manager/report" method="post">
                     <input type="hidden" name="postId" value="${post.postId}">
+                    <input type="hidden" name="userId" value="${post.user.userId}">
+                      <input type="hidden" name="postContent" value="${post.content}">
                     <input type="hidden" name="action" value="banPostByAd">
                     <div class="mb-3">
                         <label for="banReason_${post.postId}" class="form-label">Ban Reason</label>
                         <textarea class="form-control" id="banReason_${post.postId}" name="banReason" rows="3" required></textarea>
                     </div>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger" onclick="submitBanPostForm('confirmBanPostForm_${post.postId}')">Ban Post</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmBan('confirmBanPostForm_${post.postId}')">Ban Post</button>
                 </form>
             </div>
         </div>
@@ -326,4 +328,9 @@
                                                             }
                                                         });
                                                     }
+          function confirmBan(formId) {
+            if (confirm("Are you sure you want to perform this action?")) {
+                document.getElementById(formId).submit();
+            }
+        }                                           
 </script>

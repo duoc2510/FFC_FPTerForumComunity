@@ -72,7 +72,7 @@
                                 </a>
                             </li>
                             <li class="sidebar-item sub-item">
-                                <a href="${pageContext.request.contextPath}/#" class="sidebar-link">
+                                <a href="${pageContext.request.contextPath}/admin/viewFeedBack" class="sidebar-link">
                                     <span class="hide-menu">- View feedback</span>
                                 </a>
                             </li>
@@ -157,13 +157,16 @@
                 </li>
             </ul>
             <c:choose>
-                <c:when test="${USER.userRank == 3 && (USER.userRole != 2 && USER.userRole != 3)}">
+                <c:when test="${USER.userRank == 3 && USER.userRole == 1}">
                     <%@ include file="../user/managerRegistr.jsp" %>
                 </c:when>
                 <c:otherwise>
                     <%@ include file="../ads/showAds.jsp" %>
                 </c:otherwise>
             </c:choose>
+           <c:if test="${USER.userRole != 3}">
+                <%@ include file="../user/feedBackModal.jsp" %>
+            </c:if>
         </nav>
     </div>
 </aside>

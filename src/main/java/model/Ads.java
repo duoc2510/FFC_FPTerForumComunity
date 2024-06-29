@@ -1,84 +1,88 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model;
 
-/**
- *
- * @author mac
- */
+import java.util.Date;
+
 public class Ads {
 
-    private int Ads_id;
-    private int AdsDetail_id;
-    private String Content;
-    private String Image;
-    private int User_id;
-    private String currentView;
+    private int adsId;
+    private int adsDetailId;
+    private String content;
+    private String image;
+    private int userId;
+    private int currentReact;
     private String location;
-    private String URI;
+    private String title;
+    private String uri;
+    private String uploadPath;
+    private int isActive;
+    private Date startDate;
+    private String targetSex;
 
     public Ads() {
     }
 
-    public Ads(int Ads_id, int AdsDetail_id, String Content, String Image, int User_id, String currentView, String location, String URI) {
-        this.Ads_id = Ads_id;
-        this.AdsDetail_id = AdsDetail_id;
-        this.Content = Content;
-        this.Image = Image;
-        this.User_id = User_id;
-        this.currentView = currentView;
+    public Ads(int adsId, int adsDetailId, String content, String image, int userId, int currentReact, String location, String title, String uri, String uploadPath, int isActive, Date startDate, String targetSex) {
+        this.adsId = adsId;
+        this.adsDetailId = adsDetailId;
+        this.content = content;
+        this.image = image;
+        this.userId = userId;
+        this.currentReact = currentReact;
         this.location = location;
-        this.URI = URI;
+        this.title = title;
+        this.uri = uri;
+        this.uploadPath = uploadPath;
+        this.isActive = isActive;
+        this.startDate = startDate;
+        this.targetSex = targetSex;
     }
 
-    public int getAds_id() {
-        return Ads_id;
+    public int getAdsId() {
+        return adsId;
     }
 
-    public void setAds_id(int Ads_id) {
-        this.Ads_id = Ads_id;
+    public void setAdsId(int adsId) {
+        this.adsId = adsId;
     }
 
-    public int getAdsDetail_id() {
-        return AdsDetail_id;
+    public int getAdsDetailId() {
+        return adsDetailId;
     }
 
-    public void setAdsDetail_id(int AdsDetail_id) {
-        this.AdsDetail_id = AdsDetail_id;
+    public void setAdsDetailId(int adsDetailId) {
+        this.adsDetailId = adsDetailId;
     }
 
     public String getContent() {
-        return Content;
+        return content;
     }
 
-    public void setContent(String Content) {
-        this.Content = Content;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public String getImage() {
-        return Image;
+        return image;
     }
 
-    public void setImage(String Image) {
-        this.Image = Image;
+    public void setImage(String image) {
+        this.image = image;
     }
 
-    public int getUser_id() {
-        return User_id;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setUser_id(int User_id) {
-        this.User_id = User_id;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
-    public String getCurrentView() {
-        return currentView;
+    public int getCurrentReact() {
+        return currentReact;
     }
 
-    public void setCurrentView(String currentView) {
-        this.currentView = currentView;
+    public void setCurrentReact(int currentReact) {
+        this.currentReact = currentReact;
     }
 
     public String getLocation() {
@@ -89,12 +93,57 @@ public class Ads {
         this.location = location;
     }
 
-    public String getURI() {
-        return URI;
+    public String getTitle() {
+        return title;
     }
 
-    public void setURI(String URI) {
-        this.URI = URI;
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
+
+    public String getUploadPath() {
+        return uploadPath;
+    }
+
+    public void setUploadPath(String uploadPath) {
+        this.uploadPath = uploadPath;
+    }
+
+    public int getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(int isActive) {
+        this.isActive = isActive;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public String getTargetSex() {
+        return targetSex;
+    }
+
+    public void setTargetSex(String targetSex) {
+        this.targetSex = targetSex;
+    }
+
+    @Override
+    public String toString() {
+        return "Ads{" + "adsId=" + adsId + ", adsDetailId=" + adsDetailId + ", content=" + content + ", image=" + image + ", userId=" + userId + ", currentReact=" + currentReact + ", location=" + location + ", title=" + title + ", uri=" + uri + ", uploadPath=" + uploadPath + ", isActive=" + isActive + ", startDate=" + startDate + ", targetSex=" + targetSex + '}';
     }
 
 }

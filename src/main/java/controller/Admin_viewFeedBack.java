@@ -4,27 +4,23 @@
  */
 package controller;
 
+import jakarta.servlet.http.HttpServlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
-import model.Ads_combo;
-import model.Comment;
-import model.DAO.Ads_DB;
-import model.DAO.Comment_DB;
-import model.DAO.Post_DB;
 import model.DAO.User_DB;
-import model.Post;
-import model.User;
+import model.Feedback;
 
 /**
  *
- * @author mac
+ * @author PC
  */
-public class Advertising_Combo extends HttpServlet {
+public class Admin_viewFeedBack extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -43,10 +39,10 @@ public class Advertising_Combo extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Advertising_Combo</title>");
+            out.println("<title>Servlet Admin_viewFeedBack</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Advertising_Combo at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet Admin_viewFeedBack at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -62,17 +58,11 @@ public class Advertising_Combo extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        // Get the list of all ads combo
-        Ads_DB ads_DB = new Ads_DB();
-        List<Ads_combo> allAdsCombo = ads_DB.getAllAdsComboSystem();
-
-        // Set the list of ads combo as an attribute in the request
-        request.setAttribute("allAdsCombo", allAdsCombo);
-
-        // Forward the request to the JSP page
-        request.getRequestDispatcher("/advertising/comboAds.jsp").forward(request, response);
+protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+     HttpSession session = request.getSession();
+        List<Feedback> feedbackList = User_DB.getAllFeedback();
+        request.setAttribute("feedbackList", feedbackList);
+        request.getRequestDispatcher("/admin/viewFeedBack.jsp").forward(request, response);
     }
 
     /**
@@ -84,10 +74,23 @@ public class Advertising_Combo extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
+     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action = request.getParameter("action");
+        HttpSession session = request.getSession();
+        if ("delete".equals(action)) {
+            int feedbackId = Integer.parseInt(request.getParameter("feedbackId"));
+            boolean deleted = User_DB.deleteFeedback(feedbackId);
+            if (deleted) {
+                session.setAttribute("msg", "Feedback deleted successfully.");
+            } else {
+                session.setAttribute("msg", "Failed to delete feedback.");
+            }
+        }
+
+        // Redirect back to the feedback list
+        response.sendRedirect(request.getContextPath() + "/admin/viewFeedBack");
     }
+
 
     /**
      * Returns a short description of the servlet.
