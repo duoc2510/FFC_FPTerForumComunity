@@ -87,7 +87,7 @@
                     <%@ include file="include/navbar.jsp" %>
                     <div class="container-fluid d-flex">
                         <div class="friend-list col-12 col-md-4 px-3">
-                            <!-- Danh sách bạn bè sẽ được tải động vào đây -->
+                            <!-- Danh sách người liên hệ sẽ được tải vào đây -->
                         </div>
                         <div class="chat-container col-12 col-md-8 p-2 card rounded pb-2 px-4">
                             <div id="friendName" class="pt-2"></div>
@@ -100,16 +100,16 @@
                         <script>
                             let ws = new WebSocket("ws://localhost:8080/FPTer/chat");
                             let toId = null;
-                            let loggedInUserId = ${USER.userId}; // Giả sử USER là biến JavaScript được truyền từ phía server
+                            let loggedInUserId = ${USER.userId};
 
                             ws.onopen = function () {
                                 console.log('WebSocket đã kết nối.');
-                                loadFriends();
+                                loadMessageSenders();
                             };
 
-                            function loadFriends() {
+                            function loadMessageSenders() {
                                 let messageObj = {
-                                    type: "loadFriends"
+                                    type: "loadMessageSenders"
                                 };
                                 ws.send(JSON.stringify(messageObj));
                             }
@@ -117,14 +117,118 @@
                             ws.onmessage = function (event) {
                                 let data = JSON.parse(event.data);
 
-                                if (data.type === "chat") {
+                                if (data.type === "loadMessageSenders") {
+                                    handleLoadMessageSenders(data.senders);
+                                    if (data.latestSenderId) {
+                                        setAndLoadMessages(data.latestSenderId, data.latestSenderUsername);
+                                    }
+                                } else if (data.type === "chat") {
                                     handleChatMessage(data);
                                 } else if (data.type === "loadMessages") {
                                     handleLoadMessages(data);
-                                } else if (data.type === "loadFriends") {
-                                    handleLoadFriends(data.friends, data.latestFriendId, data.latestFriendUsername);
+                                } else if (data.type === "updateMessageSenders") {
+                                    handleUpdateMessageSenders(data.senders);
                                 }
                             };
+
+                            function handleLoadMessageSenders(senders) {
+                                let friendList = document.querySelector(".friend-list");
+                                friendList.innerHTML = "";
+
+                                senders.forEach(function (sender) {
+                                    let friendDiv = document.createElement("div");
+                                    friendDiv.classList.add("friend", "list-group");
+
+                                    let friendLink = document.createElement("a");
+                                    friendLink.classList.add("list-group-item", "list-group-item-action");
+                                    friendLink.href = "javascript:void(0)";
+                                    friendLink.onclick = function () {
+                                        setAndLoadMessages(sender.id, sender.username);
+                                    };
+
+                                    let friendContent = document.createElement("div");
+                                    friendContent.classList.add("d-flex", "py-2");
+
+                                    let friendImg = document.createElement("img");
+                                    friendImg.classList.add("d-inline");
+
+                                    if (sender.avatar == null || sender.avatar.trim() === "") {
+                                        friendImg.src = "/path/to/default/avatar.jpg"; // Đường dẫn ảnh mặc định
+                                    } else {
+                                        friendImg.src = sender.avatar;
+                                    }
+
+                                    friendImg.alt = sender.username;
+
+                                    let friendName = document.createElement("h4");
+                                    friendName.classList.add("d-flex", "align-items-center", "px-3");
+                                    friendName.textContent = sender.username;
+
+                                    friendContent.appendChild(friendImg);
+                                    friendContent.appendChild(friendName);
+                                    friendLink.appendChild(friendContent);
+                                    friendDiv.appendChild(friendLink);
+                                    friendList.appendChild(friendDiv);
+                                });
+                            }
+
+                            function handleUpdateMessageSenders(senders) {
+                                let friendList = document.querySelector(".friend-list");
+                                friendList.innerHTML = "";
+
+                                senders.forEach(function (sender) {
+                                    let friendDiv = document.createElement("div");
+                                    friendDiv.classList.add("friend", "list-group");
+
+                                    let friendLink = document.createElement("a");
+                                    friendLink.classList.add("list-group-item", "list-group-item-action");
+                                    friendLink.href = "javascript:void(0)";
+                                    friendLink.onclick = function () {
+                                        setAndLoadMessages(sender.id, sender.username);
+                                    };
+
+                                    let friendContent = document.createElement("div");
+                                    friendContent.classList.add("d-flex", "py-2");
+
+                                    let friendImg = document.createElement("img");
+                                    friendImg.classList.add("d-inline");
+
+                                    if (sender.avatar == null || sender.avatar.trim() === "") {
+                                        friendImg.src = "/path/to/default/avatar.jpg"; // Đường dẫn ảnh mặc định
+                                    } else {
+                                        friendImg.src = sender.avatar;
+                                    }
+
+                                    friendImg.alt = sender.username;
+
+                                    let friendName = document.createElement("h4");
+                                    friendName.classList.add("d-flex", "align-items-center", "px-3");
+                                    friendName.textContent = sender.username;
+
+                                    friendContent.appendChild(friendImg);
+                                    friendContent.appendChild(friendName);
+                                    friendLink.appendChild(friendContent);
+                                    friendDiv.appendChild(friendLink);
+                                    friendList.appendChild(friendDiv);
+                                });
+                            }
+
+                            function setAndLoadMessages(userId, username) {
+                                toId = userId;
+
+                                let messageObj = {
+                                    type: "loadMessages",
+                                    toId: toId
+                                };
+
+                                let chat = document.getElementById("chat");
+                                chat.innerHTML = "";
+
+                                let friendNameDiv = document.getElementById("friendName");
+                                friendNameDiv.textContent = username;
+
+                                ws.send(JSON.stringify(messageObj));
+                            }
 
                             function handleChatMessage(data) {
                                 let chat = document.getElementById("chat");
@@ -149,6 +253,9 @@
                                     messageDiv.appendChild(document.createTextNode(messageText));
                                     chat.appendChild(messageDiv);
                                     scrollToBottom();
+
+                                    // Update message senders list without interrupting the current chat
+                                    loadMessageSenders();
                                 } else {
                                     console.log("Received message not relevant to current chat window.");
                                 }
@@ -185,77 +292,6 @@
                                 });
                             }
 
-                            function handleLoadFriends(friends, latestFriendId, latestFriendUsername) {
-                                let friendList = document.querySelector(".friend-list");
-                                friendList.innerHTML = "";
-
-                                friends.forEach(function (friend) {
-                                    let friendDiv = document.createElement("div");
-                                    friendDiv.classList.add("friend", "list-group");
-
-                                    let friendLink = document.createElement("a");
-                                    friendLink.classList.add("list-group-item", "list-group-item-action");
-                                    friendLink.href = "javascript:void(0)";
-                                    friendLink.onclick = function () {
-                                        setAndLoadMessages(friend.id, friend.username);
-                                    };
-
-                                    let friendContent = document.createElement("div");
-                                    friendContent.classList.add("d-flex", "py-2");
-
-                                    let friendImg = document.createElement("img");
-                                    friendImg.classList.add("d-inline");
-
-                                    // Kiểm tra và log đường dẫn của avatar
-                                    if (friend.avatar == null || friend.avatar.trim() === "") {
-                                        console.log("Avatar path is not available for", friend.username);
-                                        // Đặt ảnh mặc định tại đây (đường dẫn của ảnh mặc định)
-                                        friendImg.src = "/path/to/default/avatar.jpg"; // Thay đổi đường dẫn ảnh mặc định tại đây
-                                    } else {
-                                        friendImg.src = friend.avatar;
-                                        console.log("Avatar path for", friend.username, "is", friend.avatar);
-                                    }
-
-                                    friendImg.alt = friend.username;
-
-                                    let friendName = document.createElement("h4");
-                                    friendName.classList.add("d-flex", "align-items-center", "px-3");
-                                    friendName.textContent = friend.username;
-
-                                    friendContent.appendChild(friendImg);
-                                    friendContent.appendChild(friendName);
-                                    friendLink.appendChild(friendContent);
-                                    friendDiv.appendChild(friendLink);
-                                    friendList.appendChild(friendDiv);
-                                });
-
-                                if (latestFriendId && latestFriendUsername) {
-                                    setAndLoadMessages(latestFriendId, latestFriendUsername);
-                                }
-                            }
-
-                            function setAndLoadMessages(userId, username) {
-                                toId = userId;
-
-                                let messageObj = {
-                                    type: "loadMessages",
-                                    toId: toId
-                                };
-
-                                let chat = document.getElementById("chat");
-                                chat.innerHTML = "";
-
-                                let friendNameDiv = document.getElementById("friendName");
-                                friendNameDiv.textContent = username;
-
-                                ws.send(JSON.stringify(messageObj));
-                            }
-
-                            function scrollToBottom() {
-                                let chat = document.getElementById("chat");
-                                chat.scrollTop = chat.scrollHeight;
-                            }
-
                             function sendMessage() {
                                 let messageInput = document.getElementById("message");
                                 if (!messageInput.value.trim()) {
@@ -268,7 +304,7 @@
                                         type: "chat",
                                         toId: toId,
                                         fromId: loggedInUserId,
-                                        fromUsername: '${USER.username}', // Giả sử USER.username là biến JavaScript được truyền từ phía server
+                                        fromUsername: '${USER.username}',
                                         messageText: messageInput.value
                                     };
 
@@ -283,6 +319,11 @@
                                 if (event.key === "Enter") {
                                     sendMessage();
                                 }
+                            }
+
+                            function scrollToBottom() {
+                                let chat = document.getElementById("chat");
+                                chat.scrollTop = chat.scrollHeight;
                             }
                         </script>
                     </div>

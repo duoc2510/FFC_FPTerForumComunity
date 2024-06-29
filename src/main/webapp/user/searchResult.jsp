@@ -3,7 +3,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <body>
     <title>Search Results</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .avatar-cover {
             object-fit: cover;
@@ -370,12 +369,11 @@
                     </div>
                 </div>
             </div>
-            <%@ include file="../include/footer.jsp" %>
+          
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
         $(document).ready(function() {
             $('#allButton').click(function() {

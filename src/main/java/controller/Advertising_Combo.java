@@ -66,7 +66,7 @@ public class Advertising_Combo extends HttpServlet {
             throws ServletException, IOException {
         // Get the list of all ads combo
         Ads_DB ads_DB = new Ads_DB();
-        List<Ads_combo> allAdsCombo = ads_DB.getAllAdsCombo();
+        List<Ads_combo> allAdsCombo = ads_DB.getAllAdsComboSystem();
 
         // Set the list of ads combo as an attribute in the request
         request.setAttribute("allAdsCombo", allAdsCombo);

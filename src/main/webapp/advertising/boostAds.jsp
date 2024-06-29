@@ -4,95 +4,142 @@
     Author     : mac
 --%>
 
-<%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 <%@ include file="../include/header.jsp" %>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
 <body>
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
          data-sidebar-position="fixed" data-header-position="fixed">
-        <c:if test="${not empty sessionScope.USER}">
-            <%@ include file="../include/slidebar.jsp" %>
-        </c:if>
-        <c:if test="${empty sessionScope.USER}">
-            <%@ include file="../include/slidebar_guest.jsp" %>
-        </c:if>
+        <%@ include file="../include/slidebar.jsp" %>
         <div class="body-wrapper">
-            <c:if test="${not empty sessionScope.USER}">
-                <%@ include file="../include/navbar.jsp" %>
-            </c:if>
-            <c:if test="${empty sessionScope.USER}">
-                <%@ include file="../include/navbar_guest.jsp" %>
-            </c:if>
-            <div class="container-fluid">
-                <!--Control panel-->
-                <%@ include file="panel.jsp" %>
-
-
-                <div class="col-lg-12">
-
-
-                    <div class="w-100 row mt-5">
-                        <div class="col-md-6 p-3 ">
-                            <h3>Boost My Branding</h3>
-                            <p>Growth your business with us, you can:</p>
-                            <ul class="list-unstyled custom-list my-4">
-
-
-                                <li>Giám sát tất cả các Trang, tài khoản và tài sản doanh nghiệp ở cùng một nơi.</li>
-                                <li>Dễ dàng tạo và quản lý quảng cáo cho tất cả các tài khoản.</li>
-                                <li>Theo dõi xem yếu tố nào hoạt động hiệu quả nhất bằng thông tin chi tiết về hiệu quả.</li>
-                            </ul>
-                            <button class="btn btn-primary mt-3">Join with us</button>
+            <%@ include file="../include/navbar.jsp" %>
+            <div class="container-fluid pb-2">
+                <div class="row">
+                    <div id="profile-wrapper">
+                        <div class="bg-white shadow rounded overflow-hidden">
+                            <div class="px-4 py-4 cover" style="background: url(${pageContext.request.contextPath}/upload/deli-2.png); height:250px;">
+                                <div class="media align-items-end profile-head">
+                                    <div class="profile mr-3 d-flex justify-content-between align-items-end">
+                                        <img src="${pageContext.request.contextPath}/${USER.userAvatar}" class="position-absolute rounded-circle img-thumbnail" style="object-fit: cover;">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-light pt-4 px-4 d-flex justify-content-between text-center">
+                                <div class="media-body mb-5 text-white">
+                                    <h4 class="mt-0 mb-0 position-relative" style="left: 6.5em">${USER.userFullName}</h4>
+                                </div>
+                                <ul class="list-inline mb-0"></ul>
+                            </div>
                         </div>
-                        <div class="col-md-6 p-3">
-                            <form method="POST">
-                                <div class="mb-3">
-                                    <label for="exampleInputEmail1" class="form-label">Title</label>
-                                    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid pt-0">
+                <div class="row form-settings d-flex justify-content-between">
+                    <div class="col-12 col-sm-3 px-2">
+                        <%@include file="menuAds.jsp" %>
+                    </div>
+                    <div class="col-12 col-sm-9 px-2">
+                        <div class="bg-white shadow rounded p-4">
+                            <div>
+                                <div class="mb-4">
+                                    <h3>My Advertising</h3>
+                                    <h6>All advertising activity running</h6>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="exampleInputPassword1" class="form-label">Content</label>
-                                    <textarea class="form-control" rows="3"></textarea>
+                                <div class="form-group pb-3">
+                                    <div class="d-flex flex-row align-items-center mb-4 pb-1 row">
+                                        <c:forEach var="entry" items="${adsWithComboData}">
+                                            <c:set var="ads" value="${entry.key}" />
+                                            <c:set var="adsCombo" value="${entry.value}" />
+                                            <div class="col-6 px-2">
+                                                <img src="${pageContext.request.contextPath}/${ads.image}" class="card-img w-100" alt="${ads.content}" style="height: 300px; object-fit: cover; border: 0px solid; border-radius: 10px 10px 0 0;">
+
+                                                <div class="card p-4">
+                                                    <p>Advertising ID: ${ads.adsId}</p>
+                                                    <h5 class="card-title mt-2">${ads.title}</h5>
+
+                                                    <div class="row mb-1 align-items-center">
+                                                        <div class="col-3  px-3 ">
+                                                            <img src="${pageContext.request.contextPath}/${USER.userAvatar}" class="card-img" alt="avatarUser" style="object-fit: cover; border: 0px solid; border-radius: 50%;">
+                                                        </div>
+                                                        <div class="col-9">
+                                                            <p class="ml-auto"><b> ${USER.userFullName}</b></p>
+                                                            <span>Sponsored</span>
+                                                        </div>
+                                                    </div>
+
+                                                    <p class="mt-1">
+                                                        Started running on ${ads.startDate}
+                                                    </p>
+                                                    <p class="card-text mt-2">
+                                                        ${ads.title}
+                                                    </p>
+                                                    <p class="card-text mt-2">
+                                                        URL: <a href="${pageContext.request.contextPath}/redirect?to=${ads.uri}&a=${ads.adsId}" target="_blank">${ads.uri}</a>
+                                                    </p>
+                                                    <p class="card-text mt-2">
+                                                    <div class="form-check form-switch">
+                                                        <input 
+                                                            class="form-check-input" 
+                                                            type="checkbox" 
+                                                            ${ads.isActive == 1 ? 'checked' : ''}
+                                                            onchange="handleActiveChange(${ads.adsId}, this.checked)"
+                                                            >
+                                                        <label class="form-check-label" for="flexSwitchCheckChecked_${ads.adsId}">
+                                                            ${ads.isActive == 1 ? 'Active' : 'Not active'}
+                                                        </label>
+                                                    </div>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </c:forEach>
+                                    </div>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Image</label>
-                                    <input type="file" class="form-control">
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label">URI</label>
-                                    <input type="text" class="form-control">
-                                </div>
-
-                                <div class="mb-3">
-                                    <label class="form-label">Budget per day</label>
-                                    <input type="range" class="form-control" id="budgetRange" min="10000" max="1000000" step="10000">
-                                    <div class="value-display">Value: <span id="budgetValue">10000</span> VND /day</div>
-                                </div>
-
-                                <script>
-                                    const budgetRange = document.getElementById('budgetRange');
-                                    const budgetValue = document.getElementById('budgetValue');
-
-                                    budgetRange.addEventListener('input', () => {
-                                        budgetValue.textContent = budgetRange.value;
-                                    });
-
-                                    // Initialize the display value
-                                    budgetValue.textContent = budgetRange.value;
-                                </script>
-
-
-                                <button type="submit" class="btn btn-primary">Boost</button>
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</body>
+<script>
+    function handleActiveChange(adsId, isActive) {
+        if (isActive == false) {
+            isActive = 0;
+        } else {
+            isActive = 1;
+        }
+        var data = {
+            action: "changeActive",
+            adsId: adsId,
+            isActive: isActive  // Convert boolean to integer (1 or 0)
+        };
 
-
-    <%@ include file="../include/footer.jsp" %>
+        $.ajax({
+            url: '${pageContext.request.contextPath}/advertising/boost', // Update URL according to your servlet mapping
+            type: 'POST',
+            data: data,
+            dataType: 'json',
+            success: function (response) {
+                if (response.success) {
+                    swal("Success! Your advertising status has been changed!", {
+                        icon: "success",
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    swal("Error!", response.message, "error");
+                }
+            },
+            error: function (xhr, status, error) {
+                swal("Error!", "Unable to update advertising status.", "error");
+            }
+        });
+    }
+</script>
+<%@ include file="../include/footer.jsp" %>
 
 
 

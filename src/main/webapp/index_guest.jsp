@@ -274,6 +274,8 @@
 </body>
 
 <%@ include file="include/footer.jsp" %>
+<script>
 document.addEventListener('DOMContentLoaded', function () {
 var nav = document.getElementById('legends-nav');
 var navOffset = nav.offsetTop; // Get the initial offset position of the navbar
+</script>

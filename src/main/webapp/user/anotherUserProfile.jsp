@@ -121,7 +121,6 @@
                                                     </li>
                                                 </ul>
                                             </div>
-
                                         </c:when>
                                         <c:when test="${friendStatus == 'received'}">
                                             <form action="${pageContext.request.contextPath}/friends" method="post" class="d-inline">
@@ -165,7 +164,6 @@
                                     </c:choose>
 
                                     <c:choose>
-
                                         <c:when test="${USER.userRole == 3}">
                                             <li class="list-inline-item">
                                                 <div class="dropdown d-inline">
@@ -174,7 +172,6 @@
                                                     </button>
                                                     <ul class="dropdown-menu" aria-labelledby="moreOptionsDropdown">
                                                         <c:choose>
-
                                                             <c:when test="${user.userRole == 0}">
                                                                 <li>
                                                                     <button type="button" class="dropdown-item" disabled>
@@ -184,7 +181,6 @@
                                                             </c:when>
                                                             <c:when test="${user.userRole == 2}">
                                                                 <li class="w-100">
-
                                                                     <form id="revokeManagerForm_${user.userId}" action="${pageContext.request.contextPath}/manager/report" method="post">
                                                                         <input type="hidden" name="userId" value="${user.userId}">
                                                                         <input type="hidden" name="username" value="${user.username}">
@@ -378,8 +374,40 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <li class="list-inline-item">
+                                        <button id="openMessageModal" class="btn btn-primary btn-sm ml-2">
+                                            <i class="fas fa-envelope mr-1"></i> Nhắn tin
+                                        </button>
+                                    </li>
 
+                                    <!-- Modal -->
+                                    <div class="modal" id="messageModal">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <!-- Modal Header -->
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Nhập tin nhắn mới</h5>
+                                                </div>
+                                                <!-- Modal Body -->
+                                                <div class="modal-body">
+                                                    <form id="sendMessageForm" action="${pageContext.request.contextPath}/messenger" method="post">
+                                                        <div class="form-group">
+                                                            <label for="messageText">Tin nhắn:</label>
+                                                            <textarea class="form-control" id="messageText" name="messageText" rows="3"></textarea>
+                                                        </div>
+                                                        <input type="hidden" name="toId" value="${user.userId}"> <!-- Thay bằng userId của người dùng cần nhắn tin -->
+                                                        <button type="submit" class="btn btn-primary">Gửi</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
+                                    <script>
+                                        document.getElementById('openMessageModal').addEventListener('click', function () {
+                                            $('#messageModal').modal('show'); // Sử dụng jQuery để hiển thị modal
+                                        });
+                                    </script>
                                     <li class="list-inline-item">
                                         <h5 class="font-weight-bold mb-0 d-block">${postCount}</h5><small class="text-muted"><i class="fas fa-image mr-1"></i>Posts</small>
                                     </li>

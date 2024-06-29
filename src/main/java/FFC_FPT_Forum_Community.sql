@@ -7,7 +7,6 @@ GO
 -- Bảng Users
 CREATE TABLE Users (
     Username NVARCHAR(100) NOT NULL, -- Tên người dùng, bắt buộc
-    usernameVip NVARCHAR(100), -- Tên người dùng VIP
     User_id INT IDENTITY(1,1) PRIMARY KEY, -- ID tự động tăng cho người dùng
     User_email NVARCHAR(255) NOT NULL, -- Email người dùng, bắt buộc
     User_password NVARCHAR(255) NOT NULL, -- Mật khẩu người dùng, bắt buộc
@@ -99,24 +98,6 @@ CREATE TABLE OrderItem (
 	CONSTRAINT fk_product_orderitem FOREIGN KEY (Product_id) REFERENCES Product(Product_id) -- Tham chiếu đến Product_id trong bảng Product
 );
 GO
-
--- Bảng Title
-CREATE TABLE Title (
-    Title_id INT IDENTITY(1,1) PRIMARY KEY, -- ID tự động tăng cho danh hiệu
-    Title_name NVARCHAR(255) NOT NULL -- Tên của danh hiệu, bắt buộc
-);
-GO
-
--- Bảng UserTitle
-CREATE TABLE UserTitle (
-    UserTitle_id INT IDENTITY(1,1) PRIMARY KEY, -- ID tự động tăng cho bảng trung gian
-    User_id INT NOT NULL, -- ID của người dùng, bắt buộc
-    Title_id INT NOT NULL, -- ID của danh hiệu, bắt buộc
-    CONSTRAINT fk_user_usertitle FOREIGN KEY (User_id) REFERENCES Users(User_id), -- Tham chiếu đến User_id trong bảng Users
-    CONSTRAINT fk_title_usertitle FOREIGN KEY (Title_id) REFERENCES Title(Title_id) -- Tham chiếu đến Title_id trong bảng Title
-);
-GO
-
 -- Bảng FriendShip
 CREATE TABLE FriendShip (
     Friendship_id INT IDENTITY(1,1) PRIMARY KEY, -- id tự động tăng cho mối quan hệ bạn bè
@@ -128,7 +109,6 @@ CREATE TABLE FriendShip (
     UNIQUE (User_id, Friend_id) -- Đảm bảo mỗi cặp người dùng chỉ có một mối quan hệ bạn bè duy nhất
 );
 GO
-
 -- Bảng Notification
 CREATE TABLE Notification (
     Notification_id INT IDENTITY(1,1) PRIMARY KEY, -- id tự động tăng cho thông báo
@@ -140,7 +120,6 @@ CREATE TABLE Notification (
     FOREIGN KEY (User_id) REFERENCES Users(User_id) -- Tham chiếu khóa ngoại tới bảng Users
 );
 GO
-
 -- Bảng Event
 CREATE TABLE Event (
     Event_id INT IDENTITY(1,1) PRIMARY KEY, -- id tự động tăng cho sự kiện
@@ -186,7 +165,8 @@ CREATE TABLE Message (
     From_id INT NOT NULL, -- id người gửi, không được null
     To_id INT NOT NULL, -- id người nhận, không được null
     MessageText NVARCHAR(255) NOT NULL, -- Nội dung tin nhắn, không được null
-    FromUsername NVARCHAR(255) NOT NULL,
+    FromUsername NVARCHAR(255),
+	FriendShip NVARCHAR(255),
     TimeStamp DATETIME DEFAULT GETDATE(), -- Thời gian gửi tin nhắn, mặc định là ngày hiện tại
     FOREIGN KEY (From_id) REFERENCES Users(User_id), -- Khóa ngoại tham chiếu đến người gửi
     FOREIGN KEY (To_id) REFERENCES Users(User_id) -- Khóa ngoại tham chiếu đến người nhận
@@ -341,6 +321,7 @@ INSERT INTO ATMInfo (ATMNumber, username, BankName, Money, CODE,Status) VALUES
 ('25102003222', 'Nguyen Van B', 'MBBank', 500000, 1234, 'Active'), --Thẻ thanh toán thành công
 ('25102003223', 'Nguyen Van B', 'MBBank', 200000, 1234, 'Block'), --Thẻ bị khoá
 ('25102003224', 'Nguyen Van D', 'MBBank', 0, 1234,'Active'); -- Thẻ không đủ số dư
+
 CREATE TABLE managerRegistr (
     managerRegistr_id INT IDENTITY(1,1) PRIMARY KEY, -- ID tự động tăng cho đăng ký quản lý
     User_id INT NOT NULL, -- Tham chiếu đến User_id bên bảng Users
@@ -563,3 +544,35 @@ VALUES
 (1, NULL, 1),
 (2, NULL, 2),
 (3, NULL, 1);
+
+UPDATE dbo.Users SET User_rank = '3' WHERE USER_ID = 3;
+SELECT * FROM dbo.Users
+SELECT * FROM dbo.Report 
+SELECT * FROM dbo.Post
+SELECT * FROM dbo.Notification
+INSERT INTO Report (Reporter_id, User_id, Shop_id, Post_id, Reason, Status)
+VALUES (2, 3, NULL, NULL, N'quá tệ', N'pending');
+
+INSERT INTO Report (Reporter_id, User_id, Shop_id, Post_id, Reason, Status)
+VALUES (2, 3, NULL, NULL, N'quá tệ', N'pending');
+
+INSERT INTO Report (Reporter_id, User_id, Shop_id, Post_id, Reason, Status)
+VALUES (2, 3, NULL, NULL, N'quá tệ', N'pending');
+
+
+INSERT INTO Report (Reporter_id, User_id, Shop_id, Post_id, Reason, Status)
+VALUES (2, 3, NULL, 8, N'quá tệ', N'pending');
+
+INSERT INTO Report (Reporter_id, User_id, Shop_id, Post_id, Reason, Status)
+VALUES (2, 3, NULL, 8, N'quá tệ', N'pending');
+
+INSERT INTO Report (Reporter_id, User_id, Shop_id, Post_id, Reason, Status)
+VALUES (2, 3, NULL, 8, N'quá tệ', N'pending');
+
+SELECT * FROM dbo.Feedback
+SELECT * FROM dbo.Users
+ALTER TABLE Feedback
+ADD CONSTRAINT FK_User_Feedback
+FOREIGN KEY (User_id)
+REFERENCES Users(User_id)
+ON DELETE CASCADE;

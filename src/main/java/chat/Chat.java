@@ -35,8 +35,8 @@ public class Chat {
         clients.add(session);
         System.out.println("New connection with client: " + session.getId());
 
-        // Load friends list when a new session opens
-        handleLoadFriends(session);
+        // Load message senders list and messages from the latest sender when a new session opens
+        handleLoadMessageSenders(session);
     }
 
     @OnClose
@@ -63,8 +63,8 @@ public class Chat {
                 handleChatMessage(jsonMessage, session);
             } else if ("loadMessages".equals(type)) {
                 handleLoadMessages(jsonMessage, session);
-            } else if ("loadFriends".equals(type)) {
-                handleLoadFriends(session);
+            } else if ("loadMessageSenders".equals(type)) {
+                handleLoadMessageSenders(session);
             } else {
                 System.out.println("Invalid message type received: " + type);
             }
@@ -91,11 +91,11 @@ public class Chat {
         nw.saveNotificationToDatabase(toId, notificationMessage, "/messenger");
         nw.sendNotificationToClient(toId, notificationMessage, "/messenger");
 
-        // Reload friends list for both sender and receiver
-        handleLoadFriends1(session); // Load friends list for the sender (fromId)
+        // Update message senders list for both sender and receiver without interrupting the current chat
+        updateMessageSenders(session, fromId);
         Session receiverSession = getSessionById(toId);
         if (receiverSession != null) {
-            handleLoadFriends(receiverSession); // Load friends list for the receiver (toId)
+            updateMessageSenders(receiverSession, toId);
         }
     }
 
@@ -107,62 +107,74 @@ public class Chat {
         sendExistingMessages(session, fromId, toId);
     }
 
-    private void handleLoadFriends1(Session session) {
+    private void handleLoadMessageSenders(Session session) {
         int userId = getUserId(session);
 
-        // Get accepted friends
-        List<User> friends = User_DB.getAcceptedFriendsOrderByLatestMessage(userId);
+        // Get users who have sent messages to the current user (toId = userId), ordered by the latest message
+        List<User> messageSenders = User_DB.getUsersWhoMessagedUserOrderByLatestMessage(userId);
 
-        // Create JSON array from the friends list
-        JSONArray friendsArray = new JSONArray();
-        for (User friend : friends) {
-            JSONObject friendObj = new JSONObject();
-            friendObj.put("id", friend.getUserId());
-            friendObj.put("username", friend.getUsername());
-            friendObj.put("avatar", friend.getUserAvatar());
-            friendsArray.put(friendObj);
+        // Create JSON array from the users list
+        JSONArray sendersArray = new JSONArray();
+        JSONObject response = new JSONObject();
+
+        if (!messageSenders.isEmpty()) {
+            User latestSender = messageSenders.get(0);  // Get the most recent sender
+            response.put("latestSenderId", latestSender.getUserId());
+            response.put("latestSenderUsername", latestSender.getUsername());
+        }
+
+        for (User sender : messageSenders) {
+            JSONObject senderObj = new JSONObject();
+            senderObj.put("id", sender.getUserId());
+            senderObj.put("username", sender.getUsername());
+            senderObj.put("avatar", sender.getUserAvatar());
+            sendersArray.put(senderObj);
         }
 
         // Create response JSON
-        JSONObject response = new JSONObject();
-        response.put("type", "loadFriends");
-        response.put("friends", friendsArray);
+        response.put("type", "loadMessageSenders");
+        response.put("senders", sendersArray);
 
-        // Send the friends list to the client
+        // Send the senders list to the client
         session.getAsyncRemote().sendText(response.toString());
+
+        // Automatically load messages from the latest sender if there is one
+        if (!messageSenders.isEmpty()) {
+            try {
+                JSONObject jsonMessage = new JSONObject();
+                jsonMessage.put("toId", messageSenders.get(0).getUserId());
+                handleLoadMessages(jsonMessage, session);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-    private void handleLoadFriends(Session session) {
-        int userId = getUserId(session);
+    private void updateMessageSenders(Session session, int userId) {
+        // Get users who have sent messages to the current user (toId = userId), ordered by the latest message
+        List<User> messageSenders = User_DB.getUsersWhoMessagedUserOrderByLatestMessage(userId);
 
-        // Get accepted friends
-        List<User> friends = User_DB.getAcceptedFriendsOrderByLatestMessage(userId);
-
-        // Create JSON array from the friends list
-        JSONArray friendsArray = new JSONArray();
+        // Create JSON array from the users list
+        JSONArray sendersArray = new JSONArray();
         JSONObject response = new JSONObject();
 
-        if (!friends.isEmpty()) {
-            User latestFriend = friends.get(0);  // Get the most recent friend
-            response.put("latestFriendId", latestFriend.getUserId());
-            response.put("latestFriendUsername", latestFriend.getUsername());
+        for (User sender : messageSenders) {
+            JSONObject senderObj = new JSONObject();
+            senderObj.put("id", sender.getUserId());
+            senderObj.put("username", sender.getUsername());
+            senderObj.put("avatar", sender.getUserAvatar());
+            sendersArray.put(senderObj);
         }
 
-        for (User friend : friends) {
-            JSONObject friendObj = new JSONObject();
-            friendObj.put("id", friend.getUserId());
-            friendObj.put("username", friend.getUsername());
-            friendObj.put("avatar", friend.getUserAvatar());
-            friendsArray.put(friendObj);
-        }
         // Create response JSON
-        response.put("type", "loadFriends");
-        response.put("friends", friendsArray);
-        // Send the friends list to the client
+        response.put("type", "updateMessageSenders");
+        response.put("senders", sendersArray);
+
+        // Send the senders list to the client
         session.getAsyncRemote().sendText(response.toString());
     }
 
-    private void saveMessageToDatabase(int fromId, int toId, String messageText) throws Exception {
+    void saveMessageToDatabase(int fromId, int toId, String messageText) throws Exception {
         String fromUsername = getUsername(fromId);
 
         try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass)) {
@@ -181,7 +193,7 @@ public class Chat {
 
     private void sendExistingMessages(Session session, int fromId, int toId) throws Exception {
         String query = "SELECT From_id, To_id, MessageText, FromUsername FROM Message "
-                + "WHERE (From_id = ? AND To_id = ?) OR (From_id = ? AND To_id = ?)";
+                + "WHERE ((From_id = ? AND To_id = ?) OR (From_id = ? AND To_id = ?)) AND MessageText IS NOT NULL";
 
         try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
 
@@ -214,7 +226,7 @@ public class Chat {
                 // Convert to string and send to the session asynchronously
                 session.getAsyncRemote().sendText(response.toString());
             }
-        } catch (SQLException | IOException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }

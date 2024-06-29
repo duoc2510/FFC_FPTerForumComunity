@@ -63,13 +63,17 @@
                                                             <li>
                                                                 <form id="banPostForm_${report.post.postId}" action="${pageContext.request.contextPath}/admin/handelRpManager" method="post">
                                                                     <input type="hidden" name="postId" value="${report.post.postId}">
-                                                                    <input type="hidden" name="action" value="banPost">
+                                                                    <input type="hidden" name="reporterId" value="${report.reporter_id}">
+                                                                    <input type="hidden" name="reportedId" value="${report.user.userId}">
+                                                                    <input type="hidden" name="username" value="${report.user.username}">
+                                                                    <input type="hidden" name="action" value="banPost">         
                                                                     <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#banPostModal_${report.post.postId}">Ban bài viết</button>
                                                                 </form>
                                                             </li>
                                                             <li>
                                                                 <form id="banUserForm_${report.user.userId}" action="${pageContext.request.contextPath}/admin/handelRpManager" method="post">
                                                                     <input type="hidden" name="userId" value="${report.user.userId}">
+                                                                    <input type="hidden" name="reporterId" value="${report.reporter_id}">
                                                                     <input type="hidden" name="action" value="banUser">
                                                                     <button type="button" class="dropdown-item" onclick="confirmBan('banUserForm_${report.user.userId}')">Ban manager</button>
                                                                 </form>
@@ -102,6 +106,7 @@
                                                         <div class="modal-body">
                                                             <form id="banPostFormReason_${report.post.postId}" action="${pageContext.request.contextPath}/admin/handelRpManager" method="post">
                                                                 <input type="hidden" name="postId" value="${report.post.postId}">
+                                                                <input type="hidden" name="reporterId" value="${report.reporter_id}">
                                                                 <input type="hidden" name="action" value="banPost">
                                                                 <div class="mb-3">
                                                                     <label for="banReason_${report.post.postId}" class="form-label">Lý do cấm bài viết:</label>

@@ -192,7 +192,42 @@ public class Group_DB implements DBinfo {
         }
         return groups;
     }
+public static Group getGroupById(int groupId) {
+    Group group = null;
+    String sql = "SELECT g.Group_id, g.Creater_id, g.Group_name, g.Group_description, g.image, g.Status,"
+               + "COUNT(DISTINCT CASE WHEN mg.Status IN ('approved', 'host') THEN mg.MemberGroup_id END) AS memberCount "
+               + "FROM [Group] g "
+               + "LEFT JOIN MemberGroup mg ON g.Group_id = mg.Group_id "
+               + "WHERE g.Group_id = ? "
+               + "GROUP BY g.Group_id, g.Creater_id, g.Group_name, g.Group_description, g.image, g.Status";
 
+    try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass);
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        
+        stmt.setInt(1, groupId);
+        try (ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                group = new Group(
+                        rs.getInt("Group_id"),
+                        rs.getInt("Creater_id"),
+                        rs.getString("Group_name"),
+                        rs.getString("Group_description"),
+                        null,
+                        null,
+                        null,
+                        null,
+                        rs.getString("image"),
+                        rs.getInt("memberCount"),
+                        rs.getString("Status")
+                );
+            }
+        }
+        System.out.println("Query executed successfully!"); // Thông báo thành công
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return group;
+}
     public static boolean joinGroup(int userId, int groupId) {
         String sql;
         boolean isCreator = false;
