@@ -40,7 +40,6 @@
         <description>ServletContextListener</description>
         <listener-class>model.DAO.DBListener</listener-class>
     </listener>
-    
     <listener>
         <description>ServletContextListener</description>
         <listener-class>util.SchedulerStarter</listener-class>
@@ -148,10 +147,6 @@
     <servlet>
         <servlet-name>Group_list</servlet-name>
         <servlet-class>controller.Group_list</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>Shop_allshop</servlet-name>
-        <servlet-class>controller.Shop_allshop</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Shop_myShop</servlet-name>
@@ -324,14 +319,18 @@
     <servlet>
         <servlet-name>Advertising_Report</servlet-name>
         <servlet-class>controller.Advertising_Report</servlet-class>
-    </servlet>  
-    <servlet> 
+    </servlet>
+    <servlet>
         <servlet-name>User_feedBack</servlet-name>
         <servlet-class>controller.User_feedBack</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Admin_viewFeedBack</servlet-name>
         <servlet-class>controller.Admin_viewFeedBack</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Shop_allshop</servlet-name>
+        <servlet-class>controller.Shop_allshop</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>PostComment</servlet-name>
@@ -432,10 +431,6 @@
     <servlet-mapping>
         <servlet-name>User_marketplace</servlet-name>
         <url-pattern>/marketplace</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Shop_allshop</servlet-name>
-        <url-pattern>/marketplace/allshop</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Shop_myShop</servlet-name>
@@ -609,13 +604,17 @@
         <servlet-name>Advertising_Report</servlet-name>
         <url-pattern>/advertising/report</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>    
+    <servlet-mapping>
         <servlet-name>User_feedBack</servlet-name>
         <url-pattern>/feedBack</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Admin_viewFeedBack</servlet-name>
         <url-pattern>/admin/viewFeedBack</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Shop_allshop</servlet-name>
+        <url-pattern>/martketplace/allshop</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index_guest.jsp</welcome-file>

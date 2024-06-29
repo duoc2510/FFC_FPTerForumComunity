@@ -51,28 +51,3 @@ public class SchedulerStarter implements ServletContextListener {
         }
     }
 }
-
-//public class SchedulerStarter implements ServletContextListener {
-//
-//    public void contextInitialized(ServletContextEvent sce) {
-//        try {
-//            Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
-//            JobDetail job = JobBuilder.newJob(RankResetJob.class).build();
-//            Trigger trigger = TriggerBuilder.newTrigger()
-//                    .withSchedule(monthlyOnDayAndHourAndMinute(1, 0, 0)) // Reset at 00:00 on the first day of the month
-//                    .build();
-//            scheduler.scheduleJob(job, trigger);
-//            scheduler.start();
-//        } catch (SchedulerException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    public void contextDestroyed(ServletContextEvent sce) {
-//        try {
-//            StdSchedulerFactory.getDefaultScheduler().shutdown();
-//        } catch (SchedulerException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//}

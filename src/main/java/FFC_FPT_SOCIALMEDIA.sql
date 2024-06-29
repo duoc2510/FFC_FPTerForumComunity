@@ -304,7 +304,7 @@ CREATE TABLE UserFollow (
     Topic_id INT, -- id của chủ đề được theo dõi
     FOREIGN KEY (User_id) REFERENCES Users(User_id), -- Tham chiếu khóa ngoại tới bảng Users
     FOREIGN KEY (Event_id) REFERENCES Event(Event_id), -- Tham chiếu khóa ngoại tới bảng Event
-    FOREIGN KEY (Topic_id) REFERENCES Topic(Topic_id) -- Tham chiếu khóa ngoại tới bảng Topic
+	FOREIGN KEY (Topic_id) REFERENCES Topic(Topic_id) -- Tham chiếu khóa ngoại tới bảng Topic
 );
 GO
 CREATE TABLE Upload (
@@ -471,12 +471,6 @@ VALUES
 (6, 1, 8, 10.50),
 (6, 5, 15, 25.50);
 GO
--- Chèn dữ liệu mẫu vào bảng Message
-INSERT INTO Message (From_id, To_id, MessageText,FromUsername)
-VALUES 
-(1, 2, 'Hello, how are you?','swpduoc'),
-(2, 1, 'I''m fine, thanks!','swpdiem');
-GO
 -- Chèn dữ liệu mẫu vào bảng Topic
 INSERT INTO Topic (Topic_name, Description)
 VALUES 
@@ -496,3 +490,4 @@ VALUES
 (1, 2, 'Welcome!'),
 (2, 1, 'I recommend trying the Italian restaurant downtown.');
 
+SELECT * FROM Shop WHERE Status = 1

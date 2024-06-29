@@ -40,7 +40,7 @@
             <div class="col-lg-12 mb-4">
                 <ul class="nav nav-pills nav-fill" id="nav-pills">
                     <li class="nav-item">
-                        <a class="nav-link nav-link-main-redirect" href="${pageContext.request.contextPath}/marketplace/allshop">All shop</a>
+                        <a class="nav-link nav-link-main-redirect" href="${pageContext.request.contextPath}/martketplace/allshop">All shop</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link nav-link-main-redirect" href="${pageContext.request.contextPath}/marketplace/myshop">My shop</a>
@@ -55,7 +55,6 @@
                 </ul>
             </div>
         </div>
-
         <!-- jQuery and Bootstrap JS -->
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>

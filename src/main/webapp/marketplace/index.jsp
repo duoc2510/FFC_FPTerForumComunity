@@ -116,7 +116,6 @@
             <div class="container-fluid">
                 <!--Control panel-->
                 <%@ include file="panel.jsp" %>
-
                 <div class="row my-5">
                     <div class="col-md-12 p-2">
                         <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel" data-bs-interval="2000">
@@ -220,5 +219,5 @@
         </div>
     </div>
 
-   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-<%@ include file="../include/footer.jsp" %>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <%@ include file="../include/footer.jsp" %>
