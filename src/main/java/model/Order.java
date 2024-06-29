@@ -19,11 +19,12 @@ public class Order {
     private String feedback;
     private int star; // New field
     private String receiverPhone;
+    private String payment_status;
 
     public Order() {
     }
 
-    public Order(int userID, int order_ID, Timestamp orderDate, String status, double total, int discountid, String note, String feedback, int star, String receiverPhone) {
+    public Order(int userID, int order_ID, Timestamp orderDate, String status, double total, int discountid, String note, String feedback, int star, String receiverPhone, String payment_status) {
         this.userID = userID;
         this.order_ID = order_ID;
         this.orderDate = orderDate;
@@ -34,6 +35,7 @@ public class Order {
         this.feedback = feedback;
         this.star = star;
         this.receiverPhone = receiverPhone;
+        this.payment_status = payment_status;
     }
 
     public int getUserID() {
@@ -116,9 +118,17 @@ public class Order {
         this.receiverPhone = receiverPhone;
     }
 
+    public String getPayment_status() {
+        return payment_status;
+    }
+
+    public void setPayment_status(String payment_status) {
+        this.payment_status = payment_status;
+    }
+
     @Override
     public String toString() {
-        return "Order{" + "userID=" + userID + ", order_ID=" + order_ID + ", orderDate=" + orderDate + ", status=" + status + ", total=" + total + ", discountid=" + discountid + ", note=" + note + ", feedback=" + feedback + ", star=" + star + ", receiverPhone=" + receiverPhone + '}';
+        return "Order{" + "userID=" + userID + ", order_ID=" + order_ID + ", orderDate=" + orderDate + ", status=" + status + ", total=" + total + ", discountid=" + discountid + ", note=" + note + ", feedback=" + feedback + ", star=" + star + ", receiverPhone=" + receiverPhone + ", payment_status=" + payment_status + '}';
     }
 
 }

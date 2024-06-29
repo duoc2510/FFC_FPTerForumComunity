@@ -37,7 +37,7 @@ CREATE TABLE Shop (
     Shop_campus NVARCHAR(255) NOT NULL, -- Cơ sở của shop, bắt buộc
     Description NVARCHAR(255), -- Mô tả về shop
     Image NVARCHAR(255), -- Ảnh bìa của shop
-    Status BIT DEFAULT 0, -- Trạng thái hoạt động của SHOP, mặc định là 0-on, 1-off
+        Status INT NOT NULL, -- Trạng thái hoạt động của SHOP -- chỉnh sửa
     CONSTRAINT fk_user_shop FOREIGN KEY (Owner_id) REFERENCES Users(User_id) -- Tham chiếu đến User_id trong bảng Users
 );
 GO
@@ -76,13 +76,13 @@ CREATE TABLE [Order] (
     User_id INT NOT NULL, -- ID của người dùng, bắt buộc
     Order_id INT IDENTITY(1,1) PRIMARY KEY, -- ID tự động tăng cho đơn hàng
     Order_date DATETIME DEFAULT GETDATE(), -- Ngày đặt hàng, mặc định là ngày hiện tại
-    Order_status NVARCHAR(50) CHECK (Order_status IN ('null','Pending','Accept','Completed','Cancelled','Success','Fail')) NOT NULL, -- Trạng thái của đơn hàng
-    Total_amount DECIMAL(10, 2) NOT NULL, -- Tổng số tiền của đơn hàng, bắt buộc
+        Order_status NVARCHAR(50) CHECK (Order_status IN ('null','Pending','Accept','Completed','Cancelled','Success','Fail','NotConfirm','NotConfirmNew')) NOT NULL, -- Trạng thái của đơn hàng    Total_amount DECIMAL(10, 2) NOT NULL, -- Tổng số tiền của đơn hàng, bắt buộc
     Note NVARCHAR(MAX), -- Ghi chú
     Discount_id INT, -- ID của mã giảm giá
     Feedback NVARCHAR(MAX), -- Phản hồi từ người dùng -thêm
 	Star int default 5,--số sao đánh giá   -- thêm
 	Receiver_phone NVARCHAR(20),   --thêm
+        Payment_status NVARCHAR(50), -- thêm
     CONSTRAINT fk_user_order FOREIGN KEY (User_id) REFERENCES Users(User_id), -- Tham chiếu đến User_id trong bảng Users
     CONSTRAINT fk_discount_order FOREIGN KEY (Discount_id) REFERENCES Discount(Discount_id) -- Tham chiếu đến Discount_id trong bảng Discount
 );

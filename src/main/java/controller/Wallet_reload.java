@@ -4,7 +4,6 @@
  */
 package controller;
 
-import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,16 +11,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.util.ArrayList;
-import model.DAO.Shop_DB;
+import model.DAO.User_DB;
 import model.User;
-import model.User_notification;
 
 /**
  *
  * @author Admin
  */
-public class Notifications extends HttpServlet {
+public class Wallet_reload extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -40,10 +37,10 @@ public class Notifications extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Notifications</title>");
+            out.println("<title>Servlet Wallet_reload</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Notifications at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet Wallet_reload at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -59,19 +56,9 @@ public class Notifications extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("USER");
-        if (user != null) {
-            Shop_DB sdb = new Shop_DB();
-            ArrayList<User_notification> notifications = sdb.getUnreadNotificationsByUserId(user.getUserId());
-            // int unreadCount = sdb.getUnreadNotificationsCountByUserId(user.getUserId());
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().write(new Gson().toJson(notifications));
-        } else {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-        }
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
     }
 
     /**
@@ -87,20 +74,29 @@ public class Notifications extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("USER");
-        if (user != null) {
-            int notificationId = Integer.parseInt(request.getParameter("notificationId"));
-            User_notification no = Shop_DB.getNotificationByID(notificationId);
-            if (!no.getStatus().equals("Balance")) {
-                // Gọi hàm updateStatusNotifications từ Shop_DB hoặc NotificationDAO
-                Shop_DB.updateStatusNotifications(notificationId);
-            }
 
-            // Gửi phản hồi về client
-            response.setContentType("text/plain");
-            response.setCharacterEncoding("UTF-8");
-            response.getWriter().write("Notification status updated successfully.");
+        if (user != null) {
+            // Fetch updated user information
+            User updatedUser = User_DB.getUserByEmailorUsername(user.getUserEmail());
+
+            if (updatedUser != null) {
+                // Update session with new user information
+                session.setAttribute("USER", updatedUser);
+
+                // Set response type to JSON
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+
+                // Send updated wallet amount as JSON response
+                try (PrintWriter out = response.getWriter()) {
+                    out.print("{\"newWalletAmount\": \"" + updatedUser.getUserWallet() + "\"}");
+                    out.flush();
+                }
+            } else {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "User not found");
+            }
         } else {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not logged in");
         }
     }
 
@@ -112,6 +108,6 @@ public class Notifications extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>      
+    }// </editor-fold>
 
 }

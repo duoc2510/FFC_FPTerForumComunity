@@ -50,14 +50,14 @@
 
 
 
-       
+
         <ul class="navbar-nav w-100" style="max-width: 400px">
             <form class="d-flex" action="${pageContext.request.contextPath}/search" method="post">
                 <input id="searchInput" type="text" class="form-control me-2" name="query" placeholder="Search for user name or group name" aria-label="Search" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Search for user name or group name">
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
         </ul>
-       
+
         <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
             <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
                 <li class="nav-item d-block d-xl-none">
@@ -116,10 +116,18 @@
                                 <i class="ti ti-user-circle fs-6"></i>
                                 <p class="mb-0 fs-3">My Account</p>
                             </a>
-                            <a href="${pageContext.request.contextPath}/payment" class="d-flex align-items-center gap-2 dropdown-item">
-                                <i class="ti ti-wallet fs-6"></i>
-                                <p class="mb-0 fs-3" id="walletAmount">Wallet: ${USER.userWallet}</p>
+                            <div class="d-flex align-items-center gap-2">
+                                <a href="${pageContext.request.contextPath}/payment" class="dropdown-item" id="walletLink">
+                                    <p class="mb-0 fs-3" id="walletAmount">Wallet: ${USER.userWallet}</p>
+                                </a>
+                                <i class="ti ti-repeat" id="reloadWalletIcon" style="cursor: pointer;"></i>
+                            </div>
+                            <a href="${pageContext.request.contextPath}/profile/setting"
+                               class="d-flex align-items-center gap-2 dropdown-item">
+                                <i class="ti ti-database fs-6 "></i>
+                                <p class="mb-0 fs-3">Balance Wallet</p>
                             </a>
+
                             <a href="${pageContext.request.contextPath}/logout"
                                class="btn btn-outline-danger mx-3 mt-2 d-block">Logout</a>
                         </div>
@@ -197,6 +205,23 @@
                     }
                 });
             }
+
+            // Handle click event for reloading wallet
+            $('#reloadWalletIcon').on('click', function (event) {
+                event.preventDefault(); // Prevent the default action
+
+                $.ajax({
+                    url: contextPath + '/reloadwallet', // Change this to your actual endpoint
+                    method: 'POST',
+                    success: function (data) {
+                        // Assuming the response contains the updated wallet amount
+                        $('#walletAmount').text('Wallet: ' + data.newWalletAmount);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Failed to reload wallet:', error);
+                    }
+                });
+            });
 
             $.ajax({
                 url: contextPath + '/notifications',

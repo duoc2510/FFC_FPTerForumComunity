@@ -119,6 +119,7 @@ public class Shop_product extends HttpServlet {
         User user = (User) request.getSession().getAttribute("USER");
         Shop shop = (Shop) request.getSession().getAttribute("SHOP");
         Shop_DB sdb = new Shop_DB();
+        User_DB udb = new User_DB();
         String orderid = request.getParameter("orderid");
 
         String action = request.getParameter("action");
@@ -354,7 +355,7 @@ public class Shop_product extends HttpServlet {
                     Date validFrom = dateFormat.parse(validFromStr);
                     Date validTo = dateFormat.parse(validToStr);
 
-                    Discount discount = new Discount(code, 1, shopIdnew, discountPercent, validFrom, validTo, usageLimit, discountConditionInput);
+                    Discount discount = new Discount(code, 0, shopIdnew, discountPercent, validFrom, validTo, usageLimit, discountConditionInput);
                     sdb.addNewDiscount(discount);
 
                     ArrayList<Discount> discountlist = sdb.getAllDiscountByShopID(shop.getShopID());
@@ -409,7 +410,6 @@ public class Shop_product extends HttpServlet {
                 int orderid1 = Integer.parseInt(orderid);
                 Order or = sdb.getOrderbyID(orderid1);
                 sdb.updateOrderStatus(orderid1, "Accept");
-//                sdb.addNewNotification(or.getUserID(), "Đơn hàng của bạn đã được chấp nhận!", "/marketplace/history");
                 nw.saveNotificationToDatabase(or.getUserID(), "Đơn hàng của bạn đã được chấp nhận!", "/marketplace/history");
                 nw.sendNotificationToClient(or.getUserID(), "Đơn hàng của bạn đã được chấp nhận!", "/marketplace/history");
                 response.sendRedirect("myshop");
@@ -417,7 +417,14 @@ public class Shop_product extends HttpServlet {
             case "thatbai": /////shop hủy đơn
                 int orderid2 = Integer.parseInt(orderid);
                 Order or1 = sdb.getOrderbyID(orderid2);
-//                sdb.addNewNotification(or1.getUserID(), "Đơn hàng của bạn không được chấp nhận!", "/marketplace/history");
+                //trả tiền lại cho người đặt nếu đã thanh toán
+                User owner1 = udb.getUserById(or1.getUserID());
+                if (or1.getPayment_status().equals("dathanhtoan")) {
+                    boolean updateSuccess = User_DB.updateWalletByEmail(owner1.getUserEmail(), owner1.getUserWallet() + or1.getTotal());
+                    ///Trả về thông báo tại đây
+                    nw.saveNotificationToDatabaseWithStatusIsBalance(owner1.getUserId(), "Trả lại tiền đơn hàng vì shop hủy đơn :" + or1.getTotal(), "/walletbalance");
+
+                }
                 nw.saveNotificationToDatabase(or1.getUserID(), "Đơn hàng của bạn không được chấp nhận!", "/marketplace/history");
                 nw.sendNotificationToClient(or1.getUserID(), "Đơn hàng của bạn không được chấp nhận!", "/marketplace/history");
                 sdb.updateOrderStatus(orderid2, "Fail");
@@ -430,7 +437,6 @@ public class Shop_product extends HttpServlet {
                 response.sendRedirect("myshop");
                 break;
             case "thanhcong":  ///////shop đã giao hàng thành công
-                User_DB udb = new User_DB();
                 int orderid3 = Integer.parseInt(orderid);
                 Order order = sdb.getOrderbyID(orderid3);
                 ArrayList<OrderItem> orderitemlist1 = sdb.getAllOrderItemByOrderID(orderid3);
@@ -458,6 +464,14 @@ public class Shop_product extends HttpServlet {
                 break;
             case "huydon":   //////người đặt hủy đơn
                 int orderid4 = Integer.parseInt(orderid);
+                Order or2 = sdb.getOrderbyID(orderid4);
+                //trả tiền lại cho người đặt nếu đã thanh toán
+                if (or2.getPayment_status().equals("dathanhtoan")) {
+                    boolean updateSuccess = User_DB.updateWalletByEmail(user.getUserEmail(), user.getUserWallet() + or2.getTotal());
+                    ///Trả về thông báo tại đây
+                    nw.saveNotificationToDatabaseWithStatusIsBalance(user.getUserId(), "Trả lại tiền đơn hàng vì bạn đã hủy đơn :" + or2.getTotal(), "/walletbalance");
+
+                }
                 sdb.updateOrderStatus(orderid4, "Cancelled");
                 ArrayList<OrderItem> orderitemlistnewnew = sdb.getAllOrderItemByOrderID(orderid4);
                 for (OrderItem ot : orderitemlistnewnew) {
@@ -468,7 +482,7 @@ public class Shop_product extends HttpServlet {
 
                 for (OrderItem ot : orderitemlistnewnew) {
                     Product p1 = sdb.getProductByID(ot.getProductID());
-                    Shop shop1 = sdb.getShopHaveStatusIs1ByUserID(p1.getShopId());
+                    Shop shop1 = sdb.getShopHaveStatusIs1ByShopID(p1.getShopId());
 //                    sdb.addNewNotification(shop1.getOwnerID(), "Người đặt đã hủy đơn do 1 số nguyên nhân!", "/marketplace/myshop");
                     nw.saveNotificationToDatabase(shop1.getOwnerID(), "Người đặt đã hủy đơn do 1 số nguyên nhân!", "/marketplace/myshop");
                     nw.sendNotificationToClient(shop1.getOwnerID(), "Người đặt đã hủy đơn do 1 số nguyên nhân!", "/marketplace/myshop");
@@ -483,13 +497,21 @@ public class Shop_product extends HttpServlet {
                 break;
             case "danhgia":  ///người đặt đánh giá
                 int orderid6 = Integer.parseInt(orderid);
+                Order or3 = sdb.getOrderbyID(orderid6);
+
                 ArrayList<OrderItem> orderitemlistnewnew1 = sdb.getAllOrderItemByOrderID(orderid6);
                 for (OrderItem ot : orderitemlistnewnew1) {
-                    Product p1 = sdb.getProductByID(ot.getProductID());
-                    Shop shop1 = sdb.getShopHaveStatusIs1ByUserID(p1.getShopId());
-//                    sdb.addNewNotification(shop1.getOwnerID(), "Người đặt đã nhận được hàng và đã đánh giá!", "/marketplace/allshop/shopdetail?shopid=" + shop1.getShopID());
-                    nw.saveNotificationToDatabase(shop1.getOwnerID(), "Người đặt đã nhận được hàng và đã đánh giá!", "/marketplace/allshop/shopdetail?shopid=" + shop1.getShopID());
-                    nw.sendNotificationToClient(shop1.getOwnerID(), "Người đặt đã nhận được hàng và đã đánh giá!", "/marketplace/allshop/shopdetail?shopid=" + shop1.getShopID());
+                    Product p2 = sdb.getProductByID(ot.getProductID());
+                    Shop shop2 = sdb.getShopHaveStatusIs1ByShopID(p2.getShopId());
+                    User owner = udb.getUserById(shop2.getOwnerID());
+                    //trả tiền lại cho shop khi đã thành công
+                    if (or3.getPayment_status().equals("dathanhtoan")) {
+                        boolean updateSuccess = User_DB.updateWalletByEmail(owner.getUserEmail(), owner.getUserWallet() + or3.getTotal());
+                        ///Trả về thông báo tại đây
+                        nw.saveNotificationToDatabaseWithStatusIsBalance(owner.getUserId(), "Thanh toán tiền đơn hàng đã thành công :" + or3.getTotal(), "/walletbalance");
+                    }
+                    nw.saveNotificationToDatabase(shop2.getOwnerID(), "Người đặt đã nhận được hàng và đã đánh giá!", "/marketplace/allshop/shopdetail?shopid=" + shop2.getShopID());
+                    nw.sendNotificationToClient(shop2.getOwnerID(), "Người đặt đã nhận được hàng và đã đánh giá!", "/marketplace/allshop/shopdetail?shopid=" + shop2.getShopID());
                     break;
                 }
                 String stars = request.getParameter("stars");

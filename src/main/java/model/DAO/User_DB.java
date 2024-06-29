@@ -206,6 +206,41 @@ public class User_DB implements DBinfo {
         return user;
     }
 
+    public static User getUserByShopId(int shopId) {
+        User user = null;
+        String query = "SELECT u.* FROM Users u JOIN Shop s ON u.User_id = s.Owner_id WHERE s.Shop_id = ?";
+
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
+
+            pstmt.setInt(1, shopId); // Set the Shop_id parameter in the query
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                int userId = rs.getInt("User_id");
+                String userEmail = rs.getString("User_email");
+                String userPassword = rs.getString("User_password");
+                int userRole = rs.getInt("User_role");
+                String username = rs.getString("Username");
+                String userFullName = rs.getString("User_fullName");
+                double userWallet = rs.getDouble("User_wallet");
+                String userAvatar = rs.getString("User_avatar");
+                String userStory = rs.getString("User_story");
+                int userRank = rs.getInt("User_rank");
+                int userScore = rs.getInt("User_score");
+                java.sql.Date userCreateDate = rs.getDate("User_createDate");
+                String userSex = rs.getString("User_sex");
+                boolean userActiveStatus = rs.getBoolean("User_activeStatus");
+                user = new User(userId, userEmail, userPassword, userRole, username, userFullName, userWallet, userAvatar, userStory, userRank, userScore, userCreateDate, userSex, userActiveStatus);
+
+                // Log user information to console
+                System.out.println("User retrieved from database: " + user);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(User_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return user;
+    }
+
     public static boolean updateUserByEmail(String email, String fullName, String gender, String avatar, String story) {
         String query = "UPDATE Users SET User_fullName = ?, User_sex = ?, User_avatar = ?, User_story = ? WHERE User_email = ?";
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
@@ -343,6 +378,32 @@ public class User_DB implements DBinfo {
         String query = "UPDATE Users SET User_wallet = ? WHERE User_email = ?";
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
             pstmt.setDouble(1, wallet);
+            pstmt.setString(2, email);
+            int rowsUpdated = pstmt.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(User_DB.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+
+    public static boolean updateScoreByEmail(String email, int score) {
+        String query = "UPDATE Users SET User_score = ? WHERE User_email = ?";
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setInt(1, score);
+            pstmt.setString(2, email);
+            int rowsUpdated = pstmt.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(User_DB.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+
+    public static boolean updateRankByEmail(String email, int rank) {
+        String query = "UPDATE Users SET User_rank = ? WHERE User_email = ?";
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setInt(1, rank);
             pstmt.setString(2, email);
             int rowsUpdated = pstmt.executeUpdate();
             return rowsUpdated > 0;
@@ -646,21 +707,21 @@ public class User_DB implements DBinfo {
         }
     }
 
-   public static boolean registrManager(ManagerRegistr managerRegistr) {
-    String sql = "INSERT INTO managerRegistr (User_id, RegistrationDate, Status, Remarks) VALUES (?, GETDATE(), 'pending', ?)";
+    public static boolean registrManager(ManagerRegistr managerRegistr) {
+        String sql = "INSERT INTO managerRegistr (User_id, RegistrationDate, Status, Remarks) VALUES (?, GETDATE(), 'pending', ?)";
 
-    try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement statement = conn.prepareStatement(sql)) {
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement statement = conn.prepareStatement(sql)) {
 
-        statement.setInt(1, managerRegistr.getUserId());
-        statement.setString(2, managerRegistr.getRemarks());
+            statement.setInt(1, managerRegistr.getUserId());
+            statement.setString(2, managerRegistr.getRemarks());
 
-        int rowsInserted = statement.executeUpdate();
-        return rowsInserted > 0;
-    } catch (SQLException e) {
-        e.printStackTrace();
-        return false;
+            int rowsInserted = statement.executeUpdate();
+            return rowsInserted > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
-}
 
     public static List<ManagerRegistr> getAllRegisterM() {
         List<ManagerRegistr> registrations = new ArrayList<>();
@@ -686,7 +747,7 @@ public class User_DB implements DBinfo {
 
             while (rs.next()) {
                 int managerRegistrId = rs.getInt("managerRegistr_id");
-                
+
                 Date registrationDate = rs.getTimestamp("RegistrationDate");
                 String status = rs.getString("Status");
                 String remarks = rs.getString("Remarks");
@@ -726,11 +787,11 @@ public class User_DB implements DBinfo {
 
         return registrations;
     }
+
     public static boolean isManagerPending(int userId) {
         String query = "SELECT COUNT(*) FROM managerRegistr WHERE User_id = ? AND Status = 'pending'";
 
-        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass);
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setInt(1, userId);
             ResultSet rs = stmt.executeQuery();

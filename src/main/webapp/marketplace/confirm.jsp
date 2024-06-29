@@ -24,186 +24,183 @@
 
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="row">
-                            <div class="mx-2">
-                                <div class="card mb-3">
-                                    <div class="card-header">
-                                        <div class="text-center p-2 px-5" style="padding-top: 30px !important;">
-                                            <img src="/FPTer/static/images/logo.png" width="100" alt="">
+                        <div class="card mb-3">
+                            <div class="card-header text-center">
+                                <img src="/FPTer/static/images/logo.png" width="100" alt="">
+                            </div>
+                            <div class="card-body">
+                                <div class="invoice p-5">
+                                    <h5>Your order Confirmed!</h5>
+                                    <span class="font-weight-bold d-block mt-4">Hello, ${fullname}</span>
+                                    <span>The order will not be changed if you confirm!</span>
+                                    <c:set var="totalfinal" value="0" />
+                                    <c:forEach var="order" items="${orderList}">
+                                        <c:set var="orderitemlist" value="${Shop_DB.getAllOrderItemByOrderID(order.order_ID)}" />
+                                        <c:set var="firstItem" value="${orderitemlist[0]}" />
+                                        <c:set var="product1" value="${Shop_DB.getProductByID(firstItem.getProductID())}" />
+                                        <c:set var="shop1" value="${Shop_DB.getShopHaveStatusIs1ByShopID(product1.shopId)}" />
+
+                                        <div class="border-top mt-3 mb-3 border-bottom">
+                                            <table class="table">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <div class="py-2">
+                                                                <span style="font-weight: bold;" class="d-block text-muted">Shop Name:</span>
+                                                                <span>${shop1.name}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="py-2">
+                                                                <span style="font-weight: bold;" class="d-block text-muted">Shop Phone:</span>
+                                                                <span>${shop1.phone}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="py-2">
+                                                                <span style="font-weight: bold;" class="d-block text-muted">Shop Campus:</span>
+                                                                <span>${shop1.campus}</span>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                         </div>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="invoice p-5">
-                                            <c:set var="shop" value="${Shop_DB.getShopHaveStatusIs1ByShopID(shopid)}" />
-                                            <h5>Your order Confirmed!</h5>
-                                            <span class="font-weight-bold d-block mt-4">Hello, ${fullname}</span>
-                                            <span>The order will not be changed if you confirm!</span>
 
-                                            <div class="payment border-top mt-3 mb-3 border-bottom table-responsive">
-                                                <table class="my-3">
-                                                    <tbody class="table table-reponsive mx-0">
-                                                        <tr>
-                                                            <td>
-                                                                <div class="py-2">
-                                                                    <span class="d-block text-muted">Shop Name:</span>
-                                                                    <span>${shop.name}</span>
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <div class="py-2">
-                                                                    <span class="d-block text-muted">Shop Phone:</span>
-                                                                    <span>${shop.phone}</span>
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <div class="py-2">
-                                                                    <span class="d-block text-muted">Shop campus:</span>
-                                                                    <span>${shop.campus}</span>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-
-                                            <div class="my-2">
-                                                <c:forEach var="item" items="${selectedOrderItems}">
-                                                    <c:set var="imagefirst" value="${Shop_DB.getUploadFirstByProductID(item.getProductID())}" />
-                                                    <c:set var="product" value="${Shop_DB.getProductByID(item.getProductID())}" />
-                                                    <div class="d-flex justify-content-between mx-3">
-                                                        <div class="d-flex flex-row align-items-center">
-                                                            <div>
-                                                                <img src="${pageContext.request.contextPath}/static/${imagefirst.uploadPath}" class="img-fluid rounded-3" style="width: 65px;">
-                                                            </div>
-                                                            <div class="ms-3">
-                                                                <h5>${product.name}</h5>
-                                                            </div>
-                                                        </div>
-                                                        <div class="d-flex flex-row align-items-center">
-                                                            <div class="mx-1" style="width: 70px;">
-                                                                <input type="number" name="quantity" class="form-control" value="${item.quantity}" min="1" readonly="">
-                                                            </div>
-                                                            <c:set var="totalPrice1" value="${item.quantity * item.price}" />
-                                                            <div class="mx-1" style="width: 80px;">
-                                                                <h5 class="mb-0">${totalPrice1}</h5>
-                                                            </div>
-                                                            <c:set var="totalPrice" value="${totalPrice1 + totalPrice}" />
+                                        <div class="my-2">
+                                            <c:forEach var="item" items="${orderitemlist}">
+                                                <c:set var="imagefirst" value="${Shop_DB.getUploadFirstByProductID(item.getProductID())}" />
+                                                <c:set var="product" value="${Shop_DB.getProductByID(item.getProductID())}" />
+                                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                                    <div class="d-flex align-items-center">
+                                                        <img src="${pageContext.request.contextPath}/static/${imagefirst.uploadPath}" class="img-fluid rounded-3" style="width: 65px;">
+                                                        <div class="ms-3">
+                                                            <h5>${product.name}</h5>
                                                         </div>
                                                     </div>
-                                                    <input type="hidden" name="selectedItems" value="${item.getOrderItem_id()}">
-                                                </c:forEach>
-                                            </div>
-
-                                            <style>
-                                                .text-right {
-                                                    margin: 0 20px;
-                                                }
-                                                .text-right span {
-                                                    text-align: right;
-                                                }
-                                            </style>
-
-                                            <div class="row d-flex justify-content-end mt-5">
-                                                <div class="col-md-6 d-flex justify-content-end">
-                                                    <table>
-                                                        <tbody class="totals">
-                                                            <tr>
-                                                                <td>
-                                                                    <div class="text-left">
-                                                                        <span class="text-muted">Subtotal</span>
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="text-right">
-                                                                        <span>${totalPrice} VND</span>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                            <c:set var="discount" value="${Shop_DB.getDiscountByID(discountId)}" />
-                                                            <tr>
-                                                                <td>
-                                                                    <div class="text-left">
-                                                                        <span class="text-muted">Discount Fee</span>
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="text-right">
-                                                                        <span>- ${totalPrice * discount.discountPercent / 100} VND</span>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                            <tr class="border-top border-bottom">
-                                                                <td>
-                                                                    <div class="text-left">
-                                                                        <span class="font-weight-bold">Subtotal</span>
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="text-right">
-                                                                        <span class="font-weight-bold text-success">=${total} VND</span>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
+                                                    <div class="d-flex align-items-center">
+                                                        <input type="number" name="quantity" class="form-control mx-1" value="${item.quantity}" min="1" readonly="">
+                                                        <c:set var="totalPrice1" value="${item.quantity * item.price}" />
+                                                        <h5 class="mb-0 mx-1">${totalPrice1}</h5>
+                                                        <c:set var="totalPrice" value="${totalPrice1 + totalPrice}" />
+                                                    </div>
                                                 </div>
-                                            </div>
+                                                <input type="hidden" name="selectedItems" value="${item.getOrderItem_id()}">
+                                            </c:forEach>
+                                        </div>
 
-                                            <div class="payment border-top mt-3 mb-3">
+                                        <div class="row d-flex justify-content-end mt-5">
+                                            <div class="col-md-6">
                                                 <table class="table">
                                                     <tbody>
                                                         <tr>
                                                             <td>
-                                                                <div class="py-2">
-                                                                    <span class="d-block text-muted">Order Receiver:</span>
-                                                                    <span>${fullname}</span>
+                                                                <div class="text-left">
+                                                                    <span class="text-muted">Subtotal</span>
                                                                 </div>
                                                             </td>
                                                             <td>
-                                                                <div class="py-2">
-                                                                    <span class="d-block text-muted">Order Date:</span>
-                                                                    <span>${date}</span>
+                                                                <div class="text-right">
+                                                                    <span>${totalPrice} VND</span>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        <c:set var="discount" value="${Shop_DB.getDiscountByID(order.discountid)}" />
+                                                        <tr>
+                                                            <td>
+                                                                <div class="text-left">
+                                                                    <span class="text-muted">Discount Fee</span>
                                                                 </div>
                                                             </td>
                                                             <td>
-                                                                <div class="py-2">
-                                                                    <span class="d-block text-muted">Receiver Phone</span>
-                                                                    <span>${phone}</span>
+                                                                <div class="text-right">
+                                                                    <span>- ${totalPrice * discount.discountPercent / 100} VND</span>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        <tr class="border-top border-bottom">
+                                                            <td>
+                                                                <div class="text-left">
+                                                                    <span class="font-weight-bold">Subtotal</span>
                                                                 </div>
                                                             </td>
                                                             <td>
-                                                                <div class="py-2">
-                                                                    <span class="d-block text-muted">Note :</span>
-                                                                    <span>${note}</span>
+                                                                <div class="text-right">
+                                                                    <span class="font-weight-bold text-success">=${order.total} VND</span>
                                                                 </div>
                                                             </td>
+                                                            <c:set var="totalfinal" value="${order.total + totalfinal}" />
                                                         </tr>
                                                     </tbody>
                                                 </table>
                                             </div>
-
-                                            <div class="d-flex w-100 justify-content-end row">
-                                                <p class="col-6">If you really want to buy, click the confirmation button!</p>
-                                                <div class="col-6 d-flex justify-content-end">
-                                                    <form action="confirmorder" method="post">
-                                                        <input type="hidden" name="shopid" value="${shop.shopID}">
-                                                        <input type="hidden" name="fullname" value="${fullname}">
-                                                        <input type="hidden" name="phone" value="${phone}">
-                                                        <input type="hidden" name="campus" value="${campus}">
-                                                        <input type="hidden" name="note" value="${note}">
-                                                        <input type="hidden" name="date" value="${date}">
-                                                        <input type="hidden" name="discountSelect" value="${discountId}">
-                                                        <input type="hidden" name="total" value="${total}">
-                                                        <input type="hidden" name="action" value="confirm2">
-                                                        <c:forEach var="item" items="${selectedOrderItems}">
-                                                            <input type="hidden" name="selectedItems" value="${item.getOrderItem_id()}">
-                                                        </c:forEach>
-                                                        <button type="button" class="btn btn-danger mx-2" onclick="javascript:history.go(-1);">Back</button>
-                                                        <input type="submit" value="Confirm" class="btn btn-primary">
-                                                    </form>
-                                                </div>
-                                            </div>
                                         </div>
+                                    </c:forEach>
+                                    <div class="text-right font-weight-bold mb-3">Total Final: ${totalfinal} VND</div>
+                                    <div class="border-top mt-3 mb-3">
+                                        <table class="table">
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <div class="py-2">
+                                                            <span style="font-weight: bold;" class="d-block text-muted">Order Receiver:</span>
+                                                            <span>${fullname}</span>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="py-2">
+                                                            <span style="font-weight: bold;" class="d-block text-muted">Order Date:</span>
+                                                            <span>${date}</span>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="py-2">
+                                                            <span style="font-weight: bold;" class="d-block text-muted">Receiver Phone:</span>
+                                                            <span>${phone}</span>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="py-2">
+                                                            <span style="font-weight: bold;" class="d-block text-muted">Note:</span>
+                                                            <span>${note}</span>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="d-flex justify-content-end">
+                                        <form action="confirmorder" method="post">
+                                            <input type="hidden" name="fullname" value="${fullname}">
+                                            <input type="hidden" name="phone" value="${phone}">
+                                            <input type="hidden" name="note" value="${note}">
+                                            <input type="hidden" name="date" value="${date}">
+                                            <input type="hidden" name="total" value="${totalfinal}">
+                                            <input type="hidden" name="action" value="confirm2">
+                                            <c:forEach var="order" items="${orderList}">
+                                                <input type="hidden" name="orderlist" value="${order.getOrder_ID()}">
+                                            </c:forEach>
+                                            <c:forEach var="item" items="${selectedOrderItems}">
+                                                <input type="hidden" name="selectedItems" value="${item.getOrderItem_id()}">
+                                            </c:forEach>
+                                            <!-- Payment Options -->
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="paymentMethod" id="cod" value="cod" checked>
+                                                <label class="form-check-label" for="cod">
+                                                    Cash on Delivery
+                                                </label>
+                                            </div>
+                                            <c:if test="${sessionScope.USER.userWallet >= totalfinal}">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="paymentMethod" id="systemWallet" value="systemWallet">
+                                                    <label class="form-check-label" for="systemWallet">
+                                                        System Wallet
+                                                    </label>
+                                                </div>
+                                            </c:if>
+                                            <button type="button" class="btn btn-danger mx-2" onclick="javascript:history.go(-1);">Back</button>
+                                            <input type="submit" value="Confirm" class="btn btn-primary">
+                                        </form>
                                     </div>
                                 </div>
                             </div>
