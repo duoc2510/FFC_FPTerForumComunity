@@ -97,14 +97,33 @@
                                         <h3>Deposit</h3>
                                         <h6>Recharge yout wallet</h6>
                                     </div>
-
-                                    <form action="">
-                                         <p class="fw-bold mb-4 pb-2">Main method:</p>
+                                    <%-- Kiểm tra và hiển thị thông báo từ request attribute --%>
+                                    <c:if test="${not empty message}">
+                                        <div class="alert alert-dismissible alert-${message.startsWith('Nạp tiền') ? 'success' : 'danger'}">
+                                            <strong>${message}</strong>
+                                        </div>
+                                        <% session.removeAttribute("message"); %>                    
+                                    </c:if>
+                                    <div class="form-group pb-3">
+                                        <div class="d-flex flex-row align-items-center mb-4 pb-1">
+                                            <img class="img-fluid" src="https://img.icons8.com/?size=50&id=209&format=png&color=000000" />
+                                            <div class="flex-fill mx-3 d-flex">
+                                                <div data-mdb-input-init class="form-outline col-11">
+                                                    <input type="password" id="totalValue" class="form-control" value="${USER.userWallet}" readonly/>
+                                                </div>
+                                                <div class="col-1 d-flex justify-content-center align-items-center">
+                                                    <a href="javascript:void(0)" onclick="showHideTotal()" id="showHideIcon"><i class="ti ti-eye"></i></a>
+                                                </div>
+                                            </div>                                    
+                                        </div>
+                                    </div>
+                                    <form id="depositForm" action="${pageContext.request.contextPath}/payment" method="post">
+                                        <input type="hidden" name="action" value="napTien">
                                         <div class="d-flex flex-row align-items-center mb-4 pb-1">
                                             <div class="flex-fill d-flex">
                                                 <div class="form-outline col-8">
-                                                    <label class="form-label" for="formControlLgXc">Money</label>
-                                                    <input type="text" class="form-control" value="2000000" />
+                                                    <label class="form-label" for="amountDeposit">Money</label>
+                                                    <input type="number" class="form-control" id="amountDeposit" name="amount" required>
                                                 </div>
                                                 <div class="form-outline col-4" style="padding-left:2%">
                                                     <label class="form-label" for="formControlLgXc">Currency</label>
@@ -112,83 +131,25 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <p class="fw-bold mb-4 pb-2">Main method:</p>
                                         <div class="d-flex flex-row align-items-center mb-4 pb-1">
-                                            <img class="img-fluid" src="https://img.icons8.com/color/48/000000/mastercard-logo.png" />
-                                            <div class="flex-fill mx-3">
-                                                <div data-mdb-input-init class="form-outline">
+                                            <div class="flex-fill d-flex">
+                                                <div class="form-outline col-8">
+                                                    <label class="form-label" for="bankNameDeposit">Ngân hàng:</label>
+                                                    <select class="form-control" id="bankNameDeposit" name="bankName" required>
+                                                        <option value="MBBank">MB Bank</option>
+                                                    </select>                                                
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex flex-row align-items-center mb-4 pb-1">
+                                            <div class="flex-fill d-flex">
+                                                <div class="form-outline col-8">
                                                     <label class="form-label" for="formControlLgXc">Card Number [MAIN]</label>
-                                                    <input type="text" id="formControlLgXc" class="form-control form-control" value="**** **** **** 3193" />
+                                                    <input type="text" id="atmNumberDeposit" name="atmNumber" required class="form-control form-control" />                                              
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <button data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg btn-block">Deposit</button>
-
-
-                                    </form>
-
-
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class=" bg-white shadow rounded px-3 ">
-                            <div class="row d-flex justify-content-center">
-                                <div class="card-body p-4">
-                                    <div class="mb-4">
-                                        <h3>Settings</h3>
-                                        <h6>Payment Method</h6>
-                                    </div>
-                                    <form action="">
-                                        <p class="fw-bold mb-4 pb-2">My cards:</p>
-                                        <div class="d-flex flex-row align-items-center mb-4 pb-1">
-                                            <img class="img-fluid" src="https://img.icons8.com/color/48/000000/mastercard-logo.png" />
-                                            <div class="flex-fill mx-3">
-                                                <div data-mdb-input-init class="form-outline">
-                                                    <label class="form-label" for="formControlLgXc">Card Number [MAIN]</label>
-                                                    <input type="text" id="formControlLgXc" class="form-control form-control" value="**** **** **** 3193" />
-                                                </div>
-                                            </div>
-                                            <a href="#!">Remove</a>
-                                        </div>
-                                        <div class="d-flex flex-row align-items-center mb-4 pb-1">
-                                            <img class="img-fluid" src="https://img.icons8.com/color/48/000000/visa.png" />
-                                            <div class="flex-fill mx-3">
-                                                <div data-mdb-input-init class="form-outline">
-                                                    <label class="form-label" for="formControlLgXs">Card Number | <a onclick="" href="javascript:void(0)">Set main</a></label>
-                                                    <input type="text" id="formControlLgXs" class="form-control form-control" value="**** **** **** 4296" />
-                                                </div>
-                                            </div>
-                                            <a href="#!">Remove</a>
-                                        </div>
-                                        <hr>
-                                        <p class="mb-4">Add new card:</p>
-                                        <div data-mdb-input-init class="form-outline mb-4">
-                                            <label class="form-label" for="formControlLgXsd">Cardholder's Name</label>
-                                            <input type="text" id="formControlLgXsd" class="form-control form-control" value="nguyen hari truong" style="text-transform:uppercase" />
-                                        </div>
-                                        <div class="mb-4 d-flex">
-                                            <div class="col-6 ">
-                                                <div data-mdb-input-init class="form-outline">
-                                                    <label class="form-label" for="formControlLgXM">Card Number</label>
-                                                    <input type="text" id="formControlLgXM" class="form-control form-control" value="1234 5678 1234 5678" />
-                                                </div>
-                                            </div>
-                                            <div class="col-4 px-2">
-                                                <div data-mdb-input-init class="form-outline">
-                                                    <label class="form-label" for="formControlLgExpk">Expire</label>
-                                                    <input type="password" id="formControlLgExpk" class="form-control form-control" placeholder="MM/YYYY" />
-                                                </div>
-                                            </div>
-                                            <div class="col-2">
-                                                <div data-mdb-input-init class="form-outline">
-                                                    <label class="form-label" for="formControlLgcvv">CVV</label>
-                                                    <input type="password" id="formControlLgcvv" class="form-control form-control" placeholder="Cvv" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <button data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg btn-block">Add card</button>
+                                        <button data-mdb-button-init data-mdb-ripple-init type="button" class="btn btn-primary btn-lg btn-block" id="openCodeModalBtn">Deposit</button>
                                     </form>
                                 </div>
                             </div>
@@ -198,4 +159,71 @@
             </div>
         </div>
     </div>
-</body><%@ include file="../include/footer.jsp" %>
+    <!-- Modal for Account Code -->
+    <div class="modal fade" id="accountCodeModal" tabindex="-1" role="dialog" aria-labelledby="accountCodeModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="accountCodeModalLabel">Nhập mã code của tài khoản</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="accountCodeForm">
+                        <div class="form-group">
+                            <label for="accountCodeInput">Mã code:</label>
+                            <input type="text" class="form-control" id="accountCodeInput" name="code" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" id="confirmAccountCodeBtn">Xác nhận</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap JS and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script>
+                                                        $(document).ready(function () {
+                                                            $('#openCodeModalBtn').click(function () {
+                                                                $('#accountCodeModal').modal('show');
+                                                            });
+
+                                                            $('#confirmAccountCodeBtn').click(function () {
+                                                                var accountCode = $('#accountCodeInput').val();
+                                                                $('#accountCodeModal').modal('hide');
+
+                                                                // Set account code to the hidden input and submit the form
+                                                                $('#depositForm').append('<input type="hidden" name="code" value="' + accountCode + '">');
+                                                                $('#depositForm').submit();
+                                                            });
+                                                        });
+                                                        function showHideTotal() {
+                                                            var totalValue = document.getElementById('totalValue');
+                                                            var showHideIcon = document.getElementById('showHideIcon');
+
+
+                                                            if (totalValue.type === 'text') {
+                                                                totalValue.type = 'password';
+                                                                showHideIcon.innerHTML = '<i class="ti ti-eye"></i>';
+
+
+                                                            } else {
+                                                                totalValue.type = 'text';
+                                                                showHideIcon.innerHTML = '<i class="ti ti-lock"></i>';
+
+
+                                                            }
+                                                        }
+    </script>  
+
+</body>
+<%@ include file="../include/footer.jsp" %>

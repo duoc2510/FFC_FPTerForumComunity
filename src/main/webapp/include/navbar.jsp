@@ -50,14 +50,14 @@
 
 
 
-       
+
         <ul class="navbar-nav w-100" style="max-width: 400px">
             <form class="d-flex" action="${pageContext.request.contextPath}/search" method="post">
                 <input id="searchInput" type="text" class="form-control me-2" name="query" placeholder="Search for user name or group name" aria-label="Search" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Search for user name or group name">
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
         </ul>
-       
+
         <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
             <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
                 <li class="nav-item d-block d-xl-none">
@@ -116,7 +116,7 @@
                                 <i class="ti ti-user-circle fs-6"></i>
                                 <p class="mb-0 fs-3">My Account</p>
                             </a>
-                            <a href="${pageContext.request.contextPath}/payment" class="d-flex align-items-center gap-2 dropdown-item">
+                            <a href="${pageContext.request.contextPath}/wallet" class="d-flex align-items-center gap-2 dropdown-item">
                                 <i class="ti ti-wallet fs-6"></i>
                                 <p class="mb-0 fs-3" id="walletAmount">Wallet: ${USER.userWallet}</p>
                             </a>

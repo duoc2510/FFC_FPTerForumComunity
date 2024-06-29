@@ -8,13 +8,14 @@ import jakarta.websocket.server.ServerEndpointConfig;
 import model.User;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.io.IOException;
 import java.sql.*;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import model.DAO.DBinfo;
+import model.DAO.User_DB;
 import notifications.NotificationWebSocket;
 
 @ServerEndpoint(value = "/chat", configurator = Chat.Configurator.class)
@@ -34,7 +35,8 @@ public class Chat {
         clients.add(session);
         System.out.println("New connection with client: " + session.getId());
 
-        // Do not send message history here, only when requested by the client
+        // Load friends list when a new session opens
+        handleLoadFriends(session);
     }
 
     @OnClose
@@ -58,9 +60,11 @@ public class Chat {
             String type = jsonMessage.getString("type");
 
             if ("chat".equals(type)) {
-                handleChatMessage(jsonMessage);
+                handleChatMessage(jsonMessage, session);
             } else if ("loadMessages".equals(type)) {
                 handleLoadMessages(jsonMessage, session);
+            } else if ("loadFriends".equals(type)) {
+                handleLoadFriends(session);
             } else {
                 System.out.println("Invalid message type received: " + type);
             }
@@ -69,7 +73,7 @@ public class Chat {
         }
     }
 
-    private void handleChatMessage(JSONObject jsonMessage) throws Exception {
+    private void handleChatMessage(JSONObject jsonMessage, Session session) throws Exception {
         NotificationWebSocket nw = new NotificationWebSocket();
         int toId = jsonMessage.getInt("toId");
         int fromId = jsonMessage.getInt("fromId");
@@ -86,6 +90,13 @@ public class Chat {
         String notificationMessage = fromUsername + " sent you a message.";
         nw.saveNotificationToDatabase(toId, notificationMessage, "/messenger");
         nw.sendNotificationToClient(toId, notificationMessage, "/messenger");
+
+        // Reload friends list for both sender and receiver
+        handleLoadFriends1(session); // Load friends list for the sender (fromId)
+        Session receiverSession = getSessionById(toId);
+        if (receiverSession != null) {
+            handleLoadFriends(receiverSession); // Load friends list for the receiver (toId)
+        }
     }
 
     private void handleLoadMessages(JSONObject jsonMessage, Session session) throws Exception {
@@ -94,6 +105,61 @@ public class Chat {
 
         // Send existing messages to the client
         sendExistingMessages(session, fromId, toId);
+    }
+
+    private void handleLoadFriends1(Session session) {
+        int userId = getUserId(session);
+
+        // Get accepted friends
+        List<User> friends = User_DB.getAcceptedFriendsOrderByLatestMessage(userId);
+
+        // Create JSON array from the friends list
+        JSONArray friendsArray = new JSONArray();
+        for (User friend : friends) {
+            JSONObject friendObj = new JSONObject();
+            friendObj.put("id", friend.getUserId());
+            friendObj.put("username", friend.getUsername());
+            friendObj.put("avatar", friend.getUserAvatar());
+            friendsArray.put(friendObj);
+        }
+
+        // Create response JSON
+        JSONObject response = new JSONObject();
+        response.put("type", "loadFriends");
+        response.put("friends", friendsArray);
+
+        // Send the friends list to the client
+        session.getAsyncRemote().sendText(response.toString());
+    }
+
+    private void handleLoadFriends(Session session) {
+        int userId = getUserId(session);
+
+        // Get accepted friends
+        List<User> friends = User_DB.getAcceptedFriendsOrderByLatestMessage(userId);
+
+        // Create JSON array from the friends list
+        JSONArray friendsArray = new JSONArray();
+        JSONObject response = new JSONObject();
+
+        if (!friends.isEmpty()) {
+            User latestFriend = friends.get(0);  // Get the most recent friend
+            response.put("latestFriendId", latestFriend.getUserId());
+            response.put("latestFriendUsername", latestFriend.getUsername());
+        }
+
+        for (User friend : friends) {
+            JSONObject friendObj = new JSONObject();
+            friendObj.put("id", friend.getUserId());
+            friendObj.put("username", friend.getUsername());
+            friendObj.put("avatar", friend.getUserAvatar());
+            friendsArray.put(friendObj);
+        }
+        // Create response JSON
+        response.put("type", "loadFriends");
+        response.put("friends", friendsArray);
+        // Send the friends list to the client
+        session.getAsyncRemote().sendText(response.toString());
     }
 
     private void saveMessageToDatabase(int fromId, int toId, String messageText) throws Exception {
@@ -203,6 +269,19 @@ public class Chat {
         HttpSession httpSession = (HttpSession) session.getUserProperties().get(HttpSession.class.getName());
         User user = (User) httpSession.getAttribute("USER");
         return user.getUserId();
+    }
+
+    private Session getSessionById(int userId) {
+        synchronized (clients) {
+            for (Session client : clients) {
+                HttpSession httpSession = (HttpSession) client.getUserProperties().get(HttpSession.class.getName());
+                User user = (User) httpSession.getAttribute("USER");
+                if (user.getUserId() == userId) {
+                    return client;
+                }
+            }
+        }
+        return null;
     }
 
     public static class Configurator extends ServerEndpointConfig.Configurator {

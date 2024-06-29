@@ -72,7 +72,6 @@ public class User_DB implements DBinfo {
         String query = "SELECT * FROM Users";
 
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query); ResultSet rs = pstmt.executeQuery()) {
-
             while (rs.next()) {
                 int userId = rs.getInt("User_id");
                 String userEmail = rs.getString("User_email");
@@ -523,13 +522,12 @@ public class User_DB implements DBinfo {
                 + "FROM Users u "
                 + "INNER JOIN FriendShip f ON (u.User_id = f.Friend_id OR u.User_id = f.User_id) "
                 + "LEFT JOIN Message m ON (u.User_id = m.From_id AND f.User_id = m.To_id) "
-                + "                      OR (u.User_id = m.To_id AND f.User_id = m.From_id) "
+                + "OR (u.User_id = m.To_id AND f.User_id = m.From_id) "
                 + "WHERE (f.User_id = ? OR f.Friend_id = ?) AND f.Request_status = 'accepted' AND u.User_id != ? "
                 + "GROUP BY u.User_id, u.Username, u.User_avatar "
                 + "ORDER BY LatestMessageTime DESC";
 
-        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement getAcceptedFriendsStmt = conn.prepareStatement(getAcceptedFriendsQuery)) {
-
+        try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement getAcceptedFriendsStmt = conn.prepareStatement(getAcceptedFriendsQuery)) {
             getAcceptedFriendsStmt.setInt(1, userId);
             getAcceptedFriendsStmt.setInt(2, userId);
             getAcceptedFriendsStmt.setInt(3, userId);
@@ -540,7 +538,6 @@ public class User_DB implements DBinfo {
                 int friendId = rs.getInt("User_id");
                 String userName = rs.getString("Username");
                 String userAvatar = rs.getString("User_avatar");
-
                 // Kiểm tra xem friendId đã tồn tại trong Set chưa
                 if (!uniqueFriendIds.contains(friendId)) {
                     uniqueFriendIds.add(friendId); // Thêm friendId vào Set
@@ -601,7 +598,6 @@ public class User_DB implements DBinfo {
                 + "AND f.Request_status = 'accepted'";
 
         try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setInt(1, userId);
             ps.setString(2, friendName);
             ps.setInt(3, userId);
@@ -646,21 +642,21 @@ public class User_DB implements DBinfo {
         }
     }
 
-   public static boolean registrManager(ManagerRegistr managerRegistr) {
-    String sql = "INSERT INTO managerRegistr (User_id, RegistrationDate, Status, Remarks) VALUES (?, GETDATE(), 'pending', ?)";
+    public static boolean registrManager(ManagerRegistr managerRegistr) {
+        String sql = "INSERT INTO managerRegistr (User_id, RegistrationDate, Status, Remarks) VALUES (?, GETDATE(), 'pending', ?)";
 
-    try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement statement = conn.prepareStatement(sql)) {
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement statement = conn.prepareStatement(sql)) {
 
-        statement.setInt(1, managerRegistr.getUserId());
-        statement.setString(2, managerRegistr.getRemarks());
+            statement.setInt(1, managerRegistr.getUserId());
+            statement.setString(2, managerRegistr.getRemarks());
 
-        int rowsInserted = statement.executeUpdate();
-        return rowsInserted > 0;
-    } catch (SQLException e) {
-        e.printStackTrace();
-        return false;
+            int rowsInserted = statement.executeUpdate();
+            return rowsInserted > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
-}
 
     public static List<ManagerRegistr> getAllRegisterM() {
         List<ManagerRegistr> registrations = new ArrayList<>();
@@ -686,7 +682,7 @@ public class User_DB implements DBinfo {
 
             while (rs.next()) {
                 int managerRegistrId = rs.getInt("managerRegistr_id");
-                
+
                 Date registrationDate = rs.getTimestamp("RegistrationDate");
                 String status = rs.getString("Status");
                 String remarks = rs.getString("Remarks");
@@ -726,11 +722,11 @@ public class User_DB implements DBinfo {
 
         return registrations;
     }
+
     public static boolean isManagerPending(int userId) {
         String query = "SELECT COUNT(*) FROM managerRegistr WHERE User_id = ? AND Status = 'pending'";
 
-        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass);
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setInt(1, userId);
             ResultSet rs = stmt.executeQuery();

@@ -70,7 +70,7 @@
                             }
                             .bank-logo{
                                 width:100px;
-                                
+
                             }
                         </style>
                         <div class="bg-white shadow rounded overflow-hidden ">
@@ -102,45 +102,51 @@
                                         <h3>Settings</h3>
                                         <h6>Withdraw Method</h6>
                                     </div>
-                                    <form action="">
-                                        <p class="fw-bold mb-4 pb-2">My withdraw method:</p>
-
+                                    <div class="form-group pb-3">
                                         <div class="d-flex flex-row align-items-center mb-4 pb-1">
-                                            <img class="img-fluid bank-logo" src="https://upload.wikimedia.org/wikipedia/commons/2/25/Logo_MB_new.png"/>
-                                            <div class="flex-fill mx-3">
-                                                <div data-mdb-input-init class="form-outline">
-                                                    <label class="form-label" for="formControlLgXc">Bank account number:</label>
-                                                    <input type="text" id="formControlLgXc" class="form-control form-control" value="**** **** **** 8888" />
+                                            <img class="img-fluid" src="https://img.icons8.com/?size=50&id=209&format=png&color=000000" />
+                                            <div class="flex-fill mx-3 d-flex">
+                                                <div data-mdb-input-init class="form-outline col-11">
+                                                    <input type="password" id="totalValue" class="form-control" value="${USER.userWallet}" readonly/>
                                                 </div>
-
-                                            </div>
-                                            <a href="#!">Remove</a>
+                                                <div class="col-1 d-flex justify-content-center align-items-center">
+                                                    <a href="javascript:void(0)" onclick="showHideTotal()" id="showHideIcon"><i class="ti ti-eye"></i></a>
+                                                </div>
+                                            </div>                                    
                                         </div>
-                                        <p class="mt-4">Our policy, you just can add only one bank account number to withdraw. To change withdraw method, please remove the current </p>
-
-                                        <hr>
-                                        <p class="mb-4">Add new withdraw method:</p>
-                                      
+                                    </div>
+                                    <%-- Kiểm tra và hiển thị thông báo từ request attribute --%>
+                                    <c:if test="${not empty message}">
+                                        <div class="alert alert-dismissible alert-${message.startsWith('Nạp tiền') ? 'success' : 'danger'}">
+                                            <strong>${message}</strong>
+                                        </div>
+                                        <% session.removeAttribute("message"); %>                    
+                                    </c:if>
+                                    <form id="withdrawForm" action="${pageContext.request.contextPath}/payment" method="post">
+                                        <input type="hidden" name="action" value="rutTien">
                                         <div class="mb-4 d-flex">
                                             <div class="col-4">
                                                 <div data-mdb-input-init class="form-outline">
-                                                    <label class="form-label" for="formControlLgXM">Bank</label>
-                                                    <select class="form-control">
-                                                        <option selected value="mb">MB</option>
-                                                        <option value="vcb">Vietcombank</option>
-                                                        <option value="tp">TP Bank</option>
+                                                    <label class="form-label" for="bankNameWithdraw">Bank</label>
+                                                    <select class="form-control" id="bankNameWithdraw" name="bankName" required>
+                                                        <option value="MBBank">MB Bank</option>
                                                     </select>
-
                                                 </div>
                                             </div>
                                             <div class="col-8  px-2">
-                                                <label class="form-label" for="formControlLgXsd">Bank account number</label>
-                                            <input type="text" id="formControlLgXsd" class="form-control form-control" value="081408168888"/>
+                                                <label class="form-label" for="atmNumberWithdraw">Bank account number</label>
+                                                <input type="text" id="atmNumberWithdraw" name="atmNumber" class="form-control form-control" required />
                                             </div>
-                                           
-                                            
                                         </div>
-                                        <button data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg btn-block">Add withdraw method</button>
+                                        <div class="mb-4 d-flex">
+                                            <div class="col-12">
+                                                <div data-mdb-input-init class="form-outline">
+                                                    <label class="form-label" for="amountWithdraw">Số tiền:</label>
+                                                    <input type="number" class="form-control" id="amountWithdraw" name="amount" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button data-mdb-button-init data-mdb-ripple-init  type="submit" class="btn btn-primary btn-lg btn-block">Withdraw</button>
                                     </form>
                                 </div>
                             </div>
@@ -150,4 +156,30 @@
             </div>
         </div>
     </div>
-</body><%@ include file="../include/footer.jsp" %>
+</body>
+<script>
+    function showHideTotal() {
+        var totalValue = document.getElementById('totalValue');
+        var showHideIcon = document.getElementById('showHideIcon');
+        if (totalValue.type === 'text') {
+            totalValue.type = 'password';
+            showHideIcon.innerHTML = '<i class="ti ti-eye"></i>';
+        } else {
+            totalValue.type = 'text';
+            showHideIcon.innerHTML = '<i class="ti ti-lock"></i>';
+        }
+    }
+    function showHideTotal() {
+        var totalValue = document.getElementById('totalValue');
+        var showHideIcon = document.getElementById('showHideIcon');
+        if (totalValue.type === 'text') {
+            totalValue.type = 'password';
+            showHideIcon.innerHTML = '<i class="ti ti-eye"></i>';
+        } else {
+            totalValue.type = 'text';
+            showHideIcon.innerHTML = '<i class="ti ti-lock"></i>';
+        }
+    }
+</script>
+
+<%@ include file="../include/footer.jsp" %>

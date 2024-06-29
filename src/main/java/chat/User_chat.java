@@ -60,18 +60,6 @@ public class User_chat extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("USER") == null) {
-            response.sendRedirect(request.getContextPath() + "/logingooglehandler");
-            return;
-        }
-
-        User user = (User) session.getAttribute("USER");
-
-        // Gọi phương thức từ lớp User_DB để lấy danh sách bạn bè đã chấp nhận
-        List<User> acceptedFriends = User_DB.getAcceptedFriendsOrderByLatestMessage(user.getUserId());
-        // Đưa danh sách bạn bè vào thuộc tính của request để sử dụng trong JSP
-        request.setAttribute("friends", acceptedFriends);
         // Chuyển hướng sang trang chat.jsp để hiển thị danh sách bạn bè và khung chat
         RequestDispatcher dispatcher = request.getRequestDispatcher("test.jsp");
         dispatcher.forward(request, response);
