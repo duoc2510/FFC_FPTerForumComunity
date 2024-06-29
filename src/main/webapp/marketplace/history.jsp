@@ -34,6 +34,7 @@
                                             <th>Note</th>
                                             <th>Item</th>
                                             <th>Total</th>
+                                            <th>Payment Status</th>
                                             <th>Action</th>
 
                                         </tr>
@@ -55,7 +56,16 @@
                                                     </c:forEach>
                                                 </td>
                                                 <td>${order.total}</td>
-
+                                                <c:if test="${order.payment_status eq 'dathanhtoan'}">
+                                                    <td>
+                                                        <p class="text-success">Đã Thanh Toán Trước</p>
+                                                    </td>
+                                                </c:if>
+                                                <c:if test="${order.payment_status eq 'thanhtoankhinhanhang'}">
+                                                    <td>
+                                                        <p class="text-success">Chưa Thanh Toán Trước</p>
+                                                    </td>
+                                                </c:if>
                                                 <c:if test="${order.status eq 'Pending'}">
                                                     <td>
                                                         <p class="text-success">Đang chờ Shop xác nhận..</p>

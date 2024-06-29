@@ -10,6 +10,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import model.DAO.Shop_DB;
 import model.DAO.User_DB;
 import model.Order;
@@ -153,6 +155,12 @@ public class User_authLogin extends HttpServlet {
                 return;
             }
             ArrayList<OrderItem> orderitemlist = sdb.getAllOrderItemByOrderIdHasStatusIsNull(order.getOrder_ID());
+            Collections.sort(orderitemlist, new Comparator<OrderItem>() {
+                @Override
+                public int compare(OrderItem o1, OrderItem o2) {
+                    return Integer.compare(sdb.getProductByID(o1.getProductID()).getShopId(), sdb.getProductByID(o2.getProductID()).getShopId());
+                }
+            });
             request.getSession().setAttribute("USER", user);
             request.getSession().setAttribute("ORDER", order);
             request.getSession().setAttribute("ORDERITEMLIST", orderitemlist);

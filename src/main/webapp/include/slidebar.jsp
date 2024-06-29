@@ -57,7 +57,7 @@
                                 </a>
                             </li>
                             <li class="sidebar-item sub-item">
-                                <a href="${pageContext.request.contextPath}/#" class="sidebar-link">
+                                <a href="${pageContext.request.contextPath}/admin/approveshop" class="sidebar-link">
                                     <span class="hide-menu">- Approve shop</span>
                                 </a>
                             </li>
@@ -67,7 +67,7 @@
                                 </a>
                             </li>
                             <li class="sidebar-item sub-item">
-                                <a href="${pageContext.request.contextPath}/#" class="sidebar-link">
+                                <a href="${pageContext.request.contextPath}/admin/createvoucher" class="sidebar-link">
                                     <span class="hide-menu">- Create voucher</span>
                                 </a>
                             </li>

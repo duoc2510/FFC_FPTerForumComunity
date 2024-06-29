@@ -111,7 +111,7 @@ public class User_emailVerify extends HttpServlet {
                     Logger.getLogger(User_emailVerify.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 User u = userDB.getUserByEmailorUsername(newUser.getUserEmail());
-                Order o = new Order(u.getUserId(), 1, null, "null", 0, 1, null, null, 5, null);
+                Order o = new Order(u.getUserId(), 1, null, "null", 0, 1, null, null, 5, null, null);
                 sdb.addOrder(o);
                 msg = "Registration Success";
 //                request.setAttribute("message", msg);

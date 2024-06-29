@@ -40,7 +40,11 @@
         <description>ServletContextListener</description>
         <listener-class>model.DAO.DBListener</listener-class>
     </listener>
-    <!-- Các servlet -->
+    
+    <listener>
+        <description>ServletContextListener</description>
+        <listener-class>util.SchedulerStarter</listener-class>
+    </listener>
     <servlet>
         <servlet-name>User_marketplace</servlet-name>
         <servlet-class>controller.User_marketplace</servlet-class>
@@ -177,7 +181,6 @@
         <servlet-name>Shop_history</servlet-name>
         <servlet-class>controller.Shop_history</servlet-class>
     </servlet>
-    <!-- Mapping cho các servlet -->
     <servlet>
         <servlet-name>Advertising_MyAds</servlet-name>
         <servlet-class>controller.Advertising_MyAds</servlet-class>
@@ -257,6 +260,46 @@
     <servlet>
         <servlet-name>User_Wallet_Withdraw</servlet-name>
         <servlet-class>controller.User_Wallet_Withdraw</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>User_friendHandel</servlet-name>
+        <servlet-class>controller.User_friendHandel</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>User_friends</servlet-name>
+        <servlet-class>controller.User_friends</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>User_search</servlet-name>
+        <servlet-class>controller.User_search</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Post_rate</servlet-name>
+        <servlet-class>controller.Post_rate</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Shop_confirmContinue</servlet-name>
+        <servlet-class>controller.Shop_confirmContinue</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Wallet_reload</servlet-name>
+        <servlet-class>controller.Wallet_reload</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Shop_approve</servlet-name>
+        <servlet-class>controller.Shop_approve</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Wallet_balance</servlet-name>
+        <servlet-class>controller.Wallet_balance</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Admin_createVoucher</servlet-name>
+        <servlet-class>controller.Admin_createVoucher</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>User_exchangeVoucher</servlet-name>
+        <servlet-class>controller.User_exchangeVoucher</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Advertising_Combo</servlet-name>
@@ -422,22 +465,6 @@
         <servlet-name>Shop_history</servlet-name>
         <url-pattern>/marketplace/history</url-pattern>
     </servlet-mapping>
-    <servlet>
-        <servlet-name>User_friendHandel</servlet-name>
-        <servlet-class>controller.User_friendHandel</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>User_friends</servlet-name>
-        <servlet-class>controller.User_friends</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>User_search</servlet-name>
-        <servlet-class>controller.User_search</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>Post_rate</servlet-name>
-        <servlet-class>controller.Post_rate</servlet-class>
-    </servlet>
     <servlet-mapping>
         <servlet-name>User_friendHandel</servlet-name>
         <url-pattern>/friendHandel</url-pattern>
@@ -533,6 +560,30 @@
     <servlet-mapping>
         <servlet-name>User_Wallet_Withdraw</servlet-name>
         <url-pattern>/wallet/withdraw</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Shop_confirmContinue</servlet-name>
+        <url-pattern>/marketplace/confirmcontinue</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Wallet_reload</servlet-name>
+        <url-pattern>/reloadwallet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Shop_approve</servlet-name>
+        <url-pattern>/admin/approveshop</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Wallet_balance</servlet-name>
+        <url-pattern>/walletbalance</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Admin_createVoucher</servlet-name>
+        <url-pattern>/admin/createvoucher</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>User_exchangeVoucher</servlet-name>
+        <url-pattern>/rank/exchangevoucher</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Advertising_Combo</servlet-name>

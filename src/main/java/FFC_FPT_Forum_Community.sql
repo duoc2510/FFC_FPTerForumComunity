@@ -35,7 +35,7 @@ CREATE TABLE Shop (
     Shop_campus NVARCHAR(255) NOT NULL, -- Cơ sở của shop, bắt buộc
     Description NVARCHAR(255), -- Mô tả về shop
     Image NVARCHAR(255), -- Ảnh bìa của shop
-    Status BIT DEFAULT 0, -- Trạng thái hoạt động của SHOP, mặc định là 0-on, 1-off
+        Status INT NOT NULL, -- Trạng thái hoạt động của SHOP -- chỉnh sửa
     CONSTRAINT fk_user_shop FOREIGN KEY (Owner_id) REFERENCES Users(User_id) -- Tham chiếu đến User_id trong bảng Users
 );
 GO
@@ -74,13 +74,13 @@ CREATE TABLE [Order] (
     User_id INT NOT NULL, -- ID của người dùng, bắt buộc
     Order_id INT IDENTITY(1,1) PRIMARY KEY, -- ID tự động tăng cho đơn hàng
     Order_date DATETIME DEFAULT GETDATE(), -- Ngày đặt hàng, mặc định là ngày hiện tại
-    Order_status NVARCHAR(50) CHECK (Order_status IN ('null','Pending','Accept','Completed','Cancelled','Success','Fail')) NOT NULL, -- Trạng thái của đơn hàng
-    Total_amount DECIMAL(10, 2) NOT NULL, -- Tổng số tiền của đơn hàng, bắt buộc
+        Order_status NVARCHAR(50) CHECK (Order_status IN ('null','Pending','Accept','Completed','Cancelled','Success','Fail','NotConfirm','NotConfirmNew')) NOT NULL, -- Trạng thái của đơn hàng    Total_amount DECIMAL(10, 2) NOT NULL, -- Tổng số tiền của đơn hàng, bắt buộc
     Note NVARCHAR(MAX), -- Ghi chú
     Discount_id INT, -- ID của mã giảm giá
     Feedback NVARCHAR(MAX), -- Phản hồi từ người dùng -thêm
 	Star int default 5,--số sao đánh giá   -- thêm
 	Receiver_phone NVARCHAR(20),   --thêm
+        Payment_status NVARCHAR(50), -- thêm
     CONSTRAINT fk_user_order FOREIGN KEY (User_id) REFERENCES Users(User_id), -- Tham chiếu đến User_id trong bảng Users
     CONSTRAINT fk_discount_order FOREIGN KEY (Discount_id) REFERENCES Discount(Discount_id) -- Tham chiếu đến Discount_id trong bảng Discount
 );
@@ -315,6 +315,38 @@ CREATE TABLE ATMInfo (
     Status NVARCHAR(255)
 );
 GO
+
+
+
+---------------- Table: ADS ----------------
+SELECT * FROM Ads
+
+ALTER TABLE Ads add currentView int
+ALTER TABLE Ads add location nvarchar(255)
+ALTER TABLE Ads ADD Title NVARCHAR(255);
+ALTER TABLE Ads ADD URI NVARCHAR(255);
+ALTER TABLE Ads ADD UploadPath NVARCHAR(255);
+ALTER TABLE Ads ADD isActive int;
+ALTER TABLE Ads ADD startDate DATE NULL; -- Ngày tạo quảng cáo, bắt buộc
+EXEC sp_rename 'Ads.currentView', 'currentReact', 'COLUMN'; -- rename maxView -> maxReact
+ALTER TABLE Ads add targetSex NVARCHAR(20)  
+
+---------------- Table: Combo_ads ----------------
+SELECT * FROM Combo_ads
+
+ALTER TABLE Combo_ads add maxView int
+ALTER TABLE Combo_ads add durationDate int -- Số ngày + date create -> date end 
+EXEC sp_rename 'Combo_ads.durationDate', 'durationDay', 'COLUMN'; -- rename Date -> Day
+EXEC sp_rename 'Combo_ads.Content', 'Title', 'COLUMN'; -- rename Content -> Title
+ALTER TABLE Combo_ads add User_id int
+ALTER TABLE Combo_ads ALTER COLUMN budget int; -- change data type decimal -> int
+ALTER TABLE Combo_ads ADD comboType NVARCHAR(20); -- Thể loại combo quảng cáo LIKE, CLICK, MESSAGE
+EXEC sp_rename 'Combo_ads.maxView', 'maxReact', 'COLUMN'; -- rename maxView -> maxReact
+ALTER TABLE Combo_ads ADD createDate DATE NULL;
+
+
+
+	
 -- Insert sample data into the ATMInfo table
 INSERT INTO ATMInfo (ATMNumber, username, BankName, Money, CODE,Status) VALUES
 ('25102003221', 'Nguyen Van A', 'MBBank', 0, 1234, 'Admin'), --Thẻ admin

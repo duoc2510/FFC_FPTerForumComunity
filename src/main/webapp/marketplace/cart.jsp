@@ -3,6 +3,35 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
+<style>
+    .shop-group {
+        border: 1px solid #ddd; /* Light grey border */
+        border-radius: 5px; /* Rounded corners */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        padding: 20px; /* Padding inside the box */
+        margin-bottom: 20px; /* Space between shop groups */
+        background-color: #fff; /* White background */
+    }
+    .shop-name {
+        text-align: center;
+        font-weight: bold;
+        font-size: 1.5em;
+        text-decoration: underline; /* Underline text */
+    }
+    .shop-name a {
+        color: inherit; /* Màu chữ sẽ kế thừa từ thẻ cha (.shop-name) */
+        text-decoration: none; /* Bỏ gạch chân mặc định của liên kết */
+    }
+
+    .shop-name a:hover {
+        color: inherit; /* Màu chữ khi hover, kế thừa từ thẻ cha (.shop-name) */
+    }
+
+    .shop-name a:visited {
+        color: inherit; /* Màu chữ của liên kết đã truy cập, kế thừa từ thẻ cha (.shop-name) */
+    }
+
+</style>
 <body>
 
     <script>
@@ -41,7 +70,7 @@
 
 
                 <!--check bag is empty-->
-                <c:if test="${empty ORDERITEMLIST}">'
+                <c:if test="${empty ORDERITEMLIST}">
                     <style>
                         #billing{
                             display: none;
@@ -61,25 +90,65 @@
                         session.removeAttribute("message");
                     %>
                 </c:if>
-                <div class="row" id="billing">                    
-                    <div class="col-md-6">
-                        <div class=" mx-2">
-                            <!--loop this-->
-                            <form action="confirmorder" method="post">
 
-                                <c:forEach var="item" items="${ORDERITEMLIST}">
-                                    <c:set var="imagefirst" value="${Shop_DB.getUploadFirstByProductID(item.getProductID())}" />
-                                    <c:set var="product" value="${Shop_DB.getProductByID(item.getProductID())}" />
+                <c:if test="${not empty ORDERITEMLIST}">
+                    <div class="row" id="billing">                    
+                        <div class="col-md-6">
+                            <div class="mx-2">
+                                <!--loop this-->
+                                <form action="confirmorder" method="post">
+
+                                    <c:set var="previousShopId" value="-1" />
+                                    <c:forEach var="item" items="${ORDERITEMLIST}">
+                                        <c:set var="product" value="${Shop_DB.getProductByID(item.getProductID())}" />
+                                        <c:set var="currentShopId" value="${product.shopId}" />
+
+                                        <c:if test="${previousShopId != currentShopId}">
+                                            <c:if test="${previousShopId != -1}">
+                                                <!-- Close the previous shop group and add discount/total sections -->
+                                                <div id="discountSection-${previousShopId}" style="display: none;">
+                                                    <label class="form-label mt-3" for="typeText">Discount</label>
+                                                    <select id="discountSelect-${previousShopId}" class="form-control discountSelect" name="discountSelect" data-shop-id="${previousShopId}" onchange="updateDiscount('${previousShopId}')">
+                                                        <c:forEach var="discount" items="${Shop_DB.getAllDiscountOrder(USER.userId, previousShopId)}">
+                                                            <option value="${discount.discountId}" data-percent="${discount.discountPercent}" data-condition="${discount.condition}">Giảm ${discount.discountPercent}% đơn từ ${discount.condition}VNĐ</option>
+                                                        </c:forEach>
+                                                    </select>
+                                                </div>
+
+                                                <div class="d-flex justify-content-between mt-3">
+                                                    <p class="mb-2">Sub total</p>
+                                                    <p class="mb-2" id="subtotal-${previousShopId}">0 VND</p>
+                                                </div>
+
+                                                <div class="d-flex justify-content-between">
+                                                    <p class="mb-2">Discount fee</p>
+                                                    <p class="mb-2" id="discountFee-${previousShopId}">-0 VND</p>
+                                                </div>
+                                                <div class="d-flex justify-content-between mb-4">
+                                                    <p class="mb-2">Total</p>
+                                                    <p class="mb-2" id="totalFee-${previousShopId}">0 VND</p>
+                                                </div>
+                                        </div> <!-- Close the previous shop group -->
+                                    </c:if>
+                                    <div class="shop-group">
+                                        <h3 class="shop-name">
+                                            <a href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?shopid=${currentShopId}">
+                                                <i class="ti ti-basket"></i> <!-- Icon before -->
+                                                ${Shop_DB.getShopHaveStatusIs1ByShopID(currentShopId).getName()}
+                                                <i class="ti ti-arrow-right-square"></i> <!-- Icon after -->
+                                            </a>
+                                        </h3>
+                                    </c:if>
 
                                     <div class="card mb-3">
                                         <div class="card-body">
                                             <div class="d-flex justify-content-between">
                                                 <div class="d-flex flex-row align-items-center">
                                                     <div>
-                                                        <input type="checkbox" class="orderItemCheckbox" name="selectedItems" value="${item.getOrderItem_id()}" data-item-id="${item.getOrderItem_id()}" data-item-price="${item.price}" data-item-quantity="${item.quantity}" data-product-quantity="${product.quantity}" data-product-id="${item.getProductID()}" />
+                                                        <input type="checkbox" class="orderItemCheckbox" name="selectedItems" value="${item.getOrderItem_id()}" data-item-id="${item.getOrderItem_id()}" data-item-price="${item.price}" data-item-quantity="${item.quantity}" data-product-quantity="${product.quantity}" data-product-id="${item.getProductID()}" data-shop-id="${currentShopId}" />
                                                     </div>
                                                     <div>
-                                                        <img src="${pageContext.request.contextPath}/static/${imagefirst.uploadPath}" class="img-fluid rounded-3" style="width: 65px;">
+                                                        <img src="${pageContext.request.contextPath}/static/${Shop_DB.getUploadFirstByProductID(item.getProductID()).uploadPath}" class="img-fluid rounded-3" style="width: 65px;">
                                                     </div>
                                                     <div class="ms-3">
                                                         <h5>${product.name}</h5>
@@ -87,15 +156,15 @@
                                                 </div>
                                                 <div class="d-flex flex-row align-items-center">
                                                     <div class="mx-1" style="width: 70px;">
-                                                        <c:if test="${ product.quantity > 0}">
+                                                        <c:if test="${product.quantity > 0}">
                                                             <input data-action="update" type="number" name="quantity" class="form-control" value="${item.quantity}" min="1" max="${product.quantity}" oninput="handleQuantityChange('${item.getOrderItem_id()}', this.value)">
                                                             <c:if test="${item.quantity == product.quantity}">
                                                                 <p class="text-danger position-absolute">Quantity was maximum</p>
-                                                            </c:if>    
-                                                        </c:if>  
-                                                        <c:if test="${ product.quantity == 0}">
+                                                            </c:if>
+                                                        </c:if>
+                                                        <c:if test="${product.quantity == 0}">
                                                             <input type="number" class="form-control" name="quantity" value="0" readonly>
-                                                            <p style=" font-size: 11px;" class="text-danger position-absolute">This product had sold out! Please delete!</p>
+                                                            <p style="font-size: 11px;" class="text-danger position-absolute">This product had sold out! Please delete!</p>
                                                         </c:if>
                                                     </div>
                                                     <c:set var="totalPrice1" value="${item.quantity * item.price}" />
@@ -108,10 +177,43 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    <c:set var="previousShopId" value="${currentShopId}" />
                                 </c:forEach>
-                                <!--loop this-->
+
+                                <!-- Close the last shop group -->
+                                <c:if test="${previousShopId != -1}">
+                                    <div id="discountSection-${previousShopId}" style="display: none;">
+                                        <label class="form-label mt-3" for="typeText">Discount</label>
+                                        <select id="discountSelect-${previousShopId}" class="form-control discountSelect" name="discountSelect" data-shop-id="${previousShopId}" onchange="updateDiscount('${previousShopId}')">
+                                            <c:forEach var="discount" items="${Shop_DB.getAllDiscountOrder(USER.userId, previousShopId)}">
+                                                <option value="${discount.discountId}" data-percent="${discount.discountPercent}" data-condition="${discount.condition}">Giảm ${discount.discountPercent}% đơn từ ${discount.condition}VNĐ</option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between mt-3">
+                                        <p class="mb-2">Sub total</p>
+                                        <p class="mb-2" id="subtotal-${previousShopId}">0 VND</p>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between">
+                                        <p class="mb-2">Discount fee</p>
+                                        <p class="mb-2" id="discountFee-${previousShopId}">-0 VND</p>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-4">
+                                        <p class="mb-2">Total</p>
+                                        <p class="mb-2" id="totalFee-${previousShopId}">0 VND</p>
+                                    </div>
+                                </c:if>
+
+
+
+                            </div> <!-- Close the last shop group -->
+                            <!--loop this-->
                         </div>
                     </div>
+
                     <div class="col-md-6">
                         <div class="card ">
                             <div class="card-body">
@@ -133,37 +235,15 @@
                                         <label class="form-label mt-3" for="typeText">Campus</label>
                                         <input name="campus" class="form-control form-control" placeholder="Campus" value="${shop.campus}" readonly>
 
-                                        <c:set var="discountlist" value="${Shop_DB.getAllDiscountOrder(USER.userId, product.getShopId())}" />
-                                        <div id="discountSection" style="display: none;">
-                                            <label class="form-label mt-3" for="typeText">Discount</label>
-                                            <select id="discountSelect" class="form-control" name="discountSelect" onchange="updateDiscount()">
-                                                <c:forEach var="discount" items="${discountlist}">
-                                                    <option value="${discount.discountId}" data-percent="${discount.discountPercent}" data-condition="${discount.condition}">Giảm ${discount.discountPercent}% đơn từ ${discount.condition}VNĐ</option>
-                                                </c:forEach>
-                                            </select>
-                                        </div>
-
-                                        <input type="hidden" id="selectedPercent" name="percent" value="0" />
 
                                         <label class="form-label mt-3" for="typeText">Note</label>
                                         <input name="note" class="form-control" placeholder="Note" rows="4">
                                     </div>
                                 </div>
 
-                                <div class="d-flex justify-content-between mt-3">
-                                    <p class="mb-2">Sub total</p>
-                                    <p class="mb-2" id="subtotal">0 VND</p>
-                                </div>
 
-                                <div class="d-flex justify-content-between">
-                                    <p class="mb-2">Discount fee</p>
-                                    <p class="mb-2" id="discountFee">-0 VND</p>
-                                </div>
 
-                                <div class="d-flex justify-content-between mb-4">
-                                    <p class="mb-2">Total</p>
-                                    <p class="mb-2" id="totalFee">0 VND</p>
-                                </div>
+
 
                                 <div class="mb-3" hidden="">
                                     <label class="form-label">Total</label>
@@ -171,7 +251,7 @@
                                 </div>
                                 <input type="hidden" name="action" value="confirm1">
                                 <div class="d-flex justify-content-between">
-                                    <button type="submit" class="btn btn-info btn-block btn-lg">
+                                    <button style="margin-top: 30px;" type="submit" class="btn btn-info btn-block btn-lg">
                                         <span id="checkoutTotal">0 VND</span>
                                         <span>Checkout <i class="fas fa-long-arrow-alt-right ms-2"></i></span>
                                     </button>                                                    
@@ -180,159 +260,232 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </c:if>
             </div>
         </div>
     </div>
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+</div>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
-    <script>
-                                                function handleQuantityChange(orderItemId, newQuantity) {
-                                                    var data = {
-                                                        action: "update",
-                                                        orderItemId: orderItemId,
-                                                        newQuantity: newQuantity
-                                                    };
+<script>
+                                            var selectedItemsMap = new Map();
+                                            var selectedDiscounts = [];
 
-                                                    $.ajax({
-                                                        url: 'cart',
-                                                        type: 'POST',
-                                                        data: data,
-                                                        dataType: 'json',
-                                                        success: function (response) {
-                                                            if (response.success) {
-                                                                location.reload();
-                                                            } else {
-                                                                swal("Error!", response.message, "error");
-                                                            }
-                                                        },
-                                                        error: function (xhr, status, error) {
-                                                            swal("Error!", "Unable to update the item quantity.", "error");
+                                            function handleQuantityChange(orderItemId, newQuantity) {
+                                                var data = {
+                                                    action: "update",
+                                                    orderItemId: orderItemId,
+                                                    newQuantity: newQuantity
+                                                };
+
+                                                $.ajax({
+                                                    url: 'cart',
+                                                    type: 'POST',
+                                                    data: data,
+                                                    dataType: 'json',
+                                                    success: function (response) {
+                                                        if (response.success) {
+                                                            location.reload();
+                                                        } else {
+                                                            swal("Error!", response.message, "error");
                                                         }
-                                                    });
-                                                }
+                                                    },
+                                                    error: function (xhr, status, error) {
+                                                        swal("Error!", "Unable to update the item quantity.", "error");
+                                                    }
+                                                });
+                                            }
 
-                                                function moveOutProductFromCart(id) {
-                                                    swal({
-                                                        title: "Are you sure?",
-                                                        text: "Once deleted, you will not be able to recover this item!",
-                                                        icon: "warning",
-                                                        buttons: true,
-                                                        dangerMode: true,
-                                                    }).then((willDelete) => {
-                                                        if (willDelete) {
-                                                            $.ajax({
-                                                                url: 'cart',
-                                                                type: 'POST',
-                                                                data: {id: id, action: 'delete'},
-                                                                dataType: 'json',
-                                                                success: function (response) {
-                                                                    if (response.success) {
-                                                                        swal("Success! Your item has been removed from the cart!", {
-                                                                            icon: "success",
-                                                                        }).then(() => {
-                                                                            location.reload();
-                                                                        });
-                                                                    } else {
-                                                                        swal("Error! Unable to remove the item from the cart.", {
-                                                                            icon: "error",
-                                                                        });
-                                                                    }
-                                                                },
-                                                                error: function (xhr, status, error) {
+                                            function moveOutProductFromCart(id) {
+                                                swal({
+                                                    title: "Are you sure?",
+                                                    text: "Once deleted, you will not be able to recover this item!",
+                                                    icon: "warning",
+                                                    buttons: true,
+                                                    dangerMode: true,
+                                                }).then((willDelete) => {
+                                                    if (willDelete) {
+                                                        $.ajax({
+                                                            url: 'cart',
+                                                            type: 'POST',
+                                                            data: {id: id, action: 'delete'},
+                                                            dataType: 'json',
+                                                            success: function (response) {
+                                                                if (response.success) {
+                                                                    swal("Success! Your item has been removed from the cart!", {
+                                                                        icon: "success",
+                                                                    }).then(() => {
+                                                                        location.reload();
+                                                                    });
+                                                                } else {
                                                                     swal("Error! Unable to remove the item from the cart.", {
                                                                         icon: "error",
                                                                     });
                                                                 }
-                                                            });
-                                                        } else {
-                                                            swal("Your item is safe!");
-                                                        }
-                                                    });
-                                                }
-
-                                                var selectedItems = new Set();
-
-                                                function updateSummary() {
-                                                    var subtotal = 0;
-                                                    selectedItems.forEach(function (item) {
-                                                        subtotal += item.quantity * item.price;
-                                                    });
-                                                    document.getElementById("subtotal").textContent = subtotal.toFixed(2) + ' VND';
-
-                                                    var discountSection = document.getElementById("discountSection");
-                                                    var discountSelect = document.getElementById("discountSelect");
-                                                    discountSection.style.display = selectedItems.size === 0 ? 'none' : 'block';
-                                                    discountSelect.disabled = selectedItems.size === 0;
-                                                    filterDiscountOptions(subtotal);
-                                                    updateDiscount();
-                                                }
-
-                                                function filterDiscountOptions(subtotal) {
-                                                    var discountSelect = document.getElementById("discountSelect");
-                                                    var options = discountSelect.options;
-
-                                                    for (var i = options.length - 1; i >= 0; i--) {
-                                                        var condition = parseFloat(options[i].getAttribute("data-condition"));
-                                                        if (subtotal >= condition) {
-                                                            options[i].disabled = false;
-                                                            options[i].style.display = 'block';
-                                                        } else {
-                                                            options[i].disabled = true;
-                                                            options[i].style.display = 'none';
-                                                        }
-                                                    }
-                                                }
-
-                                                function updateDiscount() {
-                                                    var discountSelect = document.getElementById("discountSelect");
-                                                    var selectedOption = discountSelect.options[discountSelect.selectedIndex];
-                                                    var percent = parseFloat(selectedOption.getAttribute("data-percent"));
-                                                    var subtotal = parseFloat(document.getElementById("subtotal").textContent);
-                                                    var discountFee = (percent * subtotal / 100).toFixed(2);
-
-                                                    document.getElementById("discountFee").textContent = '-' + discountFee + ' VND';
-
-                                                    var newTotal = subtotal - discountFee;
-                                                    document.getElementById("totalFee").textContent = newTotal.toFixed(2) + ' VND';
-                                                    document.getElementById("checkoutTotal").textContent = newTotal.toFixed(2) + ' VND';
-                                                    document.getElementById("totalInput").value = newTotal.toFixed(2);
-                                                }
-
-                                                document.addEventListener("DOMContentLoaded", (event) => {
-                                                    var checkboxes = document.querySelectorAll('.orderItemCheckbox');
-                                                    checkboxes.forEach(function (checkbox) {
-                                                        checkbox.addEventListener('change', function () {
-                                                            var item = {
-                                                                id: this.dataset.itemId,
-                                                                price: parseFloat(this.dataset.itemPrice),
-                                                                quantity: parseInt(this.dataset.itemQuantity),
-                                                                productQuantity: parseInt(this.dataset.productQuantity)
-                                                            };
-
-                                                            if (this.checked) {
-                                                                selectedItems.add(item);
-                                                            } else {
-                                                                selectedItems.forEach(function (selectedItem) {
-                                                                    if (selectedItem.id === item.id) {
-                                                                        selectedItems.delete(selectedItem);
-                                                                    }
+                                                            },
+                                                            error: function (xhr, status, error) {
+                                                                swal("Error! Unable to remove the item from the cart.", {
+                                                                    icon: "error",
                                                                 });
                                                             }
-
-                                                            updateSummary();
                                                         });
-                                                    });
+                                                    } else {
+                                                        swal("Your item is safe!");
+                                                    }
+                                                });
+                                            }
 
+                                            function updateSummary(shopId) {
+                                                var subtotal = 0;
+                                                var selectedItems = selectedItemsMap.get(shopId) || new Set();
 
-                                                    // Initial call to hide the discount select box if no items are selected
-                                                    updateSummary();
+                                                selectedItems.forEach(function (item) {
+                                                    subtotal += item.quantity * item.price;
                                                 });
 
-                                                window.onload = function () {
-                                                    listenForQuantityChange();
+                                                var subtotalElement = document.getElementById("subtotal-" + shopId);
+                                                var discountSection = document.getElementById("discountSection-" + shopId);
+                                                var discountSelect = document.getElementById("discountSelect-" + shopId);
+                                                var discountFeeElement = document.getElementById("discountFee-" + shopId);
+                                                var totalFeeElement = document.getElementById("totalFee-" + shopId);
+
+                                                if (!subtotalElement || !discountSection || !discountSelect || !discountFeeElement || !totalFeeElement) {
+                                                    console.error(`Missing elements for shopId: ${shopId}`);
+                                                    return;
                                                 }
-    </script>
+
+                                                subtotalElement.textContent = subtotal.toFixed(2) + ' VND';
+
+                                                discountSection.style.display = selectedItems.size === 0 ? 'none' : 'block';
+                                                discountSelect.disabled = selectedItems.size === 0;
+                                                filterDiscountOptions(shopId, subtotal);
+                                                updateDiscount(shopId);
+                                            }
+
+                                            function filterDiscountOptions(shopId, subtotal) {
+                                                var discountSelect = document.getElementById("discountSelect-" + shopId);
+
+                                                if (!discountSelect) {
+                                                    console.error(`Missing discountSelect element for shopId: ${shopId}`);
+                                                    return;
+                                                }
+
+                                                var options = discountSelect.options;
+
+                                                for (var i = options.length - 1; i >= 0; i--) {
+                                                    var condition = parseFloat(options[i].getAttribute("data-condition"));
+                                                    if (subtotal >= condition) {
+                                                        options[i].disabled = false;
+                                                        options[i].style.display = 'block';
+                                                    } else {
+                                                        options[i].disabled = true;
+                                                        options[i].style.display = 'none';
+                                                    }
+                                                }
+                                            }
+
+                                            function updateDiscount(shopId) {
+                                                var discountSelect = document.getElementById("discountSelect-" + shopId);
+                                                var subtotalElement = document.getElementById("subtotal-" + shopId);
+                                                var discountFeeElement = document.getElementById("discountFee-" + shopId);
+                                                var totalFeeElement = document.getElementById("totalFee-" + shopId);
+
+                                                if (!discountSelect || !subtotalElement || !discountFeeElement || !totalFeeElement) {
+                                                    console.error(`Missing elements for shopId: ${shopId}`);
+                                                    return;
+                                                }
+
+                                                var selectedOption = discountSelect.options[discountSelect.selectedIndex];
+                                                var percent = parseFloat(selectedOption.getAttribute("data-percent"));
+                                                var subtotal = parseFloat(subtotalElement.textContent);
+                                                var discountFee = (percent * subtotal / 100).toFixed(2);
+
+                                                discountFeeElement.textContent = '-' + discountFee + ' VND';
+
+                                                var newTotal = subtotal - discountFee;
+                                                totalFeeElement.textContent = newTotal.toFixed(2) + ' VND';
+
+                                                updateCheckoutTotal();
+
+                                                // Update selected discounts array
+                                                var discountId = selectedOption.value;
+                                                var existingDiscount = selectedDiscounts.find(discount => discount.shopId === shopId);
+                                                if (existingDiscount) {
+                                                    existingDiscount.discountId = discountId;
+                                                    existingDiscount.total = newTotal;
+                                                } else {
+                                                    selectedDiscounts.push({shopId: shopId, discountId: discountId, total: newTotal});
+                                                }
+                                            }
+
+                                            function updateCheckoutTotal() {
+                                                var totalFees = 0;
+                                                document.querySelectorAll('[id^="totalFee-"]').forEach(function (totalFeeElement) {
+                                                    var total = parseFloat(totalFeeElement.textContent);
+                                                    if (!isNaN(total)) {
+                                                        totalFees += total;
+                                                    }
+                                                });
+
+                                                document.getElementById("checkoutTotal").textContent = totalFees.toFixed(2) + ' VND';
+                                                document.getElementById("totalInput").value = totalFees.toFixed(2);
+                                            }
+
+                                            document.addEventListener("DOMContentLoaded", (event) => {
+                                                var checkboxes = document.querySelectorAll('.orderItemCheckbox');
+                                                checkboxes.forEach(function (checkbox) {
+                                                    checkbox.addEventListener('change', function () {
+                                                        var itemId = this.dataset.itemId;
+                                                        var shopId = this.getAttribute("data-shop-id");
+                                                        var item = {
+                                                            id: this.dataset.itemId,
+                                                            price: parseFloat(this.dataset.itemPrice),
+                                                            quantity: parseInt(this.dataset.itemQuantity),
+                                                            productQuantity: parseInt(this.dataset.productQuantity)
+                                                        };
+
+                                                        if (!selectedItemsMap.has(shopId)) {
+                                                            selectedItemsMap.set(shopId, new Set());
+                                                        }
+
+                                                        var selectedItems = selectedItemsMap.get(shopId);
+
+                                                        if (this.checked) {
+                                                            selectedItems.add(item);
+                                                        } else {
+                                                            selectedItems.forEach(function (selectedItem) {
+                                                                if (selectedItem.id === item.id) {
+                                                                    selectedItems.delete(selectedItem);
+                                                                }
+                                                            });
+                                                        }
+
+                                                        updateSummary(shopId);
+                                                    });
+                                                });
+
+                                                // Initial call to hide the discount select box if no items are selected
+                                                checkboxes.forEach(function (checkbox) {
+                                                    var shopId = checkbox.getAttribute("data-shop-id");
+                                                    updateSummary(shopId);
+                                                });
+                                            });
+
+// Append discount information to the form before submission
+                                            document.querySelector('form[action="confirmorder"]').addEventListener('submit', function (e) {
+                                                var discountInput = document.createElement('input');
+                                                discountInput.type = 'hidden';
+                                                discountInput.name = 'selectedDiscounts';
+                                                discountInput.value = JSON.stringify(selectedDiscounts);
+                                                this.appendChild(discountInput);
+                                            });
+
+                                            window.onload = function () {
+                                                listenForQuantityChange();
+                                            }
+
+</script>
+
 </body>
 <script src="../static/js/validation.js"></script>
 <%@ include file="../include/footer.jsp" %>

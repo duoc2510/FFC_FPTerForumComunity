@@ -103,6 +103,23 @@ public class NotificationWebSocket {
         }
     }
 
+    public void saveNotificationToDatabaseWithStatusIsBalance(int userId, String message, String notificationLink) {
+        String query = "INSERT INTO Notification (User_id, Message, Created_at, Status, Notification_link) VALUES (?, ?, GETDATE(), 'Balance', ?)";
+        try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, userId);
+            stmt.setString(2, message);
+            stmt.setString(3, notificationLink);
+
+            stmt.executeUpdate();
+
+            System.out.println("Notification saved to database successfully.");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static class Configurator extends ServerEndpointConfig.Configurator {
 
         @Override

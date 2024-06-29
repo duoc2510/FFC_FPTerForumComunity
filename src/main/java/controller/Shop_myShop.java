@@ -17,6 +17,7 @@ import model.Discount;
 import model.Product;
 import model.Shop;
 import model.User;
+import notifications.NotificationWebSocket;
 
 /**
  *
@@ -106,6 +107,7 @@ public class Shop_myShop extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        NotificationWebSocket nw = new NotificationWebSocket();
         User user = (User) request.getSession().getAttribute("USER");
         Shop_DB sdb = new Shop_DB();
         String name = request.getParameter("shopName");
@@ -115,14 +117,15 @@ public class Shop_myShop extends HttpServlet {
         if (isValidPhoneNumber(phone.trim()) == true) {
             if (user.getUserWallet() >= 50000) {
                 boolean updateSuccess = User_DB.updateWalletByEmail(user.getUserEmail(), user.getUserWallet() - 50000);
-                Shop sh = new Shop(1, name, phone, campus, decription, user.getUserId(), null, 1);
+                nw.saveNotificationToDatabaseWithStatusIsBalance(user.getUserId(), "Trừ phí tạo shop : 50000đ!", "/walletbalance");
+                Shop sh = new Shop(1, name, phone, campus, decription, user.getUserId(), null, 2);
                 sdb.addShop(sh);
                 Shop shop = sdb.getShopHaveStatusIs1ByUserID(user.getUserId());
                 User updatedUser = User_DB.getUserByEmailorUsername(user.getUserEmail());
                 request.getSession().setAttribute("USER", updatedUser);
-                request.setAttribute("message", "Create Shop Susscessful.");
+                request.setAttribute("message", "Your shop has been successfully created and is waiting for admin approval.");
                 request.getSession().setAttribute("SHOP", shop);
-                request.getRequestDispatcher("/marketplace/myShop.jsp").forward(request, response);
+                request.getRequestDispatcher("/marketplace/createShop.jsp").forward(request, response);
             } else {
                 request.setAttribute("message", "Your wallet doesn't have enough money.");
                 request.getRequestDispatcher("/marketplace/createShop.jsp").forward(request, response);
