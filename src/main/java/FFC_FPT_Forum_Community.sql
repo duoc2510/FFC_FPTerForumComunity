@@ -199,7 +199,7 @@ CREATE TABLE Feedback (
     Feedback_detail NVARCHAR(255) NOT NULL, -- Chi tiết phản hồi
     Feedback_title NVARCHAR(255) NOT NULL, -- Tiêu đề phản hồi, không được null
 	User_id INT NOT NULL, -- id người gửi, không được null
-    FOREIGN KEY (User_id) REFERENCES Users(User_id) -- Khóa ngoại tham chiếu đến người gửi
+    FOREIGN KEY (User_id) REFERENCES Users(User_id) ON DELETE CASCADE -- Khóa ngoại tham chiếu đến người gửi
 );
 GO
 -- Tạo bảng Topic: lưu thông tin về chủ đề
@@ -579,8 +579,3 @@ VALUES (2, 3, NULL, 8, N'quá tệ', N'pending');
 
 SELECT * FROM dbo.Feedback
 SELECT * FROM dbo.Users
-ALTER TABLE Feedback
-ADD CONSTRAINT FK_User_Feedback
-FOREIGN KEY (User_id)
-REFERENCES Users(User_id)
-ON DELETE CASCADE;

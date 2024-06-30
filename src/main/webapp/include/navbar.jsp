@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="java.util.List" %>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 
 <style>
     /*    .user-settings  .dropdown-menu{
@@ -45,17 +45,18 @@
         font-size: 0.8em;
         color: #888;
     }
-  
+
 </style>
 
 <header class="app-header">
     <nav class="navbar navbar-expand-lg navbar-light">
 
-            <ul class="navbar-nav w-100" style="max-width: 400px">
+        <ul class="navbar-nav w-100" style="max-width: 400px">
             <form class="d-flex" action="${pageContext.request.contextPath}/search" method="post">
                 <input id="searchInput" type="text" class="form-control me-2" name="query" placeholder="Search for user name or group name" aria-label="Search" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Search for user name or group name">
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
+            <div id="searchDropdown" class="list-group position-absolute" style="max-height: 200px; overflow-y: auto; display: none;"></div>
         </ul>
 
         <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
@@ -221,8 +222,57 @@
                 loadNotifications();
             });
         });
-  
-    </script>
 
+$(document).ready(function () {
+    $('#searchInput').on('input', function () {
+        var query = $(this).val();
+        if (query.length > 1) {
+            $.ajax({
+                url: '${pageContext.request.contextPath}/searchSuggestions',
+                type: 'GET',
+                data: { query: query },
+                success: function (data) {
+                    try {
+                        console.log('Received data:', data); // Kiểm tra phản hồi từ servlet
+                        var suggestions = JSON.parse(data);
+                        var dropdown = $('#searchDropdown');
+                        dropdown.empty();
+                        suggestions.forEach(function (item) {
+                            dropdown.append('<a href="#" class="list-group-item list-group-item-action">' + item + '</a>');
+                        });
+                        dropdown.show();
+                    } catch (e) {
+                        console.error('JSON parse error: ', e);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('AJAX request error: ', status, error);
+                }
+            });
+        } else {
+            $('#searchDropdown').hide();
+        }
+    });
+
+    $(document).on('click', '.list-group-item', function () {
+        var text = $(this).text();
+        $('#searchInput').val(text);
+        $('#searchDropdown').hide();
+    });
+
+    $('#searchInput').on('focus', function () {
+        if ($('#searchDropdown').children().length > 0) {
+            $('#searchDropdown').show();
+        }
+    });
+
+    $(document).click(function (event) {
+        if (!$(event.target).closest('#searchInput, #searchDropdown').length) {
+            $('#searchDropdown').hide();
+        }
+    });
+});
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 </header>
