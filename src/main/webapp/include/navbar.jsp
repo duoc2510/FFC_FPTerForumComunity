@@ -1,7 +1,13 @@
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" import="model.*" import="model.DAO.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="java.util.List" %>
-
+<%@ page import="com.google.gson.Gson" %>
+                               <%
+    // Lấy đối tượng USER từ session
+    User user = (User) session.getAttribute("USER");
+    // Chuyển đối tượng USER thành chuỗi JSON
+    String userJson = new Gson().toJson(user);
+%>
 
 
 <style>
@@ -179,8 +185,12 @@
                 </li>
             </ul>
         </div>
-    </nav>
 
+
+    </nav>
+<script type="text/javascript">
+    var USER = <%= userJson %>; // Chuyển đổi chuỗi JSON thành đối tượng JavaScript
+</script>
     <script>
         var contextPath = '<%= request.getContextPath() %>';
         var oldNotificationCount = 0;
@@ -292,13 +302,14 @@
         });
 
 $(document).ready(function () {
+    var userId = USER.userId; // Sử dụng USER.userId trực tiếp
     var searchInput = $('#searchInput');
     var searchDropdown = $('#searchDropdown');
-    var searchHistoryKey = 'searchHistory';
+    var searchHistoryKey = 'searchHistory_' + userId;
 
     // Load search history from localStorage
     var searchHistory = JSON.parse(localStorage.getItem(searchHistoryKey)) || [];
-    console.log("Loaded search history:", searchHistory);
+    console.log("Loaded search history for user " + userId + ":", searchHistory);
 
     // Function to save search query to search history
     function saveToSearchHistory(query) {
@@ -315,12 +326,12 @@ $(document).ready(function () {
         }
         // Save updated search history to localStorage
         localStorage.setItem(searchHistoryKey, JSON.stringify(searchHistory));
-        console.log("Updated search history:", searchHistory);
+        console.log("Updated search history for user " + userId + ":", searchHistory);
     }
 
     // Function to render search history dropdown
     function renderSearchHistory() {
-        console.log("Rendering search history:", searchHistory);
+        console.log("Rendering search history for user " + userId + ":", searchHistory);
         searchDropdown.empty();
 
         // Add "History" title
@@ -416,6 +427,7 @@ $(document).ready(function () {
         }
     });
 });
+
 
 
 

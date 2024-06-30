@@ -207,6 +207,7 @@
                                                     <p class="card-text">Shop name: ${shop.name}</p>
                                                     <p class="card-text">Price: ${product.price} VNĐ</p>  
                                                     <p class="card-text">${product.productDescription}</p>
+                                                        <a href="/FPTer/marketplace/allshop/shopdetail?shopid=${product.shopId}" class="btn btn-success mt-3 w-100">Visit shop</a>
                                                     <a href="/FPTer/marketplace/allshop/shopdetail/productdetail?productid=${product.productId}&shopid=${product.shopId}" class="btn btn-primary mt-3 w-100">Buy now</a>
                                                 </div>
                                             </div>
@@ -223,6 +224,7 @@
                                                     <h5 class="card-title"><a> ${product.name}</a></h5>
                                                     <p class="card-text"><a>${product.price} VNĐ</a></p>
                                                     <p class="card-text"><a>${product.productDescription}</a></p>
+                                                      <a href="/FPTer/marketplace/allshop/shopdetail?shopid=${product.shopId}" class="btn btn-success mt-3 w-100">Visit shop</a>
                                                     <button class="btn btn-danger mt-3 w-100" disabled>Sold out</button>
                                                 </div>
                                             </div>
@@ -481,6 +483,7 @@
                                                     <p class="card-text">Shop name: ${shop.name}</p>
                                                     <p class="card-text">Price: ${product.price} VNĐ</p>
                                                     <p class="card-text">${product.productDescription}</p>
+                                                    <a href="/FPTer/marketplace/allshop/shopdetail?shopid=${product.shopId}" class="btn btn-success mt-3 w-100">Visit shop</a>
                                                     <a href="/FPTer/marketplace/allshop/shopdetail/productdetail?productid=${product.productId}&shopid=${product.shopId}" class="btn btn-primary mt-3 w-100">Buy now</a>
                                                 </div>
                                             </div>
@@ -497,6 +500,7 @@
                                                     <h5 class="card-title"><a> ${product.name}</a></h5>
                                                     <p class="card-text"><a>${product.price} VNĐ</a></p>
                                                     <p class="card-text"><a>${product.productDescription}</a></p>
+                                                    <a href="/FPTer/marketplace/allshop/shopdetail?shopid=${product.shopId}" class="btn btn-success mt-3 w-100">Visit shop</a>
                                                     <button class="btn btn-danger mt-3 w-100" disabled>Sold out</button>
                                                 </div>
                                             </div>

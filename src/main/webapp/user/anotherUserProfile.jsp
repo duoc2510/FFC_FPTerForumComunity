@@ -195,6 +195,13 @@
                                                                     </form>
                                                                 </li>
                                                             </c:when>
+                                                                <c:when test="${user.userRole == 3}">
+                                                                <li>
+                                                                    <button type="button" class="dropdown-item" disabled>
+                                                                        Admin
+                                                                    </button>
+                                                                </li>
+                                                            </c:when>
                                                             <c:otherwise>
                                                                 <li>       
                                                                 <li class="w-100">
