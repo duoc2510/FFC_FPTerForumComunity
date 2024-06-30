@@ -111,11 +111,10 @@
                                 </div>
                                 <div class="form-group pb-3">
                                     <div class="d-flex flex-row align-items-center mb-4 pb-1">
-
                                         <img class="img-fluid" src="https://img.icons8.com/?size=50&id=209&format=png&color=000000" />
                                         <div class="flex-fill mx-3 d-flex">
                                             <div data-mdb-input-init class="form-outline col-11">
-                                                <input type="password" id="totalValue" class="form-control" value="99.200.000 VND" readonly/>
+                                                <input type="password" id="totalValue" class="form-control" value="${USER.userWallet}" readonly/>
                                             </div>
                                             <div class="col-1 d-flex justify-content-center align-items-center">
                                                 <a href="javascript:void(0)" onclick="showHideTotal()" id="showHideIcon"><i class="ti ti-eye"></i></a>

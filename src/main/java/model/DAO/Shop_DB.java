@@ -86,6 +86,58 @@ public class Shop_DB {
         return shop;
     }
 
+    public static Shop getShopHaveStatusIs2ByUserID(int userID) {
+        Shop shop = null;
+        String query = "SELECT * FROM Shop WHERE Owner_id = ? AND Status = 2";
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setInt(1, userID);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                int shopID = rs.getInt("Shop_id");
+                String shopName = rs.getString("Shop_name");
+                String shopPhone = rs.getString("Shop_phone");
+                String shopCampus = rs.getString("Shop_campus");
+                String shopDescription = rs.getString("Description");
+                String shopImage = rs.getString("Image");
+                int ownerID = rs.getInt("Owner_id");
+                int shopStatus = rs.getInt("Status");
+                shop = new Shop(shopID, shopName, shopPhone, shopCampus, shopDescription, ownerID, shopImage, shopStatus);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return shop;
+    }
+
+    public static ArrayList<Shop> getAllShopHaveStatusIs2() {
+        ArrayList<Shop> shops = new ArrayList<>();
+        String query = "SELECT * FROM Shop WHERE Status = 2";
+
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
+
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                int shopID = rs.getInt("Shop_id");
+                String shopName = rs.getString("Shop_name");
+                String shopPhone = rs.getString("Shop_phone");
+                String shopCampus = rs.getString("Shop_campus");
+                String shopDescription = rs.getString("Description");
+                String shopImage = rs.getString("Image");
+                int ownerID = rs.getInt("Owner_id");
+                int shopStatus = rs.getInt("Status");
+
+                Shop shop = new Shop(shopID, shopName, shopPhone, shopCampus, shopDescription, ownerID, shopImage, shopStatus);
+                shops.add(shop);
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return shops;
+    }
+
     public static Shop getShopHaveStatusIs1ByShopID(int shopID) {
         Shop shop = null;
         String query = "SELECT * FROM Shop WHERE Shop_id = ? AND Status = 1";
@@ -110,6 +162,16 @@ public class Shop_DB {
 
     public static void setStatusIs0ByShopID(int shopID) {
         String updateQuery = "UPDATE Shop SET Status = 0 WHERE Shop_id = ?";
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(updateQuery)) {
+            pstmt.setInt(1, shopID);
+            pstmt.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public static void setStatusIs1ByShopID(int shopID) {
+        String updateQuery = "UPDATE Shop SET Status = 1 WHERE Shop_id = ?";
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(updateQuery)) {
             pstmt.setInt(1, shopID);
             pstmt.executeUpdate();
@@ -381,7 +443,7 @@ public class Shop_DB {
     }
 
     public static void addOrder(Order order) {
-        String insertQuery = "INSERT INTO [Order] (User_id, Order_date, Order_status, Total_amount, Note, Discount_id, Feedback, Star, Receiver_phone) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String insertQuery = "INSERT INTO [Order] (User_id, Order_date, Order_status, Total_amount, Note, Discount_id, Feedback, Star, Receiver_phone, Payment_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(insertQuery)) {
             pstmt.setInt(1, order.getUserID());
             pstmt.setTimestamp(2, order.getOrderDate());
@@ -392,7 +454,7 @@ public class Shop_DB {
             pstmt.setString(7, order.getFeedback());
             pstmt.setInt(8, order.getStar()); // Set the Star field
             pstmt.setString(9, order.getReceiverPhone());
-
+            pstmt.setString(10, order.getPayment_status());
             pstmt.executeUpdate();
         } catch (SQLException ex) {
             Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
@@ -415,12 +477,81 @@ public class Shop_DB {
                 String feedback = rs.getString("Feedback");
                 int star = rs.getInt("Star"); // Get the Star field
                 String receiverPhone = rs.getString("Receiver_phone");
-
-                order = new Order(userID, orderID, orderDate, orderStatus, totalAmount, discountID, note, feedback, star, receiverPhone);
+                String payment_status = rs.getString("Payment_status");
+                order = new Order(userID, orderID, orderDate, orderStatus, totalAmount, discountID, note, feedback, star, receiverPhone, payment_status);
             }
         } catch (SQLException ex) {
             Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return order;
+    }
+
+    public static Order getOrderByShopIdWithStatusNotConfirm(int shopId, int userId) {
+        Order order = null;
+        String query = "SELECT TOP 1 o.* "
+                + "FROM [Order] o "
+                + "JOIN OrderItem oi ON o.Order_id = oi.Order_id "
+                + "JOIN Product p ON oi.Product_id = p.Product_id "
+                + "WHERE p.Shop_id = ? AND o.User_id = ? AND o.Order_status = 'NotConfirm' "
+                + "GROUP BY o.Order_id, o.User_id, o.Order_date, o.Order_status, o.Total_amount, o.Note, o.Discount_id, o.Feedback, o.Star, o.Receiver_phone, o.Payment_status "
+                + "ORDER BY o.Order_date DESC";
+
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setInt(1, shopId);
+            pstmt.setInt(2, userId);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                // Create an Order object from the query result
+                order = new Order();
+                order.setOrder_ID(rs.getInt("Order_id"));
+                order.setUserID(rs.getInt("User_id"));
+                order.setOrderDate(rs.getTimestamp("Order_date"));
+                order.setStatus(rs.getString("Order_status"));
+                order.setTotal(rs.getDouble("Total_amount"));
+                order.setNote(rs.getString("Note"));
+                order.setDiscountid(rs.getInt("Discount_id"));
+                order.setFeedback(rs.getString("Feedback"));
+                order.setStar(rs.getInt("Star"));
+                order.setReceiverPhone(rs.getString("Receiver_phone"));
+                order.setPayment_status(rs.getString("Payment_status"));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return order;
+    }
+
+    public static Order getLatestOrderByUserId(int userId) {
+        Order order = null;
+        String query = "SELECT TOP 1 o.* "
+                + "FROM [Order] o "
+                + "WHERE o.User_id = ? "
+                + "ORDER BY o.Order_id DESC";
+
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setInt(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                order = new Order();
+                order.setOrder_ID(rs.getInt("Order_id"));
+                order.setUserID(rs.getInt("User_id"));
+                order.setOrderDate(rs.getTimestamp("Order_date"));
+                order.setStatus(rs.getString("Order_status"));
+                order.setTotal(rs.getDouble("Total_amount"));
+                order.setNote(rs.getString("Note"));
+                order.setDiscountid(rs.getInt("Discount_id"));
+                order.setFeedback(rs.getString("Feedback"));
+                order.setStar(rs.getInt("Star"));
+                order.setReceiverPhone(rs.getString("Receiver_phone"));
+                order.setPayment_status("Payment_status");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         return order;
     }
 
@@ -447,8 +578,31 @@ public class Shop_DB {
         return count;
     }
 
+    public static int countOrdersByStatusAndMonth(String status, int month, int year) {
+        String query = "SELECT COUNT(*) FROM [Order] WHERE Order_status = ? AND MONTH(Order_date) = ? AND YEAR(Order_date) = ?";
+        int count = 0;
+
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
+
+            pstmt.setString(1, status);
+            pstmt.setInt(2, month);
+            pstmt.setInt(3, year);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        return count;
+    }
+
     public static void updateOrderbyID(Order order) {
-        String updateQuery = "UPDATE [Order] SET User_id = ?, Order_date = ?, Order_status = ?, Total_amount = ?, Note = ?, Discount_id = ?, Feedback = ?, Star = ?, Receiver_phone = ? WHERE Order_id = ?";
+        String updateQuery = "UPDATE [Order] SET User_id = ?, Order_date = ?, Order_status = ?, Total_amount = ?, Note = ?, Discount_id = ?, Feedback = ?, Star = ?, Receiver_phone = ?, Payment_status = ? WHERE Order_id = ?";
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(updateQuery)) {
             pstmt.setInt(1, order.getUserID());
             pstmt.setTimestamp(2, new java.sql.Timestamp(new java.util.Date().getTime()));
@@ -459,7 +613,8 @@ public class Shop_DB {
             pstmt.setString(7, order.getFeedback());
             pstmt.setInt(8, order.getStar()); // Set the Star field
             pstmt.setString(9, order.getReceiverPhone());
-            pstmt.setInt(10, order.getOrder_ID());
+            pstmt.setString(10, order.getPayment_status());
+            pstmt.setInt(11, order.getOrder_ID());
 
             pstmt.executeUpdate();
         } catch (SQLException ex) {
@@ -473,8 +628,8 @@ public class Shop_DB {
                 + "FROM [Order] o "
                 + "JOIN OrderItem oi ON o.Order_id = oi.Order_id "
                 + "JOIN Product p ON oi.Product_id = p.Product_id "
-                + "WHERE p.Shop_id = ? AND o.Order_status IS NOT NULL AND o.Order_status != 'null' "
-                + "GROUP BY o.Order_id, o.User_id, o.Order_date, o.Order_status, o.Total_amount, o.Note, o.Discount_id, o.Feedback, o.Star, o.Receiver_phone";
+                + "WHERE p.Shop_id = ? AND o.Order_status IS NOT NULL AND o.Order_status != 'null' AND o.Order_status != 'notconfirm'  "
+                + "GROUP BY o.Order_id, o.User_id, o.Order_date, o.Order_status, o.Total_amount, o.Note, o.Discount_id, o.Feedback, o.Star, o.Receiver_phone, o.Payment_status";
 
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
             pstmt.setInt(1, shopId);
@@ -492,6 +647,7 @@ public class Shop_DB {
                 order.setFeedback(rs.getString("Feedback"));
                 order.setStar(rs.getInt("Star"));
                 order.setReceiverPhone(rs.getString("Receiver_phone"));
+                order.setPayment_status(rs.getString("Payment_status"));
 
                 orders.add(order);
             }
@@ -499,7 +655,19 @@ public class Shop_DB {
             Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        orders.sort((o1, o2) -> o2.getOrderDate().compareTo(o1.getOrderDate()));
+        // Sort the orders by order date, handling null values
+        orders.sort((o1, o2) -> {
+            if (o1.getOrderDate() == null && o2.getOrderDate() == null) {
+                return 0;
+            } else if (o1.getOrderDate() == null) {
+                return 1;
+            } else if (o2.getOrderDate() == null) {
+                return -1;
+            } else {
+                return o2.getOrderDate().compareTo(o1.getOrderDate());
+            }
+        });
+
         return orders;
     }
 
@@ -510,7 +678,7 @@ public class Shop_DB {
                 + "JOIN OrderItem oi ON o.Order_id = oi.Order_id "
                 + "JOIN Product p ON oi.Product_id = p.Product_id "
                 + "WHERE p.Shop_id = ? AND o.Order_status IS NOT NULL AND o.Order_status != 'null' AND o.Order_status != 'Cancelled' "
-                + "GROUP BY o.Order_id, o.User_id, o.Order_date, o.Order_status, o.Total_amount, o.Note, o.Discount_id, o.Feedback, o.Star, o.Receiver_phone";
+                + "GROUP BY o.Order_id, o.User_id, o.Order_date, o.Order_status, o.Total_amount, o.Note, o.Discount_id, o.Feedback, o.Star, o.Receiver_phone, o.Payment_status";
 
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
             pstmt.setInt(1, shopId);
@@ -529,7 +697,7 @@ public class Shop_DB {
                 order.setFeedback(rs.getString("Feedback"));
                 order.setStar(rs.getInt("Star"));
                 order.setReceiverPhone(rs.getString("Receiver_phone"));
-
+                order.setPayment_status(rs.getString("Payment_status"));
                 // Add the Order object to the list
                 orders.add(order);
             }
@@ -550,7 +718,7 @@ public class Shop_DB {
                 + "JOIN OrderItem oi ON o.Order_id = oi.Order_id "
                 + "JOIN Product p ON oi.Product_id = p.Product_id "
                 + "WHERE p.Shop_id = ? AND o.Order_status = 'Success' "
-                + "GROUP BY o.Order_id, o.User_id, o.Order_date, o.Order_status, o.Total_amount, o.Note, o.Discount_id, o.Feedback, o.Star, o.Receiver_phone";
+                + "GROUP BY o.Order_id, o.User_id, o.Order_date, o.Order_status, o.Total_amount, o.Note, o.Discount_id, o.Feedback, o.Star, o.Receiver_phone, o.Payment_status";
 
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
             pstmt.setInt(1, shopId);
@@ -569,7 +737,7 @@ public class Shop_DB {
                 order.setFeedback(rs.getString("Feedback"));
                 order.setStar(rs.getInt("Star"));
                 order.setReceiverPhone(rs.getString("Receiver_phone"));
-
+                order.setPayment_status(rs.getString("Payment_status"));
                 // Add the Order object to the list
                 orders.add(order);
             }
@@ -599,8 +767,8 @@ public class Shop_DB {
                 String feedback = rs.getString("Feedback");
                 int star = rs.getInt("Star");
                 String receiverPhone = rs.getString("Receiver_phone");
-
-                order = new Order(userID, orderId, orderDate, orderStatus, totalAmount, discountID, note, feedback, star, receiverPhone);
+                String payment_status = rs.getString("Payment_status");
+                order = new Order(userID, orderId, orderDate, orderStatus, totalAmount, discountID, note, feedback, star, receiverPhone, payment_status);
             }
         } catch (SQLException ex) {
             Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
@@ -653,7 +821,7 @@ public class Shop_DB {
 
             while (rs.next()) {
                 String status = rs.getString("Order_status");
-                if (status != null && !status.equals("null")) {
+                if (status != null && !status.equals("null") && !status.equalsIgnoreCase("notconfirm")) {
                     Order order = new Order();
                     order.setOrder_ID(rs.getInt("Order_id"));
                     order.setUserID(rs.getInt("User_id"));
@@ -665,7 +833,7 @@ public class Shop_DB {
                     order.setFeedback(rs.getString("Feedback"));
                     order.setStar(rs.getInt("Star"));
                     order.setReceiverPhone(rs.getString("Receiver_phone"));
-
+                    order.setPayment_status(rs.getString("Payment_status"));
                     orders.add(order);
                 }
             }
@@ -805,8 +973,8 @@ public class Shop_DB {
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(sql)) {
 
             pstmt.setString(1, discount.getCode());
-            pstmt.setObject(2, discount.getOwnerId() == 1 ? null : discount.getOwnerId());
-            pstmt.setInt(3, discount.getShopId());
+            pstmt.setObject(2, discount.getOwnerId() == 0 ? null : discount.getOwnerId());
+            pstmt.setObject(3, discount.getShopId() == 0 ? null : discount.getShopId());
             pstmt.setDouble(4, discount.getDiscountPercent());
             pstmt.setDate(5, new java.sql.Date(discount.getValidFrom().getTime()));
             pstmt.setDate(6, new java.sql.Date(discount.getValidTo().getTime()));
@@ -1051,6 +1219,47 @@ public class Shop_DB {
         return notifications;
     }
 
+    public static ArrayList<User_notification> getBalanceNotificationsByUserId(int userId) {
+        ArrayList<User_notification> notifications = new ArrayList<>();
+        String query = "SELECT * FROM Notification WHERE User_id = ? AND Status = 'Balance' ORDER BY Created_at DESC";
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setInt(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                int notificationId = rs.getInt("Notification_id");
+                String message = rs.getString("Message");
+                Timestamp date = rs.getTimestamp("Created_at");
+                String status = rs.getString("Status");
+                String notification_link = rs.getString("Notification_link");
+                User_notification notification = new User_notification(notificationId, userId, message, date, status, notification_link);
+                notifications.add(notification);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return notifications;
+    }
+
+    public static User_notification getNotificationByID(int notificationId) {
+        User_notification notification = null;
+        String query = "SELECT * FROM Notification WHERE Notification_id = ?";
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setInt(1, notificationId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                int userId = rs.getInt("User_id");
+                String message = rs.getString("Message");
+                Timestamp date = rs.getTimestamp("Created_at");
+                String status = rs.getString("Status");
+                String notification_link = rs.getString("Notification_link");
+                notification = new User_notification(notificationId, userId, message, date, status, notification_link);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return notification;
+    }
+
     public static void updateStatusNotifications(int notificationId) {
         String query = "UPDATE Notification SET Status = 'Read' WHERE Notification_id = ?";
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
@@ -1079,6 +1288,11 @@ public class Shop_DB {
         } catch (SQLException ex) {
             Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public static void main(String[] args) {
+        Order o = getOrderByShopIdWithStatusNotConfirm(7, 4);
+        System.out.println(o.getDiscountid());
     }
 
 }

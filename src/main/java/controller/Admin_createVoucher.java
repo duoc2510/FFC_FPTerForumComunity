@@ -4,30 +4,26 @@
  */
 package controller;
 
-import com.google.gson.Gson;
-import jakarta.servlet.http.HttpServlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import java.text.Normalizer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import java.util.Date;
+import model.DAO.Shop_DB;
 import model.DAO.User_DB;
+import model.Discount;
 import model.User;
+import notifications.NotificationWebSocket;
 
 /**
  *
- * @author PC
+ * @author Admin
  */
-public class User_SearchSuggestion extends HttpServlet {
+public class Admin_createVoucher extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -46,10 +42,10 @@ public class User_SearchSuggestion extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet User_SearchSuggestion</title>");
+            out.println("<title>Servlet Admin_createVoucher</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet User_SearchSuggestion at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet Admin_createVoucher at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -67,48 +63,7 @@ public class User_SearchSuggestion extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
-         request.setCharacterEncoding("UTF-8");
-    response.setContentType("text/html; charset=UTF-8");
-        User userPersonal = (User) session.getAttribute("USER");
-        if (userPersonal == null) {
-            response.sendRedirect("login.jsp");
-            return;
-        }
-
-        String query = request.getParameter("query");
-        if (query == null || query.trim().isEmpty()) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
-        }
-
-        String lowercaseQuery = removeDiacritics(query.toLowerCase());
-
-        List<User> allUsers = User_DB.getAllUsers();
-
-        List<User> filteredUsers = allUsers.stream()
-                .filter(user -> removeDiacritics(user.getUserFullName().toLowerCase()).contains(lowercaseQuery))
-                .collect(Collectors.toList());
-
-       List<User> uniqueFilteredUsers = new ArrayList<>();
-    Set<String> userFullNames = new HashSet<>();
-
-        for (User user : filteredUsers) {
-        if (userFullNames.add(user.getUserFullName())) {
-            User userInfo = new User(user.getUsername(), user.getUserFullName());
-            uniqueFilteredUsers.add(userInfo);
-        }
-    }
-
-        String jsonResponse = new Gson().toJson(uniqueFilteredUsers);
-        System.out.println("JSON Response: " + jsonResponse); // Log dữ liệu trả về
-        response.getWriter().write(jsonResponse);
-    }
-
-    public static String removeDiacritics(String s) {
-        String normalized = Normalizer.normalize(s, Normalizer.Form.NFD);
-        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
-        return pattern.matcher(normalized).replaceAll("");
+        request.getRequestDispatcher("/admin/createVoucher.jsp").forward(request, response);
     }
 
     /**
@@ -120,9 +75,41 @@ public class User_SearchSuggestion extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("application/json");
+        PrintWriter out = response.getWriter();
+        NotificationWebSocket nw = new NotificationWebSocket();
+        Shop_DB sdb = new Shop_DB();
+        User_DB udb = new User_DB();
+        ArrayList<User> userlist = udb.getAllUsers();
+
+        try {
+            String code = request.getParameter("discountCode");
+            double discountPercent = Double.parseDouble(request.getParameter("discountPercent"));
+            double discountConditionInput = Double.parseDouble(request.getParameter("discountConditionInput"));
+            String validFromStr = request.getParameter("validFrom");
+            String validToStr = request.getParameter("validTo");
+            int usageLimit = Integer.parseInt(request.getParameter("usageLimit"));
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date validFrom = dateFormat.parse(validFromStr);
+            Date validTo = dateFormat.parse(validToStr);
+
+            Discount discount = new Discount(code, 0, 0, discountPercent, validFrom, validTo, usageLimit, discountConditionInput);
+            sdb.addNewDiscount(discount);
+
+            out.print("{\"status\":\"success\"}");
+            for (User u : userlist) {
+                nw.saveNotificationToDatabase(u.getUserId(), "Hot!Hot! Có Voucher hệ thống! Nhanh tay mua ngay!", "/marketplace/allshop");
+                nw.sendNotificationToClient(u.getUserId(), "Hot!Hot! Có Voucher hệ thống! Nhanh tay mua ngay!", "/marketplace/allshop");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            out.print("{\"status\":\"error\"}");
+        } finally {
+            out.close();
+        }
     }
 
     /**

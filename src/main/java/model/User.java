@@ -46,6 +46,18 @@ public class User {
         this.userAvatar = userAvatar;
     }
 
+    public User(String username, String userFullName) {
+        this.username = username;
+        this.userFullName = userFullName;
+    }
+
+    public User(String userEmail, String userPassword, String username, String userAvatar) {
+        this.userEmail = userEmail;
+        this.userPassword = userPassword;
+        this.username = username;
+        this.userAvatar = userAvatar;
+    }
+
     // Constructor
     public User(int userId, String userEmail, String userPassword, int userRole, String username, String userFullName, double userWallet, String userAvatar, String userStory, int userRank, int userScore, Date userCreateDate, String userSex, boolean userActiveStatus) {
         this.userId = userId;

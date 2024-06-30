@@ -28,6 +28,11 @@ public class Discount {
         this.condition = condition;
     }
 
+    public Discount(int shopId, int discountId) {
+        this.shopId = shopId;
+        this.discountId = discountId;
+    }
+
     public Discount() {
     }
 

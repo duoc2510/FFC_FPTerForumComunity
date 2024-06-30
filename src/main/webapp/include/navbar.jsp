@@ -45,15 +45,58 @@
         font-size: 0.8em;
         color: #888;
     }
+    #searchDropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: none;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+      width: 190px; /* Adjust this value as needed */
+ 
+}
 
+#searchDropdown .list-group-item {
+    padding: 10px;
+    cursor: pointer;
+}
+
+#searchDropdown .list-group-item:hover {
+    background-color: #f1f1f1;
+}
+.non-clickable {
+    background-color: #f8f9fa;
+    pointer-events: none;
+    color: #6c757d;
+    cursor: default;
+}
+.non-clickable:hover {
+    background-color: #f8f9fa; /* Không đổi màu khi hover */
+}
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.history-item .close-btn {
+    color: red;
+    cursor: pointer;
+    margin-left: 10px;
+}
 </style>
 
 <header class="app-header">
     <nav class="navbar navbar-expand-lg navbar-light">
 
-        <ul class="navbar-nav w-100" style="max-width: 400px">
+        <ul class="navbar-nav w-100" style="max-width: 400px; position: relative;">
             <form class="d-flex" action="${pageContext.request.contextPath}/search" method="post">
-                <input id="searchInput" type="text" class="form-control me-2" name="query" placeholder="Search for user name or group name" aria-label="Search" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Search for user name or group name">
+                <input id="searchInput" type="text" class="form-control me-2" name="query" placeholder="Search for user name or group name" aria-label="Search" data-bs-toggle="tooltip" data-bs-placement="bottom">
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
             <div id="searchDropdown" class="list-group position-absolute" style="max-height: 200px; overflow-y: auto; display: none;"></div>
@@ -117,10 +160,18 @@
                                 <i class="ti ti-user-circle fs-6"></i>
                                 <p class="mb-0 fs-3">My Account</p>
                             </a>
-                            <a href="${pageContext.request.contextPath}/payment" class="d-flex align-items-center gap-2 dropdown-item">
-                                <i class="ti ti-wallet fs-6"></i>
-                                <p class="mb-0 fs-3" id="walletAmount">Wallet: ${USER.userWallet}</p>
+                            <div class="d-flex align-items-center gap-2">
+                                <a href="${pageContext.request.contextPath}/payment" class="dropdown-item" id="walletLink">
+                                    <p class="mb-0 fs-3" id="walletAmount">Wallet: ${USER.userWallet}</p>
+                                </a>
+                                <i class="ti ti-repeat" id="reloadWalletIcon" style="cursor: pointer;"></i>
+                            </div>
+                            <a href="${pageContext.request.contextPath}/profile/setting"
+                               class="d-flex align-items-center gap-2 dropdown-item">
+                                <i class="ti ti-database fs-6 "></i>
+                                <p class="mb-0 fs-3">Balance Wallet</p>
                             </a>
+
                             <a href="${pageContext.request.contextPath}/logout"
                                class="btn btn-outline-danger mx-3 mt-2 d-block">Logout</a>
                         </div>
@@ -192,6 +243,23 @@
                 });
             }
 
+            // Handle click event for reloading wallet
+            $('#reloadWalletIcon').on('click', function (event) {
+                event.preventDefault(); // Prevent the default action
+
+                $.ajax({
+                    url: contextPath + '/reloadwallet', // Change this to your actual endpoint
+                    method: 'POST',
+                    success: function (data) {
+                        // Assuming the response contains the updated wallet amount
+                        $('#walletAmount').text('Wallet: ' + data.newWalletAmount);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Failed to reload wallet:', error);
+                    }
+                });
+            });
+
             $.ajax({
                 url: contextPath + '/notifications',
                 method: 'GET',
@@ -224,54 +292,136 @@
         });
 
 $(document).ready(function () {
-    $('#searchInput').on('input', function () {
-        var query = $(this).val();
-        if (query.length > 1) {
-            $.ajax({
-                url: '${pageContext.request.contextPath}/searchSuggestions',
-                type: 'GET',
-                data: { query: query },
-                success: function (data) {
-                    try {
-                        console.log('Received data:', data); // Kiểm tra phản hồi từ servlet
-                        var suggestions = JSON.parse(data);
-                        var dropdown = $('#searchDropdown');
-                        dropdown.empty();
-                        suggestions.forEach(function (item) {
-                            dropdown.append('<a href="#" class="list-group-item list-group-item-action">' + item + '</a>');
-                        });
-                        dropdown.show();
-                    } catch (e) {
-                        console.error('JSON parse error: ', e);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error('AJAX request error: ', status, error);
+    var searchInput = $('#searchInput');
+    var searchDropdown = $('#searchDropdown');
+    var searchHistoryKey = 'searchHistory';
+
+    // Load search history from localStorage
+    var searchHistory = JSON.parse(localStorage.getItem(searchHistoryKey)) || [];
+    console.log("Loaded search history:", searchHistory);
+
+    // Function to save search query to search history
+    function saveToSearchHistory(query) {
+        // Remove query if already exists to maintain uniqueness
+        var index = searchHistory.indexOf(query);
+        if (index !== -1) {
+            searchHistory.splice(index, 1);
+        }
+        // Add query to beginning of search history
+        searchHistory.unshift(query);
+        // Limit search history to 10 items (adjust as needed)
+        if (searchHistory.length > 10) {
+            searchHistory.pop();
+        }
+        // Save updated search history to localStorage
+        localStorage.setItem(searchHistoryKey, JSON.stringify(searchHistory));
+        console.log("Updated search history:", searchHistory);
+    }
+
+    // Function to render search history dropdown
+    function renderSearchHistory() {
+        console.log("Rendering search history:", searchHistory);
+        searchDropdown.empty();
+
+        // Add "History" title
+        searchDropdown.append('<div class="list-group-item list-group-item-secondary non-clickable">History</div>');
+
+        searchHistory.forEach(function (query) {
+            searchDropdown.append('<div class="list-group-item history-item">' +
+                '<span class="query-text">' + query + '</span>' +
+                '<span class="close-btn">&times;</span>' +
+            '</div>');
+        });
+        searchDropdown.show();
+    }
+
+    // Function to perform search suggestions
+    function performSearch(query) {
+        $.ajax({
+            url: '${pageContext.request.contextPath}/searchSuggestions',
+            type: 'GET',
+            data: { query: query },
+            success: function (data) {
+                try {
+                    var suggestions = JSON.parse(data);
+                    searchDropdown.empty();
+                    suggestions.forEach(function (user) {
+                        searchDropdown.append('<a href="${pageContext.request.contextPath}/profile?username=' + user.username + '" class="list-group-item list-group-item-action">' + user.userFullName + '</a>');
+                    });
+                    searchDropdown.show();
+                } catch (e) {
+                    console.error('JSON parse error: ', e);
                 }
-            });
+            },
+            error: function (xhr, status, error) {
+                console.error('AJAX request error: ', status, error);
+            }
+        });
+    }
+
+    // Event handler for search input focus
+    searchInput.on('focus', function () {
+        console.log("Search input focused");
+        if (searchHistory.length > 0) {
+            renderSearchHistory();
         } else {
-            $('#searchDropdown').hide();
+            console.log("No search history to show");
         }
     });
 
-    $(document).on('click', '.list-group-item', function () {
-        var text = $(this).text();
-        $('#searchInput').val(text);
-        $('#searchDropdown').hide();
-    });
-
-    $('#searchInput').on('focus', function () {
-        if ($('#searchDropdown').children().length > 0) {
-            $('#searchDropdown').show();
+    // Event handler for typing in search input
+    searchInput.on('input', function () {
+        var query = $(this).val();
+        console.log("Search input value:", query);
+        if (query.length > 1) {
+            performSearch(query);
+        } else {
+            searchDropdown.hide();
         }
     });
 
+    // Event delegation for clicking on history items and close buttons
+    $(document).on('click', '.history-item', function (event) {
+        var target = $(event.target);
+        if (target.hasClass('close-btn')) {
+            // Handle delete history item
+            var query = target.siblings('.query-text').text().trim();
+            searchHistory = searchHistory.filter(function (item) {
+                return item !== query;
+            });
+            localStorage.setItem(searchHistoryKey, JSON.stringify(searchHistory));
+            renderSearchHistory();
+        } else {
+            event.preventDefault();
+            var query = $(this).find('.query-text').text().trim();
+            searchInput.val(query);
+            saveToSearchHistory(query); // Save selected history item to history
+            performSearch(query); // Perform search based on selected history item
+            searchDropdown.hide();
+        }
+    });
+
+    // Click handler to hide dropdown when clicking outside searchInput and searchDropdown
     $(document).click(function (event) {
         if (!$(event.target).closest('#searchInput, #searchDropdown').length) {
-            $('#searchDropdown').hide();
+            searchDropdown.hide();
+        }
+    });
+
+    // Event handler for search form submission to save the query
+    $('.d-flex').on('submit', function (event) {
+        var query = searchInput.val().trim();
+        if (query.length > 0) {
+            saveToSearchHistory(query);
         }
     });
 });
+
+
+
+
+
+
     </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 

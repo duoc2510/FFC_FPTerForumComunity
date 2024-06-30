@@ -13,12 +13,6 @@ import model.DAO.User_payment;
 public class Payment extends HttpServlet {
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        request.getRequestDispatcher("/user/payment.jsp").forward(request, response);
-    }
-
-    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
@@ -26,10 +20,10 @@ public class Payment extends HttpServlet {
         if (action != null && !action.isEmpty()) {
             if (action.equals("napTien")) {
                 handleNapTien(request, response);
-                response.sendRedirect(request.getContextPath() + "/payment");
+                response.sendRedirect(request.getContextPath() + "/wallet/deposit");
             } else if (action.equals("rutTien")) {
                 handleRutTien(request, response);
-                response.sendRedirect(request.getContextPath() + "/payment");
+                response.sendRedirect(request.getContextPath() + "/wallet/withdraw");
             }
         } else {
         }

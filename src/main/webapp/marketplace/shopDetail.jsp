@@ -94,7 +94,7 @@
                 <div class="w-100 row container">
                     <div class="col-md">
                         <div class="card mx-2">
-                            <img class="card-img-top" src="${pageContext.request.contextPath}/static/${shop.image}" alt="Card image cap">
+                            <img style="height: 100%;" class="card-img-top" src="${pageContext.request.contextPath}/static/${shop.image}" alt="Card image cap">
                             <div class="card-body">
                                 <c:set var="orderlist" value="${Shop_DB.getOrdersByShopIdWithStatusSuccess(shop.shopID)}" />
                                 <c:set var="starshop" value="0"/>
@@ -108,10 +108,13 @@
                                     </c:forEach> 
                                 </h5>
                                 <c:set var="countorder" value="${Shop_DB.countSuccessAndCompletedOrdersByShopID(SHOP.shopID)}" />
-                                <p class="card-text">Đã bán: ${countorder} Đơn</p>
+                                <p class="card-text">Đã hoàn thành: ${countorder} Đơn</p>
                                 <p class="card-text">${shop.phone}</p>
                                 <p class="card-text">${shop.campus}</p>
-                                <p class="card-text">${shop.description}</p>
+                                <p class="card-text">Giới thiệu: ${shop.description}</p>
+                                <c:if test="${shop.ownerID != USER.userId}">
+                                    <a href="${pageContext.request.contextPath}/marketplace/confirmcontinue?shopid=${shopid}" class="btn btn-primary">Tiếp tục mua</a>
+                                </c:if>
                             </div>
                         </div>
                     </div>
