@@ -175,8 +175,8 @@ public class Admin_ManageUsers extends HttpServlet {
             boolean managerRevoked = Report_DB.revokeManager(userId);
 
             if (managerRevoked) {
-                nw.saveNotificationToDatabase(userId,  " Bạn đã bị thu hồi quyền manager!", "/#");
-            nw.saveNotificationToDatabase(userId,  " Bạn đã bị thu hồi quyền manager!", "/#");
+                nw.saveNotificationToDatabase(userId,  " Bạn đã bị thu hồi quyền manager!", "");
+            nw.saveNotificationToDatabase(userId,  " Bạn đã bị thu hồi quyền manager!", "");
                 request.getSession().setAttribute("msg", "Manager role has been revoked successfully.");
             } else {
                 request.getSession().setAttribute("msg", "Failed to revoke manager role.");
@@ -187,8 +187,8 @@ public class Admin_ManageUsers extends HttpServlet {
             boolean managerRevoked = Report_DB.revokeManager(userId);
 
             if (managerRevoked) {
-                nw.saveNotificationToDatabase(userId,  " Bạn đã bị thu hồi quyền manager!", "/#");
-            nw.saveNotificationToDatabase(userId,  " Bạn đã bị thu hồi quyền manager!", "/#");
+                nw.saveNotificationToDatabase(userId,  " Bạn đã bị thu hồi quyền manager!", "");
+            nw.saveNotificationToDatabase(userId,  " Bạn đã bị thu hồi quyền manager!", "");
                 request.getSession().setAttribute("msg", "Manager role has been revoked successfully.");
             } else {
                 request.getSession().setAttribute("msg", "Failed to revoke manager role.");
@@ -200,8 +200,8 @@ public class Admin_ManageUsers extends HttpServlet {
             boolean setM = Report_DB.setManager(userId);
 
             if (setM) {
-            nw.saveNotificationToDatabase(userId,  " Chúc mừng bạn đã trở thành Manager! Hãy bấm vào thông báo này để được cập nhật lại quyền của bạn nhé", "/#");
-            nw.sendNotificationToClient(userId,  " Chúc mừng bạn đã trở thành Manager! Hãy bấm vào thông báo này để được cập nhật lại quyền của bạn nhé", "/#");
+            nw.saveNotificationToDatabase(userId,  " Chúc mừng bạn đã trở thành Manager! Hãy bấm vào thông báo này để được cập nhật lại quyền của bạn nhé", "/manager/report");
+            nw.sendNotificationToClient(userId,  " Chúc mừng bạn đã trở thành Manager! Hãy bấm vào thông báo này để được cập nhật lại quyền của bạn nhé", "/manager/report");
                 request.getSession().setAttribute("msg", "User role has been set successfully.");
             } else {
                 request.getSession().setAttribute("msg", "Failed to set manager role.");
@@ -212,8 +212,8 @@ public class Admin_ManageUsers extends HttpServlet {
             boolean setMInAllUser = Report_DB.setManager(userId);
             
             if (setMInAllUser) {
-            nw.saveNotificationToDatabase(userId,  " Chúc mừng bạn đã trở thành Manager! Hãy bấm vào thông báo này để được cập nhật lại quyền của bạn nhé", "/#");
-           nw.sendNotificationToClient(userId,  " Chúc mừng bạn đã trở thành Manager! Hãy bấm vào thông báo này để được cập nhật lại quyền của bạn nhé", "/#");
+            nw.saveNotificationToDatabase(userId,  " Chúc mừng bạn đã trở thành Manager! Hãy bấm vào thông báo này để được cập nhật lại quyền của bạn nhé", "/manager/report");
+           nw.sendNotificationToClient(userId,  " Chúc mừng bạn đã trở thành Manager! Hãy bấm vào thông báo này để được cập nhật lại quyền của bạn nhé", "/manager/report");
                 request.getSession().setAttribute("msg", "User role has been set successfully.");
             } else {
                 request.getSession().setAttribute("msg", "Failed to set manager role.");
@@ -242,8 +242,8 @@ public class Admin_ManageUsers extends HttpServlet {
         } else if ("approveM".equals(action)) {
             int userId = Integer.parseInt(request.getParameter("userId"));
             boolean approveSuccess = Report_DB.approveManager(userId);
-            nw.saveNotificationToDatabase(userId,  " Đơn đăng kí của bạn đã được duyệt.Chúc mừng bạn đã trở thành Manager! Hãy bấm vào thông báo này để được cập nhật lại quyền của bạn nhé", "/#");
-            nw.sendNotificationToClient(userId,  " Đơn đăng kí của bạn đã được duyệt.Chúc mừng bạn đã trở thành Manager! Hãy bấm vào thông báo này để được cập nhật lại quyền của bạn nhé", "/#");
+            nw.saveNotificationToDatabase(userId,  " Đơn đăng kí của bạn đã được duyệt.Chúc mừng bạn đã trở thành Manager! Hãy bấm vào thông báo này để được cập nhật lại quyền của bạn nhé", "/manager/report");
+            nw.sendNotificationToClient(userId,  " Đơn đăng kí của bạn đã được duyệt.Chúc mừng bạn đã trở thành Manager! Hãy bấm vào thông báo này để được cập nhật lại quyền của bạn nhé", "/manager/report");
             if (approveSuccess) {
                 request.getSession().setAttribute("msg", "User has been approved as manager successfully.");
             } else {

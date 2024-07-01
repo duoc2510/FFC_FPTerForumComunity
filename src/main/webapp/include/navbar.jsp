@@ -2,11 +2,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="java.util.List" %>
 <%@ page import="com.google.gson.Gson" %>
-                               <%
-    // Lấy đối tượng USER từ session
-    User user = (User) session.getAttribute("USER");
-    // Chuyển đối tượng USER thành chuỗi JSON
-    String userJson = new Gson().toJson(user);
+<%
+// Lấy đối tượng USER từ session
+User user = (User) session.getAttribute("USER");
+// Chuyển đối tượng USER thành chuỗi JSON
+String userJson = new Gson().toJson(user);
 %>
 
 
@@ -52,49 +52,49 @@
         color: #888;
     }
     #searchDropdown {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    display: none;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    max-height: 200px;
-    overflow-y: auto;
-      width: 190px; /* Adjust this value as needed */
- 
-}
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        display: none;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        max-height: 200px;
+        overflow-y: auto;
+        width: 190px; /* Adjust this value as needed */
 
-#searchDropdown .list-group-item {
-    padding: 10px;
-    cursor: pointer;
-}
+    }
 
-#searchDropdown .list-group-item:hover {
-    background-color: #f1f1f1;
-}
-.non-clickable {
-    background-color: #f8f9fa;
-    pointer-events: none;
-    color: #6c757d;
-    cursor: default;
-}
-.non-clickable:hover {
-    background-color: #f8f9fa; /* Không đổi màu khi hover */
-}
-.history-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+    #searchDropdown .list-group-item {
+        padding: 10px;
+        cursor: pointer;
+    }
 
-.history-item .close-btn {
-    color: red;
-    cursor: pointer;
-    margin-left: 10px;
-}
+    #searchDropdown .list-group-item:hover {
+        background-color: #f1f1f1;
+    }
+    .non-clickable {
+        background-color: #f8f9fa;
+        pointer-events: none;
+        color: #6c757d;
+        cursor: default;
+    }
+    .non-clickable:hover {
+        background-color: #f8f9fa; /* Không đổi màu khi hover */
+    }
+    .history-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .history-item .close-btn {
+        color: red;
+        cursor: pointer;
+        margin-left: 10px;
+    }
 </style>
 
 <header class="app-header">
@@ -188,9 +188,9 @@
 
 
     </nav>
-<script type="text/javascript">
+    <script type="text/javascript">
     var USER = <%= userJson %>; // Chuyển đổi chuỗi JSON thành đối tượng JavaScript
-</script>
+    </script>
     <script>
         var contextPath = '<%= request.getContextPath() %>';
         var oldNotificationCount = 0;
@@ -301,132 +301,132 @@
             });
         });
 
-$(document).ready(function () {
-    var userId = USER.userId; // Sử dụng USER.userId trực tiếp
-    var searchInput = $('#searchInput');
-    var searchDropdown = $('#searchDropdown');
-    var searchHistoryKey = 'searchHistory_' + userId;
+        $(document).ready(function () {
+            var userId = USER.userId; // Sử dụng USER.userId trực tiếp
+            var searchInput = $('#searchInput');
+            var searchDropdown = $('#searchDropdown');
+            var searchHistoryKey = 'searchHistory_' + userId;
 
-    // Load search history from localStorage
-    var searchHistory = JSON.parse(localStorage.getItem(searchHistoryKey)) || [];
-    console.log("Loaded search history for user " + userId + ":", searchHistory);
+            // Load search history from localStorage
+            var searchHistory = JSON.parse(localStorage.getItem(searchHistoryKey)) || [];
+            console.log("Loaded search history for user " + userId + ":", searchHistory);
 
-    // Function to save search query to search history
-    function saveToSearchHistory(query) {
-        // Remove query if already exists to maintain uniqueness
-        var index = searchHistory.indexOf(query);
-        if (index !== -1) {
-            searchHistory.splice(index, 1);
-        }
-        // Add query to beginning of search history
-        searchHistory.unshift(query);
-        // Limit search history to 10 items (adjust as needed)
-        if (searchHistory.length > 10) {
-            searchHistory.pop();
-        }
-        // Save updated search history to localStorage
-        localStorage.setItem(searchHistoryKey, JSON.stringify(searchHistory));
-        console.log("Updated search history for user " + userId + ":", searchHistory);
-    }
-
-    // Function to render search history dropdown
-    function renderSearchHistory() {
-        console.log("Rendering search history for user " + userId + ":", searchHistory);
-        searchDropdown.empty();
-
-        // Add "History" title
-        searchDropdown.append('<div class="list-group-item list-group-item-secondary non-clickable">History</div>');
-
-        searchHistory.forEach(function (query) {
-            searchDropdown.append('<div class="list-group-item history-item">' +
-                '<span class="query-text">' + query + '</span>' +
-                '<span class="close-btn">&times;</span>' +
-            '</div>');
-        });
-        searchDropdown.show();
-    }
-
-    // Function to perform search suggestions
-    function performSearch(query) {
-        $.ajax({
-            url: '${pageContext.request.contextPath}/searchSuggestions',
-            type: 'GET',
-            data: { query: query },
-            success: function (data) {
-                try {
-                    var suggestions = JSON.parse(data);
-                    searchDropdown.empty();
-                    suggestions.forEach(function (user) {
-                        searchDropdown.append('<a href="${pageContext.request.contextPath}/profile?username=' + user.username + '" class="list-group-item list-group-item-action">' + user.userFullName + '</a>');
-                    });
-                    searchDropdown.show();
-                } catch (e) {
-                    console.error('JSON parse error: ', e);
+            // Function to save search query to search history
+            function saveToSearchHistory(query) {
+                // Remove query if already exists to maintain uniqueness
+                var index = searchHistory.indexOf(query);
+                if (index !== -1) {
+                    searchHistory.splice(index, 1);
                 }
-            },
-            error: function (xhr, status, error) {
-                console.error('AJAX request error: ', status, error);
+                // Add query to beginning of search history
+                searchHistory.unshift(query);
+                // Limit search history to 10 items (adjust as needed)
+                if (searchHistory.length > 10) {
+                    searchHistory.pop();
+                }
+                // Save updated search history to localStorage
+                localStorage.setItem(searchHistoryKey, JSON.stringify(searchHistory));
+                console.log("Updated search history for user " + userId + ":", searchHistory);
             }
-        });
-    }
 
-    // Event handler for search input focus
-    searchInput.on('focus', function () {
-        console.log("Search input focused");
-        if (searchHistory.length > 0) {
-            renderSearchHistory();
-        } else {
-            console.log("No search history to show");
-        }
-    });
+            // Function to render search history dropdown
+            function renderSearchHistory() {
+                console.log("Rendering search history for user " + userId + ":", searchHistory);
+                searchDropdown.empty();
 
-    // Event handler for typing in search input
-    searchInput.on('input', function () {
-        var query = $(this).val();
-        console.log("Search input value:", query);
-        if (query.length > 1) {
-            performSearch(query);
-        } else {
-            searchDropdown.hide();
-        }
-    });
+                // Add "History" title
+                searchDropdown.append('<div class="list-group-item list-group-item-secondary non-clickable">History</div>');
 
-    // Event delegation for clicking on history items and close buttons
-    $(document).on('click', '.history-item', function (event) {
-        var target = $(event.target);
-        if (target.hasClass('close-btn')) {
-            // Handle delete history item
-            var query = target.siblings('.query-text').text().trim();
-            searchHistory = searchHistory.filter(function (item) {
-                return item !== query;
+                searchHistory.forEach(function (query) {
+                    searchDropdown.append('<div class="list-group-item history-item">' +
+                            '<span class="query-text">' + query + '</span>' +
+                            '<span class="close-btn">&times;</span>' +
+                            '</div>');
+                });
+                searchDropdown.show();
+            }
+
+            // Function to perform search suggestions
+            function performSearch(query) {
+                $.ajax({
+                    url: '${pageContext.request.contextPath}/searchSuggestions',
+                    type: 'GET',
+                    data: {query: query},
+                    success: function (data) {
+                        try {
+                            var suggestions = JSON.parse(data);
+                            searchDropdown.empty();
+                            suggestions.forEach(function (user) {
+                                searchDropdown.append('<a href="${pageContext.request.contextPath}/profile?username=' + user.username + '" class="list-group-item list-group-item-action">' + user.userFullName + '</a>');
+                            });
+                            searchDropdown.show();
+                        } catch (e) {
+                            console.error('JSON parse error: ', e);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('AJAX request error: ', status, error);
+                    }
+                });
+            }
+
+            // Event handler for search input focus
+            searchInput.on('focus', function () {
+                console.log("Search input focused");
+                if (searchHistory.length > 0) {
+                    renderSearchHistory();
+                } else {
+                    console.log("No search history to show");
+                }
             });
-            localStorage.setItem(searchHistoryKey, JSON.stringify(searchHistory));
-            renderSearchHistory();
-        } else {
-            event.preventDefault();
-            var query = $(this).find('.query-text').text().trim();
-            searchInput.val(query);
-            saveToSearchHistory(query); // Save selected history item to history
-            performSearch(query); // Perform search based on selected history item
-            searchDropdown.hide();
-        }
-    });
 
-    // Click handler to hide dropdown when clicking outside searchInput and searchDropdown
-    $(document).click(function (event) {
-        if (!$(event.target).closest('#searchInput, #searchDropdown').length) {
-            searchDropdown.hide();
-        }
-    });
+            // Event handler for typing in search input
+            searchInput.on('input', function () {
+                var query = $(this).val();
+                console.log("Search input value:", query);
+                if (query.length > 1) {
+                    performSearch(query);
+                } else {
+                    searchDropdown.hide();
+                }
+            });
 
-    // Event handler for search form submission to save the query
-    $('.d-flex').on('submit', function (event) {
-        var query = searchInput.val().trim();
-        if (query.length > 0) {
-            saveToSearchHistory(query);
-        }
-    });
-});
+            // Event delegation for clicking on history items and close buttons
+            $(document).on('click', '.history-item', function (event) {
+                var target = $(event.target);
+                if (target.hasClass('close-btn')) {
+                    // Handle delete history item
+                    var query = target.siblings('.query-text').text().trim();
+                    searchHistory = searchHistory.filter(function (item) {
+                        return item !== query;
+                    });
+                    localStorage.setItem(searchHistoryKey, JSON.stringify(searchHistory));
+                    renderSearchHistory();
+                } else {
+                    event.preventDefault();
+                    var query = $(this).find('.query-text').text().trim();
+                    searchInput.val(query);
+                    saveToSearchHistory(query); // Save selected history item to history
+                    performSearch(query); // Perform search based on selected history item
+                    searchDropdown.hide();
+                }
+            });
+
+            // Click handler to hide dropdown when clicking outside searchInput and searchDropdown
+            $(document).click(function (event) {
+                if (!$(event.target).closest('#searchInput, #searchDropdown').length) {
+                    searchDropdown.hide();
+                }
+            });
+
+            // Event handler for search form submission to save the query
+            $('.d-flex').on('submit', function (event) {
+                var query = searchInput.val().trim();
+                if (query.length > 0) {
+                    saveToSearchHistory(query);
+                }
+            });
+        });
 
 
 

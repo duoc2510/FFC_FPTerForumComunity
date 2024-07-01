@@ -107,7 +107,7 @@
                                     <thead>
                                         <tr>
                                             <th>Avatar</th>
-                                            <th>Reporter id</th>
+                                           
                                             <th>Chủ bài viết</th>
                                             <th>Nội dung bài viết</th>
                                             <th>Lý do</th>
@@ -126,7 +126,7 @@
                                                     <img src="${pageContext.request.contextPath}/${reportedPosts.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
                                                 </a>
                                             </td>
-                                            <td>${reportedPosts.reporter_id}</td>
+                                           
                                             <td>${reportedPosts.user.username}</td>
                                             <td>${reportedPosts.post.content}</td>
                                             <td>${reportedPosts.reason}</td>
@@ -141,7 +141,7 @@
                                                 <form id="banUserForm_${reportedPosts.user.userId}" action="${pageContext.request.contextPath}/manager/report" method="post">
                                                     <input type="hidden" name="userId" value="${reportedPosts.user.userId}">
                                                      <input type="hidden" name="username" value="${reportedPosts.user.username}">
-                                                      <input type="hidden" name="reporterId" value="${reportedPosts.reporter_id}">
+                                                     
                                                     <input type="hidden" name="action" value="banUser">
                                                     <button type="button" class="btn btn-danger" onclick="confirmBan('banUserForm_${reportedPosts.user.userId}')">Ban người dùng</button>
                                                 </form>
@@ -161,7 +161,7 @@
                                                     <div class="modal-body">
                                                         <form id="banPostFormReason_${reportedPosts.post.postId}" action="${pageContext.request.contextPath}/manager/report" method="post">
                                                             <input type="hidden" name="postId" value="${reportedPosts.post.postId}">
-                                                            <input type="hidden" name="reporterId" value="${reportedPosts.reporter_id}">
+                                                            
                                                             <input type="hidden" name="reportedId" value="${reportedPosts.post.userId}">
                                                             <input type="hidden" name="postContent" value="${reportedPosts.post.content}">
                                                             <input type="hidden" name="action" value="banPost">   
@@ -193,7 +193,7 @@
                                         <tr>
                                             
                                             <th>Avatar</th>
-                                            <th>Reporter id</th>
+                                           
                                             <th>Tên người dùng</th>
                                             <th>Lý do</th>
                                             <th>Thao tác</th>
@@ -211,13 +211,13 @@
                                                     <img src="${pageContext.request.contextPath}/${reportedUsers.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
                                                 </a>
                                             </td>
-                                            <td>${reportedUsers.reporter_id}</td>
+                                            
                                             <td>${reportedUsers.user.username}</td>
                                             <td>${reportedUsers.reason}</td>
                                             <td>
                                                 <form id="banUserForm_${reportedUsers.user.userId}" action="${pageContext.request.contextPath}/manager/report" method="post">
                                                     <input type="hidden" name="userId" value="${reportedUsers.user.userId}">
-                                                    <input type="hidden" name="reporterId" value="${reportedUsers.reporter_id}">
+                                                    
                                                     <input type="hidden" name="username" value="${reportedUsers.user.username}">
                                                     <input type="hidden" name="action" value="banUser">
                                                     <button type="button" class="btn btn-danger" onclick="confirmBan('banUserForm_${reportedUsers.user.userId}')">Ban người dùng</button>

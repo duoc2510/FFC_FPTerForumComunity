@@ -74,6 +74,7 @@
                                                                 <form id="banUserForm_${report.user.userId}" action="${pageContext.request.contextPath}/admin/handelRpManager" method="post">
                                                                     <input type="hidden" name="userId" value="${report.user.userId}">
                                                                     <input type="hidden" name="reporterId" value="${report.reporter_id}">
+                                                                    <input type="hidden" name="username" value="${report.user.username}">
                                                                     <input type="hidden" name="action" value="banUser">
                                                                     <button type="button" class="dropdown-item" onclick="confirmBan('banUserForm_${report.user.userId}')">Ban manager</button>
                                                                 </form>
@@ -81,6 +82,7 @@
                                                             <li>
                                                                 <form id="revokeManagerForm_${report.user.userId}" action="${pageContext.request.contextPath}/admin/handelRpManager" method="post">
                                                                     <input type="hidden" name="userId" value="${report.user.userId}">
+                                                                    <input type="hidden" name="username" value="${report.user.username}">
                                                                     <input type="hidden" name="action" value="revokeM">
                                                                     <button type="button" class="dropdown-item" onclick="confirmRevoke('revokeManagerForm_${report.user.userId}')">Revoke manager</button>
                                                                 </form>
@@ -165,6 +167,7 @@
                                                                 <form id="banUserForm_${report.user.userId}" action="${pageContext.request.contextPath}/admin/handelRpManager" method="post">
                                                                     <input type="hidden" name="userId" value="${report.user.userId}">
                                                                     <input type="hidden" name="action" value="banUser">
+                                                                    <input type="hidden" name="username" value="${report.user.username}">
                                                                     <button type="button" class="dropdown-item" onclick="confirmBan('banUserForm_${report.user.userId}')">Ban manager</button>
                                                                 </form>
                                                             </li>
