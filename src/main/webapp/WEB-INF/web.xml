@@ -238,7 +238,7 @@
     </servlet>
     <servlet>
         <servlet-name>Payment</servlet-name>
-        <servlet-class>controller.Payment</servlet-class>
+        <servlet-class>controller.User_payment</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>chatAI</servlet-name>
@@ -331,6 +331,10 @@
     <servlet>
         <servlet-name>Shop_allshop</servlet-name>
         <servlet-class>controller.Shop_allshop</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Admin_transaction</servlet-name>
+        <servlet-class>controller.Admin_transaction</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>PostComment</servlet-name>
@@ -615,6 +619,10 @@
     <servlet-mapping>
         <servlet-name>Shop_allshop</servlet-name>
         <url-pattern>/martketplace/allshop</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Admin_transaction</servlet-name>
+        <url-pattern>/admin/transaction</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index_guest.jsp</welcome-file>

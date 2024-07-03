@@ -7,11 +7,20 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.User;
 import java.io.IOException;
+import java.util.List;
 import model.DAO.User_DB;
-import model.DAO.User_payment;
+import model.DAO.Payment_DB;
+import model.Payment;
 import notifications.NotificationWebSocket;
 
-public class Payment extends HttpServlet {
+public class User_payment extends HttpServlet {
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        List<Payment> payments = Payment_DB.getAllPayments();
+        request.setAttribute("payments", payments);
+        request.getRequestDispatcher("payments.jsp").forward(request, response);
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -47,7 +56,7 @@ public class Payment extends HttpServlet {
             double wallet = user.getUserWallet();
 
             // Gọi phương thức xử lý nạp tiền từ lớp DAO
-            boolean success = User_payment.napTien(atmNumber, userId, bankName, amount, code);
+            boolean success = Payment_DB.napTien(atmNumber, userId, bankName, amount, code);
 
             // Đặt message vào session
             String message = success ? "Nạp tiền thành công!" : "Nạp tiền thất bại!";
@@ -87,7 +96,7 @@ public class Payment extends HttpServlet {
             String bankName = request.getParameter("bankName");
 
             // Gọi phương thức xử lý rút tiền từ lớp DAO
-            boolean success = User_payment.rutTien(userId, atmNumber, bankName, amount);
+            boolean success = Payment_DB.rutTien(userId, atmNumber, bankName, amount);
 
             // Đặt message vào session
             String message = success ? "Rút tiền thành công!" : "Rút tiền thất bại!";

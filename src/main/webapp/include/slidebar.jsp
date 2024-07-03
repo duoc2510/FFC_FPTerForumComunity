@@ -76,6 +76,11 @@
                                     <span class="hide-menu">- View feedback</span>
                                 </a>
                             </li>
+                            <li class="sidebar-item sub-item">
+                                <a href="${pageContext.request.contextPath}/admin/transaction" class="sidebar-link">
+                                    <span class="hide-menu">- Transaction Manage</span>
+                                </a>
+                            </li>
                         </ul>
                     </li>
                 </c:if>

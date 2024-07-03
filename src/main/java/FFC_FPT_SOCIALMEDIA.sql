@@ -135,7 +135,12 @@ GO
 -- Tạo bảng Payment: lưu thông tin về thanh toán
 CREATE TABLE Payment (
     Payment_id INT IDENTITY(1,1) PRIMARY KEY, -- id tự động tăng cho thanh toán
-    Payment_detail NVARCHAR(255) NOT NULL, -- Chi tiết thanh toán, không được null
+	ATMNumber NVARCHAR(250),
+	ATMName	NVARCHAR(250),
+	ATMBank NVARCHAR(250),
+	Amount NVARCHAR(250),
+	Status NVARCHAR(250),
+	Reason NVARCHAR(250),
     User_id INT NOT NULL, -- id của người dùng, không được null
     FOREIGN KEY (User_id) REFERENCES Users(User_id) -- Khóa ngoại tham chiếu đến người dùng
 );
@@ -247,18 +252,6 @@ CREATE TABLE Post (
 	FOREIGN KEY (User_id) REFERENCES Users(User_id), -- Khóa ngoại tham chiếu đến người đăng bài viết
     FOREIGN KEY (Group_id) REFERENCES [Group](Group_id), -- Khóa ngoại tham chiếu đến nhóm
     FOREIGN KEY (Topic_id) REFERENCES Topic(Topic_id) -- Khóa ngoại tham chiếu đến chủ đề
-);
-CREATE TABLE Post_share (
-	Share_id int  IDENTITY(1,1) PRIMARY KEY,
-    Post_id INT  NOT NULL, -- id tự động tăng cho bài viết
-    User_id INT NOT NULL, -- id của người đăng bài viết
-    Share_content NVARCHAR(255) NOT NULL, -- Nội dung bài viết
-    createDate DATETIME DEFAULT GETDATE(), -- Ngày tạo bài viết, mặc định là ngày hiện tại
-    Share_status NVARCHAR(50), -- Trạng thái của bài viết
-	Share_postStatus NVARCHAR(50), -- Trạng thái bài viết (duyệt, chưa duyệt)
-    Reason NVARCHAR(255), -- Lý do (nếu có) của trạng thái bài viết
-	FOREIGN KEY (User_id) REFERENCES Users(User_id), -- Khóa ngoại tham chiếu đến người đăng bài viết
-	FOREIGN KEY (Post_id) REFERENCES Post(Post_id), -- Khóa ngoại tham chiếu đến người đăng bài viết
 );
 GO
 -- Tạo bảng Comment: lưu thông tin về bình luận của bài viết
