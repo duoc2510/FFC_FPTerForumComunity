@@ -1,14 +1,13 @@
 -- Tạo cơ sở dữ liệu
 CREATE DATABASE FFCFPTerForumComunity;
 GO
-
 -- Sử dụng cơ sở dữ liệu
 USE FFCFPTerForumComunity;
 GO
 -- Bảng Users
 CREATE TABLE Users (
     Username NVARCHAR(100) NOT NULL, -- Tên người dùng, bắt buộc
-    usernameVip NVARCHAR(100), -- Tên người dùng VIP
+    usernameVip NVARCHAR(100),
     User_id INT IDENTITY(1,1) PRIMARY KEY, -- ID tự động tăng cho người dùng
     User_email NVARCHAR(255) NOT NULL, -- Email người dùng, bắt buộc
     User_password NVARCHAR(255) NOT NULL, -- Mật khẩu người dùng, bắt buộc
@@ -70,26 +69,23 @@ CREATE TABLE Discount (
     CONSTRAINT fk_user_discount FOREIGN KEY (Owner_id) REFERENCES Users(User_id) -- Tham chiếu đến User_id trong bảng Users
 );
 GO
-
 -- Bảng Order
 CREATE TABLE [Order] (
     User_id INT NOT NULL, -- ID của người dùng, bắt buộc
     Order_id INT IDENTITY(1,1) PRIMARY KEY, -- ID tự động tăng cho đơn hàng
     Order_date DATETIME DEFAULT GETDATE(), -- Ngày đặt hàng, mặc định là ngày hiện tại
-        Order_status NVARCHAR(50) CHECK (Order_status IN ('null','Pending','Accept','Completed','Cancelled','Success','Fail','NotConfirm','NotConfirmNew')) NOT NULL, -- Trạng thái của đơn hàng    Total_amount DECIMAL(10, 2) NOT NULL, -- Tổng số tiền của đơn hàng, bắt buộc
-    Total_amount DECIMAL(10, 2) NOT NULL, -- Tổng số tiền của đơn hàng, bắt buộc
+    Order_status NVARCHAR(50) CHECK (Order_status IN ('null','Pending','Accept','Completed','Cancelled','Success','Fail','NotConfirm','NotConfirmNew')) NOT NULL, -- Trạng thái của đơn hàng    Total_amount DECIMAL(10, 2) NOT NULL, -- Tổng số tiền của đơn hàng, bắt buộc
     Note NVARCHAR(MAX), -- Ghi chú
     Discount_id INT, -- ID của mã giảm giá
     Feedback NVARCHAR(MAX), -- Phản hồi từ người dùng -thêm
 	Star int default 5,--số sao đánh giá   -- thêm
+	Total_amount DECIMAL(10, 2) NOT NULL, -- Tổng số tiền của đơn hàng, bắt buộc
 	Receiver_phone NVARCHAR(20),   --thêm
-        Payment_status NVARCHAR(50), -- thêm
+    Payment_status NVARCHAR(50), -- thêm
     CONSTRAINT fk_user_order FOREIGN KEY (User_id) REFERENCES Users(User_id), -- Tham chiếu đến User_id trong bảng Users
     CONSTRAINT fk_discount_order FOREIGN KEY (Discount_id) REFERENCES Discount(Discount_id) -- Tham chiếu đến Discount_id trong bảng Discount
 );
-
 GO
-
 -- Bảng OrderItem
 CREATE TABLE OrderItem (
     OrderItem_id INT IDENTITY(1,1) PRIMARY KEY, -- ID tự động tăng cho chi tiết đơn hàng
@@ -101,24 +97,6 @@ CREATE TABLE OrderItem (
 	CONSTRAINT fk_product_orderitem FOREIGN KEY (Product_id) REFERENCES Product(Product_id) -- Tham chiếu đến Product_id trong bảng Product
 );
 GO
-
--- Bảng Title
-CREATE TABLE Title (
-    Title_id INT IDENTITY(1,1) PRIMARY KEY, -- ID tự động tăng cho danh hiệu
-    Title_name NVARCHAR(255) NOT NULL -- Tên của danh hiệu, bắt buộc
-);
-GO
-
--- Bảng UserTitle
-CREATE TABLE UserTitle (
-    UserTitle_id INT IDENTITY(1,1) PRIMARY KEY, -- ID tự động tăng cho bảng trung gian
-    User_id INT NOT NULL, -- ID của người dùng, bắt buộc
-    Title_id INT NOT NULL, -- ID của danh hiệu, bắt buộc
-    CONSTRAINT fk_user_usertitle FOREIGN KEY (User_id) REFERENCES Users(User_id), -- Tham chiếu đến User_id trong bảng Users
-    CONSTRAINT fk_title_usertitle FOREIGN KEY (Title_id) REFERENCES Title(Title_id) -- Tham chiếu đến Title_id trong bảng Title
-);
-GO
-
 -- Bảng FriendShip
 CREATE TABLE FriendShip (
     Friendship_id INT IDENTITY(1,1) PRIMARY KEY, -- id tự động tăng cho mối quan hệ bạn bè
@@ -130,7 +108,6 @@ CREATE TABLE FriendShip (
     UNIQUE (User_id, Friend_id) -- Đảm bảo mỗi cặp người dùng chỉ có một mối quan hệ bạn bè duy nhất
 );
 GO
-
 -- Bảng Notification
 CREATE TABLE Notification (
     Notification_id INT IDENTITY(1,1) PRIMARY KEY, -- id tự động tăng cho thông báo
@@ -142,7 +119,6 @@ CREATE TABLE Notification (
     FOREIGN KEY (User_id) REFERENCES Users(User_id) -- Tham chiếu khóa ngoại tới bảng Users
 );
 GO
-
 -- Bảng Event
 CREATE TABLE Event (
     Event_id INT IDENTITY(1,1) PRIMARY KEY, -- id tự động tăng cho sự kiện
@@ -167,8 +143,13 @@ GO
 -- Tạo bảng Combo_ads: lưu thông tin về gói quảng cáo
 CREATE TABLE Combo_ads (
     Adsdetail_id INT IDENTITY(1,1) PRIMARY KEY, -- id tự động tăng cho gói quảng cáo
-    Content NVARCHAR(255) NOT NULL, -- Nội dung gói quảng cáo, không được null
-    budget DECIMAL(10, 2) NOT NULL -- Ngân sách của gói quảng cáo, không được null
+    Title NVARCHAR(255) NOT NULL, -- Tiêu đề gói quảng cáo, không được null (đổi tên từ Content)
+    budget INT NOT NULL, -- Ngân sách của gói quảng cáo, không được null (đổi kiểu dữ liệu từ DECIMAL sang INT)
+    maxReact INT, -- Số phản hồi tối đa (đổi tên từ maxView)
+    durationDay INT, -- Số ngày + date create -> date end (đổi tên từ durationDate)
+    User_id INT, -- id người dùng
+    comboType NVARCHAR(20), -- Thể loại combo quảng cáo LIKE, CLICK, MESSAGE
+    createDate DATE NULL -- Ngày tạo
 );
 GO
 -- Tạo bảng Ads: lưu thông tin về quảng cáo
@@ -178,6 +159,14 @@ CREATE TABLE Ads (
     Content NVARCHAR(255) NOT NULL, -- Nội dung quảng cáo, không được null
     Image NVARCHAR(255), -- Hình ảnh quảng cáo
     User_id INT NOT NULL, -- id của người đăng quảng cáo, không được null
+    currentReact INT, -- Số phản hồi hiện tại (đổi tên từ currentView)
+    location NVARCHAR(255), -- Địa điểm quảng cáo
+    Title NVARCHAR(255), -- Tiêu đề quảng cáo
+    URI NVARCHAR(255), -- Đường dẫn URI
+    UploadPath NVARCHAR(255), -- Đường dẫn tải lên
+    isActive INT, -- Trạng thái hoạt động
+    startDate DATE NULL, -- Ngày bắt đầu quảng cáo
+    targetSex NVARCHAR(20), -- Giới tính mục tiêu
     FOREIGN KEY (Adsdetail_id) REFERENCES Combo_ads(Adsdetail_id), -- Khóa ngoại tham chiếu đến chi tiết gói quảng cáo
     FOREIGN KEY (User_id) REFERENCES Users(User_id) -- Khóa ngoại tham chiếu đến người dùng
 );
@@ -188,19 +177,21 @@ CREATE TABLE Message (
     From_id INT NOT NULL, -- id người gửi, không được null
     To_id INT NOT NULL, -- id người nhận, không được null
     MessageText NVARCHAR(255) NOT NULL, -- Nội dung tin nhắn, không được null
-    FromUsername NVARCHAR(255) NOT NULL,
+    FromUsername NVARCHAR(255),
+	FriendShip NVARCHAR(255),
     TimeStamp DATETIME DEFAULT GETDATE(), -- Thời gian gửi tin nhắn, mặc định là ngày hiện tại
     FOREIGN KEY (From_id) REFERENCES Users(User_id), -- Khóa ngoại tham chiếu đến người gửi
     FOREIGN KEY (To_id) REFERENCES Users(User_id) -- Khóa ngoại tham chiếu đến người nhận
 );
 GO
--- Tạo bảng Feeback: lưu thông tin về phản hồi
+-- Tạo bảng Feedback: lưu thông tin về phản hồi
 CREATE TABLE Feedback (
     Feedback_id INT IDENTITY(1,1) PRIMARY KEY, -- id tự động tăng cho phản hồi
     Feedback_detail NVARCHAR(255) NOT NULL, -- Chi tiết phản hồi
     Feedback_title NVARCHAR(255) NOT NULL, -- Tiêu đề phản hồi, không được null
-	User_id INT NOT NULL, -- id người gửi, không được null
+    User_id INT NOT NULL, -- id người gửi, không được null
     FOREIGN KEY (User_id) REFERENCES Users(User_id) -- Khóa ngoại tham chiếu đến người gửi
+        ON DELETE CASCADE -- Xóa phản hồi khi người dùng bị xóa
 );
 GO
 -- Tạo bảng Topic: lưu thông tin về chủ đề
@@ -210,7 +201,6 @@ CREATE TABLE Topic (
 	Description NVARCHAR(255) -- Mô tả chủ đề
 );
 GO
-
 -- Tạo bảng Group: lưu thông tin về nhóm
 CREATE TABLE [Group] (
     Group_id INT IDENTITY(1,1) PRIMARY KEY, -- id tự động tăng cho nhóm
@@ -258,6 +248,18 @@ CREATE TABLE Post (
     FOREIGN KEY (Group_id) REFERENCES [Group](Group_id), -- Khóa ngoại tham chiếu đến nhóm
     FOREIGN KEY (Topic_id) REFERENCES Topic(Topic_id) -- Khóa ngoại tham chiếu đến chủ đề
 );
+CREATE TABLE Post_share (
+	Share_id int  IDENTITY(1,1) PRIMARY KEY,
+    Post_id INT  NOT NULL, -- id tự động tăng cho bài viết
+    User_id INT NOT NULL, -- id của người đăng bài viết
+    Share_content NVARCHAR(255) NOT NULL, -- Nội dung bài viết
+    createDate DATETIME DEFAULT GETDATE(), -- Ngày tạo bài viết, mặc định là ngày hiện tại
+    Share_status NVARCHAR(50), -- Trạng thái của bài viết
+	Share_postStatus NVARCHAR(50), -- Trạng thái bài viết (duyệt, chưa duyệt)
+    Reason NVARCHAR(255), -- Lý do (nếu có) của trạng thái bài viết
+	FOREIGN KEY (User_id) REFERENCES Users(User_id), -- Khóa ngoại tham chiếu đến người đăng bài viết
+	FOREIGN KEY (Post_id) REFERENCES Post(Post_id), -- Khóa ngoại tham chiếu đến người đăng bài viết
+);
 GO
 -- Tạo bảng Comment: lưu thông tin về bình luận của bài viết
 CREATE TABLE Comment (
@@ -302,7 +304,7 @@ CREATE TABLE UserFollow (
     Topic_id INT, -- id của chủ đề được theo dõi
     FOREIGN KEY (User_id) REFERENCES Users(User_id), -- Tham chiếu khóa ngoại tới bảng Users
     FOREIGN KEY (Event_id) REFERENCES Event(Event_id), -- Tham chiếu khóa ngoại tới bảng Event
-	FOREIGN KEY (Topic_id) REFERENCES Topic(Topic_id) -- Tham chiếu khóa ngoại tới bảng Topic
+    FOREIGN KEY (Topic_id) REFERENCES Topic(Topic_id) -- Tham chiếu khóa ngoại tới bảng Topic
 );
 GO
 CREATE TABLE Upload (
@@ -324,52 +326,20 @@ CREATE TABLE ATMInfo (
     CODE INT,
     Status NVARCHAR(255)
 );
-GO
-
-
-
----------------- Table: ADS ----------------
-SELECT * FROM Ads
-
-ALTER TABLE Ads add currentView int
-ALTER TABLE Ads add location nvarchar(255)
-ALTER TABLE Ads ADD Title NVARCHAR(255);
-ALTER TABLE Ads ADD URI NVARCHAR(255);
-ALTER TABLE Ads ADD UploadPath NVARCHAR(255);
-ALTER TABLE Ads ADD isActive int;
-ALTER TABLE Ads ADD startDate DATE NULL; -- Ngày tạo quảng cáo, bắt buộc
-EXEC sp_rename 'Ads.currentView', 'currentReact', 'COLUMN'; -- rename maxView -> maxReact
-ALTER TABLE Ads add targetSex NVARCHAR(20)  
-
----------------- Table: Combo_ads ----------------
-SELECT * FROM Combo_ads
-
-ALTER TABLE Combo_ads add maxView int
-ALTER TABLE Combo_ads add durationDate int -- Số ngày + date create -> date end 
-EXEC sp_rename 'Combo_ads.durationDate', 'durationDay', 'COLUMN'; -- rename Date -> Day
-EXEC sp_rename 'Combo_ads.Content', 'Title', 'COLUMN'; -- rename Content -> Title
-ALTER TABLE Combo_ads add User_id int
-ALTER TABLE Combo_ads ALTER COLUMN budget int; -- change data type decimal -> int
-ALTER TABLE Combo_ads ADD comboType NVARCHAR(20); -- Thể loại combo quảng cáo LIKE, CLICK, MESSAGE
-EXEC sp_rename 'Combo_ads.maxView', 'maxReact', 'COLUMN'; -- rename maxView -> maxReact
-ALTER TABLE Combo_ads ADD createDate DATE NULL;
-
-
-
-	
+GO	
 -- Insert sample data into the ATMInfo table
 INSERT INTO ATMInfo (ATMNumber, username, BankName, Money, CODE,Status) VALUES
 ('25102003221', 'Nguyen Van A', 'MBBank', 0, 1234, 'Admin'), --Thẻ admin
 ('25102003222', 'Nguyen Van B', 'MBBank', 500000, 1234, 'Active'), --Thẻ thanh toán thành công
 ('25102003223', 'Nguyen Van B', 'MBBank', 200000, 1234, 'Block'), --Thẻ bị khoá
 ('25102003224', 'Nguyen Van D', 'MBBank', 0, 1234,'Active'); -- Thẻ không đủ số dư
+GO
 CREATE TABLE managerRegistr (
     managerRegistr_id INT IDENTITY(1,1) PRIMARY KEY, -- ID tự động tăng cho đăng ký quản lý
     User_id INT NOT NULL, -- Tham chiếu đến User_id bên bảng Users
     RegistrationDate DATETIME DEFAULT GETDATE(), -- Ngày đăng ký, mặc định là ngày hiện tại
     Status NVARCHAR(50), -- Trạng thái của đăng ký (Pending, Approved, Rejected), mặc định là 'Pending'
     Remarks NVARCHAR(255), -- Ghi chú về đăng ký (tùy chọn)
-    
     CONSTRAINT fk_user FOREIGN KEY (User_id) REFERENCES Users(User_id) -- Khóa ngoại tham chiếu tới User_id của bảng Users
 );
 GO
@@ -443,7 +413,7 @@ VALUES
 ('swpphuc', NULL, 'phuc@fe.edu.vn', '123', 2, N'Hoàng Phúc', 200.00, Null, Null, 2, 20, 'Male', 1),
 ('swptrung', NULL, 'trung@fe.edu.vn', '123', 3, N'Quốc Trung', 200.00, Null, Null, 2, 20, 'Male', 1),
 ('vipswptruong', 'truongvipprolugach', 'truong@fpt.edu.vn', '123', 3, N'Hải Trường', 500.00, Null, Null, 3, 30, 'Male', 1);
-
+GO
 -- Chèn dữ liệu mẫu vào bảng Shop
 INSERT INTO Shop (Owner_id, Shop_name, Shop_phone, Shop_campus, Description, Image, Status)
 VALUES 
@@ -464,7 +434,7 @@ VALUES
 (4, 'Description for Product 5', 'Product 5', 25.50, 180),
 (5, 'Description for Product 6', 'Product 6', 12.75, 220),
 (6, 'Description for Product 7', 'Product 7', 18.50, 170);
-
+GO
 -- Chèn dữ liệu mẫu vào bảng Discount
 INSERT INTO Discount (Code, Owner_id, Shop_id, Discount_percent, Valid_from, Valid_to, Usage_limit, Usage_count)
 VALUES 
@@ -474,7 +444,7 @@ VALUES
 ('DISC40', NULL, 4, 40.00, '2024-05-01', '2024-05-31', 400, 0),
 ('DISC50', NULL, 5, 50.00, '2024-05-01', '2024-05-31', 500, 0),
 ('DISC60', NULL, 6, 60.00, '2024-05-01', '2024-05-31', 600, 0);
-
+GO
 -- Chèn dữ liệu mẫu vào bảng Order
 INSERT INTO [Order] (User_id, Order_date, Order_status, Total_amount)
 VALUES 
@@ -484,7 +454,7 @@ VALUES
 (4, '2024-05-18', 'null', 250.00),
 (5, '2024-05-19', 'null', 300.00),
 (6, '2024-05-20', 'null', 350.00);
-
+GO
 -- Chèn dữ liệu mẫu vào bảng OrderItem
 INSERT INTO OrderItem (Order_id, Product_id, Quantity, Unit_price)
 VALUES 
@@ -501,57 +471,17 @@ VALUES
 (6, 1, 8, 10.50),
 (6, 5, 15, 25.50);
 GO
--- Chèn dữ liệu mẫu vào bảng Combo_ads
-INSERT INTO Combo_ads (Content, budget)
-VALUES 
-('Combo 1: Small Ad Package', 100.00),
-('Combo 2: Medium Ad Package', 200.00),
-('Combo 3: Large Ad Package', 300.00);
-GO
--- Chèn dữ liệu mẫu vào bảng Ads
-INSERT INTO Ads (Adsdetail_id, Content, Image, User_id)
-VALUES 
-(1, 'Small Ad Content', NULL, 1),
-(2, 'Medium Ad Content', NULL, 2),
-(3, 'Large Ad Content', NULL, 3);
-GO
 -- Chèn dữ liệu mẫu vào bảng Message
 INSERT INTO Message (From_id, To_id, MessageText,FromUsername)
 VALUES 
 (1, 2, 'Hello, how are you?','swpduoc'),
 (2, 1, 'I''m fine, thanks!','swpdiem');
 GO
--- Chèn dữ liệu mẫu vào bảng Feedback
-INSERT INTO Feedback (Feedback_detail, Feedback_title, User_id)
-VALUES 
-('Great service!', 'Service Feedback', 1),
-('Product quality could be improved.', 'Product Feedback', 2);
-GO
 -- Chèn dữ liệu mẫu vào bảng Topic
 INSERT INTO Topic (Topic_name, Description)
 VALUES 
 ('Technology', 'Discussions related to technology'),
 ('Food', 'Discussions related to food');
-
-GO
--- Chèn dữ liệu mẫu vào bảng Group
-INSERT INTO [Group] (Creater_id, Group_name, Group_description, Image, memberCount)
-VALUES 
-(1, 'Technology Enthusiasts', 'A group for tech lovers', NULL, 10),
-(2, 'Foodies', 'A group for food enthusiasts', NULL, 15);
-GO
--- Chèn dữ liệu mẫu vào bảng MemberGroup
-INSERT INTO MemberGroup (User_id, Group_id, Status)
-VALUES
-(1, 1, 'Active'),
-(2, 1, 'Active'),
-(3, 2, 'Active');
-GO
--- Chèn dữ liệu mẫu vào bảng GroupChatMessage
-INSERT INTO GroupChatMessage (Group_id, From_id, MessageText)
-VALUES 
-(1, 1, 'Welcome to the Technology Enthusiasts group!'),
-(1, 2, 'Thank you! Excited to be here.');
 GO
 -- Chèn dữ liệu mẫu vào bảng Post
 INSERT INTO Post (User_id, Group_id, Topic_id, Content, Status, postStatus)
@@ -559,61 +489,10 @@ VALUES
 (1, Null, Null, 'Excited to join this group!', 'Active', 'Friends'),
 (2, Null, Null, 'Looking for recommendations on good restaurants.', 'Active', 'Public'),
 (2, Null, Null,'Looking for recommendations on good restaurants.', 'Active', 'Public');
-
 GO
 -- Chèn dữ liệu mẫu vào bảng Comment
 INSERT INTO Comment (Post_id, User_id, Content)
 VALUES 
 (1, 2, 'Welcome!'),
 (2, 1, 'I recommend trying the Italian restaurant downtown.');
-GO
--- Chèn dữ liệu mẫu vào bảng Rate
-INSERT INTO Rate (Post_id, User_id, TypeRate)
-VALUES 
-(1, 2, 1),
-(2, 1, 1);
-GO
--- Chèn dữ liệu mẫu vào bảng Report
-INSERT INTO Report (Reporter_id, User_id, Shop_id, Post_id, Reason, Status)
-VALUES 
-(1, 2, NULL, NULL, 'Inappropriate content', 'Pending'),
-(2, 1, NULL, NULL, 'Spam', 'Pending');
-GO
--- Chèn dữ liệu mẫu vào bảng UserFollow
-INSERT INTO UserFollow (User_id, Event_id, Topic_id)
-VALUES 
-(1, NULL, 1),
-(2, NULL, 2),
-(3, NULL, 1);
 
-UPDATE dbo.Users SET User_rank = '3' WHERE USER_ID = 3;
-SELECT * FROM dbo.Users
-SELECT * FROM dbo.Report 
-SELECT * FROM dbo.Post
-SELECT * FROM dbo.Notification
-INSERT INTO Report (Reporter_id, User_id, Shop_id, Post_id, Reason, Status)
-VALUES (2, 3, NULL, NULL, N'quá tệ', N'pending');
-
-INSERT INTO Report (Reporter_id, User_id, Shop_id, Post_id, Reason, Status)
-VALUES (2, 3, NULL, NULL, N'quá tệ', N'pending');
-
-INSERT INTO Report (Reporter_id, User_id, Shop_id, Post_id, Reason, Status)
-VALUES (2, 3, NULL, NULL, N'quá tệ', N'pending');
-
-
-INSERT INTO Report (Reporter_id, User_id, Shop_id, Post_id, Reason, Status)
-VALUES (2, 3, NULL, 8, N'quá tệ', N'pending');
-
-INSERT INTO Report (Reporter_id, User_id, Shop_id, Post_id, Reason, Status)
-VALUES (2, 3, NULL, 8, N'quá tệ', N'pending');
-
-INSERT INTO Report (Reporter_id, User_id, Shop_id, Post_id, Reason, Status)
-VALUES (2, 3, NULL, 8, N'quá tệ', N'pending');
-
-SELECT * FROM dbo.Feedback
-SELECT * FROM dbo.Users
-ALTER TABLE Feedback
-ADD CONSTRAINT FK_User_Feedback
-FOREIGN KEY (User_id)
-REFERENCES Users(User_id)
-ON DELETE CASCADE;

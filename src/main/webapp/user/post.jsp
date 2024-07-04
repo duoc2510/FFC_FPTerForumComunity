@@ -112,7 +112,7 @@
 
                                             <input type="hidden" name="postId" value="${post.postId}">
                                             <input type="hidden" name="userId" value="${post.user.userId}">
-                                             <input type="hidden" name="userRole" value="${post.user.userRole}">
+                                            <input type="hidden" name="userRole" value="${post.user.userRole}">
                                             <input type="hidden" name="action" value="rpPost">
                                         </div>
                                         <div class="modal-footer">
@@ -153,7 +153,7 @@
                                     <div class="modal-body">
                                         <form action="${pageContext.request.contextPath}/report" method="post">
                                             <input type="hidden" name="postId" value="${post.postId}">
-                                            
+
                                             <input type="hidden" name="action" value="editPostReport">
                                             <div class="mb-3">
                                                 <label for="editReason" class="form-label">New Reason:</label>
@@ -285,22 +285,22 @@
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function (event) {
-                // Ensure your DOM is fully loaded before executing any code
-                var msg = "${sessionScope.msg}";
-                console.log("Message from session:", msg);
-               
-                if (msg !== null && msg !== "") {
-                    swal({
-                        title: msg.includes("successfully") ? "Success" : "Error",
-                        text: msg,
-                        icon: msg.includes("successfully") ? "success" : "error",
-                        button: "OK!"
-                    });
-                   
-            <% session.removeAttribute("msg"); %>
-                }
-            });
+                        document.addEventListener("DOMContentLoaded", function (event) {
+                            // Ensure your DOM is fully loaded before executing any code
+                            var msg = "${sessionScope.msg}";
+                            console.log("Message from session:", msg);
+
+                            if (msg !== null && msg !== "") {
+                                swal({
+                                    title: msg.includes("successfully") ? "Success" : "Error",
+                                    text: msg,
+                                    icon: msg.includes("successfully") ? "success" : "error",
+                                    button: "OK!"
+                                });
+
+    <% session.removeAttribute("msg"); %>
+                            }
+                        });
                         function handleLike(event, postId, action) {
                             event.preventDefault();
 

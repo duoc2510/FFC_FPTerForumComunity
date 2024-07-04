@@ -116,7 +116,6 @@ public class User_authLogin extends HttpServlet {
         User user = (User) request.getSession().getAttribute("USER");
         String value = request.getParameter("value");
         if (value == null) {
-
             if (user == null) {
                 processRequest(request, response);
             }
@@ -151,7 +150,7 @@ public class User_authLogin extends HttpServlet {
 
                 message = "Your account has been banned.";
                 session.setAttribute("message", message);
-//                request.getRequestDispatcher("/auth/login.jsp").forward(request, response);
+                //                request.getRequestDispatcher("/auth/login.jsp").forward(request, response);
                 response.sendRedirect("logingooglehandler?value=login");
                 return;
             }
@@ -203,8 +202,8 @@ public class User_authLogin extends HttpServlet {
         } else {
             String msg = "Invalid email or password";
             session.setAttribute("message", msg);
-//            request.setAttribute("message", msg);
-//            request.getRequestDispatcher("/auth/login.jsp").forward(request, response);
+            //            request.setAttribute("message", msg);
+            //            request.getRequestDispatcher("/auth/login.jsp").forward(request, response);
             response.sendRedirect("logingooglehandler?value=login");
         }
     }

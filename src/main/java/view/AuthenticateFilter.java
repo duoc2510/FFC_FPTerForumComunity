@@ -10,6 +10,7 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import model.DAO.User_DB;
 import model.User;
 
 public class AuthenticateFilter implements Filter {
@@ -66,8 +67,22 @@ public class AuthenticateFilter implements Filter {
                 return;
             }
         } else if (uri.startsWith(contextPath + "/manager/")) {
+            User currentUser = (User) session.getAttribute("USER");
+
+            // Kiểm tra và cập nhật lại thông tin người dùng trong session
+            if (currentUser != null) {
+                User refreshedUser = User_DB.getUserById(currentUser.getUserId());
+                if (refreshedUser != null) {
+                    // Cập nhật lại session với thông tin người dùng mới
+                    session.setAttribute("USER", refreshedUser);
+                }
+            }
+
+            // Lấy lại thông tin user từ session sau khi cập nhật
+            User userCurrent = (User) session.getAttribute("USER");
+
             // Kiểm tra userRole của người dùng
-            if (user == null || user.getUserRole() == 1) {
+            if (userCurrent == null || userCurrent.getUserRole() == 1) {
                 // Nếu không có quyền, chuyển hướng về trang home
                 httpResponse.sendRedirect(contextPath + "/home");
                 return;

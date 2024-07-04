@@ -53,9 +53,8 @@
                             }
 
                             .post-image {
-                                width: 100%;
-                                height: 250px;
-                                object-fit: cover;
+                                max-width: 50%;
+                                height: auto;
                                 margin-top: 10px;
                             }
                             .img-preview {
@@ -64,6 +63,9 @@
                             .img-preview img {
                                 max-width: 100%;
                                 max-height: 300px;
+                            }
+                            .profile img{
+                                top: 20em;
                             }
                         </style>
                         <c:forEach var="post" items="${postsUser}">

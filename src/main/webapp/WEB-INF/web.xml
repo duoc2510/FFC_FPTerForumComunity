@@ -324,14 +324,18 @@
     <servlet>
         <servlet-name>Advertising_Report</servlet-name>
         <servlet-class>controller.Advertising_Report</servlet-class>
-    </servlet>  
-    <servlet> 
+    </servlet>
+    <servlet>
         <servlet-name>User_feedBack</servlet-name>
         <servlet-class>controller.User_feedBack</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Admin_viewFeedBack</servlet-name>
         <servlet-class>controller.Admin_viewFeedBack</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>User_SearchSuggestion</servlet-name>
+        <servlet-class>controller.User_SearchSuggestion</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>PostComment</servlet-name>
@@ -609,13 +613,17 @@
         <servlet-name>Advertising_Report</servlet-name>
         <url-pattern>/advertising/report</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>    
+    <servlet-mapping>
         <servlet-name>User_feedBack</servlet-name>
         <url-pattern>/feedBack</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Admin_viewFeedBack</servlet-name>
         <url-pattern>/admin/viewFeedBack</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>User_SearchSuggestion</servlet-name>
+        <url-pattern>/searchSuggestions</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index_guest.jsp</welcome-file>

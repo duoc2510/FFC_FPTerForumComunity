@@ -27,8 +27,8 @@ public class Report {
         this.user = user;
     }
 
-    public Report(int reporter_id, String reason, Post post, User user,String status ) {
-        this.reporter_id = reporter_id;
+    public Report( String reason, Post post, User user,String status ) {
+       
         this.reason = reason;
         this.post = post;
         this.user = user;
@@ -37,8 +37,8 @@ public class Report {
 
    
 
-    public Report(int reporter_id, String reason, User user,String status) {
-        this.reporter_id = reporter_id;
+    public Report( String reason, User user,String status) {
+       
         this.reason = reason;
         this.user = user;
         this.status = status;
