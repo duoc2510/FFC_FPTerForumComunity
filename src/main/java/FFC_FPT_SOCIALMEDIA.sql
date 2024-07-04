@@ -36,7 +36,7 @@ CREATE TABLE Shop (
     Shop_campus NVARCHAR(255) NOT NULL, -- Cơ sở của shop, bắt buộc
     Description NVARCHAR(255), -- Mô tả về shop
     Image NVARCHAR(255), -- Ảnh bìa của shop
-        Status INT NOT NULL, -- Trạng thái hoạt động của SHOP -- chỉnh sửa
+    Status INT NOT NULL, -- Trạng thái hoạt động của SHOP -- chỉnh sửa
     CONSTRAINT fk_user_shop FOREIGN KEY (Owner_id) REFERENCES Users(User_id) -- Tham chiếu đến User_id trong bảng Users
 );
 GO
@@ -181,7 +181,7 @@ CREATE TABLE Message (
     Message_id INT IDENTITY(1,1) PRIMARY KEY, -- id tự động tăng cho tin nhắn
     From_id INT NOT NULL, -- id người gửi, không được null
     To_id INT NOT NULL, -- id người nhận, không được null
-    MessageText NVARCHAR(255) NOT NULL, -- Nội dung tin nhắn, không được null
+    MessageText NVARCHAR(255), -- Nội dung tin nhắn, không được null
     FromUsername NVARCHAR(255),
 	FriendShip NVARCHAR(255),
     TimeStamp DATETIME DEFAULT GETDATE(), -- Thời gian gửi tin nhắn, mặc định là ngày hiện tại
