@@ -51,7 +51,10 @@
                                                     </a>
                                                 </td>
                                                 <td>${report.user.username}</td>
-                                                <td>${report.post.content}</td>
+                                               <td> <a href="${pageContext.request.contextPath}/post/detail?postId=${report.post.postId}">
+                                                        ${report.post.content}
+                                                    </a>
+                                                </td>
                                                 <td>${report.reason}</td>
                                                 <td>${report.status}</td>
                                                 <td>
