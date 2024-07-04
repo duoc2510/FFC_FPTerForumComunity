@@ -45,7 +45,7 @@
         font-size: 0.8em;
         color: #888;
     }
-  
+
 </style>
 
 <header class="app-header">
@@ -125,7 +125,7 @@
                                 </a>
                                 <i class="ti ti-repeat" id="reloadWalletIcon" style="cursor: pointer;"></i>
                             </div>
-                            <a href="${pageContext.request.contextPath}/profile/setting"
+                            <a href="${pageContext.request.contextPath}/walletbalance"
                                class="d-flex align-items-center gap-2 dropdown-item">
                                 <i class="ti ti-database fs-6 "></i>
                                 <p class="mb-0 fs-3">Balance Wallet</p>
@@ -249,7 +249,7 @@
                 loadNotifications();
             });
         });
-  
+
     </script>
 
 

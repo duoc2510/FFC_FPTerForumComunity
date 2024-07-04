@@ -448,8 +448,11 @@ public class Shop_product extends HttpServlet {
                     Discount dis = sdb.getDiscountByID(order.getDiscountid());
                     if (dis.getShopId() == 0) {
                         boolean check = udb.updateWalletByEmail(user.getUserEmail(), user.getUserWallet() + (total1 - order.getTotal()) - (total1 * 5 / 100));
+                        nw.saveNotificationToDatabaseWithStatusIsBalance(user.getUserId(), "Trả lại tiền voucher hệ thống :" + (total1 - order.getTotal()) + "và trừ tiền hoa hồng đơn hàng :" + (total1 * 5 / 100), "/walletbalance");
+
                     } else {
                         boolean check = udb.updateWalletByEmail(user.getUserEmail(), user.getUserWallet() - (total1 * 5 / 100));
+                        nw.saveNotificationToDatabaseWithStatusIsBalance(user.getUserId(), "Trừ tiền hoa hồng đơn hàng :" + (total1 * 5 / 100), "/walletbalance");
 
                     }
                 }

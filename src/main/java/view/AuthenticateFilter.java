@@ -30,58 +30,60 @@ public class AuthenticateFilter implements Filter {
         String contextPath = httpRequest.getContextPath();
 
         // Bỏ qua xác thực cho các đường dẫn cụ thể
-        if (!(uri.startsWith(contextPath + "/marketplace/allshop")
+        if (uri.startsWith(contextPath + "/marketplace/allshop")
                 || uri.startsWith(contextPath + "/marketplace/allshop/shopdetail")
-                || uri.startsWith(contextPath + "/marketplace/allshop/shopdetail/productdetail"))) {
+                || uri.startsWith(contextPath + "/marketplace/allshop/shopdetail/productdetail")) {
+            chain.doFilter(request, response);
+            return;
+        }
 
-            if (uri.startsWith(contextPath + "/rank/")
-                    || uri.startsWith(contextPath + "/profile")
-                    || uri.startsWith(contextPath + "/marketplace/")
-                    || uri.startsWith(contextPath + "/manager/")
-                    || uri.startsWith(contextPath + "/post")
-                    || uri.startsWith(contextPath + "/messenger")) {
-                if (user == null) {
-                    // Lưu lại URL hiện tại
-                    String referer = httpRequest.getHeader("referer");
-                    if (referer != null && !referer.isEmpty()) {
-                        httpRequest.getSession(true).setAttribute("redirectURL", referer);
-                    }
-                    // Chuyển hướng đến trang đăng nhập
-                    httpResponse.sendRedirect(httpResponse.encodeRedirectURL(contextPath + "/logingooglehandler?value=login"));
-                    return;
+        // Xác thực cho các đường dẫn cần đăng nhập
+        if (uri.startsWith(contextPath + "/rank/")
+                || uri.startsWith(contextPath + "/profile")
+                || uri.startsWith(contextPath + "/marketplace/")
+                || uri.startsWith(contextPath + "/manager/")
+                || uri.startsWith(contextPath + "/post")
+                || uri.startsWith(contextPath + "/messenger")) {
+
+            if (user == null) {
+                // Lưu lại URL hiện tại
+                String referer = httpRequest.getHeader("referer");
+                if (referer != null && !referer.isEmpty()) {
+                    httpRequest.getSession(true).setAttribute("redirectURL", referer);
                 }
-
+                // Chuyển hướng đến trang đăng nhập
+                httpResponse.sendRedirect(httpResponse.encodeRedirectURL(contextPath + "/logingooglehandler?value=login"));
+                return;
             }
+        }
 
-            // Kiểm tra quyền truy cập vào trang admin
-            if (uri.startsWith(contextPath + "/admin/")) {
-                // Kiểm tra userRole của người dùng
-                if (user == null || user.getUserRole() != 3) {
-                    // Nếu không có quyền, chuyển hướng về trang home
-                    httpResponse.sendRedirect(contextPath + "/home");
-                    return;
-                }
-            } else if (uri.startsWith(contextPath + "/manager/")) {
-                // Kiểm tra userRole của người dùng
-                if (user == null || user.getUserRole() ==1) {
-                    // Nếu không có quyền, chuyển hướng về trang home
-                    httpResponse.sendRedirect(contextPath + "/home");
-                    return;
-                }
-            }
-
-            // Kiểm tra nếu người dùng đã đăng nhập và cố truy cập vào trang login hoặc register
-            if ((uri.equals(contextPath + "/login") || uri.equals(contextPath + "/register")) && user != null) {
-                // Chuyển hướng đến trang chủ
+        // Kiểm tra quyền truy cập vào trang admin
+        if (uri.startsWith(contextPath + "/admin/")) {
+            // Kiểm tra userRole của người dùng
+            if (user == null || user.getUserRole() != 3) {
+                // Nếu không có quyền, chuyển hướng về trang home
                 httpResponse.sendRedirect(contextPath + "/home");
                 return;
             }
-
-            // Tiếp tục với các filter khác hoặc servlet đích
-            chain.doFilter(request, response);
+        } else if (uri.startsWith(contextPath + "/manager/")) {
+            // Kiểm tra userRole của người dùng
+            if (user == null || user.getUserRole() == 1) {
+                // Nếu không có quyền, chuyển hướng về trang home
+                httpResponse.sendRedirect(contextPath + "/home");
+                return;
+            }
         }
+
+        // Kiểm tra nếu người dùng đã đăng nhập và cố truy cập vào trang login hoặc register
+        if ((uri.equals(contextPath + "/login") || uri.equals(contextPath + "/register")) && user != null) {
+            // Chuyển hướng đến trang chủ
+            httpResponse.sendRedirect(contextPath + "/home");
+            return;
+        }
+
+        // Tiếp tục với các filter khác hoặc servlet đích
+        chain.doFilter(request, response);
     }
-    
 
     public void destroy() {
         // Hủy filter nếu cần thiết

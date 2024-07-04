@@ -77,6 +77,7 @@ CREATE TABLE [Order] (
     Order_id INT IDENTITY(1,1) PRIMARY KEY, -- ID tự động tăng cho đơn hàng
     Order_date DATETIME DEFAULT GETDATE(), -- Ngày đặt hàng, mặc định là ngày hiện tại
         Order_status NVARCHAR(50) CHECK (Order_status IN ('null','Pending','Accept','Completed','Cancelled','Success','Fail','NotConfirm','NotConfirmNew')) NOT NULL, -- Trạng thái của đơn hàng    Total_amount DECIMAL(10, 2) NOT NULL, -- Tổng số tiền của đơn hàng, bắt buộc
+    Total_amount DECIMAL(10, 2) NOT NULL, -- Tổng số tiền của đơn hàng, bắt buộc
     Note NVARCHAR(MAX), -- Ghi chú
     Discount_id INT, -- ID của mã giảm giá
     Feedback NVARCHAR(MAX), -- Phản hồi từ người dùng -thêm
