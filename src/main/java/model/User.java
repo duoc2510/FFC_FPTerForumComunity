@@ -46,6 +46,11 @@ public class User {
         this.userAvatar = userAvatar;
     }
 
+    public User(String username, String userFullName) {
+        this.username = username;
+        this.userFullName = userFullName;
+    }
+
     public User(String userEmail, String userPassword, String username, String userAvatar) {
         this.userEmail = userEmail;
         this.userPassword = userPassword;

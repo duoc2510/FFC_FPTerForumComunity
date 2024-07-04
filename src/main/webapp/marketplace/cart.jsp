@@ -109,10 +109,12 @@
                                                 <div id="discountSection-${previousShopId}" style="display: none;">
                                                     <label class="form-label mt-3" for="typeText">Discount</label>
                                                     <select id="discountSelect-${previousShopId}" class="form-control discountSelect" name="discountSelect" data-shop-id="${previousShopId}" onchange="updateDiscount('${previousShopId}')">
+                                                        <option value="" data-percent="0" data-condition="0">No Discount</option>
                                                         <c:forEach var="discount" items="${Shop_DB.getAllDiscountOrder(USER.userId, previousShopId)}">
                                                             <option value="${discount.discountId}" data-percent="${discount.discountPercent}" data-condition="${discount.condition}">Giảm ${discount.discountPercent}% đơn từ ${discount.condition}VNĐ</option>
                                                         </c:forEach>
                                                     </select>
+
                                                 </div>
 
                                                 <div class="d-flex justify-content-between mt-3">
@@ -186,10 +188,12 @@
                                     <div id="discountSection-${previousShopId}" style="display: none;">
                                         <label class="form-label mt-3" for="typeText">Discount</label>
                                         <select id="discountSelect-${previousShopId}" class="form-control discountSelect" name="discountSelect" data-shop-id="${previousShopId}" onchange="updateDiscount('${previousShopId}')">
+                                            <option value="" data-percent="0" data-condition="0">No Discount</option>
                                             <c:forEach var="discount" items="${Shop_DB.getAllDiscountOrder(USER.userId, previousShopId)}">
                                                 <option value="${discount.discountId}" data-percent="${discount.discountPercent}" data-condition="${discount.condition}">Giảm ${discount.discountPercent}% đơn từ ${discount.condition}VNĐ</option>
                                             </c:forEach>
                                         </select>
+
                                     </div>
 
                                     <div class="d-flex justify-content-between mt-3">
@@ -396,19 +400,24 @@
                                                 }
 
                                                 var selectedOption = discountSelect.options[discountSelect.selectedIndex];
-                                                var percent = parseFloat(selectedOption.getAttribute("data-percent"));
                                                 var subtotal = parseFloat(subtotalElement.textContent);
-                                                var discountFee = (percent * subtotal / 100).toFixed(2);
+                                                var discountFee = 0;
 
-                                                discountFeeElement.textContent = '-' + discountFee + ' VND';
+                                                if (selectedOption && selectedOption.value !== "") {
+                                                    var percent = parseFloat(selectedOption.getAttribute("data-percent"));
+                                                    discountFee = (percent * subtotal / 100).toFixed(2);
+                                                    discountFeeElement.textContent = '-' + discountFee + ' VND';
+                                                } else {
+                                                    discountFeeElement.textContent = '-0.00 VND';
+                                                }
 
-                                                var newTotal = subtotal - discountFee;
+                                                var newTotal = subtotal - parseFloat(discountFee);
                                                 totalFeeElement.textContent = newTotal.toFixed(2) + ' VND';
 
                                                 updateCheckoutTotal();
 
                                                 // Update selected discounts array
-                                                var discountId = selectedOption.value;
+                                                var discountId = selectedOption && selectedOption.value !== "" ? selectedOption.value : "0";
                                                 var existingDiscount = selectedDiscounts.find(discount => discount.shopId === shopId);
                                                 if (existingDiscount) {
                                                     existingDiscount.discountId = discountId;

@@ -448,7 +448,7 @@ public class Shop_DB {
             pstmt.setString(3, order.getStatus());
             pstmt.setDouble(4, order.getTotal());
             pstmt.setString(5, order.getNote());
-            pstmt.setObject(6, order.getDiscountid() == 1 ? null : order.getDiscountid());
+            pstmt.setObject(6, order.getDiscountid() == 0 ? null : order.getDiscountid());
             pstmt.setString(7, order.getFeedback());
             pstmt.setInt(8, order.getStar()); // Set the Star field
             pstmt.setString(9, order.getReceiverPhone());
@@ -834,6 +834,38 @@ public class Shop_DB {
                     order.setPayment_status(rs.getString("Payment_status"));
                     orders.add(order);
                 }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return orders;
+    }
+
+    public static ArrayList<Order> getAllOrderWithStatusIsCompleted() {
+        ArrayList<Order> orders = new ArrayList<>();
+        String query = "SELECT * FROM [Order] WHERE Order_status = ? AND Payment_status = ? ORDER BY Order_ID DESC";
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
+
+            pstmt.setString(1, "completed"); // Filter by Order_status = 'completed'
+            pstmt.setString(2, "thanhtoankhinhanhang"); // Filter by Payment_status = 'thanhtoankhinhanhang'
+
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                Order order = new Order();
+                order.setOrder_ID(rs.getInt("Order_id"));
+                order.setUserID(rs.getInt("User_id"));
+                order.setOrderDate(rs.getTimestamp("Order_date"));
+                order.setStatus(rs.getString("Order_status"));
+                order.setTotal(rs.getDouble("Total_amount"));
+                order.setNote(rs.getString("Note"));
+                order.setDiscountid(rs.getInt("Discount_id"));
+                order.setFeedback(rs.getString("Feedback"));
+                order.setStar(rs.getInt("Star"));
+                order.setReceiverPhone(rs.getString("Receiver_phone"));
+                order.setPayment_status(rs.getString("Payment_status"));
+                orders.add(order);
             }
         } catch (SQLException ex) {
             Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
@@ -1289,8 +1321,10 @@ public class Shop_DB {
     }
 
     public static void main(String[] args) {
-        Order o = getOrderByShopIdWithStatusNotConfirm(7, 4);
-        System.out.println(o.getDiscountid());
+        ArrayList<Shop> shoplist = getAllShop();
+        for (Shop s : shoplist) {
+            System.out.println(s);
+        }
     }
 
 }

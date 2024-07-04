@@ -329,6 +329,10 @@
         <servlet-class>controller.Admin_viewFeedBack</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>User_SearchSuggestion</servlet-name>
+        <servlet-class>controller.User_SearchSuggestion</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>Shop_allshop</servlet-name>
         <servlet-class>controller.Shop_allshop</servlet-class>
     </servlet>
@@ -623,6 +627,10 @@
     <servlet-mapping>
         <servlet-name>Admin_transaction</servlet-name>
         <url-pattern>/admin/transaction</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>User_SearchSuggestion</servlet-name>
+        <url-pattern>/searchSuggestions</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index_guest.jsp</welcome-file>

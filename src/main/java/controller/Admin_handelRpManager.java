@@ -108,8 +108,8 @@ public class Admin_handelRpManager extends HttpServlet {
 
                     // Send notifications to each reporter
                     for (int reporterId : reporterIds) {
-                        nw.saveNotificationToDatabase(reporterId, "Report on post " + postContent + " processed!", "/#");
-                        nw.sendNotificationToClient(reporterId, "Report on post " + postContent + " processed!", "/#");
+                        nw.saveNotificationToDatabase(reporterId, "Report on post " + postContent + " processed!", "");
+                        nw.sendNotificationToClient(reporterId, "Report on post " + postContent + " processed!", "");
                     }
                     nw.saveNotificationToDatabase(reportedId, "Your post " + postContent + " has been banned for a reason " + reason, "/#");
                     nw.sendNotificationToClient(reportedId, "Your post " + postContent + " has been banned for a reason " + reason, "/#");
@@ -127,8 +127,8 @@ public class Admin_handelRpManager extends HttpServlet {
 
                     // Send notifications to each reporter
                     for (int reporterId : reporterIds) {
-                        nw.saveNotificationToDatabase(reporterId, "Report on user " + username + " processed!", "/#");
-                        nw.sendNotificationToClient(reporterId, "Report on user " + username + " processed!", "/#");
+                        nw.saveNotificationToDatabase(reporterId, "Report on user " + username + " processed!", "");
+                        nw.sendNotificationToClient(reporterId, "Report on user " + username + " processed!", "");
                     }
                     msg = "User has been banned successfully.";
                 } else {

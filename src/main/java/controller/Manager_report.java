@@ -66,22 +66,13 @@ public class Manager_report extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
-        User currentUser = (User) session.getAttribute("USER");
 
         // Làm mới thông tin người dùng từ cơ sở dữ liệu (giả sử có phương thức getUserById)
-        if (currentUser != null) {
-            User refreshedUser = User_DB.getUserById(currentUser.getUserId());
-            if (refreshedUser != null) {
-                // Cập nhật lại session với thông tin người dùng mới
-                session.setAttribute("USER", refreshedUser);
-            }
-        }
-
         List<Report> reports = Report_DB.getAllReports();
 
         // Lọc và chỉ lấy các report có status là "pending" cho từng danh sách
         List<Report> pendingAllReports = reports.stream()
-                .filter(report -> "Pending".equalsIgnoreCase(report.getStatus()))
+                .filter(report -> "pending".equalsIgnoreCase(report.getStatus()))
                 .collect(Collectors.toList());
 
         List<Report> pendingAllPostReports = reports.stream()
@@ -128,16 +119,19 @@ public class Manager_report extends HttpServlet {
         if (action != null && !action.isEmpty()) {
             if (action.equals("banPost")) {
                 int postId = Integer.parseInt(request.getParameter("postId"));
-                int reporterId = Integer.parseInt(request.getParameter("reporterId"));
                 int reportedId = Integer.parseInt(request.getParameter("reportedId"));
                 String reason = request.getParameter("banReason");
                 boolean postBanned = Report_DB.banPost(postId, reason);
                 String postContent = request.getParameter("postContent");
                 if (postBanned) {
-                    nw.saveNotificationToDatabase(reporterId, "Report on post " + postContent + " processed!", "/#");
-                    nw.sendNotificationToClient(reporterId, "Report on post " + postContent + " processed!", "/#");
-                    nw.saveNotificationToDatabase(reportedId, "Your post " + postContent + " has been banned for a reason " + reason, "/#");
-                    nw.sendNotificationToClient(reportedId, "Your post " + postContent + " has been banned for a reason " + reason, "/#");
+                    List<Integer> reporterIds = Report_DB.getReporterIdsByPostId(postId);
+                    for (int reporterId : reporterIds) {
+                        nw.saveNotificationToDatabase(reporterId, "Report on post " + postContent + " processed!", "");
+                        nw.sendNotificationToClient(reporterId, "Report on post " + postContent + " processed!", "");
+                    }
+
+                    nw.saveNotificationToDatabase(reportedId, "Your post " + postContent + " has been banned for a reason " + reason, "");
+                    nw.sendNotificationToClient(reportedId, "Your post " + postContent + " has been banned for a reason " + reason, "");
                     msg = "Post has been banned successfully.";
                 } else {
                     msg = "Failed to ban the post.";
@@ -146,10 +140,13 @@ public class Manager_report extends HttpServlet {
                 int userId = Integer.parseInt(request.getParameter("userId"));
                 boolean userBanned = Report_DB.banUser(userId);
                 String username = request.getParameter("username");
-                  int reporterId = Integer.parseInt(request.getParameter("reporterId"));
+
+                List<Integer> reporterIds = Report_DB.getReporterIdsByUserId(userId);
                 if (userBanned) {
-                     nw.saveNotificationToDatabase(reporterId, "Report on user " + username + " processed!", "/#");
-                    nw.sendNotificationToClient(reporterId, "Report on user " + username + " processed!", "/#");
+                    for (int reporterId : reporterIds) {
+                        nw.saveNotificationToDatabase(reporterId, "Report on user " + username + " processed!", "");
+                        nw.sendNotificationToClient(reporterId, "Report on user " + username + " processed!", "");
+                    }
                     msg = "User has been banned successfully.";
                 } else {
                     msg = "Failed to ban the user.";
