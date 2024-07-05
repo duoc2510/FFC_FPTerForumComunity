@@ -161,6 +161,7 @@ public class User_authLogin extends HttpServlet {
                     return Integer.compare(sdb.getProductByID(o1.getProductID()).getShopId(), sdb.getProductByID(o2.getProductID()).getShopId());
                 }
             });
+            User_DB.updateUser_activeStatusByEmail(user.getUserEmail(), 1);
             request.getSession().setAttribute("USER", user);
             request.getSession().setAttribute("ORDER", order);
             request.getSession().setAttribute("ORDERITEMLIST", orderitemlist);

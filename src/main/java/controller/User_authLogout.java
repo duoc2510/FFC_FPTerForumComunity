@@ -11,6 +11,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import model.DAO.User_DB;
+import model.User;
 
 /**
  *
@@ -59,6 +61,8 @@ public class User_authLogout extends HttpServlet {
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
         HttpSession session = request.getSession();
+        User user = (User) request.getSession().getAttribute("USER");
+        User_DB.updateUser_activeStatusByEmail(user.getUserEmail(), 0);
 
         if (session != null) {
             session.invalidate();
