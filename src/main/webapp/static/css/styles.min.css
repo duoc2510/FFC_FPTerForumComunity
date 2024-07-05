@@ -256,6 +256,11 @@ h1 {
     font-size: calc(1.34375rem + 1.125vw)
 }
 
+
+row {
+        flex-direction: row !important;
+}
+
 @media (min-width:1200px) {
 
     .h1,
@@ -20340,9 +20345,8 @@ ul {
     object-fit: cover;
 }
 .marketplace .section-title {
-    text-align: center;
+    text-align: left;
     margin-bottom: 30px;
-    color: #007bff;
 }
 .marketplace .custom-list li {
     padding-left: 20px;

@@ -13,28 +13,32 @@
             }
             .nav-pills {
                 position: relative;
-                padding-bottom: 10px; /* To provide space for the taller slider */
+                   padding:10px 0;
+               
             }
             .nav-pills .nav-link {
                 position: relative;
             }
+            .slider{
+                background-color:#5e87ff;
+            }
         </style>
 
     <body>
-        <div class="container mt-5">
-            <div class="col-lg-12 mb-4">
+        <div class="container border rounded shadow mb-5">
+            <div class="col-lg-12">
                 <ul class="nav nav-pills nav-fill" id="nav-pills">
                     <li class="nav-item">
-                        <a class="nav-link nav-link-main-redirect" href="${pageContext.request.contextPath}/martketplace/allshop">All shop</a>
+                        <a class="rounded nav-link nav-link-main-redirect" href="${pageContext.request.contextPath}/martketplace/allshop">All shop</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link nav-link-main-redirect" href="${pageContext.request.contextPath}/marketplace/myshop">My shop</a>
+                        <a class="rounded nav-link nav-link-main-redirect" href="${pageContext.request.contextPath}/marketplace/myshop">My shop</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link nav-link-main-redirect" href="${pageContext.request.contextPath}/marketplace/cart">Cart</a>
+                        <a class="rounded nav-link nav-link-main-redirect" href="${pageContext.request.contextPath}/marketplace/cart">Cart</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link nav-link-main-redirect" href="${pageContext.request.contextPath}/marketplace/history">History</a>
+                        <a class="rounded nav-link nav-link-main-redirect" href="${pageContext.request.contextPath}/marketplace/history">History</a>
                     </li>
                     <div class="slider" id="slider"></div>
                 </ul>
