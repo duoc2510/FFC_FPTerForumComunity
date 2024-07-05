@@ -76,9 +76,7 @@
                                 <h3>Campaign advertising</h3>
                                 <h6>you can keep an eye on your campaign while you’re on the go. Wherever you are, you’ll have the power to create and edit ads, track their performance, and manage ad budgets and schedules.</h6>
                             </div>
-                            <div class="d-flex mb-4">
-                                <button class="btn btn-primary" data-toggle="modal" data-target="#createCampaign" href="javascript:void(0)">Create new campaign</button>
-                            </div>
+
                             <div class="form-group mx-2">
                                 <c:if test="${empty allAdsCombo}">
                                     <p class="mb-4">You have no campaigns.</p>
@@ -94,6 +92,9 @@
                                     </div>
                                 </c:if>
                                 <c:if test="${not empty allAdsCombo}"> 
+                                    <div class="d-flex mb-4">
+                                        <button class="btn btn-primary" data-toggle="modal" data-target="#createCampaign" href="javascript:void(0)">Create new campaign</button>
+                                    </div>
                                     <c:forEach var="adsCombo" items="${allAdsCombo}">
                                         <c:set var="createDate" value="${adsCombo.createDate}" />
                                         <fmt:parseDate var="parsedCreateDate" value="${createDate}" pattern="yyyy-MM-dd" />
