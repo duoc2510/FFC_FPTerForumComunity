@@ -63,8 +63,96 @@ public class Shop_cart extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
+//    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+//            throws ServletException, IOException {
+//        int quantity = 1;
+//        Shop_DB sdb = new Shop_DB();
+//        User user = (User) request.getSession().getAttribute("USER");
+//        Shop shop = sdb.getShopHaveStatusIs1ByUserID(user.getUserId());
+//        int id;
+//
+//        if (request.getParameter("productid") != null) {
+//            String id1 = request.getParameter("productid");
+//            id = Integer.parseInt(id1);
+//            String id2 = request.getParameter("shopid");
+//            int shopid = Integer.parseInt(id2);
+//            Product product = sdb.getProductByID(id);
+//
+//            if (product != null) {
+//                // Check if the product belongs to the user's shop
+//                if (shop != null && product.getShopId() == shop.getShopID()) {
+//                    request.setAttribute("shopid", shopid);
+//                    request.setAttribute("productid", id);
+//                    request.setAttribute("message", "You cannot add your own product to the cart.");
+//                    request.getRequestDispatcher("/marketplace/productDetail.jsp").forward(request, response);
+//                    return;
+//                }
+//
+//                if (request.getParameter("quantity") != null) {
+//                    quantity = Integer.parseInt(request.getParameter("quantity"));
+//                }
+//                HttpSession session = request.getSession();
+//
+//                Order order = (Order) session.getAttribute("ORDER");
+//                ArrayList<OrderItem> orderitemlist = (ArrayList<OrderItem>) session.getAttribute("ORDERITEMLIST");
+//
+//                if (orderitemlist != null && !orderitemlist.isEmpty()) {
+//                    boolean check = false;
+//                    for (OrderItem item : orderitemlist) {
+//                        if (item.getProductID() == product.getProductId()) {
+//                            // Check if the quantity does not exceed the available quantity of the product
+//                            if (item.getQuantity() + quantity <= product.getQuantity()) {
+//                                item.setQuantity(item.getQuantity() + quantity);
+//                                sdb.updateOrderItem(item);
+//                                check = true;
+//                            } else {
+//                                // If quantity exceeds available quantity, set an error message
+//                                request.setAttribute("shopid", shopid);
+//                                request.setAttribute("productid", id);
+//                                request.setAttribute("message", "The quantity of this product is now maximum.");
+//                                request.getRequestDispatcher("/marketplace/productDetail.jsp").forward(request, response);
+//                                return;
+//                            }
+//                        }
+//                    }
+//                    if (!check) {
+//                        OrderItem item = new OrderItem(1, order.getOrder_ID(), product.getProductId(), quantity, product.getPrice());
+//                        sdb.addNewOrderItem(item);
+//                    }
+//                    ArrayList<OrderItem> orderitemlistnew = sdb.getAllOrderItemByOrderIdHasStatusIsNull(order.getOrder_ID());
+//                    Collections.sort(orderitemlistnew, new Comparator<OrderItem>() {
+//                        @Override
+//                        public int compare(OrderItem o1, OrderItem o2) {
+//                            return Integer.compare(sdb.getProductByID(o1.getProductID()).getShopId(), sdb.getProductByID(o2.getProductID()).getShopId());
+//                        }
+//                    });
+//                    session.setAttribute("ORDERITEMLIST", orderitemlistnew);
+//                    session.setAttribute("ORDER", order);
+//                    response.sendRedirect(request.getContextPath() + "/marketplace/cart");
+//                    return;
+//                } else {
+//                    OrderItem item = new OrderItem(1, order.getOrder_ID(), product.getProductId(), quantity, product.getPrice());
+//                    sdb.addNewOrderItem(item);
+//                    ArrayList<OrderItem> orderitemlistnew = sdb.getAllOrderItemByOrderIdHasStatusIsNull(order.getOrder_ID());
+//                    Collections.sort(orderitemlistnew, new Comparator<OrderItem>() {
+//                        @Override
+//                        public int compare(OrderItem o1, OrderItem o2) {
+//                            return Integer.compare(sdb.getProductByID(o1.getProductID()).getShopId(), sdb.getProductByID(o2.getProductID()).getShopId());
+//                        }
+//                    });
+//                    session.setAttribute("ORDERITEMLIST", orderitemlistnew);
+//                    session.setAttribute("ORDER", order);
+//                    response.sendRedirect(request.getContextPath() + "/marketplace/cart");
+//                    return;
+//                }
+//            }
+//        }
+//        request.getRequestDispatcher("/marketplace/cart.jsp").forward(request, response);
+//    }
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
         int quantity = 1;
         Shop_DB sdb = new Shop_DB();
         User user = (User) request.getSession().getAttribute("USER");
@@ -76,60 +164,90 @@ public class Shop_cart extends HttpServlet {
             id = Integer.parseInt(id1);
             String id2 = request.getParameter("shopid");
             int shopid = Integer.parseInt(id2);
+            Shop snew = sdb.getShopHaveStatusIs1ByShopID(shopid);
             Product product = sdb.getProductByID(id);
 
             if (product != null) {
                 // Check if the product belongs to the user's shop
                 if (shop != null && product.getShopId() == shop.getShopID()) {
-                    request.setAttribute("shopid", shopid);
-                    request.setAttribute("productid", id);
-                    request.setAttribute("message", "You cannot add your own product to the cart.");
-                    request.getRequestDispatcher("/marketplace/productDetail.jsp").forward(request, response);
+//                    request.setAttribute("shopid", shopid);
+//                    request.setAttribute("productid", id);
+//                    request.setAttribute("message", "You cannot add your own product to the cart.");
+//                    request.getRequestDispatcher("/marketplace/productDetail.jsp").forward(request, response);
+                    String msg = "You cannot add your own product to the cart! ";
+                    session.setAttribute("message", msg);
+                    response.sendRedirect("allshop/shopdetail/productdetail?productid=" + id + "&shopid=" + shopid);
                     return;
                 }
 
                 if (request.getParameter("quantity") != null) {
                     quantity = Integer.parseInt(request.getParameter("quantity"));
                 }
-                HttpSession session = request.getSession();
+//                HttpSession session = request.getSession();
 
                 Order order = (Order) session.getAttribute("ORDER");
                 ArrayList<OrderItem> orderitemlist = (ArrayList<OrderItem>) session.getAttribute("ORDERITEMLIST");
 
                 if (orderitemlist != null && !orderitemlist.isEmpty()) {
-                    boolean check = false;
+                    boolean checkshop = false;
                     for (OrderItem item : orderitemlist) {
-                        if (item.getProductID() == product.getProductId()) {
-                            // Check if the quantity does not exceed the available quantity of the product
-                            if (item.getQuantity() + quantity <= product.getQuantity()) {
-                                item.setQuantity(item.getQuantity() + quantity);
-                                sdb.updateOrderItem(item);
-                                check = true;
-                            } else {
-                                // If quantity exceeds available quantity, set an error message
-                                request.setAttribute("shopid", shopid);
-                                request.setAttribute("productid", id);
-                                request.setAttribute("message", "The quantity of this product is now maximum.");
-                                request.getRequestDispatcher("/marketplace/productDetail.jsp").forward(request, response);
-                                return;
+                        Product p = sdb.getProductByID(item.getProductID());
+                        Shop s = sdb.getShopHaveStatusIs1ByShopID(p.getShopId());
+                        if (s.getCampus().equals(snew.getCampus())) {
+                            checkshop = true;
+                        }
+                    }
+                    if (checkshop) {
+                        boolean check = false;
+                        for (OrderItem item : orderitemlist) {
+                            if (item.getProductID() == product.getProductId()) {
+                                // Check if the quantity does not exceed the available quantity of the product
+                                if (item.getQuantity() + quantity <= product.getQuantity()) {
+                                    item.setQuantity(item.getQuantity() + quantity);
+                                    sdb.updateOrderItem(item);
+                                    check = true;
+                                } else {
+                                    // If quantity exceeds available quantity, set an error message
+//                                    request.setAttribute("shopid", shopid);
+//                                    request.setAttribute("productid", id);
+//                                    request.setAttribute("message", "The quantity of this product is now maximum.");
+//                                    request.getRequestDispatcher("/marketplace/productDetail.jsp").forward(request, response);
+
+                                    String msg = "The quantity of this product is now maximum! ";
+                                    session.setAttribute("message", msg);
+                                    response.sendRedirect("allshop/shopdetail/productdetail?productid=" + id + "&shopid=" + shopid);
+                                    return;
+                                }
                             }
+
                         }
-                    }
-                    if (!check) {
-                        OrderItem item = new OrderItem(1, order.getOrder_ID(), product.getProductId(), quantity, product.getPrice());
-                        sdb.addNewOrderItem(item);
-                    }
-                    ArrayList<OrderItem> orderitemlistnew = sdb.getAllOrderItemByOrderIdHasStatusIsNull(order.getOrder_ID());
-                    Collections.sort(orderitemlistnew, new Comparator<OrderItem>() {
-                        @Override
-                        public int compare(OrderItem o1, OrderItem o2) {
-                            return Integer.compare(sdb.getProductByID(o1.getProductID()).getShopId(), sdb.getProductByID(o2.getProductID()).getShopId());
+                        if (!check) {
+                            OrderItem item = new OrderItem(1, order.getOrder_ID(), product.getProductId(), quantity, product.getPrice());
+                            sdb.addNewOrderItem(item);
                         }
-                    });
-                    session.setAttribute("ORDERITEMLIST", orderitemlistnew);
-                    session.setAttribute("ORDER", order);
-                    response.sendRedirect(request.getContextPath() + "/marketplace/cart");
-                    return;
+                        ArrayList<OrderItem> orderitemlistnew = sdb.getAllOrderItemByOrderIdHasStatusIsNull(order.getOrder_ID());
+                        Collections.sort(orderitemlistnew, new Comparator<OrderItem>() {
+                            @Override
+                            public int compare(OrderItem o1, OrderItem o2) {
+                                return Integer.compare(sdb.getProductByID(o1.getProductID()).getShopId(), sdb.getProductByID(o2.getProductID()).getShopId());
+                            }
+                        });
+                        session.setAttribute("ORDERITEMLIST", orderitemlistnew);
+                        session.setAttribute("ORDER", order);
+                        response.sendRedirect(request.getContextPath() + "/marketplace/cart");
+                        return;
+
+                    } else {
+//                        request.setAttribute("shopid", shopid);
+//                        request.setAttribute("productid", id);
+//                        request.setAttribute("message", "The added product must belong to a shop on the same campus as the existing shop in the cart.");
+//                        request.getRequestDispatcher("/marketplace/productDetail.jsp").forward(request, response);
+
+                        String msg = "The added product must belong to a shop on the same campus as the existing shop in the cart! ";
+                        session.setAttribute("message", msg);
+                        response.sendRedirect("allshop/shopdetail/productdetail?productid=" + id + "&shopid=" + shopid);
+                        return;
+                    }
                 } else {
                     OrderItem item = new OrderItem(1, order.getOrder_ID(), product.getProductId(), quantity, product.getPrice());
                     sdb.addNewOrderItem(item);
@@ -202,6 +320,9 @@ public class Shop_cart extends HttpServlet {
                 Product p = sdb.getProductByID(odi.getProductID());
                 if (newQuantity > p.getQuantity()) {
                     newQuantity = p.getQuantity();
+                }
+                if (newQuantity == 0) {
+                    newQuantity = 1;
                 }
                 sdb.updateOrderItemQuantity(orderItemId, newQuantity);
                 Order order = (Order) session.getAttribute("ORDER");

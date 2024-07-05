@@ -44,6 +44,22 @@
 </style>
 
 <body>
+    <script>
+        // Check if the message variable is set or not
+        document.addEventListener("DOMContentLoaded", (event) => {
+            var errorMessage = "${message}";
+            // Kiểm tra nếu errorMessage không rỗng, hiển thị thông báo lỗi
+            if (errorMessage != "") {
+                swal({
+                    title: "Error!",
+                    text: errorMessage,
+                    icon: "error",
+                    button: "OK",
+                });
+            }
+        });
+    </script>
+
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
          data-sidebar-position="fixed" data-header-position="fixed">
         <c:if test="${not empty sessionScope.USER}">
@@ -62,6 +78,12 @@
             <div class="container-fluid">
                 <!-- Control panel -->
                 <%@ include file="panel.jsp" %>
+
+                <c:if test="${not empty message}">
+                    <%
+                        session.removeAttribute("message");
+                    %>
+                </c:if>
 
                 <div class="w-100 row container">
                     <c:set var="imagefirst" value="${Shop_DB.getUploadFirstByProductID(productid)}" />
@@ -110,19 +132,7 @@
 </body>
 
 <script>
-    // Check if the message variable is set or not
-    document.addEventListener("DOMContentLoaded", (event) => {
-        var errorMessage = "${requestScope.message}";
-        // Kiểm tra nếu errorMessage không rỗng, hiển thị thông báo lỗi
-        if (errorMessage != "") {
-            swal({
-                title: "Error!",
-                text: errorMessage,
-                icon: "error",
-                button: "OK",
-            });
-        }
-    });
+
 
     function change_image(image, productId) {
         console.log("Changing main image to:", image.src);

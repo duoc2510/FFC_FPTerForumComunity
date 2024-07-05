@@ -276,6 +276,11 @@
                                             var selectedDiscounts = [];
 
                                             function handleQuantityChange(orderItemId, newQuantity) {
+                                                // Nếu newQuantity là null hoặc rỗng, gán giá trị là 0
+                                                if (!newQuantity) {
+                                                    newQuantity = 0;
+                                                }
+
                                                 var data = {
                                                     action: "update",
                                                     orderItemId: orderItemId,
