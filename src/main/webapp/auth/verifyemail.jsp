@@ -21,7 +21,7 @@
                 <div class="d-flex align-items-center justify-content-center w-100">
                     <div class="row justify-content-center w-100">
                         <div class="col-md-8 col-lg-4 col-xxl-3">
-                            <div class="card mb-0">
+                            <div class="card mb-0 rounded">
                                 <div class="card-body px-4">
                                     <a href="${pageContext.request.contextPath}/" class="text-nowrap logo-img text-center d-block py-3 w-100">
                                         <img src="${pageContext.request.contextPath}/static/images/logo.png" width="100" alt="">
@@ -32,7 +32,7 @@
                                     <form method="post" action="verifyemail">
                                         <div class="form-group">
                                             <label for="number">Enter a 5-digit Number:</label>
-                                            <input type="number" class="form-control" id="number" name="number" min="10000" max="99999" required>
+                                            <input type="number" class="form-control rounded" id="number" name="number" min="10000" max="99999" required>
                                         </div>
                                         <%-- Ô input ẩn --%>
                                         <input type="hidden" id="status" name="status" value="${status}">
@@ -45,7 +45,7 @@
                                         </c:if>
                                         <div class="d-flex justify-content-between mt-3">
                                             <a href="register" class="btn btn-link">Cancel</a>
-                                            <input type="submit" class="btn btn-primary" value="Submit">
+                                            <input type="submit" class="btn btn-primary rounded" value="Submit">
                                         </div>
                                     </form>
                                 </div>

@@ -20,11 +20,9 @@
     request.setAttribute("getdaynow", getdaynow);
 %>
 
-
 <%@ include file="../include/header.jsp" %>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+
 
 
 <style>
@@ -102,7 +100,7 @@
                                         <c:set var="diff" value="${diffInMillies / (1000 * 60 * 60 * 24)}" />
                                         <c:set var="durationDay" value="${adsCombo.durationDay}" />
 
-                                        <div class="row mb-4 card py-3 px-3 <c:if test="${diff > durationDay}"> no-available </c:if>">
+                                        <div class="row mb-4 rounded card py-3 px-3 <c:if test="${diff > durationDay}"> no-available </c:if>">
                                                 <div class="col-12">
                                                     <div data-ads="${adsCombo.adsDetailId}" class="d-flex flex-row align-items-center mb-4 pb-1">
                                                     <div class="border px-3 py-2 mx-2 rounded">

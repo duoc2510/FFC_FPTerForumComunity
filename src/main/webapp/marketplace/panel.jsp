@@ -1,5 +1,4 @@
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" import="model.*" import="model.DAO.*"%>
-<%@ include file="../include/header.jsp" %>
 
         <style>
             .slider {
@@ -25,7 +24,7 @@
         </style>
 
     <body>
-        <div class="container border rounded shadow mb-5">
+        <div class="container border rounded shadow mb-5 ">
             <div class="col-lg-12">
                 <ul class="nav nav-pills nav-fill" id="nav-pills">
                     <li class="nav-item">
@@ -44,9 +43,7 @@
                 </ul>
             </div>
         </div>
-        <!-- jQuery and Bootstrap JS -->
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+       
         <script>
             $(document).ready(function () {
                 var $slider = $('#slider');

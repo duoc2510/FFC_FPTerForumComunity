@@ -33,7 +33,7 @@
             <ul id="sidebarnav">
                 <c:if test="${USER.userRole == 3}">
                     <li class="sidebar-item">
-                        <a class="sidebar-link has-arrow" href="javascript:void(0)" aria-expanded="false">
+                        <a class="rounded sidebar-link rounded has-arrow" href="javascript:void(0)" aria-expanded="false">
                             <span>
                                 <i class="ti ti-users"></i>
                             </span>
@@ -41,43 +41,43 @@
                         </a>
                         <ul aria-expanded="false" class="collapse  first-level">
                             <li class="sidebar-item sub-item">
-                                <a href="${pageContext.request.contextPath}/admin/ManageUsers?action=allUser" class="sidebar-link" role="button">
+                                <a href="${pageContext.request.contextPath}/admin/ManageUsers?action=allUser" class="sidebar-link rounded" role="button">
                                     <span class="hide-menu">- Manage users</span>
                                 </a>
                             </li>
                             <li class="sidebar-item sub-item">
-                                <a href="${pageContext.request.contextPath}/admin/handelRpManager" class="sidebar-link">
+                                <a href="${pageContext.request.contextPath}/admin/handelRpManager" class="sidebar-link rounded">
                                     <span class="hide-menu">- Handle report manager</span>
                                 </a>
                             </li>
 
                             <li class="sidebar-item sub-item">
-                                <a  class="sidebar-link">
+                                <a  class="sidebar-link rounded">
                                     <span class="hide-menu">- Reset rankings</span>
                                 </a>
                             </li>
                             <li class="sidebar-item sub-item">
-                                <a href="${pageContext.request.contextPath}/admin/approveshop" class="sidebar-link">
+                                <a href="${pageContext.request.contextPath}/admin/approveshop" class="sidebar-link rounded">
                                     <span class="hide-menu">- Approve shop</span>
                                 </a>
                             </li>
                             <li class="sidebar-item sub-item">
-                                <a  class="sidebar-link">
+                                <a  class="sidebar-link rounded">
                                     <span class="hide-menu">- Add ads</span>
                                 </a>
                             </li>
                             <li class="sidebar-item sub-item">
-                                <a href="${pageContext.request.contextPath}/admin/createvoucher" class="sidebar-link">
+                                <a href="${pageContext.request.contextPath}/admin/createvoucher" class="sidebar-link rounded">
                                     <span class="hide-menu">- Create voucher</span>
                                 </a>
                             </li>
                             <li class="sidebar-item sub-item">
-                                <a href="${pageContext.request.contextPath}/admin/viewFeedBack" class="sidebar-link">
+                                <a href="${pageContext.request.contextPath}/admin/viewFeedBack" class="sidebar-link rounded">
                                     <span class="hide-menu">- View feedback</span>
                                 </a>
                             </li>
                             <li class="sidebar-item sub-item">
-                                <a href="${pageContext.request.contextPath}/admin/transaction" class="sidebar-link">
+                                <a href="${pageContext.request.contextPath}/admin/transaction" class="sidebar-link rounded">
                                     <span class="hide-menu">- Transaction Manage</span>
                                 </a>
                             </li>
@@ -85,7 +85,7 @@
                     </li>
                 </c:if>
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="${pageContext.request.contextPath}/post" aria-expanded="false">
+                    <a class="sidebar-link rounded" href="${pageContext.request.contextPath}/post" aria-expanded="false">
                         <span>
                             <i class="ti ti-article"></i>
                         </span>
@@ -94,7 +94,7 @@
                 </li>
 
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="${pageContext.request.contextPath}/group" aria-expanded="false">
+                    <a class="sidebar-link rounded" href="${pageContext.request.contextPath}/group" aria-expanded="false">
                         <span>
                             <i class="ti ti-users"></i>
                         </span>
@@ -104,7 +104,7 @@
 
                 <c:if test="${USER.userRole > 1}">
                     <li class="sidebar-item">
-                        <a class="sidebar-link has-arrow" href="javascript:void(0)" aria-expanded="false">
+                        <a class="sidebar-link rounded has-arrow" href="javascript:void(0)" aria-expanded="false">
                             <span>
                                 <i class="ti ti-users"></i>
                             </span>
@@ -112,12 +112,12 @@
                         </a>
                         <ul aria-expanded="false" class="collapse  first-level">
                             <li class="sidebar-item sub-item">
-                                <a href="${pageContext.request.contextPath}/manager/post" class="sidebar-link">
+                                <a href="${pageContext.request.contextPath}/manager/post" class="sidebar-link rounded">
                                     <span class="hide-menu">- Approve Post</span>
                                 </a>
                             </li>
                             <li class="sidebar-item sub-item">
-                                <a href="${pageContext.request.contextPath}/manager/report" class="sidebar-link">
+                                <a href="${pageContext.request.contextPath}/manager/report" class="sidebar-link rounded">
                                     <span class="hide-menu">- Handle report</span>
                                 </a>
                             </li>
@@ -126,7 +126,7 @@
                 </c:if>
 
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="${pageContext.request.contextPath}/listEvent" aria-expanded="false">
+                    <a class="sidebar-link rounded" href="${pageContext.request.contextPath}/listEvent" aria-expanded="false">
                         <span>
                             <i class="ti ti-calendar-event"></i>
                         </span>
@@ -135,7 +135,7 @@
                 </li>
 
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="${pageContext.request.contextPath}/advertising" aria-expanded="false">
+                    <a class="sidebar-link rounded" href="${pageContext.request.contextPath}/advertising" aria-expanded="false">
                         <span>
                             <i class="ti ti-speakerphone"></i>
                         </span>
@@ -144,7 +144,7 @@
                 </li>
 
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="${pageContext.request.contextPath}/rank" aria-expanded="false">
+                    <a class="sidebar-link rounded" href="${pageContext.request.contextPath}/rank" aria-expanded="false">
                         <span>
                             <i class="ti ti-trophy"></i>
                         </span>
@@ -153,7 +153,7 @@
                 </li>
 
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="${pageContext.request.contextPath}/marketplace" aria-expanded="false">
+                    <a class="sidebar-link rounded" href="${pageContext.request.contextPath}/marketplace" aria-expanded="false">
                         <span>
                             <i class="ti ti-basket"></i>
                         </span>

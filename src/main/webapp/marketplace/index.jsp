@@ -18,19 +18,21 @@
                 <%@ include file="../include/navbar_guest.jsp" %>
             </c:if>
             <div class="container-fluid">
-                <!--Control panel-->
-                <%@ include file="panel.jsp" %>
+               
                 <div class="row my-4 rounded shadow ">
                     <div class="col-md-12 p-2">
                         <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel" data-bs-interval="2000">
                             <div class="carousel-inner">
                                 <div class="carousel-item rounded active">
+                                    <div class="cel-overplay"></div>
                                     <img src="${pageContext.request.contextPath}/static/images/bannerdangkishop.png" class="rounded d-block w-100" alt="Banner 2">
                                 </div>
                                 <div class="carousel-item rounded">
+                                    <div class="cel-overplay"></div>
                                     <img src="${pageContext.request.contextPath}/static/images/bannermonan.png" class="rounded d-block w-100" alt="Banner 3">
                                 </div>
                                 <div class="carousel-item rounded">
+                                    <div class="cel-overplay"></div>
                                     <img src="${pageContext.request.contextPath}/static/images/bannersale.png" class="rounded d-block w-100" alt="Banner 4">
                                 </div>
                             </div>
@@ -45,6 +47,9 @@
                         </div>
                     </div>
                 </div>
+                                
+                                 <!--Control panel-->
+                <%@ include file="panel.jsp" %>
 
                 <div class="row mt-5 rounded px-3 py-5 shadow ">
                     <div class="col-md-7 p-2">

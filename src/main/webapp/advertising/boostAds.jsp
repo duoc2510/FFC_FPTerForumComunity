@@ -52,10 +52,10 @@
                                         <c:forEach var="entry" items="${adsWithComboData}">
                                             <c:set var="ads" value="${entry.key}" />
                                             <c:set var="adsCombo" value="${entry.value}" />
-                                            <div class="col-6 px-2">
-                                                <img src="${pageContext.request.contextPath}/${ads.image}" class="card-img w-100" alt="${ads.content}" style="height: 300px; object-fit: cover; border: 0px solid; border-radius: 10px 10px 0 0;">
+                                            <div class="col-6 px-2 ">
+                                                <img src="${pageContext.request.contextPath}/${ads.image}" class="card-img w-100  rounded-top" alt="${ads.content}" style="height: 300px; object-fit: cover; border: 0px solid; border-radius: 10px 10px 0 0;">
 
-                                                <div class="card p-4">
+                                                <div class="card p-4 rounded">
                                                     <p>Advertising ID: ${ads.adsId}</p>
                                                     <h5 class="card-title mt-2">${ads.title}</h5>
 

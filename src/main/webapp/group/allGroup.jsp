@@ -17,10 +17,10 @@
 </style>
 <div class="row">
     <div class="col-12 mb-3">
-        <button class="btn btn-success" type="button" data-bs-toggle="modal" data-bs-target="#createGroupModal">Create Group</button>
-        <a href="javascript:void(0);" class="btn btn-primary" onclick="toggleGroupList()">Groups You Can Join</a>
-        <a href="javascript:void(0);" class="btn btn-secondary" onclick="toggleJoinedGroups()">Groups You Joined</a>
-        <a href="javascript:void(0);" class="btn btn-info" onclick="toggleCreatedGroups()">Groups You Created</a>
+        <button class="btn btn-success rounded me-2" type="button" data-bs-toggle="modal" data-bs-target="#createGroupModal">Create Group</button>
+        <a href="javascript:void(0);" class="btn btn-primary rounded me-2" onclick="toggleGroupList()">Groups You Can Join</a>
+        <a href="javascript:void(0);" class="btn btn-secondary rounded me-2" onclick="toggleJoinedGroups()">Groups You Joined</a>
+        <a href="javascript:void(0);" class="btn btn-info rounded me-2" onclick="toggleCreatedGroups()">Groups You Created</a>
     </div>
 </div>
 

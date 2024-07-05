@@ -223,9 +223,9 @@
                                             </a>
                                         </c:otherwise>
                                     </c:choose>
-                                    <div class="ms-2">
-                                        <h6 class="card-title fw-semibold mb-0">${comment.user.username}: ${comment.content}</h6>
-                                        <p class="s-4">${comment.date}</p>
+                                    <div class="ms-2 ">
+                                        <h6 class="card-title fw-semibold mb-0">${comment.user.username}</h6> <p>${comment.content}</p>
+                                        <small>${comment.date}</small>
                                     </div>
                                 </div>
                                 <c:if test="${comment.user.userId == USER.userId}">

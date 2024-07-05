@@ -2,19 +2,10 @@
 <%@ include file="../include/header.jsp" %>
 <style>
     .shop-group {
-        border: 1px solid #ddd; /* Light grey border */
-        border-radius: 5px; /* Rounded corners */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
         padding: 20px; /* Padding inside the box */
         margin-bottom: 20px; /* Space between shop groups */
-        background-color: #fff; /* White background */
     }
-    .shop-name {
-        text-align: center;
-        font-weight: bold;
-        font-size: 1.5em;
-        text-decoration: underline; /* Underline text */
-    }
+   
     .shop-name a {
         color: inherit; /* Màu chữ sẽ kế thừa từ thẻ cha (.shop-name) */
         text-decoration: none; /* Bỏ gạch chân mặc định của liên kết */
@@ -31,21 +22,6 @@
 </style>
 <body>
 
-    <script>
-        // Check if the message variable is set or not
-        document.addEventListener("DOMContentLoaded", (event) => {
-            var errorMessage = "${message}";
-            // Kiểm tra nếu errorMessage không rỗng, hiển thị thông báo lỗi
-            if (errorMessage != "") {
-                swal({
-                    title: "Error!",
-                    text: errorMessage,
-                    icon: "error",
-                    button: "OK",
-                });
-            }
-        });
-    </script>
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
          data-sidebar-position="fixed" data-header-position="fixed">
         <c:if test="${not empty sessionScope.USER}">
@@ -73,8 +49,8 @@
                             display: none;
                         }
                     </style>
-                    <div class='row mt-5'>
-                        <div class='col-12 mx-auto text-center'>
+                    <div class='row mt-5 '>
+                        <div class='col-12 mx-auto text-center rounded'>
                             <img src="${pageContext.request.contextPath}/static/images/bag-empty.jpg" alt="alt" width='200px'/>
                             <h1 class="text-uppercase text-bold my-3">bag is empty</h1>
                         </div>
@@ -89,9 +65,9 @@
                 </c:if>
 
                 <c:if test="${not empty ORDERITEMLIST}">
-                    <div class="row" id="billing">                    
-                        <div class="col-md-6">
-                            <div class="mx-2">
+                    <div class="row card-group" id="billing">                    
+                        <div class="col-md-6 rounded">
+                            <div class="mx-2 ">
                                 <!--loop this-->
                                 <form action="confirmorder" method="post">
 
@@ -113,7 +89,7 @@
                                                     </select>
 
                                                 </div>
-
+                                                        <hr>
                                                 <div class="d-flex justify-content-between mt-3">
                                                     <p class="mb-2">Sub total</p>
                                                     <p class="mb-2" id="subtotal-${previousShopId}">0 VND</p>
@@ -129,7 +105,7 @@
                                                 </div>
                                         </div> <!-- Close the previous shop group -->
                                     </c:if>
-                                    <div class="shop-group">
+                                    <div class="shop-group rounded card">
                                         <h3 class="shop-name">
                                             <a href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?shopid=${currentShopId}">
                                                 <i class="ti ti-basket"></i> <!-- Icon before -->
@@ -137,9 +113,10 @@
                                                 <i class="ti ti-arrow-right-square"></i> <!-- Icon after -->
                                             </a>
                                         </h3>
+                                                <hr>
                                     </c:if>
 
-                                    <div class="card mb-3">
+                                    <div class="card mb-3 rounded card">
                                         <div class="card-body">
                                             <div class="d-flex justify-content-between">
                                                 <div class="d-flex flex-row align-items-center">
@@ -192,7 +169,7 @@
                                         </select>
 
                                     </div>
-
+                                            <hr>
                                     <div class="d-flex justify-content-between mt-3">
                                         <p class="mb-2">Sub total</p>
                                         <p class="mb-2" id="subtotal-${previousShopId}">0 VND</p>
@@ -216,7 +193,7 @@
                     </div>
 
                     <div class="col-md-6">
-                        <div class="card ">
+                        <div class="card rounded">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-4">
                                     <h5 class="mb-0">Billing</h5>
@@ -495,6 +472,20 @@
                                                 listenForQuantityChange();
                                             }
 
+
+                                            // Check if the message variable is set or not
+                                            document.addEventListener("DOMContentLoaded", (event) => {
+                                                var errorMessage = "${message}";
+                                                // Kiểm tra nếu errorMessage không rỗng, hiển thị thông báo lỗi
+                                                if (errorMessage != "") {
+                                                    swal({
+                                                        title: "Error!",
+                                                        text: errorMessage,
+                                                        icon: "error",
+                                                        button: "OK",
+                                                    });
+                                                }
+                                            });
 </script>
 
 </body>
