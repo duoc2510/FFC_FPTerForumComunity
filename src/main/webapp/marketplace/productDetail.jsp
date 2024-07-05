@@ -1,26 +1,6 @@
-<%-- 
-    Document   : myShop
-    Created on : May 27, 2024, 9:19:01 PM
-    Author     : Admin
---%>
-
-<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" import="model.*" import="model.DAO.*" %>
-<!-- Load jQuery first -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- Load Bootstrap -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-<!-- Load Owl Carousel CSS and JS -->
-<!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">-->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
-
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-
+<%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" import="model.*" import="model.DAO.*"%>
 <%@ include file="../include/header.jsp" %>
+
 
 <style>
     .thumbnail img {

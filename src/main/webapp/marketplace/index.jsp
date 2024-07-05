@@ -1,103 +1,7 @@
-
-
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" import="model.*" import="model.DAO.*"%>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-<!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>-->
 <%@ include file="../include/header.jsp" %>
 
-<style>
-    .item img {
-        width: 100%;
-        height: 500px;
-        object-fit: cover;
-    }
-    .card-img-top {
-        height: 250px;
-        object-fit: cover;
-    }
-    .card-text {
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        width: 200px;
-        overflow: hidden;
-    }
-    .imgs-grid {
-        display: grid;
-        grid-template-columns: repeat(27, 1fr);
-        position: relative;
-    }
-    .imgs-grid .grid.grid-1 {
-        -ms-grid-column: 1;
-        -ms-grid-column-span: 18;
-        grid-column: 1 / span 18;
-        -ms-grid-row: 1;
-        -ms-grid-row-span: 27;
-        grid-row: 1 / span 27;
-    }
-    .imgs-grid .grid.grid-2 {
-        -ms-grid-column: 19;
-        -ms-grid-column-span: 27;
-        grid-column: 19 / span 27;
-        -ms-grid-row: 1;
-        -ms-grid-row-span: 5;
-        grid-row: 1 / span 5;
-        padding-left: 20px;
-    }
-    .imgs-grid .grid.grid-3 {
-        -ms-grid-column: 14;
-        -ms-grid-column-span: 16;
-        grid-column: 14 / span 16;
-        -ms-grid-row: 6;
-        -ms-grid-row-span: 27;
-        grid-row: 6 / span 27;
-        padding-top: 20px;
-    }
-    .imgs-grid .grid img {
-        border-radius: 20px;
-        max-width: 100%;
-    }
-    .carousel-item {
-        height: 500px;
-    }
-    .carousel-item img {
-        height: 100%;
-        object-fit: cover;
-    }
-    .section-title {
-        text-align: center;
-        margin-bottom: 30px;
-        color: #007bff;
-    }
-    .custom-list li {
-        padding-left: 20px;
-        position: relative;
-    }
-    .custom-list li::before {
-        content: "✔";
-        position: absolute;
-        left: 0;
-        color: #007bff;
-    }
-    .btn-custom {
-        background-color: #007bff;
-        color: white;
-    }
-    .section-container {
-        padding: 20px;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        background-color: #fff;
-        margin-bottom: 20px;
-    }
-    .section-container.bg-light {
-        background-color: #f8f9fa;
-    }
-</style>
-
-<body>
+<body class="marketplace">
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
          data-sidebar-position="fixed" data-header-position="fixed">
         <c:if test="${not empty sessionScope.USER}">
@@ -219,5 +123,4 @@
         </div>
     </div>
 
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-    <%@ include file="../include/footer.jsp" %>
+        <%@ include file="../include/footer.jsp" %>
