@@ -15,11 +15,11 @@
                 <%@ include file="../include/slidebar.jsp" %>
                 <div class="body-wrapper">
                     <%@ include file="../include/navbar.jsp" %>
-                    <div class="container-fluid d-flex">
-                        <div class="col-lg-12 w-100">
+                    <div class="container-fluid">
+                        <div class="col-lg-12">
                             <div id="report-sections">
                                 <div id="reported-posts-section">
-                                    <h2>Create coupons for the entire system</h2>
+                                    <h2 class="mt-4 mb-4">Create coupons for the entire system</h2>
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">
                                             <form id="createVoucherForm">
@@ -28,29 +28,30 @@
                                                         <label for="discountCodeInput">Discount Code:</label>
                                                         <input type="text" class="form-control" id="discountCodeInput" name="discountCode" required>
                                                     </div>
-                                                    <div class="form-group">
+                                                    <div class="form-group mt-3">
                                                         <label for="discountPercentInput">Discount Percent:</label>
                                                         <input type="number" class="form-control" id="discountPercentInput" name="discountPercent" required>
                                                     </div>
-                                                    <div class="form-group">
+                                                    <div class="form-group mt-3">
                                                         <label for="discountConditionInput">Discount Condition (Giá trị đơn hàng tối thiểu):</label>
                                                         <input type="number" class="form-control" id="discountConditionInput" name="discountConditionInput" required>
                                                     </div>
-                                                    <div class="form-group">
+                                                    <div class="form-group mt-3">
                                                         <label for="validFromInput">Valid From:</label>
                                                         <input type="date" class="form-control" id="validFromInput" name="validFrom" required>
                                                     </div>
-                                                    <div class="form-group">
+                                                    <div class="form-group mt-3">
                                                         <label for="validToInput">Valid To:</label>
                                                         <input type="date" class="form-control" id="validToInput" name="validTo" required>
                                                     </div>
-                                                    <div class="form-group">
+                                                    <div class="form-group mt-3">
                                                         <label for="usageLimitInput">Usage Limit:</label>
                                                         <input type="number" class="form-control" id="usageLimitInput" name="usageLimit" required>
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
-                                                    <button type="submit" class="btn btn-primary">Add New</button>
+                                                    <button style="    margin-top: 20px;
+                                                            " type="submit" class="btn btn-primary w-100">Add New</button>
                                                 </div>
                                             </form>
                                         </div>
@@ -85,7 +86,6 @@
                     data: formData,
                     success: function (response) {
                         swal('Success', 'Discount created successfully!', 'success');
-                        // Optionally, clear the form fields or perform other actions
                         $('#createVoucherForm')[0].reset();
                     },
                     error: function (xhr, status, error) {

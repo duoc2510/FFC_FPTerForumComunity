@@ -1,13 +1,7 @@
-
-
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" import="model.*" import="model.DAO.*"%>
 <%@ page import="java.util.*, java.sql.*" %>
-
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <%@ include file="../include/header.jsp" %>
+
 <style>
     .thumbnail img{
         width: 200px;
@@ -843,9 +837,6 @@
 
     <script>
 
-
-
-
         function change_image(n, o) {
             console.log(n.src);
             var e = document.getElementById("main-image-" + o);
@@ -853,5 +844,4 @@
         }</script>
 </body>
 
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <%@ include file="../include/footer.jsp" %>
