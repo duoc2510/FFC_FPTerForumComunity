@@ -11,13 +11,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import model.Ads;
-import model.Ads_combo;
 import model.DAO.Ads_DB;
+import static model.DAO.DBinfo.dbPass;
 import model.DAO.User_DB;
 import model.User;
 
@@ -25,7 +23,7 @@ import model.User;
  *
  * @author mac
  */
-public class Advertising_Library extends HttpServlet {
+public class Advertising_Show extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -44,10 +42,10 @@ public class Advertising_Library extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Advertising_Library</title>");
+            out.println("<title>Servlet Advertising_Show</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Advertising_Library at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet Advertising_Show at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -65,46 +63,29 @@ public class Advertising_Library extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
+        String comboType = request.getParameter("comboType");
+        String targetSex = request.getParameter("targetSex");
 
-        if (session != null && session.getAttribute("USER") != null) {
-            User currentUser = (User) session.getAttribute("USER");
+        Ads_DB adsDB = new Ads_DB();
+        Ads ad = adsDB.getRandomAdWithHighestRate(comboType, targetSex);
 
-            Ads_DB adsDB = new Ads_DB();
-            List<Ads> allAds = adsDB.getAllAds();
-            List<Ads_combo> allComboAds = adsDB.getAllComboAds();
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
 
-            Map<Integer, Ads_combo> comboAdsMap = new HashMap<>();
-            for (Ads_combo combo : allComboAds) {
-                comboAdsMap.put(combo.getAdsDetailId(), combo);
-            }
+        if (ad != null) {
+            User_DB userDB = new User_DB();
+            User adUser = userDB.getUserById(ad.getUserId());
 
-            Map<Ads, Ads_combo> adsWithComboData = new HashMap<>();
-            for (Ads ad : allAds) {
-                Ads_combo combo = comboAdsMap.get(ad.getAdsDetailId());
-                adsWithComboData.put(ad, combo);
-            }
-
-            Map<Integer, User> adUserMap = new HashMap<>();
-            for (Ads ad : allAds) {
-                User adUser = User_DB.getUserById(ad.getUserId());
-                adUserMap.put(ad.getAdsDetailId(), adUser);
-            }
-            response.setContentType("text/html;charset=UTF-8");
-            response.setCharacterEncoding("UTF-8");
+            // Combine ad and user details
+            Map<String, Object> responseData = new HashMap<>();
+            responseData.put("ad", ad);
+            responseData.put("user", adUser);
 
             Gson gson = new Gson();
-            String adsWithComboDataJson = gson.toJson(adsWithComboData);
-            String adUserMapJson = gson.toJson(adUserMap);
-
-            // Set the maps of ads with combo data and user data as attributes in the request
-            request.setAttribute("adsWithComboDataJson", adsWithComboDataJson); // Make sure this variable is defined in your servlet
-            request.setAttribute("adUserMapJson", adUserMapJson); // Make sure this variable is defined in your servlet
-
-            request.getRequestDispatcher("/advertising/libraryAds.jsp").forward(request, response);
-
+            String jsonResponse = gson.toJson(responseData);
+            response.getWriter().write(jsonResponse);
         } else {
-            response.sendRedirect("/login");
+            response.getWriter().write("{\"message\": \"No ad found matching the criteria.\"}");
         }
     }
 

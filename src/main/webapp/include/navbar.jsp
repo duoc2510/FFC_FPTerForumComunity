@@ -167,7 +167,7 @@ String userJson = new Gson().toJson(user);
                                 <p class="mb-0 fs-3">My Account</p>
                             </a>
                             <div class="d-flex align-items-center gap-2">
-                                <a href="${pageContext.request.contextPath}/payment" class="dropdown-item" id="walletLink">
+                                <a href="${pageContext.request.contextPath}/wallet" class="dropdown-item" id="walletLink">
                                     <p class="mb-0 fs-3" id="walletAmount">Wallet: ${USER.userWallet}</p>
                                 </a>
                                 <i class="ti ti-repeat" id="reloadWalletIcon" style="cursor: pointer;"></i>
@@ -189,7 +189,7 @@ String userJson = new Gson().toJson(user);
 
     </nav>
     <script type="text/javascript">
-    var USER = <%= userJson %>; // Chuyển đổi chuỗi JSON thành đối tượng JavaScript
+        var USER = <%= userJson %>; // Chuyển đổi chuỗi JSON thành đối tượng JavaScript
     </script>
     <script>
         var contextPath = '<%= request.getContextPath() %>';
@@ -300,8 +300,6 @@ String userJson = new Gson().toJson(user);
                 loadNotifications();
             });
         });
-
-
         $(document).ready(function () {
             var userId = USER.userId; // Sử dụng USER.userId trực tiếp
             var searchInput = $('#searchInput');
@@ -428,13 +426,6 @@ String userJson = new Gson().toJson(user);
                 }
             });
         });
-
-
-
-
-
-
-
     </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 

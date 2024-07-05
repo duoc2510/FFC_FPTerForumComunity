@@ -74,7 +74,6 @@ public class Chat {
     }
 
     private void handleChatMessage(JSONObject jsonMessage, Session session) throws Exception {
-        NotificationWebSocket nw = new NotificationWebSocket();
         int toId = jsonMessage.getInt("toId");
         int fromId = jsonMessage.getInt("fromId");
         String messageText = jsonMessage.getString("messageText");
@@ -87,6 +86,7 @@ public class Chat {
 
         // Broadcast message to relevant clients
         broadcastMessage(fromId, fromUsername, toId, messageText);
+        NotificationWebSocket nw = new NotificationWebSocket();
         String notificationMessage = fromUsername + " sent you a message.";
         nw.saveNotificationToDatabase(toId, notificationMessage, "/messenger");
         nw.sendNotificationToClient(toId, notificationMessage, "/messenger");

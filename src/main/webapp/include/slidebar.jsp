@@ -52,7 +52,7 @@
                             </li>
 
                             <li class="sidebar-item sub-item">
-                                <a href="${pageContext.request.contextPath}/#" class="sidebar-link">
+                                <a  class="sidebar-link">
                                     <span class="hide-menu">- Reset rankings</span>
                                 </a>
                             </li>
@@ -62,7 +62,7 @@
                                 </a>
                             </li>
                             <li class="sidebar-item sub-item">
-                                <a href="${pageContext.request.contextPath}/#" class="sidebar-link">
+                                <a  class="sidebar-link">
                                     <span class="hide-menu">- Add ads</span>
                                 </a>
                             </li>
@@ -74,6 +74,11 @@
                             <li class="sidebar-item sub-item">
                                 <a href="${pageContext.request.contextPath}/admin/viewFeedBack" class="sidebar-link">
                                     <span class="hide-menu">- View feedback</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item sub-item">
+                                <a href="${pageContext.request.contextPath}/admin/transaction" class="sidebar-link">
+                                    <span class="hide-menu">- Transaction Manage</span>
                                 </a>
                             </li>
                         </ul>
@@ -164,7 +169,7 @@
                     <%@ include file="../ads/showAds.jsp" %>
                 </c:otherwise>
             </c:choose>
-           <c:if test="${USER.userRole != 3}">
+            <c:if test="${USER.userRole != 3}">
                 <%@ include file="../user/feedBackModal.jsp" %>
             </c:if>
         </nav>

@@ -27,6 +27,7 @@ public class Ads_DB implements DBinfo {
         }
     }
 
+  
     // Retrieve all AdsCombo records
     public List<Ads_combo> getAllAdsCombo() {
         List<Ads_combo> allAdsCombo = new ArrayList<>();
@@ -389,6 +390,38 @@ public class Ads_DB implements DBinfo {
         } catch (SQLException ex) {
             Logger.getLogger(Ads_DB.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public Ads getRandomAdWithHighestRate(String comboType, String targetSex) {
+        Ads ad = null;
+        String sql = "SELECT TOP 1 a.* FROM Ads a JOIN Combo_ads c ON a.Adsdetail_id = c.Adsdetail_id WHERE c.comboType = ? AND isActive = 1 AND (a.targetSex = ? OR a.targetSex ='all') AND DATEDIFF(day, c.createDate, GETDATE()) < c.durationDay ORDER BY NEWID();";
+
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(sql)) {
+            pstmt.setString(1, comboType);
+            pstmt.setString(2, targetSex);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    ad = new Ads();
+                    ad.setAdsId(rs.getInt("Ads_id"));
+                    ad.setAdsDetailId(rs.getInt("Adsdetail_id"));
+                    ad.setTitle(rs.getString("Title"));
+                    ad.setContent(rs.getString("Content"));
+                    ad.setImage(rs.getString("Image"));
+                    ad.setUserId(rs.getInt("User_id"));
+                    ad.setCurrentReact(rs.getInt("currentReact"));
+                    ad.setLocation(rs.getString("location"));
+                    ad.setUri(rs.getString("URI"));
+                    ad.setUploadPath(rs.getString("UploadPath"));
+                    ad.setIsActive(rs.getInt("isActive"));
+                    ad.setStartDate(rs.getDate("startDate"));
+                    ad.setTargetSex(rs.getString("targetSex"));
+                }
+            }
+        } catch (SQLException ex) {
+            System.err.println("getRandomAdWithHighestRate: Query execution failed - " + ex.getMessage());
+        }
+        return ad;
     }
 
 }

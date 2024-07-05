@@ -114,9 +114,7 @@ public class Shop_DB {
         String query = "SELECT * FROM Shop WHERE Status = 2";
 
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
-
             ResultSet rs = pstmt.executeQuery();
-
             while (rs.next()) {
                 int shopID = rs.getInt("Shop_id");
                 String shopName = rs.getString("Shop_name");
@@ -218,10 +216,10 @@ public class Shop_DB {
                 Shop shop = new Shop(shopID, shopName, shopPhone, shopCampus, description, ownerID, image, status ? 1 : 0);
                 shops.add(shop);
             }
+            System.out.println("lay thanh cong");
         } catch (SQLException ex) {
             Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
         }
-
         return shops;
     }
 

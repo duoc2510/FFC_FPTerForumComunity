@@ -3,9 +3,15 @@
     Created on : Jun 23, 2024, 11:36:27 AM
     Author     : mac
 --%>
-<%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%><%@ include file="../include/header.jsp" %> <body>
-    <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full" data-sidebar-position="fixed" data-header-position="fixed"><%@ include file="../include/slidebar.jsp" %> <div class="body-wrapper"><%@ include file="../include/navbar.jsp" %> <div class="container-fluid pb-2">
-                <div class="row ">
+<%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
+<%@ include file="../include/header.jsp" %>
+<body>
+    <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full" data-sidebar-position="fixed" data-header-position="fixed">
+        <%@ include file="../include/slidebar.jsp" %>
+        <div class="body-wrapper">
+            <%@ include file="../include/navbar.jsp" %>
+            <div class="container-fluid pb-2">
+                <div class="row">
                     <div id="profile-wrapper">
                         <style>
                             .post {
@@ -68,12 +74,12 @@
                             .profile img {
                                 top: 20em;
                             }
-                            .bank-logo{
-                                width:100px;
 
+                            .bank-logo {
+                                width: 100px;
                             }
                         </style>
-                        <div class="bg-white shadow rounded overflow-hidden ">
+                        <div class="bg-white shadow rounded overflow-hidden">
                             <div class="px-4 py-4 cover cover " style="background: url(${pageContext.request.contextPath}/upload/deli-2.png); height:250px;">
                                 <div class="media align-items-end profile-head">
                                     <div class="profile mr-3 d-flex justify-content-between align-items-end">
@@ -93,7 +99,9 @@
             </div>
             <div class="container-fluid pt-0">
                 <div class="row form-settings d-flex justify-content-between">
-                    <div class="col-12 col-sm-5 px-2"><%@include file="menuWallet.jsp" %> </div>
+                    <div class="col-12 col-sm-5 px-2">
+                        <%@include file="menuWallet.jsp" %>
+                    </div>
                     <div class="col-12 col-sm-7 px-2">
                         <div class=" bg-white shadow rounded px-3 ">
                             <div class="row d-flex justify-content-center">
@@ -107,12 +115,12 @@
                                             <img class="img-fluid" src="https://img.icons8.com/?size=50&id=209&format=png&color=000000" />
                                             <div class="flex-fill mx-3 d-flex">
                                                 <div data-mdb-input-init class="form-outline col-11">
-                                                    <input type="password" id="totalValue" class="form-control" value="${USER.userWallet}" readonly/>
+                                                    <input type="password" id="totalValue" class="form-control" value="${USER.userWallet}" readonly />
                                                 </div>
                                                 <div class="col-1 d-flex justify-content-center align-items-center">
                                                     <a href="javascript:void(0)" onclick="showHideTotal()" id="showHideIcon"><i class="ti ti-eye"></i></a>
                                                 </div>
-                                            </div>                                    
+                                            </div>
                                         </div>
                                     </div>
                                     <%-- Kiểm tra và hiển thị thông báo từ request attribute --%>
@@ -120,7 +128,7 @@
                                         <div class="alert alert-dismissible alert-${message.startsWith('Nạp tiền') ? 'success' : 'danger'}">
                                             <strong>${message}</strong>
                                         </div>
-                                        <% session.removeAttribute("message"); %>                    
+                                        <% session.removeAttribute("message"); %>
                                     </c:if>
                                     <form id="withdrawForm" action="${pageContext.request.contextPath}/payment" method="post">
                                         <input type="hidden" name="action" value="rutTien">
@@ -146,7 +154,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <button data-mdb-button-init data-mdb-ripple-init  type="submit" class="btn btn-primary btn-lg btn-block">Withdraw</button>
+                                        <button data-mdb-button-init data-mdb-ripple-init type="button" class="btn btn-primary btn-lg btn-block" onclick="openConfirmModal()">Withdraw</button>
                                     </form>
                                 </div>
                             </div>
@@ -156,19 +164,47 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmModalLabel">Confirm Withdrawal</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Bank:</strong> <span id="confirmBankName"></span></p>
+                    <p><strong>Bank Account Number:</strong> <span id="confirmAtmNumber"></span></p>
+                    <p><strong>Amount:</strong> <span id="confirmAmount"></span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="submitWithdrawal()">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 <script>
-    function showHideTotal() {
-        var totalValue = document.getElementById('totalValue');
-        var showHideIcon = document.getElementById('showHideIcon');
-        if (totalValue.type === 'text') {
-            totalValue.type = 'password';
-            showHideIcon.innerHTML = '<i class="ti ti-eye"></i>';
-        } else {
-            totalValue.type = 'text';
-            showHideIcon.innerHTML = '<i class="ti ti-lock"></i>';
-        }
+    function openConfirmModal() {
+        var bankName = document.getElementById('bankNameWithdraw').value;
+        var atmNumber = document.getElementById('atmNumberWithdraw').value;
+        var amount = document.getElementById('amountWithdraw').value;
+
+        document.getElementById('confirmBankName').textContent = bankName;
+        document.getElementById('confirmAtmNumber').textContent = atmNumber;
+        document.getElementById('confirmAmount').textContent = amount;
+
+        $('#confirmModal').modal('show');
     }
+
+    function submitWithdrawal() {
+        document.getElementById('withdrawForm').submit();
+    }
+
     function showHideTotal() {
         var totalValue = document.getElementById('totalValue');
         var showHideIcon = document.getElementById('showHideIcon');
