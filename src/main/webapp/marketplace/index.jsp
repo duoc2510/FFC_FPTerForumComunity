@@ -18,20 +18,22 @@
                 <%@ include file="../include/navbar_guest.jsp" %>
             </c:if>
             <div class="container-fluid">
-                <!--Control panel-->
-                <%@ include file="panel.jsp" %>
-                <div class="row my-5">
+               
+                <div class="row my-4 rounded shadow ">
                     <div class="col-md-12 p-2">
                         <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel" data-bs-interval="2000">
                             <div class="carousel-inner">
-                                <div class="carousel-item active">
-                                    <img src="${pageContext.request.contextPath}/static/images/bannerdangkishop.png" class="d-block w-100" alt="Banner 2">
+                                <div class="carousel-item rounded active">
+                                    <div class="cel-overplay"></div>
+                                    <img src="${pageContext.request.contextPath}/static/images/bannerdangkishop.png" class="rounded d-block w-100" alt="Banner 2">
                                 </div>
-                                <div class="carousel-item">
-                                    <img src="${pageContext.request.contextPath}/static/images/bannermonan.png" class="d-block w-100" alt="Banner 3">
+                                <div class="carousel-item rounded">
+                                    <div class="cel-overplay"></div>
+                                    <img src="${pageContext.request.contextPath}/static/images/bannermonan.png" class="rounded d-block w-100" alt="Banner 3">
                                 </div>
-                                <div class="carousel-item">
-                                    <img src="${pageContext.request.contextPath}/static/images/bannersale.png" class="d-block w-100" alt="Banner 4">
+                                <div class="carousel-item rounded">
+                                    <div class="cel-overplay"></div>
+                                    <img src="${pageContext.request.contextPath}/static/images/bannersale.png" class="rounded d-block w-100" alt="Banner 4">
                                 </div>
                             </div>
                             <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
@@ -45,20 +47,23 @@
                         </div>
                     </div>
                 </div>
+                                
+                                 <!--Control panel-->
+                <%@ include file="panel.jsp" %>
 
-                <div class="row mt-5">
+                <div class="row mt-5 rounded px-3 py-5 shadow ">
                     <div class="col-md-7 p-2">
-                        <div class="section-container">
+                        <div>
                             <h3 class="section-title">FFC Shop - Nơi Trao Đổi Mua Bán Các Mặt Hàng Giữa FPTer</h3>
                             <div class="imgs-grid">
-                                <div class="grid grid-1"><img src="${pageContext.request.contextPath}/static/images/rank/sanpham.jpg"></div>
-                                <div class="grid grid-2"><img src="${pageContext.request.contextPath}/static/images/rank/sanpham2.jpg"></div>
-                                <div class="grid grid-3"><img src="${pageContext.request.contextPath}/static/images/rank/sanpham3.jpg"></div>
+                                <div class="grid grid-1 rounded"><img src="${pageContext.request.contextPath}/static/images/rank/sanpham.jpg"></div>
+                                <div class="grid grid-2 rounded"><img src="${pageContext.request.contextPath}/static/images/rank/sanpham2.jpg"></div>
+                                <div class="grid grid-3 rounded"><img src="${pageContext.request.contextPath}/static/images/rank/sanpham3.jpg"></div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-5 p-2">
-                        <div class="section-container">
+                    <div class="col-md-5 p-4 d-flex align-items-center">
+                        <div>
                             <h3>Rất Nhiều Sản Phẩm Đa Dạng</h3>
                             <ul class="list-unstyled custom-list my-4">
                                 <li>Nhận ưu đãi đặc biệt, dịch vụ chăm sóc tận tâm</li>
@@ -71,9 +76,9 @@
                     </div>
                 </div>
 
-                <div class="row mt-5">
-                    <div class="col-md-5 p-2">
-                        <div class="section-container bg-light">
+                <div class="row mt-5 rounded px-3 py-5 shadow ">
+                    <div class="col-md-5 p-4 d-flex align-items-center">
+                        <div>
                             <h3 class="section-title">Hàng Ngàn Ưu Đãi Quyền Lợi Dành Cho Shop Owner</h3>
                             <p>Tạo shop dễ dàng và bán hàng nhanh chóng</p>
                             <ul class="list-unstyled custom-list my-4">
@@ -85,8 +90,8 @@
                             <a href="${pageContext.request.contextPath}/marketplace/myshop" class="btn btn-primary btn-custom mt-3">Join with us</a>
                         </div>
                     </div>
-                    <div class="col-md-7 p-2">
-                        <div class="section-container">
+                    <div class="col-md-7 p-2 ">
+                        <div>
                             <div class="imgs-grid">
                                 <div class="grid grid-1"><img src="${pageContext.request.contextPath}/static/images/rank/giaohang.jpg"></div>
                                 <div class="grid grid-2"><img src="${pageContext.request.contextPath}/static/images/rank/doitac1.jpg"></div>
@@ -96,9 +101,9 @@
                     </div>
                 </div>
 
-                <div class="row mt-5">
-                    <div class="col-md-7 p-2">
-                        <div class="section-container">
+                <div class="row mt-5 rounded px-3 py-5 shadow">
+                    <div class="col-12 col-md-7 p-2">
+                        <div>
                             <div class="imgs-grid">
                                 <div class="grid grid-1"><img src="${pageContext.request.contextPath}/static/images/rank/sale3.jpg"></div>
                                 <div class="grid grid-2"><img src="${pageContext.request.contextPath}/static/images/rank/sale2.jpg"></div>
@@ -106,8 +111,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-5 p-2">
-                        <div class="section-container">
+                    <div class="col-12 col-md-5 p-4 d-flex align-items-center">
+                        <div>
                             <h3 class="section-title">Hàng Ngàn Voucher Hấp Dẫn</h3>
                             <ul class="list-unstyled custom-list my-4">
                                 <li>Nhận ưu đãi đặc biệt, hàng ngàn voucher miễn phí</li>
