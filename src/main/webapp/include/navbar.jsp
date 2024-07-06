@@ -189,7 +189,7 @@ String userJson = new Gson().toJson(user);
 
     </nav>
     <script type="text/javascript">
-    var USER = <%= userJson %>; // Chuyển đổi chuỗi JSON thành đối tượng JavaScript
+        var USER = <%= userJson %>; // Chuyển đổi chuỗi JSON thành đối tượng JavaScript
     </script>
     <script>
         var contextPath = '<%= request.getContextPath() %>';
@@ -320,8 +320,8 @@ String userJson = new Gson().toJson(user);
                 }
                 // Add query to beginning of search history
                 searchHistory.unshift(query);
-                // Limit search history to 10 items (adjust as needed)
-                if (searchHistory.length > 10) {
+                // Limit search history to 7 items
+                if (searchHistory.length > 7) {
                     searchHistory.pop();
                 }
                 // Save updated search history to localStorage
@@ -427,7 +427,6 @@ String userJson = new Gson().toJson(user);
                 }
             });
         });
-
 
 
 
