@@ -496,3 +496,9 @@ VALUES
 (1, 2, 'Welcome!'),
 (2, 1, 'I recommend trying the Italian restaurant downtown.');
 
+SELECT * FROM dbo.Users
+SELECT * FROM	dbo.Product
+SELECT * FROM	dbo.Shop
+SELECT * FROM	dbo.Report
+SELECT * FROM	dbo.FriendShip
+
