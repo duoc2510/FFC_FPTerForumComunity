@@ -120,6 +120,18 @@ public class Shop_confirmOrder extends HttpServlet {
                             int discountShopId = Integer.parseInt((String) discount.get("shopId"));
                             int discountId = Integer.parseInt((String) discount.get("discountId"));
                             double total = Double.parseDouble(discount.get("total").toString());
+
+                            // Kiểm tra số lượng giới hạn của discount
+                            if (discountId != 0) {
+                                Discount discountObj = sdb.getDiscountByID(discountId);
+                                if (discountObj.getUsageLimit() <= 0) {
+                                    String msg = "The selected discount has run out, please choose another.";
+                                    session.setAttribute("message", msg);
+                                    response.sendRedirect("cart");
+                                    return;
+                                }
+                            }
+
                             Discount dis = new Discount(discountShopId, discountId);
                             discountList.add(dis);
                             shopTotals.put(discountShopId, total);
@@ -128,11 +140,15 @@ public class Shop_confirmOrder extends HttpServlet {
                         // You can now use the selectedDiscounts list for further processing, such as applying discounts to the order, saving to the database, etc.
                     } catch (IOException e) {
                         e.printStackTrace();
-                        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid discount data");
+                        String msg = "Invalid discount data";
+                        session.setAttribute("message", msg);
+                        response.sendRedirect("cart");
                         return;
                     }
                 } else {
-                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No discount data provided");
+                    String msg = "No discount data provided";
+                    session.setAttribute("message", msg);
+                    response.sendRedirect("cart");
                     return;
                 }
 
@@ -227,6 +243,7 @@ public class Shop_confirmOrder extends HttpServlet {
                     return;
                 }
                 break;
+
             case "confirm2":
                 String totalStr = request.getParameter("total");
                 String paymentMethod = request.getParameter("paymentMethod");
@@ -266,8 +283,22 @@ public class Shop_confirmOrder extends HttpServlet {
                     }
                 }
 
-                if (!isOutOfStock) {
+                // Check if the discount usage limits are reached
+                for (String orderid : orderlistidnew) {
+                    int id = Integer.parseInt(orderid);
+                    Order order = sdb.getOrderbyID(id);
+                    if (order.getDiscountid() != 0) {
+                        Discount discount = sdb.getDiscountByID(order.getDiscountid());
+                        if (discount.getUsageLimit() <= 0) {
+                            String msg = "The selected discount has run out, please choose another.";
+                            session.setAttribute("message", msg);
+                            response.sendRedirect("cart");
+                            return;
+                        }
+                    }
+                }
 
+                if (!isOutOfStock) {
                     // If no products are out of stock, proceed to update the order
                     for (OrderItem orderItem : selectedOrderItemsConfirm2) {
                         Product product = sdb.getProductByID(orderItem.getProductID());
@@ -276,15 +307,15 @@ public class Shop_confirmOrder extends HttpServlet {
                     }
 
                     if ("systemWallet".equals(paymentMethod)) {
-                        ///trừ tiền người mua
+                        // Deduct money from the buyer
                         boolean updateSuccess = User_DB.updateWalletByEmail(user.getUserEmail(), user.getUserWallet() - total);
 
-                        //trả về thông báo trừ tiền tại đây:
+                        // Return notification of money deduction here:
                         nw.saveNotificationToDatabaseWithStatusIsBalance(user.getUserId(), "Trừ tiền đơn hàng :" + total, "/walletbalance");
                         for (String orderid : orderlistidnew) {
                             int id = Integer.parseInt(orderid);
                             Order order = sdb.getOrderbyID(id);
-                            //kiểm tra có discount thì cập nhật lại số lượng
+                            // Check if there is a discount then update the usage limit
                             if (order.getDiscountid() != 0) {
                                 Discount discount = sdb.getDiscountByID(order.getDiscountid());
                                 sdb.updateUsageLimit(order.getDiscountid(), discount.getUsageLimit() - 1);
@@ -308,7 +339,7 @@ public class Shop_confirmOrder extends HttpServlet {
                         for (String orderid : orderlistidnew) {
                             int id = Integer.parseInt(orderid);
                             Order order = sdb.getOrderbyID(id);
-                            //kiểm tra có discount thì cập nhật lại số lượng
+                            // Check if there is a discount then update the usage limit
                             if (order.getDiscountid() != 0) {
                                 Discount discount = sdb.getDiscountByID(order.getDiscountid());
                                 sdb.updateUsageLimit(order.getDiscountid(), discount.getUsageLimit() - 1);
@@ -343,13 +374,13 @@ public class Shop_confirmOrder extends HttpServlet {
                     request.getSession().setAttribute("ORDERITEMLIST", newOrderItems);
 
                     // Redirect to the allshop page with a success message
-                    String msg = "Thanks for your order! ";
+                    String msg = "Thanks for your order!";
                     session.setAttribute("message", msg);
-                    response.sendRedirect("allshop");
+                    response.sendRedirect("/FPTer/martketplace/allshop");
 
                 } else {
                     // If any products are out of stock, redirect to the cart page with an error message
-                    String msg = "Your Cart Contains Sold Out Product! ";
+                    String msg = "Your Cart Contains Sold Out Product!";
                     session.setAttribute("message", msg);
                     response.sendRedirect("cart");
                 }
