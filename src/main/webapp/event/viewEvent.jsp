@@ -3,6 +3,12 @@
 <%@ page import="java.util.Date" %>
 <%@ include file="../include/header.jsp" %>
 
+<!-- Include Bootstrap CSS and JS -->
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 <body>
     <style>
         /* CSS style for the page */
@@ -52,6 +58,7 @@
             padding: 10px;
             border-radius: 8px;
             z-index: 1;
+            cursor: pointer; /* Add cursor pointer */
         }
 
         .num-interested-users {
@@ -79,23 +86,8 @@
         .event-info p {
             margin-bottom: 10px;
         }
-
-        .interested-members {
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
-        }
-
-        .interested-members ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-
-        .interested-members li {
-            margin-bottom: 5px;
-        }
     </style>
+
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
          data-sidebar-position="fixed" data-header-position="fixed">
         <%@ include file="../include/slidebar.jsp" %>
@@ -110,26 +102,30 @@
                             </div>
                             <div class="event-header">
                                 <h2 class="event-title">${event.title}</h2>
-                                <div class="member-info">
+                                <div class="member-info" data-toggle="modal" data-target="#interestedMembersModal">
                                     <div>Number of interested members:</div>
                                     <span class="num-interested-users">${numInterestedUsers}</span>
                                 </div>
                                 <div class="interest-button">
                                     <c:choose>
                                         <c:when test="${event.isInterest}">
-                                            <button class="btn btn-secondary" disabled>Interested</button>
+                                            <form action="${pageContext.request.contextPath}/interested" method="post">
+                                                <input type="hidden" name="eventId" value="${event.eventId}">
+                                                <input type="hidden" name="action" value="cancel">
+                                                <button type="submit" class="btn btn-secondary">Interested</button>
+                                            </form>
                                         </c:when>
                                         <c:otherwise>
                                             <form action="${pageContext.request.contextPath}/interested" method="post">
                                                 <input type="hidden" name="eventId" value="${event.eventId}">
+                                                <input type="hidden" name="action" value="add">
                                                 <button type="submit" class="btn btn-primary">Interest</button>
                                             </form>
                                         </c:otherwise>
                                     </c:choose>
                                 </div>
                             </div>
-                            
-                            
+
                             <!-- Set the current time -->
                             <c:set var="now" value="<%= new java.util.Date() %>" />
 
@@ -142,7 +138,7 @@
                                     <p class="text-success"><strong>This event is ongoing</strong></p>
                                 </c:otherwise>
                             </c:choose>
-                                    
+
                             <!-- Google Maps iframe based on location -->
                             <div>
                                 <c:choose>
@@ -156,7 +152,7 @@
                                         <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15343.424671312003!2d108.2608913!3d15.9688859!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3142116949840599%3A0x365b35580f52e8d5!2zxJDhuqFpIGjhu41jIEZQVCDEkMOgIE7hurVuZw!5e0!3m2!1svi!2s!4v1718764574863!5m2!1svi!2s" width="540" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                                         </c:when>
                                         <c:when test="${event.location == 'Đại học FPT Cần Thơ'}">
-                                        <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15716.213416548251!2d105.7324316!3d10.0124518!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0882139720a77%3A0x3916a227d0b95a64!2sFPT%20University!5e0!3m2!1svi!2s!4v1718766046530!5m2!1svi!2s"width="540" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                                        <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15716.213416548251!2d105.7324316!3d10.0124518!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0882139720a77%3A0x3916a227d0b95a64!2sFPT%20University!5e0!3m2!1svi!2s!4v1718766046530!5m2!1svi!2s" width="540" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                                         </c:when>
 
                                     <c:otherwise>
@@ -176,16 +172,32 @@
                                 <p><strong>Place:</strong> ${event.place}</p>
                                 <p><strong>Created At:</strong> ${event.createdAt}</p>
                             </div>
-                            <div class="interested-members">
-                                <h4>Interested Members</h4>
-                                <ul class="member-list">
-                                    <c:forEach var="member" items="${interestedUsers}">
-                                        <li>${member}</li>
-                                        </c:forEach>
-                                </ul>
-                            </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Interested Members -->
+    <div class="modal fade" id="interestedMembersModal" tabindex="-1" role="dialog" aria-labelledby="interestedMembersModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="interestedMembersModalLabel">Interested Members</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <ul class="member-list">
+                        <c:forEach var="member" items="${interestedUsers}">
+                            <li>${member}</li>
+                            </c:forEach>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>

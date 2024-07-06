@@ -6,11 +6,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import model.Upload;
 import model.Event;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class Event_DB {
 
@@ -70,6 +73,7 @@ public class Event_DB {
     public static List<Event> getAllEvents() {
         String SELECT_ALL_EVENTS_QUERY = "SELECT e.*, u.uploadPath FROM Event e LEFT JOIN Upload u ON e.Event_id = u.event_id";
         List<Event> eventList = new ArrayList<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement pstmt = con.prepareStatement(SELECT_ALL_EVENTS_QUERY)) {
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
@@ -85,12 +89,56 @@ public class Event_DB {
                         rs.getTimestamp("Created_at"),
                         rs.getString("uploadPath")
                 );
+                // Format the dates
+                event.setFormattedStartDate(sdf.format(event.getStartDate()));
+                event.setFormattedEndDate(sdf.format(event.getEndDate()));
                 eventList.add(event);
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
         return eventList;
+    } 
+    public static String getAllEventsAsJson() {
+        String SELECT_ALL_EVENTS_QUERY = "SELECT e.*, u.uploadPath FROM Event e LEFT JOIN Upload u ON e.Event_id = u.event_id";
+        List<Event> eventList = new ArrayList<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
+        // JSON array to hold events
+        JSONArray jsonArray = new JSONArray();
+
+        try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement pstmt = con.prepareStatement(SELECT_ALL_EVENTS_QUERY)) {
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Event event = new Event(
+                        rs.getInt("Event_id"),
+                        rs.getString("Title"),
+                        rs.getString("Description"),
+                        rs.getTimestamp("Start_date"),
+                        rs.getTimestamp("End_date"),
+                        rs.getInt("Created_by"),
+                        rs.getString("Location"),
+                        rs.getString("Place"),
+                        rs.getTimestamp("Created_at"),
+                        rs.getString("uploadPath")
+                );
+                // Format the start date
+                String formattedStartDate = sdf.format(event.getStartDate());
+
+                // Create JSON object for each event
+                JSONObject jsonEvent = new JSONObject();
+                jsonEvent.put("title", event.getTitle());
+                jsonEvent.put("start", formattedStartDate);
+
+                // Add event object to JSON array
+                jsonArray.put(jsonEvent);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+        // Convert JSON array to string and return
+        return jsonArray.toString();
     }
 
     public static List<Event> getAllEvents(int userId) {
@@ -274,4 +322,18 @@ public class Event_DB {
             return false;
         }
     }
+
+    public static boolean deleteUserInterest(int userId, int eventId) {
+        String DELETE_USER_INTEREST_QUERY = "DELETE FROM UserFollow WHERE user_id = ? AND event_id = ?";
+        try (Connection con = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement pstmt = con.prepareStatement(DELETE_USER_INTEREST_QUERY)) {
+            pstmt.setInt(1, userId);
+            pstmt.setInt(2, eventId);
+            int affectedRows = pstmt.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
 }

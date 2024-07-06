@@ -1,6 +1,8 @@
 package model;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Event {
 
@@ -15,6 +17,8 @@ public class Event {
     private Timestamp createdAt;
     private String uploadPath;
     private boolean isInterest;
+    private String formattedStartDate;
+    private String formattedEndDate;
 
     // Constructors
     public Event() {
@@ -29,7 +33,7 @@ public class Event {
         this.userId = userId;
     }
 
-    public Event(int eventId, String title, String description, Timestamp startDate, Timestamp endDate, int userId, String location,String place, Timestamp createdAt) {
+    public Event(int eventId, String title, String description, Timestamp startDate, Timestamp endDate, int userId, String location, String place, Timestamp createdAt) {
         this.eventId = eventId;
         this.title = title;
         this.description = description;
@@ -68,13 +72,28 @@ public class Event {
         this.isInterest = isInterest;
     }
 
-    
     // Getters and Setters
+    public String getFormattedStartDate() {
+        return formattedStartDate;
+    }
+
+    public void setFormattedStartDate(String formattedStartDate) {
+        this.formattedStartDate = formattedStartDate;
+    }
+
+    public String getFormattedEndDate() {
+        return formattedEndDate;
+    }
+
+    public void setFormattedEndDate(String formattedEndDate) {
+        this.formattedEndDate = formattedEndDate;
+    }
+
     public String getPlace() {
         return place;
     }
 
-    public void setPlace(String place) {    
+    public void setPlace(String place) {
         this.place = place;
     }
 
@@ -157,4 +176,5 @@ public class Event {
     public void setUploadPath(String uploadPath) {
         this.uploadPath = uploadPath;
     }
+   
 }

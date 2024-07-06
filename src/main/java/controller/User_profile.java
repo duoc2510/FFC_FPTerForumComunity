@@ -15,6 +15,7 @@ import java.util.List;
 import model.Comment;
 import model.DAO.Comment_DB;
 import model.DAO.Post_DB;
+import model.DAO.Report_DB;
 import model.DAO.User_DB;
 import model.Post;
 import model.User;
@@ -100,7 +101,7 @@ public class User_profile extends HttpServlet {
                 // Đang xem hồ sơ của người khác
                 // Lấy thông tin của người dùng từ cơ sở dữ liệu
                 User userInfo = User_DB.getUserByEmailorUsername(requestedUsername);
-
+                
                 // Kiểm tra xem người dùng có tồn tại không
                 if (userInfo == null) {
                     response.sendRedirect(request.getContextPath() + "/auth/login.jsp?errorMessage=User not found");
@@ -134,11 +135,16 @@ public class User_profile extends HttpServlet {
                     }
                     post.setComments(comments); // Đặt danh sách comment vào bài viết
                 }
+                
                 boolean areFriend = User_DB.areFriendsAccepted(userId, requestedUsername);
                 boolean isPendingRq = User_DB.hasFriendRequestFromUser(userId, requestedUsername);
+                boolean hasReport = Report_DB.hasReported(userId, requestedUsername);
                 int postCountofUser = User_DB.countPostByUserName(requestedUsername);
-
+                boolean hasReportedMore3 = Report_DB.userReportedAtLeastThreeTimes(userInfo.getUserId());
+                
+                session.setAttribute("hasReportedMore3", hasReportedMore3);
                 // Thiết lập các thuộc tính cho session và request
+                session.setAttribute("hasReport", hasReport);
                 session.setAttribute("isPendingRq", isPendingRq);
                 session.setAttribute("areFriend", areFriend);
                 session.setAttribute("postCountofUser", postCountofUser);

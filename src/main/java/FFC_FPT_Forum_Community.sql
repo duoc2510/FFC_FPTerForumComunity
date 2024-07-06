@@ -330,6 +330,15 @@ INSERT INTO ATMInfo (ATMNumber, username, BankName, Money, CODE,Status) VALUES
 ('25102003222', 'Nguyen Van B', 'MBBank', 500000, 1234, 'Active'), --Thẻ thanh toán thành công
 ('25102003223', 'Nguyen Van B', 'MBBank', 200000, 1234, 'Block'), --Thẻ bị khoá
 ('25102003224', 'Nguyen Van D', 'MBBank', 0, 1234,'Active'); -- Thẻ không đủ số dư
+CREATE TABLE managerRegistr (
+    managerRegistr_id INT IDENTITY(1,1) PRIMARY KEY, -- ID tự động tăng cho đăng ký quản lý
+    User_id INT NOT NULL, -- Tham chiếu đến User_id bên bảng Users
+    RegistrationDate DATETIME DEFAULT GETDATE(), -- Ngày đăng ký, mặc định là ngày hiện tại
+    Status NVARCHAR(50), -- Trạng thái của đăng ký (Pending, Approved, Rejected), mặc định là 'Pending'
+    Remarks NVARCHAR(255), -- Ghi chú về đăng ký (tùy chọn)
+    
+    CONSTRAINT fk_user FOREIGN KEY (User_id) REFERENCES Users(User_id) -- Khóa ngoại tham chiếu tới User_id của bảng Users
+);
 GO
 CREATE OR ALTER VIEW GroupView AS
 SELECT 

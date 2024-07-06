@@ -1,12 +1,23 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
+<head>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+</body>
 <aside class="left-sidebar">
+    <!-- Bootstrap CSS -->
+
+
     <style>
         .sub-item{
             font-size: 13px;
             padding-left: 20px;
         }
-
     </style>
+
     <!-- Sidebar scroll-->  
     <div>
         <div class="brand-logo d-flex align-items-center justify-content-between">
@@ -20,7 +31,44 @@
         <!-- Sidebar navigation-->
         <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
             <ul id="sidebarnav">
-
+                <c:if test="${USER.userRole == 3}">
+                    <li class="sidebar-item">
+                        <a class="sidebar-link has-arrow" href="javascript:void(0)" aria-expanded="false">
+                            <span>
+                                <i class="ti ti-users"></i>
+                            </span>
+                            <span class="hide-menu">Admin <i style="font-size: 13px" class="ti ti-arrow-down"></i></span>
+                        </a>
+                        <ul aria-expanded="false" class="collapse  first-level">
+                            <li class="sidebar-item sub-item">
+                                <a href="${pageContext.request.contextPath}/admin/ManageUsers?action=allUser" class="sidebar-link" role="button">
+                                    <span class="hide-menu">- Manage users</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item sub-item">
+                                <a href="${pageContext.request.contextPath}/admin/handelRpManager" class="sidebar-link">
+                                    <span class="hide-menu">- Handle report manager</span>
+                                </a>
+                            </li>
+                           
+                            <li class="sidebar-item sub-item">
+                                <a href="${pageContext.request.contextPath}/#" class="sidebar-link">
+                                    <span class="hide-menu">- Reset rankings</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item sub-item">
+                                <a href="${pageContext.request.contextPath}/#" class="sidebar-link">
+                                    <span class="hide-menu">- Approve shop</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item sub-item">
+                                <a href="${pageContext.request.contextPath}/#" class="sidebar-link">
+                                    <span class="hide-menu">- View feedback</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </c:if>
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="${pageContext.request.contextPath}/post" aria-expanded="false">
                         <span>
@@ -62,7 +110,6 @@
                     </li>
                 </c:if>
 
-
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="${pageContext.request.contextPath}/listEvent" aria-expanded="false">
                         <span>
@@ -99,7 +146,14 @@
                     </a>
                 </li>
             </ul>
-            <%@ include file="../ads/showAds.jsp" %>
+            <c:choose>
+                <c:when test="${USER.userRank == 3 && (USER.userRole != 2 && USER.userRole != 3)}">
+                    <%@ include file="../user/managerRegistr.jsp" %>
+                </c:when>
+                <c:otherwise>
+                    <%@ include file="../ads/showAds.jsp" %>
+                </c:otherwise>
+            </c:choose>
         </nav>
     </div>
 </aside>

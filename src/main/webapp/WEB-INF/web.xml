@@ -203,8 +203,20 @@
         <servlet-class>controller.Event_deleteEvent</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>Post_rate</servlet-name>
-        <servlet-class>controller.Post_rate</servlet-class>
+        <servlet-name>Report_handel</servlet-name>
+        <servlet-class>controller.Report_submitRp</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Admin_handelRpManager</servlet-name>
+        <servlet-class>controller.Admin_handelRpManager</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Admin_ManageUsers</servlet-name>
+        <servlet-class>controller.Admin_ManageUsers</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>User_registerManager</servlet-name>
+        <servlet-class>controller.User_registerManager</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Notifications</servlet-name>
@@ -378,6 +390,10 @@
         <servlet-name>User_search</servlet-name>
         <servlet-class>controller.User_search</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>Post_rate</servlet-name>
+        <servlet-class>controller.Post_rate</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>User_friendHandel</servlet-name>
         <url-pattern>/friendHandel</url-pattern>
@@ -423,6 +439,22 @@
         <url-pattern>/rate</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>Report_handel</servlet-name>
+        <url-pattern>/report</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Admin_handelRpManager</servlet-name>
+        <url-pattern>/admin/handelRpManager</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Admin_ManageUsers</servlet-name>
+        <url-pattern>/admin/ManageUsers</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>User_registerManager</servlet-name>
+        <url-pattern>/registerManager</url-pattern>
+    </servlet-mapping>
+     <servlet-mapping>    
         <servlet-name>User_chat</servlet-name>
         <url-pattern>/messenger</url-pattern>
     </servlet-mapping>
