@@ -89,9 +89,11 @@ public class Notifications extends HttpServlet {
         User user = (User) session.getAttribute("USER");
         if (user != null) {
             int notificationId = Integer.parseInt(request.getParameter("notificationId"));
-
-            // Gọi hàm updateStatusNotifications từ Shop_DB hoặc NotificationDAO
-            Shop_DB.updateStatusNotifications(notificationId);
+            User_notification no = Shop_DB.getNotificationByID(notificationId);
+            if (!no.getStatus().equals("Balance")) {
+                // Gọi hàm updateStatusNotifications từ Shop_DB hoặc NotificationDAO
+                Shop_DB.updateStatusNotifications(notificationId);
+            }
 
             // Gửi phản hồi về client
             response.setContentType("text/plain");

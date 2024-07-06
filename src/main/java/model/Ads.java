@@ -1,13 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model;
 
-/**
- *
- * @author ThanhDuoc
- */
+import java.util.Date;
+
 public class Ads {
 
     private int adsId;
@@ -15,20 +9,34 @@ public class Ads {
     private String content;
     private String image;
     private int userId;
-    private String URI;
+    private int currentReact;
+    private String location;
+    private String title;
+    private String uri;
+    private String uploadPath;
+    private int isActive;
+    private Date startDate;
+    private String targetSex;
 
     public Ads() {
     }
 
-    public Ads(int adsId, int adsDetailId, String content, String image, int userId) {
+    public Ads(int adsId, int adsDetailId, String content, String image, int userId, int currentReact, String location, String title, String uri, String uploadPath, int isActive, Date startDate, String targetSex) {
         this.adsId = adsId;
         this.adsDetailId = adsDetailId;
         this.content = content;
         this.image = image;
         this.userId = userId;
+        this.currentReact = currentReact;
+        this.location = location;
+        this.title = title;
+        this.uri = uri;
+        this.uploadPath = uploadPath;
+        this.isActive = isActive;
+        this.startDate = startDate;
+        this.targetSex = targetSex;
     }
 
-    // Getters and Setters
     public int getAdsId() {
         return adsId;
     }
@@ -69,12 +77,73 @@ public class Ads {
         this.userId = userId;
     }
 
-    public String getURI() {
-        return URI;
+    public int getCurrentReact() {
+        return currentReact;
     }
 
-    public void setURI(String URI) {
-        this.URI = URI;
+    public void setCurrentReact(int currentReact) {
+        this.currentReact = currentReact;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
+
+    public String getUploadPath() {
+        return uploadPath;
+    }
+
+    public void setUploadPath(String uploadPath) {
+        this.uploadPath = uploadPath;
+    }
+
+    public int getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(int isActive) {
+        this.isActive = isActive;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public String getTargetSex() {
+        return targetSex;
+    }
+
+    public void setTargetSex(String targetSex) {
+        this.targetSex = targetSex;
+    }
+
+    @Override
+    public String toString() {
+        return "Ads{" + "adsId=" + adsId + ", adsDetailId=" + adsDetailId + ", content=" + content + ", image=" + image + ", userId=" + userId + ", currentReact=" + currentReact + ", location=" + location + ", title=" + title + ", uri=" + uri + ", uploadPath=" + uploadPath + ", isActive=" + isActive + ", startDate=" + startDate + ", targetSex=" + targetSex + '}';
     }
 
 }

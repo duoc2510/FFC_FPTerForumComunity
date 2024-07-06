@@ -23,12 +23,18 @@ public class AESUtil {
     }
 
     public static String decrypt(String encryptedMessage) throws Exception {
-        Cipher cipher = Cipher.getInstance(TRANSFORMATION);
-        SecretKeySpec keySpec = new SecretKeySpec(AES_KEY.getBytes("UTF-8"), ALGORITHM);
-        cipher.init(Cipher.DECRYPT_MODE, keySpec);
-        byte[] encryptedBytes = Base64.getDecoder().decode(encryptedMessage);
-        byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
-        return new String(decryptedBytes, "UTF-8");
+        try {
+            Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+            SecretKeySpec keySpec = new SecretKeySpec(AES_KEY.getBytes("UTF-8"), ALGORITHM);
+            cipher.init(Cipher.DECRYPT_MODE, keySpec);
+            byte[] encryptedBytes = Base64.getDecoder().decode(encryptedMessage);
+            byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
+            return new String(decryptedBytes, "UTF-8");
+        } catch (Exception e) {
+            // Xử lý ngoại lệ và in ra thông báo lỗi
+            e.printStackTrace();
+            return null; // Trả về null nếu có lỗi xảy ra trong quá trình giải mã
+        }
     }
 
     public static void main(String[] args) {

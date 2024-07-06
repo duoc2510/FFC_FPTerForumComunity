@@ -54,7 +54,10 @@
                                                     </a>
                                                 </td>
                                                 <td>${report.user.username}</td>
-                                                <td>${report.post.content}</td>
+                                                <td> <a href="${pageContext.request.contextPath}/post/detail?postId=${report.post.postId}">
+                                                        ${report.post.content}
+                                                    </a>
+                                                </td>
                                                 <td>${report.reason}</td>
                                                 <td>${report.status}</td>
 
@@ -107,6 +110,7 @@
                                     <thead>
                                         <tr>
                                             <th>Avatar</th>
+
                                             <th>Chủ bài viết</th>
                                             <th>Nội dung bài viết</th>
                                             <th>Lý do</th>
@@ -125,17 +129,25 @@
                                                     <img src="${pageContext.request.contextPath}/${reportedPosts.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
                                                 </a>
                                             </td>
+
                                             <td>${reportedPosts.user.username}</td>
-                                            <td>${reportedPosts.post.content}</td>
+                                            <td> <a href="${pageContext.request.contextPath}/post/detail?postId=${report.post.postId}">
+                                                        ${report.post.content}
+                                                    </a>
+                                                </td>
                                             <td>${reportedPosts.reason}</td>
                                             <td>
                                                 <form id="banPostForm_${reportedPosts.post.postId}" action="${pageContext.request.contextPath}/manager/report" method="post">
                                                     <input type="hidden" name="postId" value="${reportedPosts.post.postId}">
+
+
                                                     <input type="hidden" name="action" value="banPost">
                                                     <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#banPostModal_${reportedPosts.post.postId}">Ban bài viết</button>
                                                 </form>
                                                 <form id="banUserForm_${reportedPosts.user.userId}" action="${pageContext.request.contextPath}/manager/report" method="post">
                                                     <input type="hidden" name="userId" value="${reportedPosts.user.userId}">
+                                                    <input type="hidden" name="username" value="${reportedPosts.user.username}">
+
                                                     <input type="hidden" name="action" value="banUser">
                                                     <button type="button" class="btn btn-danger" onclick="confirmBan('banUserForm_${reportedPosts.user.userId}')">Ban người dùng</button>
                                                 </form>
@@ -145,7 +157,6 @@
                                                     <button type="button" class="btn btn-warning" onclick="confirmCancel('cancelReportPostForm_${reportedPosts.post.postId}')">Cancel Report</button>
                                                 </form>
                                             </td>
-                                        </tr>
                                         <div class="modal fade" id="banPostModal_${reportedPosts.post.postId}" tabindex="-1" aria-labelledby="banPostModalLabel_${reportedPosts.post.postId}" aria-hidden="true">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
@@ -156,7 +167,10 @@
                                                     <div class="modal-body">
                                                         <form id="banPostFormReason_${reportedPosts.post.postId}" action="${pageContext.request.contextPath}/manager/report" method="post">
                                                             <input type="hidden" name="postId" value="${reportedPosts.post.postId}">
-                                                            <input type="hidden" name="action" value="banPost">
+
+                                                            <input type="hidden" name="reportedId" value="${reportedPosts.post.userId}">
+                                                            <input type="hidden" name="postContent" value="${reportedPosts.post.content}">
+                                                            <input type="hidden" name="action" value="banPost">   
                                                             <div class="mb-3">
                                                                 <label for="banReason_${reportedPosts.post.postId}" class="form-label">Lý do cấm bài viết:</label>
                                                                 <textarea class="form-control" id="banReason_${reportedPosts.post.postId}" name="banReason" rows="3" required></textarea>
@@ -170,6 +184,8 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        </tr>
+
                                     </c:forEach>
                                     </tbody>
                                 </table>
@@ -181,7 +197,9 @@
                                 <table class="table">
                                     <thead>
                                         <tr>
+
                                             <th>Avatar</th>
+
                                             <th>Tên người dùng</th>
                                             <th>Lý do</th>
                                             <th>Thao tác</th>
@@ -199,11 +217,14 @@
                                                     <img src="${pageContext.request.contextPath}/${reportedUsers.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
                                                 </a>
                                             </td>
+
                                             <td>${reportedUsers.user.username}</td>
                                             <td>${reportedUsers.reason}</td>
                                             <td>
                                                 <form id="banUserForm_${reportedUsers.user.userId}" action="${pageContext.request.contextPath}/manager/report" method="post">
                                                     <input type="hidden" name="userId" value="${reportedUsers.user.userId}">
+
+                                                    <input type="hidden" name="username" value="${reportedUsers.user.username}">
                                                     <input type="hidden" name="action" value="banUser">
                                                     <button type="button" class="btn btn-danger" onclick="confirmBan('banUserForm_${reportedUsers.user.userId}')">Ban người dùng</button>
                                                 </form>
@@ -228,22 +249,22 @@
     <%@ include file="../include/footer.jsp" %>
 
     <script>
-         document.addEventListener("DOMContentLoaded", function (event) {
-                // Ensure your DOM is fully loaded before executing any code
-                var msg = "${sessionScope.msg}";
-                console.log("Message from session:", msg);
-                // Kiểm tra nếu msg không rỗng, hiển thị thông báo
-                if (msg !== null && msg !== "") {
-                    swal({
-                        title: msg.includes("successfully") ? "Success" : "Error",
-                        text: msg,
-                        icon: msg.includes("successfully") ? "success" : "error",
-                        button: "OK!"
-                    });
-                    // Xóa msg sau khi hiển thị để tránh hiển thị lại khi tải lại trang
-            <% session.removeAttribute("msg"); %>
-                }
-            });
+        document.addEventListener("DOMContentLoaded", function (event) {
+            // Ensure your DOM is fully loaded before executing any code
+            var msg = "${sessionScope.msg}";
+            console.log("Message from session:", msg);
+            // Kiểm tra nếu msg không rỗng, hiển thị thông báo
+            if (msg !== null && msg !== "") {
+                swal({
+                    title: msg.includes("successfully") ? "Success" : "Error",
+                    text: msg,
+                    icon: msg.includes("successfully") ? "success" : "error",
+                    button: "OK!"
+                });
+                // Xóa msg sau khi hiển thị để tránh hiển thị lại khi tải lại trang
+        <% session.removeAttribute("msg"); %>
+            }
+        });
         // JavaScript để điều khiển hiển thị các danh sách báo cáo
         document.addEventListener("DOMContentLoaded", function () {
             // Hiển thị danh sách người dùng bị báo cáo khi trang được tải
@@ -286,7 +307,7 @@
                 document.getElementById("reported-users-gt-3-section").style.display = "none";
             });
         });
- function confirmBan(formId) {
+        function confirmBan(formId) {
             if (confirm("Bạn có chắc chắn muốn thực hiện hành động này?")) {
                 document.getElementById(formId).submit();
             }

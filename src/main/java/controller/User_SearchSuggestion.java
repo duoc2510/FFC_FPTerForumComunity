@@ -2,22 +2,32 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package view;
+package controller;
 
+import com.google.gson.Gson;
+import jakarta.servlet.http.HttpServlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.text.Normalizer;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import model.DAO.User_DB;
+import model.User;
 
 /**
  *
- * @author ThanhDuoc
+ * @author PC
  */
-@WebServlet(name = "test", urlPatterns = {"/test"})
-public class test extends HttpServlet {
+public class User_SearchSuggestion extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -36,10 +46,10 @@ public class test extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet test</title>");
+            out.println("<title>Servlet User_SearchSuggestion</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet test at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet User_SearchSuggestion at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -57,7 +67,48 @@ public class test extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("test.jsp").forward(request, response);
+        HttpSession session = request.getSession();
+         request.setCharacterEncoding("UTF-8");
+    response.setContentType("text/html; charset=UTF-8");
+        User userPersonal = (User) session.getAttribute("USER");
+        if (userPersonal == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
+
+        String query = request.getParameter("query");
+        if (query == null || query.trim().isEmpty()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+
+        String lowercaseQuery = removeDiacritics(query.toLowerCase());
+
+        List<User> allUsers = User_DB.getAllUsers();
+
+        List<User> filteredUsers = allUsers.stream()
+                .filter(user -> removeDiacritics(user.getUserFullName().toLowerCase()).contains(lowercaseQuery))
+                .collect(Collectors.toList());
+
+       List<User> uniqueFilteredUsers = new ArrayList<>();
+    Set<String> userFullNames = new HashSet<>();
+
+        for (User user : filteredUsers) {
+        if (userFullNames.add(user.getUserFullName())) {
+            User userInfo = new User(user.getUsername(), user.getUserFullName());
+            uniqueFilteredUsers.add(userInfo);
+        }
+    }
+
+        String jsonResponse = new Gson().toJson(uniqueFilteredUsers);
+        System.out.println("JSON Response: " + jsonResponse); // Log dữ liệu trả về
+        response.getWriter().write(jsonResponse);
+    }
+
+    public static String removeDiacritics(String s) {
+        String normalized = Normalizer.normalize(s, Normalizer.Form.NFD);
+        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+        return pattern.matcher(normalized).replaceAll("");
     }
 
     /**

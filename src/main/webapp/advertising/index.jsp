@@ -1,129 +1,153 @@
 <%-- 
     Document   : index
-    Created on : May 25, 2024, 9:43:06 PM
+    Created on : May 25, 2024, 9:43:06 PM
     Author     : mac
 --%>
-
-<%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
+<%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 <%@ include file="../include/header.jsp" %>
-<style>
-    .card-img-top{
-        height:250px;
-        object-fit: cover;
-    }
-    .card-text{
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        width: 200px;
-        overflow: hidden;
-    }
-    .imgs-grid{
-        display: grid;
-        grid-template-columns: repeat(27, 1fr);
-        position: relative;
-    }
-    .imgs-grid .grid.grid-1 {
-        -ms-grid-column: 1;
-        -ms-grid-column-span: 18;
-        grid-column: 1 / span 18;
-        -ms-grid-row: 1;
-        -ms-grid-row-span: 27;
-        grid-row: 1 / span 27;
-    }
-    .imgs-grid .grid.grid-2 {
-        -ms-grid-column: 19;
-        -ms-grid-column-span: 27;
-        grid-column: 19 / span 27;
-        -ms-grid-row: 1;
-        -ms-grid-row-span: 5;
-        grid-row: 1 / span 5;
-        padding-left: 20px;
-    }
-    .imgs-grid .grid.grid-3 {
-        -ms-grid-column: 14;
-        -ms-grid-column-span: 16;
-        grid-column: 14 / span 16;
-        -ms-grid-row: 6;
-        -ms-grid-row-span: 27;
-        grid-row: 6 / span 27;
-        padding-top: 20px;
-    }
-    .imgs-grid .grid img {
-        border-radius: 20px;
-        max-width: 100%;
-    }
-</style>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
 <body>
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
          data-sidebar-position="fixed" data-header-position="fixed">
-        <c:if test="${not empty sessionScope.USER}">
-            <%@ include file="../include/slidebar.jsp" %>
-        </c:if>
-        <c:if test="${empty sessionScope.USER}">
-            <%@ include file="../include/slidebar_guest.jsp" %>
-        </c:if>
+        <%@ include file="../include/slidebar.jsp" %>
         <div class="body-wrapper">
-            <c:if test="${not empty sessionScope.USER}">
-                <%@ include file="../include/navbar.jsp" %>
-            </c:if>
-            <c:if test="${empty sessionScope.USER}">
-                <%@ include file="../include/navbar_guest.jsp" %>
-            </c:if>
-            <div class="container-fluid">
-                <!--Control panel-->
-                <%@ include file="panel.jsp" %>
+            <%@ include file="../include/navbar.jsp" %>
+            <div class="container-fluid pb-2">
+                <div class="row">
+                    <div id="profile-wrapper">
+                        <div class="bg-white shadow rounded overflow-hidden">
+                            <div class="p-5 cover" style="background: linear-gradient(to right, #7f7fd5, #86a8e7, #91eae4); height:250px;">
+                                <div class="media align-items-end profile-head">
+                                    <div class="profile mr-3 ">
 
+                                        <h2 class="text-light">Your customers are here. Find them with FFC ads.</h2>
+                                        <p class="text-light">Reach new and existing customers as they connect with people and find communities on FFC.</p>
+                                        <img src="${pageContext.request.contextPath}/static/images/fb.webp" class="mx-2 position-absolute w-25 h-auto " style="top: 9em;right: 3em;" width="100%">
+                                    </div>
+                                </div>
+                            </div>
 
-                <div class="col-lg-12">
-                    <div class="w-100 row">
-                        <div class="col-md-12 p-2">
-                            <img class="w-100 rounded" src="${pageContext.request.contextPath}/static/images/bannerShop.jpg"/>
                         </div>
                     </div>
-
-                    <div class="w-100 row mt-5">
-                        <div class="col-md-5 p-2">
-                            <h3>Boost My Branding</h3>
-                            <p>Growth your business with us, you can:</p>
-                            <ul class="list-unstyled custom-list my-4">
-
-
-                                <li>Giám sát tất cả các Trang, tài khoản và tài sản doanh nghiệp ở cùng một nơi.</li>
-                                <li>Dễ dàng tạo và quản lý quảng cáo cho tất cả các tài khoản.</li>
-                                <li>Theo dõi xem yếu tố nào hoạt động hiệu quả nhất bằng thông tin chi tiết về hiệu quả.</li>
-                            </ul>
-                            <button class="btn btn-primary mt-3">Join with us</button>
-                        </div>
-                        <div class="col-md-7 p-2">
-
-                        </div>
-
-                    </div>
-
-
                 </div>
-                <div>
-                    <!--Tao shop-->
-                    <%--<%@ include file="createShop.jsp" %>--%>
+            </div>
+            <div class="container-fluid pt-0">
+                <div class="row form-settings d-flex justify-content-between">
+                    <div class="col-12 col-sm-3 px-2">
+                        <%@include file="menuAds.jsp" %>
+                    </div>
+                    <div class="col-12 col-sm-9 px-3">
+                        <div class="bg-white shadow rounded p-4">
+                            <div>
+                                <div class="mb-4">
+                                    <h3>What are FFC ads?</h3>
+                                    <h6>All advertising activity running</h6>
+                                    <p>Build lasting connections with customers with Facebook ads, Instagram ads and ads clicking to WhatsApp and Messenger. <BR><BR>
+                                        Billions of people use Meta apps to connect with people and explore topics they care about. Your Meta ads can show up as your customers explore their Facebook Feed or watch Instagram Reels or check their Messenger inbox. <BR><BR>
+                                        Businesses like yours use Meta ads to increase online sales, drive in-store traffic and find new customers. Whether you're new to online advertising or are an experienced marketer, Meta is here to give you the resources and support you need to succeed. <BR><BR>
+                                    </p>
+                                </div>
+                                <div class="form-group pb-3">
+                                    <div class="d-flex flex-row align-items-center mb-4 pb-1 row">
 
-                    <!--Xem tat ca san pham cua minh-->
-                    <%--<%@ include file="myProduct.jsp" %>--%>
+                                        <div class="col-6 px-2">
+                                            <img src="https://maisonoffice.vn/wp-content/uploads/2023/12/0-tru-so-fpt.jpg" class="card-img w-100" alt="${ads.content}" style="height: 300px; object-fit: cover; border: 0px solid; border-radius: 10px 10px 0 0;">
 
-                    <!--Tao san pham -->
-                    <%--<%@ include file="createProduct.jsp" %>--%>
+                                            <div class="card p-4">
 
-                    <!--Xem tat ca san pham-->
-                    <%--<%@ include file="allProduct.jsp" %>--%>
+                                                <h5 class="card-title mt-2">${ads.title}</h5>
 
-                    <!--Xem tien trinh giao hang -->
-                    <%--<%@ include file="checkProgress.jsp" %>--%>
+                                                <div class="row mb-1 align-items-center">
+                                                    <div class="col-3  px-3 ">
+                                                        <img src="https://yt3.googleusercontent.com/ytc/AIdro_mM0vTEH0LMtwoQCZ5d52gd0Rpv5KbfBoGtm3GHeEH2Gg=s900-c-k-c0x00ffffff-no-rj" class="card-img" alt="avatarUser" style="object-fit: cover; border: 0px solid; border-radius: 50%;">
+                                                    </div>
+                                                    <div class="col-9">
+                                                        <p class="ml-auto"><b> FPT Corporate</b></p>
+                                                        <span>Sponsored</span>
+                                                    </div>
+                                                </div>
+
+
+                                                <p class="card-text mt-2">
+                                                    ${ads.title}
+                                                </p>
+
+                                                <p class="card-text mt-2">
+
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 px-4">
+                                            <h3>Find a budget that works for your business.</h3>
+                                            <p class=" mb-4">You can start, stop and pause your ads at any time, so you're always in control. We also recommend a budget based on ads like yours, so you feel informed when you decide what to spend..</p>
+                                            <a href="${pageContext.request.contextPath}/advertising/campaign">
+                                                <button class="btn btn-primary mt-3">Go to campaign</button>
+                                            </a>
+                                        </div>
+
+
+
+                                    </div>
+                                </div>
+                                <div class="form-group pb-3">
+                                    <div class="d-flex flex-row align-items-center mb-4 pb-1 row">
+                                        <div class="col-6 px-4">
+                                            <h3> Download information and track spending</h3>
+                                            <p>For ads about social issues, elections or politics, use the Ad Library report to see overall spending totals and details about spending by advertiser and location.
+                                                Who the report is for
+                                                Anyone who wants to quickly explore, filter and download data on ads about social issues, elections or politics.</p>
+                                            <a href="${pageContext.request.contextPath}/advertising/report">
+                                                <button class="btn btn-primary mt-3">Go to report</button>
+                                            </a>
+                                        </div>
+
+
+                                        <div class="col-6 px-2">
+                                            <img src="${pageContext.request.contextPath}/static/images/ads2.png" class="card-img w-100" alt="${ads.content}" style="height: 300px; object-fit: cover; border: 0px solid; border-radius: 10px 10px 0 0;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+</body>
+<script>
+    function handleActiveChange(adsId, isActive) {
+        if (isActive == false) {
+            isActive = 0;
+        } else {
+            isActive = 1;
+        }
+        var data = {
+            action: "changeActive",
+            adsId: adsId,
+            isActive: isActive  // Convert boolean to integer (1 or 0)
+        };
 
-
-    <%@ include file="../include/footer.jsp" %>
-
-
-
+        $.ajax({
+            url: '${pageContext.request.contextPath}/advertising/boost', // Update URL according to your servlet mapping
+            type: 'POST',
+            data: data,
+            dataType: 'json',
+            success: function (response) {
+                if (response.success) {
+                    swal("Success! Your advertising status has been changed!", {
+                        icon: "success",
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    swal("Error!", response.message, "error");
+                }
+            },
+            error: function (xhr, status, error) {
+                swal("Error!", "Unable to update advertising status.", "error");
+            }
+        });
+    }
+</script>
+<%@ include file="../include/footer.jsp" %>

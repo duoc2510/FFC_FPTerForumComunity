@@ -34,6 +34,7 @@
                                             <th>Note</th>
                                             <th>Item</th>
                                             <th>Total</th>
+                                            <th>Payment Status</th>
                                             <th>Action</th>
 
                                         </tr>
@@ -55,10 +56,19 @@
                                                     </c:forEach>
                                                 </td>
                                                 <td>${order.total}</td>
-
+                                                <c:if test="${order.payment_status eq 'dathanhtoan'}">
+                                                    <td>
+                                                        <p class="text-success">Đã Thanh Toán Trước</p>
+                                                    </td>
+                                                </c:if>
+                                                <c:if test="${order.payment_status eq 'thanhtoankhinhanhang'}">
+                                                    <td>
+                                                        <p class="text-success">Chưa Thanh Toán Trước</p>
+                                                    </td>
+                                                </c:if>
                                                 <c:if test="${order.status eq 'Pending'}">
                                                     <td>
-                                                        <p>Đang chờ Shop xác nhận..</p>
+                                                        <p class="text-success">Đang chờ Shop xác nhận..</p>
 
                                                         <form class="my-1" action="product" method="post">
                                                             <input type="text" name="orderid" value="${order.order_ID}" hidden/>
@@ -69,7 +79,7 @@
                                                 </c:if>
                                                 <c:if test="${order.status eq 'Accept'}">
                                                     <td>
-                                                        <p>Đơn đã được xác nhận và sẽ sớm gửi đến bạn.</p>
+                                                        <p class="text-success">Đơn đã được xác nhận và sẽ sớm gửi đến bạn.</p>
                                                     </td>
                                                 </c:if>
                                                 <c:if test="${order.status eq 'Completed'}">
@@ -84,12 +94,17 @@
                                                 </c:if>
                                                 <c:if test="${order.status eq 'Cancelled'}">
                                                     <td>
-                                                        <p>Đơn hàng bị hủy.</p>
+                                                        <p class="text-danger">Đơn hàng bị người dùng hủy.</p>
+                                                    </td>
+                                                </c:if>
+                                                <c:if test="${order.status eq 'Fail'}">
+                                                    <td>
+                                                        <p class="text-danger">Đơn hàng bị shop hủy.</p>
                                                     </td>
                                                 </c:if>
                                                 <c:if test="${order.status eq 'Success'}">
                                                     <td>
-                                                        <p>Success.</p>
+                                                        <p class="text-success">Success.</p>
                                                     </td>
                                                 </c:if>
                                             </tr>

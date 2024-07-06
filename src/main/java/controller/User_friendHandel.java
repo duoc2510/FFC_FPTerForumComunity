@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.DAO.User_DB;
 import model.User;
+import notifications.NotificationWebSocket;
 
 /**
  *
@@ -76,6 +77,7 @@ public class User_friendHandel extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
         HttpSession session = request.getSession(false);
+        NotificationWebSocket nw = new NotificationWebSocket();
         User user = (User) session.getAttribute("USER");
         int userId = user.getUserId();
         int friendId = Integer.parseInt(request.getParameter("friendId"));
@@ -85,11 +87,16 @@ public class User_friendHandel extends HttpServlet {
         switch (action) {
             case "add":
                 success = User_DB.addFriendRequest(userId, friendId);
+                nw.saveNotificationToDatabase(friendId, user.getUserFullName() + " đã gửi cho bạn lời mời kết bạn!", "/friends");
+                nw.sendNotificationToClient(friendId, user.getUserFullName() + " đã gửi cho bạn lời mời kết bạn!", "/friends");
                 redirectUrl = request.getContextPath() + "/profile?username=" + friendName;
                 break;
             case "addFrSearch":
                 success = User_DB.addFriendRequest(userId, friendId);
                 redirectUrl = request.getContextPath() + "/search";
+                nw.saveNotificationToDatabase(friendId, user.getUserFullName() + " đã gửi cho bạn lời mời kết bạn!", "/friends");
+                nw.sendNotificationToClient(friendId, user.getUserFullName() + " đã gửi cho bạn lời mời kết bạn!", "/friends");
+
                 break;
             case "unfriendProfile":
                 success = User_DB.unFriend(userId, friendId);

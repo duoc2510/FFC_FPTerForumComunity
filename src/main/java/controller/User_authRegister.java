@@ -10,8 +10,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.DAO.User_DB;
 import model.User;
 import util.Email;
@@ -126,6 +129,21 @@ public class User_authRegister extends HttpServlet {
             if (checkMail && checkUsername) {
                 int x = new Random().nextInt(90000) + 10000;
                 Email.sendEmail(email, x);
+
+                // Create a default avatar path (adjust this path to your default image)
+                String defaultAvatar = "/upload/images.jpg";
+
+                // Create a new User instance with default avatar if needed
+                User newUser = new User(userName, password, email, defaultAvatar);
+
+                try {
+                    // Add the new user to your database
+                    userDB.addUser(newUser);
+                } catch (ParseException ex) {
+                    Logger.getLogger(User_authRegister.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                // Set attributes for verification JSP
                 request.setAttribute("x", x);
                 request.setAttribute("userName", userName);
                 request.setAttribute("email", email);

@@ -3,13 +3,7 @@
     Created on : May 27, 2024, 9:19:01 PM
     Author     : Admin
 --%>
-
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" import="model.*" import="model.DAO.*"%>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <%@ include file="../include/header.jsp" %>
 <style>
     #allProduct .card .card-img-top{
@@ -94,7 +88,7 @@
                 <div class="w-100 row container">
                     <div class="col-md">
                         <div class="card mx-2">
-                            <img class="card-img-top" src="${pageContext.request.contextPath}/static/${shop.image}" alt="Card image cap">
+                            <img style="height: 100%;" class="card-img-top" src="${pageContext.request.contextPath}/static/${shop.image}" alt="Card image cap">
                             <div class="card-body">
                                 <c:set var="orderlist" value="${Shop_DB.getOrdersByShopIdWithStatusSuccess(shop.shopID)}" />
                                 <c:set var="starshop" value="0"/>
@@ -108,10 +102,13 @@
                                     </c:forEach> 
                                 </h5>
                                 <c:set var="countorder" value="${Shop_DB.countSuccessAndCompletedOrdersByShopID(SHOP.shopID)}" />
-                                <p class="card-text">Đã bán: ${countorder} Đơn</p>
+                                <p class="card-text">Đã hoàn thành: ${countorder} Đơn</p>
                                 <p class="card-text">${shop.phone}</p>
                                 <p class="card-text">${shop.campus}</p>
-                                <p class="card-text">${shop.description}</p>
+                                <p class="card-text">Giới thiệu: ${shop.description}</p>
+                                <c:if test="${shop.ownerID != USER.userId}">
+                                    <a href="${pageContext.request.contextPath}/marketplace/confirmcontinue?shopid=${shopid}" class="btn btn-primary">Tiếp tục mua</a>
+                                </c:if>
                             </div>
                         </div>
                     </div>

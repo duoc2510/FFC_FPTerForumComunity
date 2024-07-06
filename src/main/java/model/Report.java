@@ -27,7 +27,8 @@ public class Report {
         this.user = user;
     }
 
-    public Report(String reason, Post post, User user,String status ) {
+    public Report( String reason, Post post, User user,String status ) {
+       
         this.reason = reason;
         this.post = post;
         this.user = user;
@@ -36,7 +37,8 @@ public class Report {
 
    
 
-    public Report(String reason, User user,String status) {
+    public Report( String reason, User user,String status) {
+       
         this.reason = reason;
         this.user = user;
         this.status = status;

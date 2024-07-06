@@ -8,13 +8,15 @@ import jakarta.websocket.server.ServerEndpointConfig;
 import model.User;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.io.IOException;
 import java.sql.*;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import model.DAO.DBinfo;
+import model.DAO.User_DB;
+import notifications.NotificationWebSocket;
 
 @ServerEndpoint(value = "/chat", configurator = Chat.Configurator.class)
 public class Chat {
@@ -33,7 +35,8 @@ public class Chat {
         clients.add(session);
         System.out.println("New connection with client: " + session.getId());
 
-        // Do not send message history here, only when requested by the client
+        // Load message senders list and messages from the latest sender when a new session opens
+        handleLoadMessageSenders(session);
     }
 
     @OnClose
@@ -57,9 +60,11 @@ public class Chat {
             String type = jsonMessage.getString("type");
 
             if ("chat".equals(type)) {
-                handleChatMessage(jsonMessage);
+                handleChatMessage(jsonMessage, session);
             } else if ("loadMessages".equals(type)) {
                 handleLoadMessages(jsonMessage, session);
+            } else if ("loadMessageSenders".equals(type)) {
+                handleLoadMessageSenders(session);
             } else {
                 System.out.println("Invalid message type received: " + type);
             }
@@ -68,7 +73,7 @@ public class Chat {
         }
     }
 
-    private void handleChatMessage(JSONObject jsonMessage) throws Exception {
+    private void handleChatMessage(JSONObject jsonMessage, Session session) throws Exception {
         int toId = jsonMessage.getInt("toId");
         int fromId = jsonMessage.getInt("fromId");
         String messageText = jsonMessage.getString("messageText");
@@ -81,6 +86,17 @@ public class Chat {
 
         // Broadcast message to relevant clients
         broadcastMessage(fromId, fromUsername, toId, messageText);
+        NotificationWebSocket nw = new NotificationWebSocket();
+        String notificationMessage = fromUsername + " sent you a message.";
+        nw.saveNotificationToDatabase(toId, notificationMessage, "/messenger");
+        nw.sendNotificationToClient(toId, notificationMessage, "/messenger");
+
+        // Update message senders list for both sender and receiver without interrupting the current chat
+        updateMessageSenders(session, fromId);
+        Session receiverSession = getSessionById(toId);
+        if (receiverSession != null) {
+            updateMessageSenders(receiverSession, toId);
+        }
     }
 
     private void handleLoadMessages(JSONObject jsonMessage, Session session) throws Exception {
@@ -91,7 +107,74 @@ public class Chat {
         sendExistingMessages(session, fromId, toId);
     }
 
-    private void saveMessageToDatabase(int fromId, int toId, String messageText) throws Exception {
+    private void handleLoadMessageSenders(Session session) {
+        int userId = getUserId(session);
+
+        // Get users who have sent messages to the current user (toId = userId), ordered by the latest message
+        List<User> messageSenders = User_DB.getUsersWhoMessagedUserOrderByLatestMessage(userId);
+
+        // Create JSON array from the users list
+        JSONArray sendersArray = new JSONArray();
+        JSONObject response = new JSONObject();
+
+        if (!messageSenders.isEmpty()) {
+            User latestSender = messageSenders.get(0);  // Get the most recent sender
+            response.put("latestSenderId", latestSender.getUserId());
+            response.put("latestSenderUsername", latestSender.getUsername());
+        }
+
+        for (User sender : messageSenders) {
+            JSONObject senderObj = new JSONObject();
+            senderObj.put("id", sender.getUserId());
+            senderObj.put("username", sender.getUsername());
+            senderObj.put("avatar", sender.getUserAvatar());
+            sendersArray.put(senderObj);
+        }
+
+        // Create response JSON
+        response.put("type", "loadMessageSenders");
+        response.put("senders", sendersArray);
+
+        // Send the senders list to the client
+        session.getAsyncRemote().sendText(response.toString());
+
+        // Automatically load messages from the latest sender if there is one
+        if (!messageSenders.isEmpty()) {
+            try {
+                JSONObject jsonMessage = new JSONObject();
+                jsonMessage.put("toId", messageSenders.get(0).getUserId());
+                handleLoadMessages(jsonMessage, session);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void updateMessageSenders(Session session, int userId) {
+        // Get users who have sent messages to the current user (toId = userId), ordered by the latest message
+        List<User> messageSenders = User_DB.getUsersWhoMessagedUserOrderByLatestMessage(userId);
+
+        // Create JSON array from the users list
+        JSONArray sendersArray = new JSONArray();
+        JSONObject response = new JSONObject();
+
+        for (User sender : messageSenders) {
+            JSONObject senderObj = new JSONObject();
+            senderObj.put("id", sender.getUserId());
+            senderObj.put("username", sender.getUsername());
+            senderObj.put("avatar", sender.getUserAvatar());
+            sendersArray.put(senderObj);
+        }
+
+        // Create response JSON
+        response.put("type", "updateMessageSenders");
+        response.put("senders", sendersArray);
+
+        // Send the senders list to the client
+        session.getAsyncRemote().sendText(response.toString());
+    }
+
+    void saveMessageToDatabase(int fromId, int toId, String messageText) throws Exception {
         String fromUsername = getUsername(fromId);
 
         try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass)) {
@@ -110,7 +193,7 @@ public class Chat {
 
     private void sendExistingMessages(Session session, int fromId, int toId) throws Exception {
         String query = "SELECT From_id, To_id, MessageText, FromUsername FROM Message "
-                + "WHERE (From_id = ? AND To_id = ?) OR (From_id = ? AND To_id = ?)";
+                + "WHERE ((From_id = ? AND To_id = ?) OR (From_id = ? AND To_id = ?)) AND MessageText IS NOT NULL";
 
         try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
 
@@ -143,7 +226,7 @@ public class Chat {
                 // Convert to string and send to the session asynchronously
                 session.getAsyncRemote().sendText(response.toString());
             }
-        } catch (SQLException | IOException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -198,6 +281,19 @@ public class Chat {
         HttpSession httpSession = (HttpSession) session.getUserProperties().get(HttpSession.class.getName());
         User user = (User) httpSession.getAttribute("USER");
         return user.getUserId();
+    }
+
+    private Session getSessionById(int userId) {
+        synchronized (clients) {
+            for (Session client : clients) {
+                HttpSession httpSession = (HttpSession) client.getUserProperties().get(HttpSession.class.getName());
+                User user = (User) httpSession.getAttribute("USER");
+                if (user.getUserId() == userId) {
+                    return client;
+                }
+            }
+        }
+        return null;
     }
 
     public static class Configurator extends ServerEndpointConfig.Configurator {

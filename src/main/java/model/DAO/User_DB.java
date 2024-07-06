@@ -52,6 +52,10 @@ public class User_DB implements DBinfo {
                     String userFullName = rs.getString("User_fullName");
                     double userWallet = rs.getDouble("User_wallet");
                     String userAvatar = rs.getString("User_avatar");
+                    if (userAvatar == null) {
+                        userAvatar = "static/images/user-default.webp";
+                    }
+
                     String userStory = rs.getString("User_story");
                     int userRank = rs.getInt("User_rank");
                     int userScore = rs.getInt("User_score");
@@ -72,7 +76,6 @@ public class User_DB implements DBinfo {
         String query = "SELECT * FROM Users";
 
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query); ResultSet rs = pstmt.executeQuery()) {
-
             while (rs.next()) {
                 int userId = rs.getInt("User_id");
                 String userEmail = rs.getString("User_email");
@@ -82,6 +85,10 @@ public class User_DB implements DBinfo {
                 String userFullName = rs.getString("User_fullName");
                 double userWallet = rs.getDouble("User_wallet");
                 String userAvatar = rs.getString("User_avatar");
+                if (userAvatar == null) {
+                    userAvatar = "static/images/user-default.webp";
+                }
+
                 String userStory = rs.getString("User_story");
                 int userRank = rs.getInt("User_rank");
                 int userScore = rs.getInt("User_score");
@@ -189,6 +196,10 @@ public class User_DB implements DBinfo {
                 String userFullName = rs.getString("User_fullName");
                 double userWallet = rs.getDouble("User_wallet");
                 String userAvatar = rs.getString("User_avatar");
+                if (userAvatar == null) {
+                    userAvatar = "static/images/user-default.webp";
+                }
+
                 String userStory = rs.getString("User_story");
                 int userRank = rs.getInt("User_rank");
                 int userScore = rs.getInt("User_score");
@@ -198,6 +209,45 @@ public class User_DB implements DBinfo {
                 user = new User(userId, userEmail, userPassword, userRole, username, userFullName, userWallet, userAvatar, userStory, userRank, userScore, userCreateDate, userSex, userActiveStatus);
 
                 // In thông tin người dùng ra console
+                System.out.println("User retrieved from database: " + user);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(User_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return user;
+    }
+
+    public static User getUserByShopId(int shopId) {
+        User user = null;
+        String query = "SELECT u.* FROM Users u JOIN Shop s ON u.User_id = s.Owner_id WHERE s.Shop_id = ?";
+
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
+
+            pstmt.setInt(1, shopId); // Set the Shop_id parameter in the query
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                int userId = rs.getInt("User_id");
+                String userEmail = rs.getString("User_email");
+                String userPassword = rs.getString("User_password");
+                int userRole = rs.getInt("User_role");
+                String username = rs.getString("Username");
+                String userFullName = rs.getString("User_fullName");
+                double userWallet = rs.getDouble("User_wallet");
+                String userAvatar = rs.getString("User_avatar");
+                if (userAvatar == null) {
+                    userAvatar = "static/images/user-default.webp";
+                }
+
+                String userStory = rs.getString("User_story");
+                int userRank = rs.getInt("User_rank");
+                int userScore = rs.getInt("User_score");
+                java.sql.Date userCreateDate = rs.getDate("User_createDate");
+                String userSex = rs.getString("User_sex");
+                boolean userActiveStatus = rs.getBoolean("User_activeStatus");
+                user = new User(userId, userEmail, userPassword, userRole, username, userFullName, userWallet, userAvatar, userStory, userRank, userScore, userCreateDate, userSex, userActiveStatus);
+
+                // Log user information to console
                 System.out.println("User retrieved from database: " + user);
             }
         } catch (SQLException ex) {
@@ -379,10 +429,49 @@ public class User_DB implements DBinfo {
         return userId;
     }
 
+    public static boolean updateUser_activeStatusByEmail(String email, int activestatus) {
+        String query = "UPDATE Users SET User_activeStatus = ? WHERE User_email = ?";
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setDouble(1, activestatus);
+            pstmt.setString(2, email);
+            int rowsUpdated = pstmt.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(User_DB.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+
     public static boolean updateWalletByEmail(String email, double wallet) {
         String query = "UPDATE Users SET User_wallet = ? WHERE User_email = ?";
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
             pstmt.setDouble(1, wallet);
+            pstmt.setString(2, email);
+            int rowsUpdated = pstmt.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(User_DB.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+
+    public static boolean updateScoreByEmail(String email, int score) {
+        String query = "UPDATE Users SET User_score = ? WHERE User_email = ?";
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setInt(1, score);
+            pstmt.setString(2, email);
+            int rowsUpdated = pstmt.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(User_DB.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+
+    public static boolean updateRankByEmail(String email, int rank) {
+        String query = "UPDATE Users SET User_rank = ? WHERE User_email = ?";
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setInt(1, rank);
             pstmt.setString(2, email);
             int rowsUpdated = pstmt.executeUpdate();
             return rowsUpdated > 0;
@@ -435,19 +524,38 @@ public class User_DB implements DBinfo {
     }
 
     public static boolean acceptFriendRequest(int userId, int friendId) {
-        String query = "UPDATE FriendShip SET Request_status = 'accepted' WHERE (User_id = ? AND Friend_id = ?) OR (User_id = ? AND Friend_id = ?)";
+        String updateQuery = "UPDATE FriendShip SET Request_status = 'accepted' WHERE (User_id = ? AND Friend_id = ?) OR (User_id = ? AND Friend_id = ?)";
+        String insertMessageQuery = "INSERT INTO Message (From_id, To_id, Friendship, TimeStamp) VALUES (?, ?, ?, GETDATE())";
 
-        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, userId);
-            stmt.setInt(2, friendId);
-            stmt.setInt(3, friendId);
-            stmt.setInt(4, userId);
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0; // Return true if at least one row was updated
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass)) {
+            // Step 1: Update FriendShip table
+            try (PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
+                updateStmt.setInt(1, userId);
+                updateStmt.setInt(2, friendId);
+                updateStmt.setInt(3, friendId);
+                updateStmt.setInt(4, userId);
+
+                int rowsAffected = updateStmt.executeUpdate();
+                if (rowsAffected > 0) {
+                    int friendship = 1;
+
+                    try (PreparedStatement insertStmt = conn.prepareStatement(insertMessageQuery)) {
+                        insertStmt.setInt(1, userId);
+                        insertStmt.setInt(2, friendId);
+                        insertStmt.setInt(3, friendship);
+
+                        int rowsInserted = insertStmt.executeUpdate();
+                        if (rowsInserted > 0) {
+                            System.out.println("Friend request accepted successfully. Message inserted into Message table.");
+                            return true; // Return true if successfully accepted and message inserted
+                        }
+                    }
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-            return false; // Return false if an error occurred
         }
+        return false; // Return false if any error occurred or no rows affected/inserted
     }
 
     public static boolean rejectFriendRequest(int userId, int friendId) {
@@ -483,11 +591,15 @@ public class User_DB implements DBinfo {
     }
 
     public static boolean cancelFriendRequest(int userId, int friendId) {
-        String query = "UPDATE FriendShip SET Request_status = 'cancelled' WHERE (User_id = ? AND Friend_id = ? AND Request_status = 'sent')";
+        String query = "UPDATE FriendShip SET Request_status = 'cancelled' WHERE "
+                + "((User_id = ? AND Friend_id = ? AND Request_status = 'sent') OR "
+                + "(User_id = ? AND Friend_id = ? AND Request_status = 'received'))";
 
         try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, userId);
             stmt.setInt(2, friendId);
+            stmt.setInt(3, friendId);
+            stmt.setInt(4, userId);
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0; // Return true if at least one row was updated
         } catch (SQLException e) {
@@ -554,47 +666,6 @@ public class User_DB implements DBinfo {
         return pendingRequests;
     }
 
-    public static List<User> getAcceptedFriendsOrderByLatestMessage(int userId) {
-        List<User> acceptedFriends = new ArrayList<>();
-        Set<Integer> uniqueFriendIds = new HashSet<>(); // Dùng Set để lưu trữ các friendId duy nhất
-
-        // Câu truy vấn SQL để lấy danh sách các bạn bè đã chấp nhận của người dùng từ cả hai phía và sắp xếp theo thứ tự tin nhắn mới nhất
-        String getAcceptedFriendsQuery = "SELECT u.User_id, u.Username, u.User_avatar, MAX(m.TimeStamp) AS LatestMessageTime "
-                + "FROM Users u "
-                + "INNER JOIN FriendShip f ON (u.User_id = f.Friend_id OR u.User_id = f.User_id) "
-                + "LEFT JOIN Message m ON (u.User_id = m.From_id AND f.User_id = m.To_id) "
-                + "                      OR (u.User_id = m.To_id AND f.User_id = m.From_id) "
-                + "WHERE (f.User_id = ? OR f.Friend_id = ?) AND f.Request_status = 'accepted' AND u.User_id != ? "
-                + "GROUP BY u.User_id, u.Username, u.User_avatar "
-                + "ORDER BY LatestMessageTime DESC";
-
-        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement getAcceptedFriendsStmt = conn.prepareStatement(getAcceptedFriendsQuery)) {
-
-            getAcceptedFriendsStmt.setInt(1, userId);
-            getAcceptedFriendsStmt.setInt(2, userId);
-            getAcceptedFriendsStmt.setInt(3, userId);
-            ResultSet rs = getAcceptedFriendsStmt.executeQuery();
-
-            // Lặp qua kết quả của truy vấn và thêm các bạn bè đã chấp nhận vào danh sách acceptedFriends
-            while (rs.next()) {
-                int friendId = rs.getInt("User_id");
-                String userName = rs.getString("Username");
-                String userAvatar = rs.getString("User_avatar");
-
-                // Kiểm tra xem friendId đã tồn tại trong Set chưa
-                if (!uniqueFriendIds.contains(friendId)) {
-                    uniqueFriendIds.add(friendId); // Thêm friendId vào Set
-                    User friend = new User(friendId, userName, userAvatar); // Tạo đối tượng User từ kết quả truy vấn
-                    acceptedFriends.add(friend);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            Logger.getLogger(User_DB.class.getName()).log(Level.SEVERE, "Error occurred while fetching accepted friends", e);
-        }
-        return acceptedFriends;
-    }
-
     public static List<User> getAcceptedFriends(int userId) {
         List<User> acceptedFriends = new ArrayList<>();
         Set<Integer> uniqueFriendIds = new HashSet<>(); // Dùng Set để lưu trữ các friendId duy nhất
@@ -641,7 +712,6 @@ public class User_DB implements DBinfo {
                 + "AND f.Request_status = 'accepted'";
 
         try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setInt(1, userId);
             ps.setString(2, friendName);
             ps.setInt(3, userId);
@@ -655,11 +725,9 @@ public class User_DB implements DBinfo {
                     }
                 }
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return isFriend;
     }
 
@@ -686,21 +754,21 @@ public class User_DB implements DBinfo {
         }
     }
 
-   public static boolean registrManager(ManagerRegistr managerRegistr) {
-    String sql = "INSERT INTO managerRegistr (User_id, RegistrationDate, Status, Remarks) VALUES (?, GETDATE(), 'pending', ?)";
+    public static boolean registrManager(ManagerRegistr managerRegistr) {
+        String sql = "INSERT INTO managerRegistr (User_id, RegistrationDate, Status, Remarks) VALUES (?, GETDATE(), 'pending', ?)";
 
-    try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement statement = conn.prepareStatement(sql)) {
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement statement = conn.prepareStatement(sql)) {
 
-        statement.setInt(1, managerRegistr.getUserId());
-        statement.setString(2, managerRegistr.getRemarks());
+            statement.setInt(1, managerRegistr.getUserId());
+            statement.setString(2, managerRegistr.getRemarks());
 
-        int rowsInserted = statement.executeUpdate();
-        return rowsInserted > 0;
-    } catch (SQLException e) {
-        e.printStackTrace();
-        return false;
+            int rowsInserted = statement.executeUpdate();
+            return rowsInserted > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
-}
 
     public static List<ManagerRegistr> getAllRegisterM() {
         List<ManagerRegistr> registrations = new ArrayList<>();
@@ -726,7 +794,7 @@ public class User_DB implements DBinfo {
 
             while (rs.next()) {
                 int managerRegistrId = rs.getInt("managerRegistr_id");
-                
+
                 Date registrationDate = rs.getTimestamp("RegistrationDate");
                 String status = rs.getString("Status");
                 String remarks = rs.getString("Remarks");
@@ -766,11 +834,11 @@ public class User_DB implements DBinfo {
 
         return registrations;
     }
+
     public static boolean isManagerPending(int userId) {
         String query = "SELECT COUNT(*) FROM managerRegistr WHERE User_id = ? AND Status = 'pending'";
 
-        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass);
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setInt(1, userId);
             ResultSet rs = stmt.executeQuery();
@@ -786,4 +854,106 @@ public class User_DB implements DBinfo {
             return false; // Trả về false nếu có lỗi xảy ra
         }
     }
+
+    public static boolean addFeedback(Feedback feedback) {
+        String query = "INSERT INTO Feedback (Feedback_detail, Feedback_title, User_id) VALUES (?, ?, ?)";
+
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, feedback.getFeedbackDetail());
+            stmt.setString(2, feedback.getFeedbackTitle());
+            stmt.setInt(3, feedback.getUserId());
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0; // Return true if at least one row was inserted
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false; // Return false if an error occurred
+        }
+    }
+
+    public static List<Feedback> getAllFeedback() {
+        List<Feedback> feedbackList = new ArrayList<>();
+        String selectQuery = "SELECT Feedback_id, Feedback_title, Feedback_detail, User_id FROM Feedback";
+
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(selectQuery); ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                int feedbackId = rs.getInt("Feedback_id");
+                String feedbackTitle = rs.getString("Feedback_detail");
+                String feedbackDetail = rs.getString("Feedback_title");
+                int userId = rs.getInt("User_id");
+
+                Feedback feedback = new Feedback(feedbackId, feedbackTitle, feedbackDetail, userId);
+                feedbackList.add(feedback);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Logger.getLogger(User_DB.class.getName()).log(Level.SEVERE, "Error occurred while fetching feedback", e);
+        }
+
+        return feedbackList;
+    }
+
+    public static boolean deleteFeedback(int feedbackId) {
+        String deleteQuery = "DELETE FROM Feedback WHERE Feedback_id = ?";
+
+        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(deleteQuery)) {
+
+            stmt.setInt(1, feedbackId);
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0; // Return true if at least one row was deleted
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Logger.getLogger(User_DB.class.getName()).log(Level.SEVERE, "Error occurred while deleting feedback", e);
+            return false; // Return false if an error occurred
+        }
+    }
+
+    public static List<User> getUsersWhoMessagedUserOrderByLatestMessage(int userId) {
+        List<User> users = new ArrayList<>();
+        Set<Integer> uniqueUserIds = new HashSet<>(); // Dùng Set để lưu trữ các userId duy nhất
+
+        // Câu truy vấn SQL để lấy danh sách các người dùng có liên quan đến người dùng hiện tại, không phân biệt gửi hay nhận, sắp xếp theo thời gian tin nhắn gần nhất
+        String query = "SELECT u.User_id, u.Username, u.User_avatar, MAX(m.TimeStamp) AS LatestMessageTime "
+                + "FROM Users u "
+                + "JOIN Message m ON u.User_id = m.From_id OR u.User_id = m.To_id "
+                + "WHERE m.From_id = ? OR m.To_id = ? "
+                + "GROUP BY u.User_id, u.Username, u.User_avatar "
+                + "ORDER BY LatestMessageTime DESC";
+
+        try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, userId);
+            stmt.setInt(2, userId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    int id = rs.getInt("User_id");
+                    String username = rs.getString("Username");
+                    String avatar = rs.getString("User_avatar");
+
+                    // Kiểm tra xem userId đã tồn tại trong Set chưa
+                    if (!uniqueUserIds.contains(id) && id != userId) { // Đảm bảo không thêm chính userId vào danh sách
+                        uniqueUserIds.add(id); // Thêm userId vào Set
+                        User user = new User();
+                        user.setUserId(id);
+                        user.setUsername(username);
+                        user.setUserAvatar(avatar);
+                        users.add(user);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Logger.getLogger(User_DB.class.getName()).log(Level.SEVERE, "Error occurred while fetching users who messaged user", e);
+        }
+
+        // In ra danh sách người dùng
+        System.out.println("List of users who messaged user with userId " + userId + ":");
+        for (User user : users) {
+            System.out.println("User ID: " + user.getUserId() + ", Username: " + user.getUsername() + ", Avatar: " + user.getUserAvatar());
+        }
+
+        return users;
+    }
+
 }

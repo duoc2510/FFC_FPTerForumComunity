@@ -262,7 +262,6 @@ public class Post_DB implements DBinfo {
                 + "WHERE p.Group_id IS NULL AND p.Topic_id IS NULL "
                 + "ORDER BY CHECKSUM(NEWID());";
         try (Connection conn = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
-
             while (rs.next()) {
                 posts.add(mapResultSetToPost(rs));
             }

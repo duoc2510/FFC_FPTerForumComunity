@@ -20,7 +20,7 @@
             <div class="container-fluid">
 
                 <div class="col-lg-12 ">
-                    <div class="card w-100">
+                    <div class="card w-100 rounded">
                         <div class="card-body p-4">
                             <table class="table">
                                 <thead class="">
@@ -88,6 +88,9 @@
                                 </tbody>
                             </table>
                             <div class="p-2 mx-auto w-100">
+                                <div class="col-4 d-inline">
+                                    <button type="button" class="btn btn-primary float-end mx-2" onclick="window.location.href = '${pageContext.request.contextPath}/rank/exchangevoucher'">Đổi Voucher</button>
+                                </div>
                                 <div class="col-4 d-inline">
                                     <button type="button" class="btn btn-primary float-end mx-2" onclick="window.location.href = '${pageContext.request.contextPath}/rank/userrank'">Rank của bạn</button>
                                 </div>

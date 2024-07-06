@@ -5,7 +5,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>FPTer</title>
+        <title>FPTer - Login</title>
         <link rel="shortcut icon" type="image/png" href="${pageContext.request.contextPath}/static/images/logos/favicon.png" />
         <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/styles.min.css" />
     </head>
@@ -16,7 +16,14 @@
             document.addEventListener("DOMContentLoaded", (event) => {
                 var errorMessage = "${message}";
                 // Kiểm tra nếu errorMessage không rỗng, hiển thị thông báo lỗi
-                if (errorMessage != "") {
+                if (errorMessage == "Registration Success" && errorMessage != "") {
+                    swal({
+                        title: "Success!",
+                        text: errorMessage,
+                        icon: "success",
+                        button: "OK",
+                    });
+                } else if (errorMessage != "") {
                     swal({
                         title: "Error!",
                         text: errorMessage,
@@ -32,7 +39,7 @@
                 <div class="d-flex align-items-center justify-content-center w-100">
                     <div class="row justify-content-center w-100">
                         <div class="col-md-8 col-lg-4 col-xxl-3">
-                            <div class="card mb-0">
+                            <div class="card mb-0 rounded">
                                 <div class="card-body px-4">
                                     <a href="${pageContext.request.contextPath}/" class="text-nowrap logo-img text-center d-block py-3 w-100">
                                         <img src="${pageContext.request.contextPath}/static/images/logo.png" width="100" alt="">
@@ -41,11 +48,11 @@
                                     <form name="input" action="logingooglehandler" method="post">
                                         <div class="mb-3">
                                             <label for="identify" class="form-label">Email</label>
-                                            <input type="text" class="form-control" placeholder="Enter email or Username" id="identify" name="identify" value="${cookie.identify.value}" autofocus>
+                                            <input type="text" class="form-control rounded" placeholder="Enter email or Username" id="identify" name="identify" value="${cookie.identify.value}" autofocus>
                                         </div>
                                         <div class="mb-4">
                                             <label for="password" class="form-label">Password</label>
-                                            <input type="password" id="password" name="password" class="form-control" placeholder="Enter password" value="${cookie.password.value}">
+                                            <input type="password" id="password" name="password" class="rounded form-control" placeholder="Enter password" value="${cookie.password.value}">
                                         </div>
 
 
@@ -58,7 +65,7 @@
 
                                         <div class="d-flex align-items-center justify-content-between mb-4">
                                             <div class="form-check">
-                                                <input class="form-check-input primary" type="checkbox" value="true" id="flexCheckChecked" name="rememberMe" <c:if test="${cookie.rememberMe.value eq 'true'}">checked</c:if>>
+                                                <input class="form-check-input primary rounded" type="checkbox" value="true" id="flexCheckChecked" name="rememberMe" <c:if test="${cookie.rememberMe.value eq 'true'}">checked</c:if>>
                                                     <label class="form-check-label text-dark" for="flexCheckChecked">
                                                         Remember me
                                                     </label>

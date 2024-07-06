@@ -1,11 +1,7 @@
-
-
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" import="model.*" import="model.DAO.*"%>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<%@ page import="java.util.*, java.sql.*" %>
 <%@ include file="../include/header.jsp" %>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
     .thumbnail img{
         width: 200px;
@@ -41,24 +37,24 @@
                 <%@ include file="panel.jsp" %>
 
                 <div class="col-lg-12">
-                    <div class="w-100 row">
+                    <div class="w-100 row card-group">
                         <div class="col-md">
-                            <div class="card mx-1">
-                                <img class="card-img-top" src="${pageContext.request.contextPath}/static/${SHOP.image}" alt="Card image cap">
+                            <div class="card mx-1 rounded">
+                                <img style="height: 100%;" class="card-img-top" src="${pageContext.request.contextPath}/static/${SHOP.image}" alt="Card image cap">
                                 <div class="card-body">
                                     <h5 class="card-title">${SHOP.name}</h5>
                                     <p class="card-text">${SHOP.phone}</p>
                                     <p class="card-text">${SHOP.campus}</p>
-                                    <p class="card-text">${SHOP.description}</p>
+                                    <p class="card-text">Giới thiệu: ${SHOP.description}</p>
 
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="w-100 row">
-                        <div class="col-md">
-                            <div class="card mx-1">
+                    <div class="w-100 row ">
+                        <div class="col-md card-group">
+                            <div class="card mx-1 rounded">
                                 <ul class="list-group list-group-flush rounded-3">
                                     <li class="list-group-item d-flex p-3">
                                         <i style="display: inline-block;
@@ -73,8 +69,8 @@
                                 </ul>
                             </div>
                         </div>
-                        <div class="col-md">
-                            <div class="card mx-1">
+                        <div class="col-md card-group">
+                            <div class="card mx-1 rounded">
                                 <ul class="list-group list-group-flush rounded-3">
                                     <li class="list-group-item d-flex p-3">
                                         <div class="col-sm-3">
@@ -113,15 +109,12 @@
                             </div>
                         </div>
                     </div>
-                    <div class="w-100 row">
-                        <div class="col-md">
-                        </div>
-                    </div>
+   
 
 
-                    <div class="w-100 row">
+                    <div class="w-100 row rounded border  my-5">
                         <div class="col-md">
-                            <div class="card mx-1">
+                            <div class="rounded">
                                 <nav>
                                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                                         <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">All Discount</button>
@@ -232,6 +225,7 @@
                                                     <th>Note</th>
                                                     <th>Item</th>
                                                     <th>Total</th>
+                                                    <th>Payment Status</th>
                                                     <th>Action</th>
 
                                                 </tr>
@@ -253,7 +247,16 @@
                                                             </c:forEach>
                                                         </td>
                                                         <td>${order.total} VNĐ</td>
-
+                                                        <c:if test="${order.payment_status eq 'dathanhtoan'}">
+                                                            <td>
+                                                                <p class="text-success">Đã Thanh Toán Trước</p>
+                                                            </td>
+                                                        </c:if>
+                                                        <c:if test="${order.payment_status eq 'thanhtoankhinhanhang'}">
+                                                            <td>
+                                                                <p class="text-success">Chưa Thanh Toán Trước</p>
+                                                            </td>
+                                                        </c:if>
                                                         <c:if test="${order.total * 5 / 100 >= USER.userWallet}">
                                                             <c:if test="${order.status eq 'Pending'}">
                                                                 <td>
@@ -287,7 +290,12 @@
                                                             </c:if>
                                                             <c:if test="${order.status eq 'Cancelled'}">
                                                                 <td>
-                                                                    <p class="text-danger">Đơn hàng bị hủy</p>
+                                                                    <p class="text-danger">Đơn hàng bị người dùng hủy.</p>
+                                                                </td>
+                                                            </c:if>
+                                                            <c:if test="${order.status eq 'Fail'}">
+                                                                <td>
+                                                                    <p class="text-danger">Đơn hàng bị shop hủy.</p>
                                                                 </td>
                                                             </c:if>
                                                             <c:if test="${order.status eq 'Success'}">
@@ -332,7 +340,12 @@
                                                             </c:if>
                                                             <c:if test="${order.status eq 'Cancelled'}">
                                                                 <td>
-                                                                    <p class="text-danger">Đơn hàng bị hủy</p>
+                                                                    <p class="text-danger">Đơn hàng bị người dùng hủy.</p>
+                                                                </td>
+                                                            </c:if>
+                                                            <c:if test="${order.status eq 'Fail'}">
+                                                                <td>
+                                                                    <p class="text-danger">Đơn hàng bị shop hủy.</p>
                                                                 </td>
                                                             </c:if>
                                                             <c:if test="${order.status eq 'Success'}">
@@ -341,6 +354,7 @@
                                                                 </td>
                                                             </c:if>
                                                         </c:if>
+
                                                     </tr>
                                                 </c:forEach>
                                             </tbody>
@@ -351,7 +365,96 @@
                             </div>
                         </div>
                     </div>
+
+
+                    <div class="rounded shadow w-100 row p-4">
+                        <h2>Order Chart by Month</h2>
+
+                        <%
+                            String[] statuses = {"Pending", "Accept", "Completed", "Cancelled", "Success", "Fail"};
+                            int year = 2024; // Set the year you want to query
+
+                            // Create a map to hold the order counts for each status
+                            Map<String, int[]> orderData = new HashMap<>();
+        
+                            for (String status : statuses) {
+                                int[] monthlyCounts = new int[12];
+                                for (int month = 1; month <= 12; month++) {
+                                    monthlyCounts[month - 1] = Shop_DB.countOrdersByStatusAndMonth(status, month, year);
+                                }
+                                orderData.put(status, monthlyCounts);
+                            }
+                        %>
+
+                        <canvas id="orderChart" width="800" height="400"></canvas>
+                        <script>
+                            var ctx = document.getElementById('orderChart').getContext('2d');
+                            var orderChart = new Chart(ctx, {
+                                type: 'bar',
+                                data: {
+                                    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                                    datasets: [
+                                        {
+                                            label: 'Pending',
+                                            data: <%= Arrays.toString(orderData.get("Pending")) %>,
+                                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                            borderColor: 'rgba(255, 99, 132, 1)',
+                                            borderWidth: 1
+                                        },
+                                        {
+                                            label: 'Accept',
+                                            data: <%= Arrays.toString(orderData.get("Accept")) %>,
+                                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                            borderColor: 'rgba(54, 162, 235, 1)',
+                                            borderWidth: 1
+                                        },
+                                        {
+                                            label: 'Completed',
+                                            data: <%= Arrays.toString(orderData.get("Completed")) %>,
+                                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                            borderColor: 'rgba(75, 192, 192, 1)',
+                                            borderWidth: 1
+                                        },
+                                        {
+                                            label: 'Cancelled',
+                                            data: <%= Arrays.toString(orderData.get("Cancelled")) %>,
+                                            backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                                            borderColor: 'rgba(153, 102, 255, 1)',
+                                            borderWidth: 1
+                                        },
+                                        {
+                                            label: 'Success',
+                                            data: <%= Arrays.toString(orderData.get("Success")) %>,
+                                            backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                                            borderColor: 'rgba(255, 159, 64, 1)',
+                                            borderWidth: 1
+                                        },
+                                        {
+                                            label: 'Fail',
+                                            data: <%= Arrays.toString(orderData.get("Fail")) %>,
+                                            backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                                            borderColor: 'rgba(255, 206, 86, 1)',
+                                            borderWidth: 1
+                                        }
+                                    ]
+                                },
+                                options: {
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true,
+                                            max: 100,
+                                            ticks: {
+                                                stepSize: 10
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        </script>
+                    </div>
                 </div>
+
+
             </div>
         </div>
     </div>
@@ -727,12 +830,7 @@
         </div>
     </c:forEach>
 
-
-
     <script>
-
-
-
 
         function change_image(n, o) {
             console.log(n.src);
@@ -741,5 +839,4 @@
         }</script>
 </body>
 
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <%@ include file="../include/footer.jsp" %>

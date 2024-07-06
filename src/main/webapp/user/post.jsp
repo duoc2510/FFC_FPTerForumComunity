@@ -112,7 +112,7 @@
 
                                             <input type="hidden" name="postId" value="${post.postId}">
                                             <input type="hidden" name="userId" value="${post.user.userId}">
-                                             <input type="hidden" name="userRole" value="${post.user.userRole}">
+                                            <input type="hidden" name="userRole" value="${post.user.userRole}">
                                             <input type="hidden" name="action" value="rpPost">
                                         </div>
                                         <div class="modal-footer">
@@ -153,7 +153,7 @@
                                     <div class="modal-body">
                                         <form action="${pageContext.request.contextPath}/report" method="post">
                                             <input type="hidden" name="postId" value="${post.postId}">
-                                            
+
                                             <input type="hidden" name="action" value="editPostReport">
                                             <div class="mb-3">
                                                 <label for="editReason" class="form-label">New Reason:</label>
@@ -197,10 +197,7 @@
                         <span><i class="ti ti-message-plus"></i></span>
                         <span class="hide-menu">Comment</span>
                     </a>
-                    <a class="col nav-link nav-icon-hover" href="javascript:void(0)">
-                        <span><i class="ti ti-share"></i></span>
-                        <span class="hide-menu">Share</span>
-                    </a>
+
                 </div>
                 <form action="${pageContext.request.contextPath}/comment" method="post" class="input-group">
                     <input type="hidden" name="action" value="addComment">
@@ -226,9 +223,9 @@
                                             </a>
                                         </c:otherwise>
                                     </c:choose>
-                                    <div class="ms-2">
-                                        <h6 class="card-title fw-semibold mb-0">${comment.user.username}: ${comment.content}</h6>
-                                        <p class="s-4">${comment.date}</p>
+                                    <div class="ms-2 ">
+                                        <h6 class="card-title fw-semibold mb-0">${comment.user.username}</h6> <p>${comment.content}</p>
+                                        <small>${comment.date}</small>
                                     </div>
                                 </div>
                                 <c:if test="${comment.user.userId == USER.userId}">
@@ -269,13 +266,15 @@
             <div class="modal-body">
                 <form id="confirmBanPostForm_${post.postId}" action="${pageContext.request.contextPath}/manager/report" method="post">
                     <input type="hidden" name="postId" value="${post.postId}">
+                    <input type="hidden" name="userId" value="${post.user.userId}">
+                    <input type="hidden" name="postContent" value="${post.content}">
                     <input type="hidden" name="action" value="banPostByAd">
                     <div class="mb-3">
                         <label for="banReason_${post.postId}" class="form-label">Ban Reason</label>
                         <textarea class="form-control" id="banReason_${post.postId}" name="banReason" rows="3" required></textarea>
                     </div>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger" onclick="submitBanPostForm('confirmBanPostForm_${post.postId}')">Ban Post</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmBan('confirmBanPostForm_${post.postId}')">Ban Post</button>
                 </form>
             </div>
         </div>
@@ -283,22 +282,22 @@
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function (event) {
-                // Ensure your DOM is fully loaded before executing any code
-                var msg = "${sessionScope.msg}";
-                console.log("Message from session:", msg);
-               
-                if (msg !== null && msg !== "") {
-                    swal({
-                        title: msg.includes("successfully") ? "Success" : "Error",
-                        text: msg,
-                        icon: msg.includes("successfully") ? "success" : "error",
-                        button: "OK!"
-                    });
-                   
-            <% session.removeAttribute("msg"); %>
-                }
-            });
+                        document.addEventListener("DOMContentLoaded", function (event) {
+                            // Ensure your DOM is fully loaded before executing any code
+                            var msg = "${sessionScope.msg}";
+                            console.log("Message from session:", msg);
+
+                            if (msg !== null && msg !== "") {
+                                swal({
+                                    title: msg.includes("successfully") ? "Success" : "Error",
+                                    text: msg,
+                                    icon: msg.includes("successfully") ? "success" : "error",
+                                    button: "OK!"
+                                });
+
+    <% session.removeAttribute("msg"); %>
+                            }
+                        });
                         function handleLike(event, postId, action) {
                             event.preventDefault();
 
@@ -312,18 +311,23 @@
                                 success: function (response) {
                                     $('#like-count-' + postId).text('Likes: ' + response.likeCount);
 
-                                                                // C?p nh?t tr?ng thái hi?n th? c?a các th? <a>
-                                                                if (action === 'like') {
-                                                                    $('#like-btn-' + postId).hide();
-                                                                    $('#unlike-btn-' + postId).show();
-                                                                } else if (action === 'unlike') {
-                                                                    $('#like-btn-' + postId).show();
-                                                                    $('#unlike-btn-' + postId).hide();
-                                                                }
-                                                            },
-                                                            error: function (jqXHR, textStatus, errorThrown) {
-                                                                console.error('Error:', errorThrown);
-                                                            }
-                                                        });
-                                                    }
+                                    // C?p nh?t tr?ng thái hi?n th? c?a các th? <a>
+                                    if (action === 'like') {
+                                        $('#like-btn-' + postId).hide();
+                                        $('#unlike-btn-' + postId).show();
+                                    } else if (action === 'unlike') {
+                                        $('#like-btn-' + postId).show();
+                                        $('#unlike-btn-' + postId).hide();
+                                    }
+                                },
+                                error: function (jqXHR, textStatus, errorThrown) {
+                                    console.error('Error:', errorThrown);
+                                }
+                            });
+                        }
+                        function confirmBan(formId) {
+                            if (confirm("Are you sure you want to perform this action?")) {
+                                document.getElementById(formId).submit();
+                            }
+                        }
 </script>

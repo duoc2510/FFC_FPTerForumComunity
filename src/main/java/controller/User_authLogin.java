@@ -10,6 +10,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import model.DAO.Shop_DB;
 import model.DAO.User_DB;
 import model.Order;
@@ -114,7 +116,6 @@ public class User_authLogin extends HttpServlet {
         User user = (User) request.getSession().getAttribute("USER");
         String value = request.getParameter("value");
         if (value == null) {
-
             if (user == null) {
                 processRequest(request, response);
             }
@@ -149,11 +150,18 @@ public class User_authLogin extends HttpServlet {
 
                 message = "Your account has been banned.";
                 session.setAttribute("message", message);
-//                request.getRequestDispatcher("/auth/login.jsp").forward(request, response);
+                //                request.getRequestDispatcher("/auth/login.jsp").forward(request, response);
                 response.sendRedirect("logingooglehandler?value=login");
                 return;
             }
             ArrayList<OrderItem> orderitemlist = sdb.getAllOrderItemByOrderIdHasStatusIsNull(order.getOrder_ID());
+            Collections.sort(orderitemlist, new Comparator<OrderItem>() {
+                @Override
+                public int compare(OrderItem o1, OrderItem o2) {
+                    return Integer.compare(sdb.getProductByID(o1.getProductID()).getShopId(), sdb.getProductByID(o2.getProductID()).getShopId());
+                }
+            });
+            User_DB.updateUser_activeStatusByEmail(user.getUserEmail(), 1);
             request.getSession().setAttribute("USER", user);
             request.getSession().setAttribute("ORDER", order);
             request.getSession().setAttribute("ORDERITEMLIST", orderitemlist);
@@ -195,8 +203,8 @@ public class User_authLogin extends HttpServlet {
         } else {
             String msg = "Invalid email or password";
             session.setAttribute("message", msg);
-//            request.setAttribute("message", msg);
-//            request.getRequestDispatcher("/auth/login.jsp").forward(request, response);
+            //            request.setAttribute("message", msg);
+            //            request.getRequestDispatcher("/auth/login.jsp").forward(request, response);
             response.sendRedirect("logingooglehandler?value=login");
         }
     }

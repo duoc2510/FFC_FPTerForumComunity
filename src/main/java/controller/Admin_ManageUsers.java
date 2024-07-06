@@ -18,6 +18,7 @@ import model.DAO.User_DB;
 import static model.DAO.User_DB.getAllUsers;
 import model.ManagerRegistr;
 import model.User;
+import notifications.NotificationWebSocket;
 
 /**
  *
@@ -63,7 +64,7 @@ public class Admin_ManageUsers extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
-
+        NotificationWebSocket nw = new NotificationWebSocket();
         if ("allUser".equals(action)) {
             // Xử lý lấy danh sách tất cả người dùng
             List<User> allUsers = getAllUsers();
@@ -97,10 +98,9 @@ public class Admin_ManageUsers extends HttpServlet {
             // Chuyển hướng tới trang unBanUser.jsp để hiển thị
             request.getRequestDispatcher("/admin/unBanUser.jsp").forward(request, response);
         } else if ("approveManager".equals(action)) {
-            
+
             List<ManagerRegistr> pendingRegistrations = User_DB.getAllRegisterM();
 
-            
             List<ManagerRegistr> pendingApprovals = new ArrayList<>();
             for (ManagerRegistr registr : pendingRegistrations) {
                 if ("pending".equals(registr.getStatus())) {
@@ -146,113 +146,122 @@ public class Admin_ManageUsers extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-   protected void doPost(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-    String action = request.getParameter("action");
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String action = request.getParameter("action");
+        NotificationWebSocket nw = new NotificationWebSocket();
+        if ("banUser".equals(action)) {
+            int userId = Integer.parseInt(request.getParameter("userId"));
+            boolean userBanned = Report_DB.banUser(userId);
 
-    if ("banUser".equals(action)) {
-        int userId = Integer.parseInt(request.getParameter("userId"));
-        boolean userBanned = Report_DB.banUser(userId);
+            if (userBanned) {
+                request.getSession().setAttribute("msg", "User has been banned successfully.");
+            } else {
+                request.getSession().setAttribute("msg", "Failed to ban the user.");
+            }
+            response.sendRedirect(request.getContextPath() + "/admin/ManageUsers?action=listManager");
+        } else if ("banUserInAllUser".equals(action)) {
+            int userId = Integer.parseInt(request.getParameter("userId"));
+            boolean userBanned = Report_DB.banUser(userId);
 
-        if (userBanned) {
-            request.getSession().setAttribute("msg", "User has been banned successfully.");
-        } else {
-            request.getSession().setAttribute("msg", "Failed to ban the user.");
+            if (userBanned) {
+                request.getSession().setAttribute("msg", "User role has been banned successfully.");
+            } else {
+                request.getSession().setAttribute("msg", "Failed to ban manager role.");
+            }
+            response.sendRedirect(request.getContextPath() + "/admin/ManageUsers?action=allUser");
+        } else if ("revokeMInAllUser".equals(action)) {
+            int userId = Integer.parseInt(request.getParameter("userId"));
+            boolean managerRevoked = Report_DB.revokeManager(userId);
+
+            if (managerRevoked) {
+                nw.saveNotificationToDatabase(userId,  " Bạn đã bị thu hồi quyền manager!", "");
+            nw.saveNotificationToDatabase(userId,  " Bạn đã bị thu hồi quyền manager!", "");
+                request.getSession().setAttribute("msg", "Manager role has been revoked successfully.");
+            } else {
+                request.getSession().setAttribute("msg", "Failed to revoke manager role.");
+            }
+            response.sendRedirect(request.getContextPath() + "/admin/ManageUsers?action=allUser");
+        } else if ("revokeM".equals(action)) {
+            int userId = Integer.parseInt(request.getParameter("userId"));
+            boolean managerRevoked = Report_DB.revokeManager(userId);
+
+            if (managerRevoked) {
+                nw.saveNotificationToDatabase(userId,  " Bạn đã bị thu hồi quyền manager!", "");
+            nw.saveNotificationToDatabase(userId,  " Bạn đã bị thu hồi quyền manager!", "");
+                request.getSession().setAttribute("msg", "Manager role has been revoked successfully.");
+            } else {
+                request.getSession().setAttribute("msg", "Failed to revoke manager role.");
+            }
+            response.sendRedirect(request.getContextPath() + "/admin/ManageUsers?action=listManager");
+
+        } else if ("setM".equals(action)) {
+            int userId = Integer.parseInt(request.getParameter("userId"));
+            boolean setM = Report_DB.setManager(userId);
+
+            if (setM) {
+            nw.saveNotificationToDatabase(userId,  " Chúc mừng bạn đã trở thành Manager! Hãy bấm vào thông báo này để được cập nhật lại quyền của bạn nhé", "/manager/report");
+            nw.sendNotificationToClient(userId,  " Chúc mừng bạn đã trở thành Manager! Hãy bấm vào thông báo này để được cập nhật lại quyền của bạn nhé", "/manager/report");
+                request.getSession().setAttribute("msg", "User role has been set successfully.");
+            } else {
+                request.getSession().setAttribute("msg", "Failed to set manager role.");
+            }
+            response.sendRedirect(request.getContextPath() + "/admin/ManageUsers?action=listManager");
+        } else if ("setMInAllUser".equals(action)) {
+            int userId = Integer.parseInt(request.getParameter("userId"));
+            boolean setMInAllUser = Report_DB.setManager(userId);
+            
+            if (setMInAllUser) {
+            nw.saveNotificationToDatabase(userId,  " Chúc mừng bạn đã trở thành Manager! Hãy bấm vào thông báo này để được cập nhật lại quyền của bạn nhé", "/manager/report");
+           nw.sendNotificationToClient(userId,  " Chúc mừng bạn đã trở thành Manager! Hãy bấm vào thông báo này để được cập nhật lại quyền của bạn nhé", "/manager/report");
+                request.getSession().setAttribute("msg", "User role has been set successfully.");
+            } else {
+                request.getSession().setAttribute("msg", "Failed to set manager role.");
+            }
+            response.sendRedirect(request.getContextPath() + "/admin/ManageUsers?action=allUser");
+        } else if ("unbanUser".equals(action)) {
+            int userId = Integer.parseInt(request.getParameter("userId"));
+            boolean unBan = Report_DB.unBanUser(userId);
+
+            if (unBan) {
+                request.getSession().setAttribute("msg", "User role has been unban successfully.");
+            } else {
+                request.getSession().setAttribute("msg", "Failed to unban.");
+            }
+            response.sendRedirect(request.getContextPath() + "/admin/ManageUsers?action=unBanUser");
+        } else if ("unBanInAllUser".equals(action)) {
+            int userId = Integer.parseInt(request.getParameter("userId"));
+            boolean unBanInAllUser = Report_DB.unBanUser(userId);
+
+            if (unBanInAllUser) {
+                request.getSession().setAttribute("msg", "User role has been unban successfully.");
+            } else {
+                request.getSession().setAttribute("msg", "Failed to unban.");
+            }
+            response.sendRedirect(request.getContextPath() + "/admin/ManageUsers?action=allUser");
+        } else if ("approveM".equals(action)) {
+            int userId = Integer.parseInt(request.getParameter("userId"));
+            boolean approveSuccess = Report_DB.approveManager(userId);
+            nw.saveNotificationToDatabase(userId,  " Đơn đăng kí của bạn đã được duyệt.Chúc mừng bạn đã trở thành Manager! Hãy bấm vào thông báo này để được cập nhật lại quyền của bạn nhé", "/manager/report");
+            nw.sendNotificationToClient(userId,  " Đơn đăng kí của bạn đã được duyệt.Chúc mừng bạn đã trở thành Manager! Hãy bấm vào thông báo này để được cập nhật lại quyền của bạn nhé", "/manager/report");
+            if (approveSuccess) {
+                request.getSession().setAttribute("msg", "User has been approved as manager successfully.");
+            } else {
+                request.getSession().setAttribute("msg", "Failed to approve user as manager.");
+            }
+            response.sendRedirect(request.getContextPath() + "/admin/ManageUsers?action=approveManager");
+        } else if ("cancelApprove".equals(action)) {
+            int userId = Integer.parseInt(request.getParameter("userId"));
+            boolean cancelApproveSuccess = Report_DB.cancelApproveManager(userId);
+
+            if (cancelApproveSuccess) {
+                request.getSession().setAttribute("msg", "Manager approval has been cancelled successfully.");
+            } else {
+                request.getSession().setAttribute("msg", "Failed to cancel manager approval.");
+            }
+            response.sendRedirect(request.getContextPath() + "/admin/ManageUsers?action=approveManager");
         }
-        response.sendRedirect(request.getContextPath() + "/admin/ManageUsers?action=listManager");
-    } else if ("banUserInAllUser".equals(action)) {
-        int userId = Integer.parseInt(request.getParameter("userId"));
-        boolean userBanned = Report_DB.banUser(userId);
-
-        if (userBanned) {
-            request.getSession().setAttribute("msg", "User role has been banned successfully.");
-        } else {
-            request.getSession().setAttribute("msg", "Failed to ban manager role.");
-        }
-        response.sendRedirect(request.getContextPath() + "/admin/ManageUsers?action=allUser");
-    } else if ("revokeMInAllUser".equals(action)) {
-        int userId = Integer.parseInt(request.getParameter("userId"));
-        boolean managerRevoked = Report_DB.revokeManager(userId);
-
-        if (managerRevoked) {
-            request.getSession().setAttribute("msg", "Manager role has been revoked successfully.");
-        } else {
-            request.getSession().setAttribute("msg", "Failed to revoke manager role.");
-        }
-        response.sendRedirect(request.getContextPath() + "/admin/ManageUsers?action=allUser");
-    } else if ("revokeM".equals(action)) {
-        int userId = Integer.parseInt(request.getParameter("userId"));
-        boolean managerRevoked = Report_DB.revokeManager(userId);
-
-        if (managerRevoked) {
-            request.getSession().setAttribute("msg", "Manager role has been revoked successfully.");
-        } else {
-            request.getSession().setAttribute("msg", "Failed to revoke manager role.");
-        }
-        response.sendRedirect(request.getContextPath() + "/admin/ManageUsers?action=listManager");
-
-    } else if ("setM".equals(action)) {
-        int userId = Integer.parseInt(request.getParameter("userId"));
-        boolean setM = Report_DB.setManager(userId);
-
-        if (setM) {
-            request.getSession().setAttribute("msg", "User role has been set successfully.");
-        } else {
-            request.getSession().setAttribute("msg", "Failed to set manager role.");
-        }
-        response.sendRedirect(request.getContextPath() + "/admin/ManageUsers?action=listManager");
-    } else if ("setMInAllUser".equals(action)) {
-        int userId = Integer.parseInt(request.getParameter("userId"));
-        boolean setMInAllUser = Report_DB.setManager(userId);
-
-        if (setMInAllUser) {
-            request.getSession().setAttribute("msg", "User role has been set successfully.");
-        } else {
-            request.getSession().setAttribute("msg", "Failed to set manager role.");
-        }
-        response.sendRedirect(request.getContextPath() + "/admin/ManageUsers?action=allUser");
-    } else if ("unbanUser".equals(action)) {
-        int userId = Integer.parseInt(request.getParameter("userId"));
-        boolean unBan = Report_DB.unBanUser(userId);
-
-        if (unBan) {
-            request.getSession().setAttribute("msg", "User role has been unban successfully.");
-        } else {
-            request.getSession().setAttribute("msg", "Failed to unban.");
-        }
-        response.sendRedirect(request.getContextPath() + "/admin/ManageUsers?action=unBanUser");
-    } else if ("unBanInAllUser".equals(action)) {
-        int userId = Integer.parseInt(request.getParameter("userId"));
-        boolean unBanInAllUser = Report_DB.unBanUser(userId);
-
-        if (unBanInAllUser) {
-            request.getSession().setAttribute("msg", "User role has been unban successfully.");
-        } else {
-            request.getSession().setAttribute("msg", "Failed to unban.");
-        }
-        response.sendRedirect(request.getContextPath() + "/admin/ManageUsers?action=allUser");
-    } else if ("approveM".equals(action)) {
-        int userId = Integer.parseInt(request.getParameter("userId"));
-        boolean approveSuccess = Report_DB.approveManager(userId);
-
-        if (approveSuccess) {
-            request.getSession().setAttribute("msg", "User has been approved as manager successfully.");
-        } else {
-            request.getSession().setAttribute("msg", "Failed to approve user as manager.");
-        }
-        response.sendRedirect(request.getContextPath() + "/admin/ManageUsers?action=approveManager");
-    } else if ("cancelApprove".equals(action)) {
-        int userId = Integer.parseInt(request.getParameter("userId"));
-        boolean cancelApproveSuccess = Report_DB.cancelApproveManager(userId);
-
-        if (cancelApproveSuccess) {
-            request.getSession().setAttribute("msg", "Manager approval has been cancelled successfully.");
-        } else {
-            request.getSession().setAttribute("msg", "Failed to cancel manager approval.");
-        }
-        response.sendRedirect(request.getContextPath() + "/admin/ManageUsers?action=approveManager");
     }
-}
 
     /**
      * Returns a short description of the servlet.

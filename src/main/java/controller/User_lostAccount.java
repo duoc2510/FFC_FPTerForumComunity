@@ -94,7 +94,7 @@ public class User_lostAccount extends HttpServlet {
             sendEmail(email, x);
             request.setAttribute("x", x);
             request.setAttribute("email", email);
-            request.getRequestDispatcher("/auth/verifyaccount.jsp").forward(request, response);
+            request.getRequestDispatcher("/auth/verifyemail.jsp").forward(request, response);
 
         } else {
             msg = "Email not found!";
