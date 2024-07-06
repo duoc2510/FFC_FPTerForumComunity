@@ -5,7 +5,7 @@
         padding: 20px; /* Padding inside the box */
         margin-bottom: 20px; /* Space between shop groups */
     }
-   
+
     .shop-name a {
         color: inherit; /* Màu chữ sẽ kế thừa từ thẻ cha (.shop-name) */
         text-decoration: none; /* Bỏ gạch chân mặc định của liên kết */
@@ -89,7 +89,7 @@
                                                     </select>
 
                                                 </div>
-                                                        <hr>
+                                                <hr>
                                                 <div class="d-flex justify-content-between mt-3">
                                                     <p class="mb-2">Sub total</p>
                                                     <p class="mb-2" id="subtotal-${previousShopId}">0 VND</p>
@@ -113,7 +113,7 @@
                                                 <i class="ti ti-arrow-right-square"></i> <!-- Icon after -->
                                             </a>
                                         </h3>
-                                                <hr>
+                                        <hr>
                                     </c:if>
 
                                     <div class="card mb-3 rounded card">
@@ -169,7 +169,7 @@
                                         </select>
 
                                     </div>
-                                            <hr>
+                                    <hr>
                                     <div class="d-flex justify-content-between mt-3">
                                         <p class="mb-2">Sub total</p>
                                         <p class="mb-2" id="subtotal-${previousShopId}">0 VND</p>
@@ -341,6 +341,9 @@
 
                                                 discountSection.style.display = selectedItems.size === 0 ? 'none' : 'block';
                                                 discountSelect.disabled = selectedItems.size === 0;
+                                                if (selectedItems.size === 0) {
+                                                    discountSelect.value = ""; // Reset discount to "No Discount"
+                                                }
                                                 filterDiscountOptions(shopId, subtotal);
                                                 updateDiscount(shopId);
                                             }
