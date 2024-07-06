@@ -292,7 +292,7 @@ String userJson = new Gson().toJson(user);
                 searchDropdown.empty();
 
                 // Add "History" title
-                searchDropdown.append('<div class="list-group-item list-group-item-secondary non-clickable">History</div>');
+             
 
                 searchHistory.forEach(function (query) {
                     searchDropdown.append('<div class="list-group-item history-item">' +
