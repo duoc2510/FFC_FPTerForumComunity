@@ -8,6 +8,7 @@ User user = (User) session.getAttribute("USER");
 // Chuyển đối tượng USER thành chuỗi JSON
 String userJson = new Gson().toJson(user);
 %>
+
      <style>
         #searchDropdown {
             position: absolute;

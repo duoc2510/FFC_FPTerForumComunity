@@ -52,20 +52,11 @@
                             </li>
 
                             <li class="sidebar-item sub-item">
-                                <a  class="sidebar-link rounded">
-                                    <span class="hide-menu">- Reset rankings</span>
-                                </a>
-                            </li>
-                            <li class="sidebar-item sub-item">
                                 <a href="${pageContext.request.contextPath}/admin/approveshop" class="sidebar-link rounded">
                                     <span class="hide-menu">- Approve shop</span>
                                 </a>
                             </li>
-                            <li class="sidebar-item sub-item">
-                                <a  class="sidebar-link rounded">
-                                    <span class="hide-menu">- Add ads</span>
-                                </a>
-                            </li>
+                           
                             <li class="sidebar-item sub-item">
                                 <a href="${pageContext.request.contextPath}/admin/createvoucher" class="sidebar-link rounded">
                                     <span class="hide-menu">- Create voucher</span>
