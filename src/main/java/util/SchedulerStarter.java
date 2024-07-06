@@ -29,7 +29,7 @@ public class SchedulerStarter implements ServletContextListener {
 
             // Set the date and time for the trigger
             Calendar calendar = Calendar.getInstance();
-            calendar.set(2024, Calendar.JUNE, 29, 18, 10, 0);
+            calendar.set(2024, Calendar.JULY, 5, 14, 27, 0);
             Date triggerDate = calendar.getTime();
 
             Trigger trigger = TriggerBuilder.newTrigger()

@@ -175,7 +175,7 @@ public class Shop_confirmOrder extends HttpServlet {
                         int itemShopId = sdb.getProductByID(item.getProductID()).getShopId();
 
                         if (itemShopId != currentShopId) {
-                            int discountId = 1;
+                            int discountId = 0;
                             double total = 0;
                             for (Discount discount : discountList) {
                                 if (discount.getShopId() == itemShopId) {

@@ -1,13 +1,7 @@
-
-
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" import="model.*" import="model.DAO.*"%>
 <%@ page import="java.util.*, java.sql.*" %>
-
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <%@ include file="../include/header.jsp" %>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
     .thumbnail img{
         width: 200px;
@@ -43,9 +37,9 @@
                 <%@ include file="panel.jsp" %>
 
                 <div class="col-lg-12">
-                    <div class="w-100 row">
+                    <div class="w-100 row card-group">
                         <div class="col-md">
-                            <div class="card mx-1">
+                            <div class="card mx-1 rounded">
                                 <img style="height: 100%;" class="card-img-top" src="${pageContext.request.contextPath}/static/${SHOP.image}" alt="Card image cap">
                                 <div class="card-body">
                                     <h5 class="card-title">${SHOP.name}</h5>
@@ -58,9 +52,9 @@
                         </div>
                     </div>
 
-                    <div class="w-100 row">
-                        <div class="col-md">
-                            <div class="card mx-1">
+                    <div class="w-100 row ">
+                        <div class="col-md card-group">
+                            <div class="card mx-1 rounded">
                                 <ul class="list-group list-group-flush rounded-3">
                                     <li class="list-group-item d-flex p-3">
                                         <i style="display: inline-block;
@@ -75,8 +69,8 @@
                                 </ul>
                             </div>
                         </div>
-                        <div class="col-md">
-                            <div class="card mx-1">
+                        <div class="col-md card-group">
+                            <div class="card mx-1 rounded">
                                 <ul class="list-group list-group-flush rounded-3">
                                     <li class="list-group-item d-flex p-3">
                                         <div class="col-sm-3">
@@ -115,15 +109,12 @@
                             </div>
                         </div>
                     </div>
-                    <div class="w-100 row">
-                        <div class="col-md">
-                        </div>
-                    </div>
+   
 
 
-                    <div class="w-100 row">
+                    <div class="w-100 row rounded border  my-5">
                         <div class="col-md">
-                            <div class="card mx-1">
+                            <div class="rounded">
                                 <nav>
                                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                                         <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">All Discount</button>
@@ -375,8 +366,8 @@
                         </div>
                     </div>
 
-                    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-                    <div>
+
+                    <div class="rounded shadow w-100 row p-4">
                         <h2>Order Chart by Month</h2>
 
                         <%
@@ -839,12 +830,7 @@
         </div>
     </c:forEach>
 
-
-
     <script>
-
-
-
 
         function change_image(n, o) {
             console.log(n.src);
@@ -853,5 +839,4 @@
         }</script>
 </body>
 
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <%@ include file="../include/footer.jsp" %>

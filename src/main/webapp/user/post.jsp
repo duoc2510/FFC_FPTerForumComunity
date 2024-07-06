@@ -197,10 +197,7 @@
                         <span><i class="ti ti-message-plus"></i></span>
                         <span class="hide-menu">Comment</span>
                     </a>
-                    <a class="col nav-link nav-icon-hover" href="javascript:void(0)">
-                        <span><i class="ti ti-share"></i></span>
-                        <span class="hide-menu">Share</span>
-                    </a>
+
                 </div>
                 <form action="${pageContext.request.contextPath}/comment" method="post" class="input-group">
                     <input type="hidden" name="action" value="addComment">
@@ -226,9 +223,9 @@
                                             </a>
                                         </c:otherwise>
                                     </c:choose>
-                                    <div class="ms-2">
-                                        <h6 class="card-title fw-semibold mb-0">${comment.user.username}: ${comment.content}</h6>
-                                        <p class="s-4">${comment.date}</p>
+                                    <div class="ms-2 ">
+                                        <h6 class="card-title fw-semibold mb-0">${comment.user.username}</h6> <p>${comment.content}</p>
+                                        <small>${comment.date}</small>
                                     </div>
                                 </div>
                                 <c:if test="${comment.user.userId == USER.userId}">
@@ -270,7 +267,7 @@
                 <form id="confirmBanPostForm_${post.postId}" action="${pageContext.request.contextPath}/manager/report" method="post">
                     <input type="hidden" name="postId" value="${post.postId}">
                     <input type="hidden" name="userId" value="${post.user.userId}">
-                      <input type="hidden" name="postContent" value="${post.content}">
+                    <input type="hidden" name="postContent" value="${post.content}">
                     <input type="hidden" name="action" value="banPostByAd">
                     <div class="mb-3">
                         <label for="banReason_${post.postId}" class="form-label">Ban Reason</label>
@@ -314,23 +311,23 @@
                                 success: function (response) {
                                     $('#like-count-' + postId).text('Likes: ' + response.likeCount);
 
-                                                                // C?p nh?t tr?ng thái hi?n th? c?a các th? <a>
-                                                                if (action === 'like') {
-                                                                    $('#like-btn-' + postId).hide();
-                                                                    $('#unlike-btn-' + postId).show();
-                                                                } else if (action === 'unlike') {
-                                                                    $('#like-btn-' + postId).show();
-                                                                    $('#unlike-btn-' + postId).hide();
-                                                                }
-                                                            },
-                                                            error: function (jqXHR, textStatus, errorThrown) {
-                                                                console.error('Error:', errorThrown);
-                                                            }
-                                                        });
-                                                    }
-          function confirmBan(formId) {
-            if (confirm("Are you sure you want to perform this action?")) {
-                document.getElementById(formId).submit();
-            }
-        }                                           
+                                    // C?p nh?t tr?ng thái hi?n th? c?a các th? <a>
+                                    if (action === 'like') {
+                                        $('#like-btn-' + postId).hide();
+                                        $('#unlike-btn-' + postId).show();
+                                    } else if (action === 'unlike') {
+                                        $('#like-btn-' + postId).show();
+                                        $('#unlike-btn-' + postId).hide();
+                                    }
+                                },
+                                error: function (jqXHR, textStatus, errorThrown) {
+                                    console.error('Error:', errorThrown);
+                                }
+                            });
+                        }
+                        function confirmBan(formId) {
+                            if (confirm("Are you sure you want to perform this action?")) {
+                                document.getElementById(formId).submit();
+                            }
+                        }
 </script>

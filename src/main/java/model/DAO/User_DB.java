@@ -52,6 +52,10 @@ public class User_DB implements DBinfo {
                     String userFullName = rs.getString("User_fullName");
                     double userWallet = rs.getDouble("User_wallet");
                     String userAvatar = rs.getString("User_avatar");
+                    if (userAvatar == null) {
+                        userAvatar = "static/images/user-default.webp";
+                    }
+
                     String userStory = rs.getString("User_story");
                     int userRank = rs.getInt("User_rank");
                     int userScore = rs.getInt("User_score");
@@ -81,6 +85,10 @@ public class User_DB implements DBinfo {
                 String userFullName = rs.getString("User_fullName");
                 double userWallet = rs.getDouble("User_wallet");
                 String userAvatar = rs.getString("User_avatar");
+                if (userAvatar == null) {
+                    userAvatar = "static/images/user-default.webp";
+                }
+
                 String userStory = rs.getString("User_story");
                 int userRank = rs.getInt("User_rank");
                 int userScore = rs.getInt("User_score");
@@ -188,6 +196,10 @@ public class User_DB implements DBinfo {
                 String userFullName = rs.getString("User_fullName");
                 double userWallet = rs.getDouble("User_wallet");
                 String userAvatar = rs.getString("User_avatar");
+                if (userAvatar == null) {
+                    userAvatar = "static/images/user-default.webp";
+                }
+
                 String userStory = rs.getString("User_story");
                 int userRank = rs.getInt("User_rank");
                 int userScore = rs.getInt("User_score");
@@ -223,6 +235,10 @@ public class User_DB implements DBinfo {
                 String userFullName = rs.getString("User_fullName");
                 double userWallet = rs.getDouble("User_wallet");
                 String userAvatar = rs.getString("User_avatar");
+                if (userAvatar == null) {
+                    userAvatar = "static/images/user-default.webp";
+                }
+
                 String userStory = rs.getString("User_story");
                 int userRank = rs.getInt("User_rank");
                 int userScore = rs.getInt("User_score");
@@ -371,6 +387,19 @@ public class User_DB implements DBinfo {
         }
 
         return userId;
+    }
+
+    public static boolean updateUser_activeStatusByEmail(String email, int activestatus) {
+        String query = "UPDATE Users SET User_activeStatus = ? WHERE User_email = ?";
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setDouble(1, activestatus);
+            pstmt.setString(2, email);
+            int rowsUpdated = pstmt.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException ex) {
+            Logger.getLogger(User_DB.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
     }
 
     public static boolean updateWalletByEmail(String email, double wallet) {

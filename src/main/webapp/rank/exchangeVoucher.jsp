@@ -95,7 +95,7 @@
             <div class="body-wrapper">
                 <%@ include file="../include/navbar.jsp" %>
                 <div class="container-fluid">
-                    <div class="container">
+                    <div class="container rounded">
                         <div class="header">HỆ THỐNG ĐỔI THƯỞNG</div>
                         <div class="rewards">
                             <div class="reward-item">

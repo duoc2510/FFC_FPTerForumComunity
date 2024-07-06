@@ -20,11 +20,9 @@
     request.setAttribute("getdaynow", getdaynow);
 %>
 
-
 <%@ include file="../include/header.jsp" %>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+
 
 
 <style>
@@ -76,9 +74,7 @@
                                 <h3>Campaign advertising</h3>
                                 <h6>you can keep an eye on your campaign while you’re on the go. Wherever you are, you’ll have the power to create and edit ads, track their performance, and manage ad budgets and schedules.</h6>
                             </div>
-                            <div class="d-flex mb-4">
-                                <button class="btn btn-primary" data-toggle="modal" data-target="#createCampaign" href="javascript:void(0)">Create new campaign</button>
-                            </div>
+
                             <div class="form-group mx-2">
                                 <c:if test="${empty allAdsCombo}">
                                     <p class="mb-4">You have no campaigns.</p>
@@ -94,6 +90,9 @@
                                     </div>
                                 </c:if>
                                 <c:if test="${not empty allAdsCombo}"> 
+                                    <div class="d-flex mb-4">
+                                        <button class="btn btn-primary" data-toggle="modal" data-target="#createCampaign" href="javascript:void(0)">Create new campaign</button>
+                                    </div>
                                     <c:forEach var="adsCombo" items="${allAdsCombo}">
                                         <c:set var="createDate" value="${adsCombo.createDate}" />
                                         <fmt:parseDate var="parsedCreateDate" value="${createDate}" pattern="yyyy-MM-dd" />
@@ -101,7 +100,7 @@
                                         <c:set var="diff" value="${diffInMillies / (1000 * 60 * 60 * 24)}" />
                                         <c:set var="durationDay" value="${adsCombo.durationDay}" />
 
-                                        <div class="row mb-4 card py-3 px-3 <c:if test="${diff > durationDay}"> no-available </c:if>">
+                                        <div class="row mb-4 rounded card py-3 px-3 <c:if test="${diff > durationDay}"> no-available </c:if>">
                                                 <div class="col-12">
                                                     <div data-ads="${adsCombo.adsDetailId}" class="d-flex flex-row align-items-center mb-4 pb-1">
                                                     <div class="border px-3 py-2 mx-2 rounded">

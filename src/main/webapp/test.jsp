@@ -104,6 +104,7 @@
 
                             ws.onopen = function () {
                                 console.log('WebSocket đã kết nối.');
+                                // Load message senders only once when the WebSocket connection is opened
                                 loadMessageSenders();
                             };
 
@@ -253,9 +254,6 @@
                                     messageDiv.appendChild(document.createTextNode(messageText));
                                     chat.appendChild(messageDiv);
                                     scrollToBottom();
-
-                                    // Update message senders list without interrupting the current chat
-                                    loadMessageSenders();
                                 } else {
                                     console.log("Received message not relevant to current chat window.");
                                 }

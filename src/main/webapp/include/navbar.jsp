@@ -8,102 +8,62 @@ User user = (User) session.getAttribute("USER");
 // Chuyển đối tượng USER thành chuỗi JSON
 String userJson = new Gson().toJson(user);
 %>
+     <style>
+        #searchDropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: none;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            width: 190px; /* Adjust this value as needed */
+        }
 
+        #searchDropdown .list-group-item {
+            padding: 10px;
+            cursor: pointer;
+        }
 
-<style>
-    /*    .user-settings  .dropdown-menu{
-            min-width: 200px !important;
-        }*/
-    .avatar-cover {
-        width: 35px;
-        height: 35px;
-        object-fit: cover;
-    }
+        #searchDropdown .list-group-item:hover {
+            background-color: #f1f1f1;
+        }
+        
+        .non-clickable {
+            background-color: #f8f9fa;
+            pointer-events: none;
+            color: #6c757d;
+            cursor: default;
+        }
 
-    .notification-count {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background-color: red;
-        color: white;
-        border-radius: 50%;
-        width: 20px;
-        height: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-    }
+        .non-clickable:hover {
+            background-color: #f8f9fa; /* Không đổi màu khi hover */
+        }
 
-    .notification-list {
-        max-height: 300px;
-        overflow-y: auto;
-    }
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-    .notification-item {
-        display: flex;
-        flex-direction: column;
-        padding: 10px;
-        border-bottom: 1px solid #ddd;
-    }
+        .history-item .close-btn {
+            color: red;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+    </style>
 
-    .notification-item .date {
-        font-size: 0.8em;
-        color: #888;
-    }
-    #searchDropdown {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        z-index: 1000;
-        display: none;
-        background-color: #fff;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        max-height: 200px;
-        overflow-y: auto;
-        width: 190px; /* Adjust this value as needed */
-
-    }
-
-    #searchDropdown .list-group-item {
-        padding: 10px;
-        cursor: pointer;
-    }
-
-    #searchDropdown .list-group-item:hover {
-        background-color: #f1f1f1;
-    }
-    .non-clickable {
-        background-color: #f8f9fa;
-        pointer-events: none;
-        color: #6c757d;
-        cursor: default;
-    }
-    .non-clickable:hover {
-        background-color: #f8f9fa; /* Không đổi màu khi hover */
-    }
-    .history-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .history-item .close-btn {
-        color: red;
-        cursor: pointer;
-        margin-left: 10px;
-    }
-</style>
-
-<header class="app-header">
+<header class="app-header border-bottom">
     <nav class="navbar navbar-expand-lg navbar-light">
 
         <ul class="navbar-nav w-100" style="max-width: 400px; position: relative;">
             <form class="d-flex" action="${pageContext.request.contextPath}/search" method="post">
-                <input id="searchInput" type="text" class="form-control me-2" name="query" placeholder="Search for user name or group name" aria-label="Search" data-bs-toggle="tooltip" data-bs-placement="bottom">
-                <button class="btn btn-outline-success" type="submit">Search</button>
+                <input id="searchInput" type="text" class="form-control me-2 rounded" name="query" placeholder="Search for user name or group name" aria-label="Search" data-bs-toggle="tooltip" data-bs-placement="bottom">
+                <button class="btn btn-outline-success rounded" type="submit">Search</button>
             </form>
             <div id="searchDropdown" class="list-group position-absolute" style="max-height: 200px; overflow-y: auto; display: none;"></div>
         </ul>
@@ -125,7 +85,7 @@ String userJson = new Gson().toJson(user);
                             <div class="notification bg-primary rounded-circle"></div>
                             <span id="notificationCount" class="notification-count" style="display: none;">0</span>
                         </a>
-                        <ul class="dropdown-menu notification-list" aria-labelledby="dropdownMenuLink" id="notificationList">
+                        <ul class="dropdown-menu notification-list rounded mt-2" aria-labelledby="dropdownMenuLink" id="notificationList">
                             <!-- Notifications will be dynamically loaded here -->
                         </ul>
                     </li>
@@ -134,14 +94,14 @@ String userJson = new Gson().toJson(user);
                     <i class="ti ti-message-forward fs-8"></i>
                 </a>
 
-                <li class="nav-item dropdown">
+                <li class="nav-item dropdown ">
                     <a class="nav-link nav-icon-hover" href="javascript:void(0)" id="drop2"
                        data-bs-toggle="dropdown"
                        aria-expanded="false">
                         <img src="${pageContext.request.contextPath}/${USER.userAvatar}" alt="" width="35"
                              class="rounded-circle avatar-cover">
                     </a>
-                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2" style="min-width: 200px">
+                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up rounded mt-2" aria-labelledby="drop2" style="min-width: 200px">
                         <div class="message-body">
                             <a href="${pageContext.request.contextPath}/profile?username=${USER.username}"
                                class="d-flex align-items-center gap-2 dropdown-item">
@@ -167,19 +127,19 @@ String userJson = new Gson().toJson(user);
                                 <p class="mb-0 fs-3">My Account</p>
                             </a>
                             <div class="d-flex align-items-center gap-2">
-                                <a href="${pageContext.request.contextPath}/payment" class="dropdown-item" id="walletLink">
-                                    <p class="mb-0 fs-3" id="walletAmount">Wallet: ${USER.userWallet}</p>
+                                <a href="${pageContext.request.contextPath}/wallet" class="dropdown-item d-flex" id="walletLink">
+                                      <i class="ti ti-database fs-6 "></i><p class="mb-0 ms-2 fs-3" id="walletAmount"> ${USER.userWallet}</p>
                                 </a>
-                                <i class="ti ti-repeat" id="reloadWalletIcon" style="cursor: pointer;"></i>
+                                <i class="ti ti-repeat" class="position-absolute p-1" id="reloadWalletIcon" style="cursor: pointer;"></i>
                             </div>
-                            <a href="${pageContext.request.contextPath}/profile/setting"
+                            <a href="${pageContext.request.contextPath}/walletbalance"
                                class="d-flex align-items-center gap-2 dropdown-item">
                                 <i class="ti ti-database fs-6 "></i>
                                 <p class="mb-0 fs-3">Balance Wallet</p>
                             </a>
 
                             <a href="${pageContext.request.contextPath}/logout"
-                               class="btn btn-outline-danger mx-3 mt-2 d-block">Logout</a>
+                               class="btn btn-outline-danger mx-3 mt-2 d-block rounded">Logout</a>
                         </div>
                     </div>
                 </li>
@@ -216,7 +176,7 @@ String userJson = new Gson().toJson(user);
                             } else {
                                 $('#notificationCount').text(oldNotificationCount).show();
                             }
-                            $('#notificationList').prepend('<li class="notification-item text-center"><p class="text-danger mb-0">Bạn có ' + newNotificationCount + ' thông báo chưa đọc</p></li>');
+                            $('#notificationList').prepend('<li class="notification-item px-4 pb-3 border-bottom"><p class="text-danger mb-0">Bạn có ' + newNotificationCount + ' thông báo chưa đọc</p> <a href="' + contextPath + '/allnotifications"><p class="text-primary ">Show all</p></a></li>');
                             var notificationsToShow = data.slice(0, 10);
                             $.each(notificationsToShow, function (index, notification) {
                                 var listItem = $('<li class="notification-item"></li>');
@@ -228,13 +188,11 @@ String userJson = new Gson().toJson(user);
                                 listItem.append(link);
                                 $('#notificationList').append(listItem);
                             });
-                            $('#notificationList').append('<li class="text-center mt-2"><a href="' + contextPath + '/allnotifications" id="showMoreButton" class="btn btn-link text-decoration-none">Show All</a></li>');
-                        } else {
+                                  } else {
                             $('#notificationList').empty();
                             $('#notificationCount').text(oldNotificationCount).show();
                             $('#notificationList').append('<li class="notification-item"><a class="dropdown-item" >No new notifications</a></li>');
-                            $('#notificationList').append('<li class="text-center mt-2"><a href="' + contextPath + '/allnotifications" id="showMoreButton" class="btn btn-link text-decoration-none">Show All</a></li>');
-                        }
+                                                 }
                     }
                 });
             }
@@ -300,7 +258,6 @@ String userJson = new Gson().toJson(user);
                 loadNotifications();
             });
         });
-
         $(document).ready(function () {
             var userId = USER.userId; // Sử dụng USER.userId trực tiếp
             var searchInput = $('#searchInput');

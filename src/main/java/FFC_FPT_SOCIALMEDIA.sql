@@ -36,7 +36,7 @@ CREATE TABLE Shop (
     Shop_campus NVARCHAR(255) NOT NULL, -- Cơ sở của shop, bắt buộc
     Description NVARCHAR(255), -- Mô tả về shop
     Image NVARCHAR(255), -- Ảnh bìa của shop
-        Status INT NOT NULL, -- Trạng thái hoạt động của SHOP -- chỉnh sửa
+    Status INT NOT NULL, -- Trạng thái hoạt động của SHOP -- chỉnh sửa
     CONSTRAINT fk_user_shop FOREIGN KEY (Owner_id) REFERENCES Users(User_id) -- Tham chiếu đến User_id trong bảng Users
 );
 GO
@@ -135,7 +135,12 @@ GO
 -- Tạo bảng Payment: lưu thông tin về thanh toán
 CREATE TABLE Payment (
     Payment_id INT IDENTITY(1,1) PRIMARY KEY, -- id tự động tăng cho thanh toán
-    Payment_detail NVARCHAR(255) NOT NULL, -- Chi tiết thanh toán, không được null
+	ATMNumber NVARCHAR(250),
+	ATMName	NVARCHAR(250),
+	ATMBank NVARCHAR(250),
+	Amount NVARCHAR(250),
+	Status NVARCHAR(250),
+	Reason NVARCHAR(250),
     User_id INT NOT NULL, -- id của người dùng, không được null
     FOREIGN KEY (User_id) REFERENCES Users(User_id) -- Khóa ngoại tham chiếu đến người dùng
 );
@@ -176,7 +181,7 @@ CREATE TABLE Message (
     Message_id INT IDENTITY(1,1) PRIMARY KEY, -- id tự động tăng cho tin nhắn
     From_id INT NOT NULL, -- id người gửi, không được null
     To_id INT NOT NULL, -- id người nhận, không được null
-    MessageText NVARCHAR(255) NOT NULL, -- Nội dung tin nhắn, không được null
+    MessageText NVARCHAR(255), -- Nội dung tin nhắn, không được null
     FromUsername NVARCHAR(255),
 	FriendShip NVARCHAR(255),
     TimeStamp DATETIME DEFAULT GETDATE(), -- Thời gian gửi tin nhắn, mặc định là ngày hiện tại
@@ -248,18 +253,6 @@ CREATE TABLE Post (
     FOREIGN KEY (Group_id) REFERENCES [Group](Group_id), -- Khóa ngoại tham chiếu đến nhóm
     FOREIGN KEY (Topic_id) REFERENCES Topic(Topic_id) -- Khóa ngoại tham chiếu đến chủ đề
 );
-CREATE TABLE Post_share (
-	Share_id int  IDENTITY(1,1) PRIMARY KEY,
-    Post_id INT  NOT NULL, -- id tự động tăng cho bài viết
-    User_id INT NOT NULL, -- id của người đăng bài viết
-    Share_content NVARCHAR(255) NOT NULL, -- Nội dung bài viết
-    createDate DATETIME DEFAULT GETDATE(), -- Ngày tạo bài viết, mặc định là ngày hiện tại
-    Share_status NVARCHAR(50), -- Trạng thái của bài viết
-	Share_postStatus NVARCHAR(50), -- Trạng thái bài viết (duyệt, chưa duyệt)
-    Reason NVARCHAR(255), -- Lý do (nếu có) của trạng thái bài viết
-	FOREIGN KEY (User_id) REFERENCES Users(User_id), -- Khóa ngoại tham chiếu đến người đăng bài viết
-	FOREIGN KEY (Post_id) REFERENCES Post(Post_id), -- Khóa ngoại tham chiếu đến người đăng bài viết
-);
 GO
 -- Tạo bảng Comment: lưu thông tin về bình luận của bài viết
 CREATE TABLE Comment (
@@ -304,7 +297,7 @@ CREATE TABLE UserFollow (
     Topic_id INT, -- id của chủ đề được theo dõi
     FOREIGN KEY (User_id) REFERENCES Users(User_id), -- Tham chiếu khóa ngoại tới bảng Users
     FOREIGN KEY (Event_id) REFERENCES Event(Event_id), -- Tham chiếu khóa ngoại tới bảng Event
-    FOREIGN KEY (Topic_id) REFERENCES Topic(Topic_id) -- Tham chiếu khóa ngoại tới bảng Topic
+	FOREIGN KEY (Topic_id) REFERENCES Topic(Topic_id) -- Tham chiếu khóa ngoại tới bảng Topic
 );
 GO
 CREATE TABLE Upload (
@@ -471,12 +464,6 @@ VALUES
 (6, 1, 8, 10.50),
 (6, 5, 15, 25.50);
 GO
--- Chèn dữ liệu mẫu vào bảng Message
-INSERT INTO Message (From_id, To_id, MessageText,FromUsername)
-VALUES 
-(1, 2, 'Hello, how are you?','swpduoc'),
-(2, 1, 'I''m fine, thanks!','swpdiem');
-GO
 -- Chèn dữ liệu mẫu vào bảng Topic
 INSERT INTO Topic (Topic_name, Description)
 VALUES 
@@ -496,9 +483,4 @@ VALUES
 (1, 2, 'Welcome!'),
 (2, 1, 'I recommend trying the Italian restaurant downtown.');
 
-SELECT * FROM dbo.Users
-SELECT * FROM	dbo.Product
-SELECT * FROM	dbo.Shop
-SELECT * FROM	dbo.Report
-SELECT * FROM	dbo.FriendShip
-
+SELECT * FROM Shop WHERE Status = 1

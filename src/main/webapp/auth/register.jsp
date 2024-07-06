@@ -26,7 +26,7 @@
                 <div class="d-flex align-items-center justify-content-center w-100">
                     <div class="row justify-content-center w-100">
                         <div class="col-md-8 col-lg-4 col-xxl-3">
-                            <div class="card mb-0">
+                            <div class="card mb-0 rounded">
                                 <div class="card-body px-4">
                                     <a href="${pageContext.request.contextPath}/" class="text-nowrap logo-img text-center d-block py-3 w-100">
                                         <img src="${pageContext.request.contextPath}/static/images/logo.png" width="100" alt="">
@@ -37,21 +37,21 @@
                                     <form name="input" action="register" method="post" onsubmit="return validateForm()">
                                         <div class="mb-3">
                                             <label for="userName" class="form-label">Name</label>
-                                            <input type="text" class="form-control" id="userName" name="userName" placeholder="Enter name">
+                                            <input type="text" class="form-control rounded" id="userName" name="userName" placeholder="Enter name">
                                         </div>
                                         <div class="mb-3">
                                             <label for="userEmail" class="form-label">Email Address</label>
-                                            <input type="email" class="form-control" id="userEmail" name="userEmail" placeholder="Enter email"  onkeyup="showEmailHint()">
+                                            <input type="email" class="form-control rounded" id="userEmail" name="userEmail" placeholder="Enter email"  onkeyup="showEmailHint()">
                                             <div id="emailHint" style="color: #666; font-size: 14px; margin-top: 5px;"></div>
                                         </div>
                                         <div class="mb-4">
                                             <label for="password" class="form-label">Password</label>
-                                            <input type="password" class="form-control" id="password" name="password" placeholder="Enter new password"  onkeyup="showPasswordHint()">
+                                            <input type="password" class="form-control rounded" id="password" name="password" placeholder="Enter new password"  onkeyup="showPasswordHint()">
                                             <div id="passwordHint" style="color: #666; font-size: 14px; margin-top: 5px;"></div>
                                         </div>
                                         <div class="mb-4">
                                             <label for="rePassword" class="form-label">Re-Password</label>
-                                            <input type="password" class="form-control" id="rePassword" name="rePassword" placeholder="Re-enter new password">
+                                            <input type="password" class="form-control rounded" id="rePassword" name="rePassword" placeholder="Re-enter new password">
 
                                         </div>
                                         <c:if test="${not empty message}">

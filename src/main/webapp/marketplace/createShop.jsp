@@ -48,7 +48,7 @@
                                 <form action="myshop" method="POST">
                                     <div class="mb-3">
                                         <label for="shopName" class="form-label">Shop Name</label>
-                                        <input type="text" class="form-control" id="shopName" name="shopName" />
+                                        <input type="text" class="form-control" id="shopName" name="shopName" required />
                                     </div>
 
                                     <div class="mb-3">
@@ -64,12 +64,12 @@
 
                                     <div class="mb-3">
                                         <label for="shopPhone" class="form-label">Shop Phone</label>
-                                        <input type="text" class="form-control" id="shopPhone" name="shopPhone">
+                                        <input type="text" class="form-control" id="shopPhone" name="shopPhone" required>
                                     </div>
 
                                     <div class="mb-3">
                                         <label for="shopDescription" class="form-label">Shop Description</label>
-                                        <input type="text" class="form-control" id="shopDescription" name="shopDescription">
+                                        <input type="text" class="form-control" id="shopDescription" name="shopDescription" required>
                                     </div>
                                     <button type="submit" class="btn btn-primary float-end">Create</button>
                                 </form>
@@ -100,7 +100,7 @@
                             }
                         });
                     </script>
-                    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+                   
 
                     <%@ include file="../include/footer.jsp" %>
                 </div>

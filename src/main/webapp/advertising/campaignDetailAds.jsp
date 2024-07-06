@@ -61,9 +61,9 @@
 
                                 <c:forEach var="ads" items="${allAdsUserInCombo}">
                                     <div class="col-6 px-2">
-                                        <img src="${pageContext.request.contextPath}/${ads.image}" class="card-img w-100" alt="${ads.content}" style="height: 300px; object-fit: cover; border: 0px solid; border-radius: 10px 10px 0 0;">
+                                        <img src="${pageContext.request.contextPath}/${ads.image}" class="card-img w-100 rounded-top" alt="${ads.content}" style="height: 300px; object-fit: cover; border: 0px solid; border-radius: 10px 10px 0 0;">
 
-                                        <div class="card p-4">
+                                        <div class="card p-4 rounded">
                                             <p>Advertising ID: ${ads.adsId}</p>
                                             <h5 class="card-title mt-2">${ads.title}</h5>
 
@@ -130,7 +130,21 @@
                             <label for="productNameInput">Title:</label>
                             <input type="text" class="form-control" name="Title" required>
                         </div>
-                        <div class="form-group checkboxLocation">
+                      
+                         <div class="form-group mb-3">
+                            <label for="fileInput">Choose Image File:</label>
+                            <input type="file" class="form-control-file" id="fileInput" name="file" accept="image/*" required>
+                        </div>
+                         <div class="form-group mb-3">
+                            <label for="productDescriptionInput">Content:</label>
+                            <textarea class="form-control" name="Content" required></textarea>
+                        </div>
+                     
+                        <div class="form-group mb-3">
+                            <label for="productURIInput">URL:</label>
+                            <input type="text" class="form-control" name="URI" required>
+                        </div>
+                          <div class="form-group checkboxLocation">
                             <div class="checkbox my-2">
                                 <label>
                                     <input type="checkbox" name="campus" class="check" id="checkAll" value="All"> All campus
@@ -138,15 +152,7 @@
                             </div>
                             <!-- Other checkboxes will be dynamically added here -->
                         </div>
-                        <div class="form-group mb-3">
-                            <label for="fileInput">Choose Image File:</label>
-                            <input type="file" class="form-control-file" id="fileInput" name="file" accept="image/*" required>
-                        </div>
-                        <div class="form-group mb-3">
-                            <label for="productDescriptionInput">Content:</label>
-                            <textarea class="form-control" name="Content" required></textarea>
-                        </div>
-                        <div class="form-group mb-3">
+                           <div class="form-group mb-3">
                             <label for="budgetInput">Gender</label>
                             <select class="form-select" name="targetSex">
                                 <option value="all">All</option>
@@ -154,20 +160,9 @@
                                 <option value="female">Female</option>
                             </select>
                         </div>
-                        <div class="form-group mb-3">
-                            <label for="productURIInput">URI:</label>
-                            <input type="text" class="form-control" name="URI" required>
-                        </div>
-                        <div class="d-flex">
-                            <div class="col-6 form-group mb-3" style="padding-right: 2%">
-                                <label for="productQuantityInput">View can get:</label>
-                                <input type="text" class="form-control" value="${adsCombo.maxReact}" readonly>
-                            </div>
-                            <div class="col-6 form-group mb-3">
-                                <label for="productQuantityInput">Your wallet need:</label>
-                                <input type="text" class="form-control" value="${adsCombo.budget} VND" readonly>
-                            </div>
-                        </div>
+                       
+                       
+                        
                         <!-- Hidden input fields -->
                         <input type="hidden" name="adsDetailId" value="${AdsComboID}"/>
                         <input type="hidden" id="location${adsCombo.adsDetailId}" name="location">
@@ -175,7 +170,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Pay</button>
+                        <button type="submit" class="btn btn-primary">Create</button>
                     </div>
                 </form>
             </div>

@@ -52,7 +52,7 @@
                                 <div class="form-group pb-3">
                                     <c:forEach var="adsCombo" items="${allAdsCombo}">
                                         <div data-ads="${adsCombo.adsDetailId}" class="d-flex flex-row align-items-center mb-4 pb-1">
-                                            <img class="img-fluid" src="https://nhanhoa.com/templates/images/v2/kim_cuong.png"/>
+                                            <img class="img-fluid " src="https://nhanhoa.com/templates/images/v2/kim_cuong.png"/>
                                             <div class="flex-fill mx-3 d-flex">
                                                 <div data-mdb-input-init class="form-outline col-11">
                                                     <h6>${adsCombo.title}</h6>

@@ -130,7 +130,7 @@
 
     <script>
         // Retrieve the URL to redirect to
-        var url = "${redirectTo}";
+        var url = '${redirectTo}';
         console.log(url); // Outputs the complete URL
 
 // Check if the URL contains the context path
