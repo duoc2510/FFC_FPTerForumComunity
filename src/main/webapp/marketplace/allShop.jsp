@@ -1,10 +1,16 @@
-<%-- 
-    Document   : allShop
-    Created on : May 27, 2024, 9:02:58 PM
-    Author     : Admin
---%>
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
 <%@ include file="../include/header.jsp" %>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Page Title</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <!-- SweetAlert JS -->
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+</head>
 <body>
     <script>
         // Check if the message variable is set or not
@@ -22,7 +28,7 @@
         });
     </script>
     <style>
-        .container-fluid .card img{
+        .container-fluid .card img {
             aspect-ratio: 1 / 1;
             object-fit: cover;
         }
@@ -53,20 +59,19 @@
                 </c:if>
                 <div class="col-lg-12">
                     <div class="w-100 row">
-                        <c:forEach var="shop" items="${shoplist}" >
+                        <c:forEach var="shop" items="${shoplist}">
                             <div class="col-md-4">
                                 <div class="card mx-2">
                                     <a href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?shopid=${shop.shopID}" data-toggle="modal" data-target="#productID1">
-                                        <img class="card-img-top" src="${pageContext.request.contextPath}/static/${shop.getImage()}">
+                                        <img style="height: 100%" class="card-img-top" src="${pageContext.request.contextPath}/static/${shop.getImage()}">
                                     </a>
                                     <div class="card-body">
-                                        <h5 class="card-title"><a href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?shopid=${shop.shopID}">${shop.getName()}</a></h5>
-                                        <p class="card-text"><a href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?shopid=${shop.shopID}">Campus : ${shop.getCampus()}</a></p>
-                                        <p class="card-text"><a href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?shopid=${shop.shopID}">${shop.getDescription()}</a></p>
-                                        <p class="card-text"><a href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?shopid=${shop.shopID}">Liên hệ: ${shop.getPhone()}</a></p>
-                                        <a href="#" class="btn btn-primary mt-3 w-100">Message</a>
+                                        <h5 style="text-align: center;" class="card-title"><a style="color: black; font-size: 20px; font-weight: bold;" href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?shopid=${shop.shopID}" class="text-decoration-none">${shop.getName()}</a></h5>
+                                        <p class="card-text"><i class="fas fa-university me-2"></i><a style="color: black;" href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?shopid=${shop.shopID}" class="text-decoration-none">${shop.getCampus()}</a></p>
+                                        <p class="card-text"><i class="fas fa-info-circle me-2"></i><a style="color: black;" href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?shopid=${shop.shopID}" class="text-decoration-none">${shop.getDescription()}</a></p>
+                                        <p class="card-text"><i class="fas fa-phone-alt me-2"></i><a style="color: black;" href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?shopid=${shop.shopID}" class="text-decoration-none">${shop.getPhone()}</a></p>
+                                        <a href="#" class="btn btn-primary mt-3 w-100"><i class="fas fa-envelope me-1"></i> Message</a>
                                     </div>
-
                                 </div>
                             </div>
                         </c:forEach>
@@ -74,9 +79,6 @@
                 </div>
             </div>
         </div>
-
+    </div>
 </body>
-
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-
 <%@ include file="../include/footer.jsp" %>

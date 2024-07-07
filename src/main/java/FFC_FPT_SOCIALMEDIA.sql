@@ -127,6 +127,7 @@ CREATE TABLE Event (
     Start_date DATETIME NOT NULL, -- Ngày bắt đầu sự kiện, không được null
     End_date DATETIME NOT NULL, -- Ngày kết thúc sự kiện, không được null
     Location NVARCHAR(255), -- Địa điểm tổ chức sự kiện
+    Place NVARCHAR(255),
     Created_by INT NOT NULL, -- Người tạo sự kiện, không được null
     Created_at DATETIME DEFAULT GETDATE(), -- Ngày và giờ tạo sự kiện, mặc định là ngày và giờ hiện tại
 	FOREIGN KEY (Created_by) REFERENCES Users(User_id) -- Tham chiếu khóa ngoại tới bảng Users

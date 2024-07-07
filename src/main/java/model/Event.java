@@ -1,6 +1,8 @@
 package model;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Event {
 
@@ -11,8 +13,12 @@ public class Event {
     private Timestamp endDate;
     private int userId; // Đây là Created_by trong bảng Event
     private String location;
+    private String place;
     private Timestamp createdAt;
     private String uploadPath;
+    private boolean isInterest;
+    private String formattedStartDate;
+    private String formattedEndDate;
 
     // Constructors
     public Event() {
@@ -27,7 +33,7 @@ public class Event {
         this.userId = userId;
     }
 
-    public Event(int eventId, String title, String description, Timestamp startDate, Timestamp endDate, int userId, String location, Timestamp createdAt) {
+    public Event(int eventId, String title, String description, Timestamp startDate, Timestamp endDate, int userId, String location, String place, Timestamp createdAt) {
         this.eventId = eventId;
         this.title = title;
         this.description = description;
@@ -35,22 +41,70 @@ public class Event {
         this.endDate = endDate;
         this.userId = userId;
         this.location = location;
+        this.place = place;
         this.createdAt = createdAt;
     }
 
-    public Event(int eventId, String title, String description, Timestamp startDate, Timestamp endDate, int userId, String location, Timestamp createdAt, String uploadPath) {
+    public Event(int eventId, String title, String description, Timestamp startDate, Timestamp endDate, int userId, String location, String place, Timestamp createdAt, String uploadPath) {
         this.eventId = eventId;
         this.title = title;
         this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.userId = userId; // Sử dụng userId để đại diện cho Created_by
+        this.userId = userId;
         this.location = location;
+        this.place = place;
         this.createdAt = createdAt;
         this.uploadPath = uploadPath;
     }
 
+    public Event(int eventId, String title, String description, Timestamp startDate, Timestamp endDate, int userId, String location, String place, Timestamp createdAt, String uploadPath, boolean isInterest) {
+        this.eventId = eventId;
+        this.title = title;
+        this.description = description;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.userId = userId;
+        this.location = location;
+        this.place = place;
+        this.createdAt = createdAt;
+        this.uploadPath = uploadPath;
+        this.isInterest = isInterest;
+    }
+
     // Getters and Setters
+    public String getFormattedStartDate() {
+        return formattedStartDate;
+    }
+
+    public void setFormattedStartDate(String formattedStartDate) {
+        this.formattedStartDate = formattedStartDate;
+    }
+
+    public String getFormattedEndDate() {
+        return formattedEndDate;
+    }
+
+    public void setFormattedEndDate(String formattedEndDate) {
+        this.formattedEndDate = formattedEndDate;
+    }
+
+    public String getPlace() {
+        return place;
+    }
+
+    public void setPlace(String place) {
+        this.place = place;
+    }
+
+    public boolean isIsInterest() {
+        return isInterest;
+    }
+
+    public void setIsInterest(boolean isInterest) {
+        this.isInterest = isInterest;
+    }
+
     public int getEventId() {
         return eventId;
     }
@@ -122,4 +176,5 @@ public class Event {
     public void setUploadPath(String uploadPath) {
         this.uploadPath = uploadPath;
     }
+   
 }

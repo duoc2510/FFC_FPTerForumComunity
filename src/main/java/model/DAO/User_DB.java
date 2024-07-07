@@ -289,6 +289,46 @@ public class User_DB implements DBinfo {
             return false;
         }
     }
+    
+     // Get usernames of all users interested in a specific event
+    public static List<String> getUsersInterestedInEvent(int eventId) {
+        List<String> usernames = new ArrayList<>();
+        String query = "SELECT u.Username FROM Users u " +
+                       "JOIN UserFollow uf ON u.User_id = uf.User_id " +
+                       "WHERE uf.Event_id = ?";
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); 
+             PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setInt(1, eventId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    usernames.add(rs.getString("Username"));
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(User_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return usernames;
+    }
+
+    // Count the number of users interested in a specific event
+    public static int countInterestedUsers(int eventId) {
+        int userCount = 0;
+        String query = "SELECT COUNT(*) FROM UserFollow WHERE Event_id = ?";
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); 
+             PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setInt(1, eventId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    userCount = rs.getInt(1);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(User_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return userCount;
+    }
+
+    // R
 
     public static void updateScore(int userId) {
         String countCommentsQuery = "SELECT COUNT(*) FROM Comment WHERE User_id = ?";
