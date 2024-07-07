@@ -1,6 +1,17 @@
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" import="model.*" import="model.DAO.*"%>
 <%@ page import="java.util.*, java.sql.*" %>
 <%@ include file="../include/header.jsp" %>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Page Title</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <!-- SweetAlert JS -->
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+</head>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
     .thumbnail img{
@@ -42,39 +53,53 @@
                             <div class="card mx-1 rounded">
                                 <img style="height: 100%;" class="card-img-top" src="${pageContext.request.contextPath}/static/${SHOP.image}" alt="Card image cap">
                                 <div class="card-body">
-                                    <h5 class="card-title">${SHOP.name}</h5>
-                                    <p class="card-text">${SHOP.phone}</p>
-                                    <p class="card-text">${SHOP.campus}</p>
-                                    <p class="card-text">Giới thiệu: ${SHOP.description}</p>
-
+                                    <h5 style="font-size: 30px;" class="card-title">
+                                        <i class="fas fa-store-alt"></i> ${SHOP.name}
+                                    </h5>
+                                    <div class="d-flex justify-content-between">
+                                        <p style="font-size: 18px;" class="card-text">
+                                            <i class="fas fa-phone"></i> ${SHOP.phone}
+                                        </p>
+                                        <p style="font-size: 18px;" class="card-text">
+                                            <i class="fas fa-map-marker-alt"></i> ${SHOP.campus}
+                                        </p>
+                                        <p style="font-size: 18px;" class="card-text">
+                                            <i class="fas fa-info-circle"></i> Giới thiệu: ${SHOP.description}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
+
+
                     <div class="w-100 row ">
                         <div class="col-md card-group">
                             <div class="card mx-1 rounded">
                                 <ul class="list-group list-group-flush rounded-3">
-                                    <li class="list-group-item d-flex p-3">
-                                        <i style="display: inline-block;
-                                           margin-top: 1px;" class="fas fa-globe fa-lg text-warning"></i>
-                                        <a style="margin-left:10px" class="mb-0" href="" data-toggle="modal" data-target="#editBrand">Edit brand information</a>
+                                    <li class="list-group-item d-flex align-items-center p-3">
+                                        <i class="fas fa-globe fa-lg text-warning"></i>
+                                        <a href="#" class="ms-3 mb-0" data-toggle="modal" data-target="#editBrand">Edit brand information</a>
                                     </li>
-                                    <li class="list-group-item d-flex p-3">
-                                        <i style="display: inline-block;
-                                           margin-top: 1px;" class="fas fa-globe fa-lg text-warning"></i>
-                                        <a style="margin-left:10px" class="mb-0" href="" data-toggle="modal" data-target="#deleteShop">Delete shop</a>
+                                    <li class="list-group-item d-flex align-items-center p-3">
+                                        <i class="fas fa-globe fa-lg text-warning"></i>
+                                        <a href="#" class="ms-3 mb-0" data-toggle="modal" data-target="#deleteShop">Delete shop</a>
+                                    </li>
+                                    <li class="list-group-item d-flex align-items-center p-3">
+                                        <i class="fas fa-globe fa-lg text-warning"></i>
+                                        <a href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?shopid=${SHOP.shopID}" class="ms-3 mb-0" >Go to sales page</a>
                                     </li>
                                 </ul>
                             </div>
                         </div>
+
                         <div class="col-md card-group">
                             <div class="card mx-1 rounded">
                                 <ul class="list-group list-group-flush rounded-3">
                                     <li class="list-group-item d-flex p-3">
                                         <div class="col-sm-3">
-                                            <p class="mb-0">Full Name</p>
+                                            <p class="mb-0"><i class="fas fa-user"></i> Full Name</p>
                                         </div>
                                         <div class="col-sm-9">
                                             <p class="text-muted mb-0">${USER.userFullName}</p>
@@ -82,7 +107,7 @@
                                     </li>
                                     <li class="list-group-item d-flex p-3">
                                         <div class="col-sm-3">
-                                            <p class="mb-0">Email</p>
+                                            <p class="mb-0"><i class="fas fa-envelope"></i> Email</p>
                                         </div>
                                         <div class="col-sm-9">
                                             <p class="text-muted mb-0">${USER.userEmail}</p>
@@ -90,7 +115,7 @@
                                     </li>
                                     <li class="list-group-item d-flex p-3">
                                         <div class="col-sm-3">
-                                            <p class="mb-0">Wallet</p>
+                                            <p class="mb-0"><i class="fas fa-wallet"></i> Wallet</p>
                                         </div>
                                         <div class="col-sm-9">
                                             <p class="text-muted mb-0">${USER.userWallet} VNĐ</p>
@@ -99,7 +124,7 @@
                                     <c:set var="count" value="${Shop_DB.countSuccessAndCompletedOrdersByShopID(SHOP.shopID)}" />
                                     <li class="list-group-item d-flex p-3">
                                         <div class="col-sm-3">
-                                            <p class="mb-0">Successful orders</p>
+                                            <p class="mb-0"><i class="fas fa-check-circle"></i> Success orders</p>
                                         </div>
                                         <div class="col-sm-9">
                                             <p class="text-muted mb-0">${count}</p>
@@ -109,7 +134,7 @@
                             </div>
                         </div>
                     </div>
-   
+
 
 
                     <div class="w-100 row rounded border  my-5">
@@ -117,19 +142,26 @@
                             <div class="rounded">
                                 <nav>
                                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                                        <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">All Discount</button>
-                                        <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">All Product</button>
-                                        <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">All Order</button>
+                                        <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">
+                                            <i class="fas fa-tags"></i> All Discount
+                                        </button>
+                                        <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">
+                                            <i class="fas fa-box-open"></i> All Product
+                                        </button>
+                                        <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">
+                                            <i class="fas fa-shopping-cart"></i> All Order
+                                        </button>
                                     </div>
                                 </nav>
+
 
 
 
                                 <div class="tab-content" id="nav-tabContent">
                                     <!--tab content 1-->
                                     <div class="tab-pane fade card-body show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0" style="overflow-x: auto">
-                                        <table class="table table-responsive table-bordered w-auto">
-                                            <thead>
+                                        <table class="table table-responsive table-bordered">
+                                            <thead class="table-light">
                                                 <tr>
                                                     <th>Code</th>
                                                     <th>Valid from</th>
@@ -157,29 +189,29 @@
                                                                 <td>${discount.usageCount}</td>
                                                                 <td>
                                                                     <input type="hidden" name="code" value="${discount.code}">
-                                                                    <a class="btn btn-primary" data-toggle="modal" data-target="#showdiscount${discount.discountId}">Show</a>
+                                                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#showdiscount${discount.discountId}">Show</button>
                                                                 </td>
                                                                 <td>
                                                                     <input type="hidden" name="name" value="${discount.code}">
-                                                                    <a class="btn btn-secondary" data-toggle="modal" data-target="#editDiscount${discount.discountId}">Edit</a>
+                                                                    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#editDiscount${discount.discountId}">Edit</button>
                                                                 </td>
                                                             </tr>
                                                         </c:forEach>
                                                     </c:otherwise>
                                                 </c:choose>
-
                                             </tbody>
                                         </table>
                                         <div class="d-flex justify-content-end mb-2">
-                                            <a class="btn btn-primary" data-toggle="modal" data-target="#addDiscount">Add new discount</a>
+                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addDiscount">Add new discount</button>
                                         </div>
                                     </div>
 
 
+
                                     <!--tab content 2-->
                                     <div class="tab-pane card-body fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" tabindex="0">
-                                        <table class="table table-responsive table-bordered w-auto">
-                                            <thead>
+                                        <table class="table table-responsive table-bordered">
+                                            <thead class="table-light">
                                                 <tr>
                                                     <th>Name Product</th>
                                                     <th>Price</th>
@@ -194,40 +226,38 @@
                                                         <td>${product.name}</td>
                                                         <td>${product.price} VNĐ</td>
                                                         <td>${product.quantity}</td>
-
                                                         <td>
                                                             <input type="hidden" name="name" value="${product.name}">
-                                                            <a class="btn btn-primary" data-toggle="modal" data-target="#show${product.productId}">Show</a>
+                                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#show${product.productId}">Show</button>
                                                         </td>
                                                         <td>
                                                             <input type="hidden" name="name" value="${product.name}">
-                                                            <a class="btn btn-secondary" data-toggle="modal" data-target="#editProduct${product.productId}">Edit</a>
+                                                            <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#editProduct${product.productId}">Edit</button>
                                                         </td>
-
                                                     </tr>
                                                 </c:forEach>
                                             </tbody>
                                         </table>
                                         <div class="d-flex justify-content-end mb-2">
-                                            <a class="btn btn-primary" data-toggle="modal" data-target="#addProduct">Add new product</a>
+                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addProduct">Add new product</button>
                                         </div>
                                     </div>
+
 
 
                                     <!--tab content 3-->
                                     <div class="tab-pane card-body fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab" tabindex="0">
                                         <table class="table table-responsive table-bordered w-auto">
-                                            <thead>
+                                            <thead class="table-light">
                                                 <tr>
                                                     <th>Order Date</th>
                                                     <th>Name Receiver</th>
-                                                    <th>Phone </th>
+                                                    <th>Phone</th>
                                                     <th>Note</th>
                                                     <th>Item</th>
                                                     <th>Total</th>
                                                     <th>Payment Status</th>
                                                     <th>Action</th>
-
                                                 </tr>
                                             </thead>
                                             <c:set var="orderlist" value="${Shop_DB.getOrdersByShopId(SHOP.shopID)}" />
@@ -239,7 +269,7 @@
                                                         <td>${userorder.userFullName}</td>
                                                         <td>${order.receiverPhone}</td>
                                                         <td>${order.note}</td>
-                                                        <c:set var="orderitemlistbyid" value="${Shop_DB.getAllOrderItemByOrderID(order.order_ID)}" />   
+                                                        <c:set var="orderitemlistbyid" value="${Shop_DB.getAllOrderItemByOrderID(order.order_ID)}" />
                                                         <td>
                                                             <c:forEach var="orderitem" items="${orderitemlistbyid}">
                                                                 <c:set var="productitem" value="${Shop_DB.getProductByID(orderitem.productID)}" />
@@ -260,26 +290,25 @@
                                                         <c:if test="${order.total * 5 / 100 >= USER.userWallet}">
                                                             <c:if test="${order.status eq 'Pending'}">
                                                                 <td>
-                                                                    <p class="text-danger"> Ví bạn không đủ tiền để thanh toán thuế!</p>
+                                                                    <p class="text-danger">Ví bạn không đủ tiền để thanh toán thuế!</p>
                                                                     <form action="product" method="post">
-                                                                        <input type="text" name="orderid" value="${order.order_ID}" hidden/>
-                                                                        <input type="text" name="action" value="thatbai" hidden/>
-                                                                        <button type="submit" class="btn btn-danger my-1">Khong Nhan Don Hang</button>
+                                                                        <input type="hidden" name="orderid" value="${order.order_ID}" />
+                                                                        <input type="hidden" name="action" value="thatbai" />
+                                                                        <button type="submit" class="btn btn-danger my-1">Không Nhận Đơn Hàng</button>
                                                                     </form>
                                                                 </td>
-
                                                             </c:if>
                                                             <c:if test="${order.status eq 'Accept'}">
                                                                 <td>
                                                                     <form action="product" method="post">
-                                                                        <input type="text" name="orderid" value="${order.order_ID}" hidden/>
-                                                                        <input type="text" name="action" value="thanhcong" hidden/>
-                                                                        <button type="submit" class="btn btn-primary my-1">Giao hang thanh cong</button>
+                                                                        <input type="hidden" name="orderid" value="${order.order_ID}" />
+                                                                        <input type="hidden" name="action" value="thanhcong" />
+                                                                        <button type="submit" class="btn btn-primary my-1">Giao hàng thành công</button>
                                                                     </form>
                                                                     <form action="product" method="post">
-                                                                        <input type="text" name="orderid" value="${order.order_ID}" hidden/>
-                                                                        <input type="text" name="action" value="thatbai" hidden/>
-                                                                        <button type="submit" class="btn btn-danger my-1">Giao hang that bai</button>
+                                                                        <input type="hidden" name="orderid" value="${order.order_ID}" />
+                                                                        <input type="hidden" name="action" value="thatbai" />
+                                                                        <button type="submit" class="btn btn-danger my-1">Giao hàng thất bại</button>
                                                                     </form>
                                                                 </td>
                                                             </c:if>
@@ -308,28 +337,28 @@
                                                             <c:if test="${order.status eq 'Pending'}">
                                                                 <td>
                                                                     <form action="product" method="post">
-                                                                        <input type="text" name="orderid" value="${order.order_ID}" hidden/>
-                                                                        <input type="text" name="action" value="chapnhan" hidden/>
-                                                                        <button type="submit" class="btn btn-primary my-1">Chap Nhan Don Hang</button>
+                                                                        <input type="hidden" name="orderid" value="${order.order_ID}" />
+                                                                        <input type="hidden" name="action" value="chapnhan" />
+                                                                        <button type="submit" class="btn btn-primary my-1">Chấp Nhận Đơn Hàng</button>
                                                                     </form>
                                                                     <form action="product" method="post">
-                                                                        <input type="text" name="orderid" value="${order.order_ID}" hidden/>
-                                                                        <input type="text" name="action" value="thatbai" hidden/>
-                                                                        <button type="submit" class="btn btn-danger my-1">Khong Nhan Don Hang</button>
+                                                                        <input type="hidden" name="orderid" value="${order.order_ID}" />
+                                                                        <input type="hidden" name="action" value="thatbai" />
+                                                                        <button type="submit" class="btn btn-danger my-1">Không Nhận Đơn Hàng</button>
                                                                     </form>
                                                                 </td>
                                                             </c:if>
                                                             <c:if test="${order.status eq 'Accept'}">
                                                                 <td>
                                                                     <form action="product" method="post">
-                                                                        <input type="text" name="orderid" value="${order.order_ID}" hidden/>
-                                                                        <input type="text" name="action" value="thanhcong" hidden/>
-                                                                        <button type="submit" class="btn btn-primary my-1">Giao hang thanh cong</button>
+                                                                        <input type="hidden" name="orderid" value="${order.order_ID}" />
+                                                                        <input type="hidden" name="action" value="thanhcong" />
+                                                                        <button type="submit" class="btn btn-primary my-1">Giao hàng thành công</button>
                                                                     </form>
                                                                     <form action="product" method="post">
-                                                                        <input type="text" name="orderid" value="${order.order_ID}" hidden/>
-                                                                        <input type="text" name="action" value="thatbai" hidden/>
-                                                                        <button type="submit" class="btn btn-danger my-1">Giao hang that bai</button>
+                                                                        <input type="hidden" name="orderid" value="${order.order_ID}" />
+                                                                        <input type="hidden" name="action" value="thatbai" />
+                                                                        <button type="submit" class="btn btn-danger my-1">Giao hàng thất bại</button>
                                                                     </form>
                                                                 </td>
                                                             </c:if>
@@ -354,13 +383,12 @@
                                                                 </td>
                                                             </c:if>
                                                         </c:if>
-
                                                     </tr>
                                                 </c:forEach>
                                             </tbody>
                                         </table>
-
                                     </div>
+
                                 </div>
                             </div>
                         </div>
@@ -368,7 +396,8 @@
 
 
                     <div class="rounded shadow w-100 row p-4">
-                        <h2>Order Chart by Month</h2>
+                        <h2 style="font-size: 25px;"><i class="fas fa-chart-bar"></i> Order Chart by Month</h2>
+
 
                         <%
                             String[] statuses = {"Pending", "Accept", "Completed", "Cancelled", "Success", "Fail"};

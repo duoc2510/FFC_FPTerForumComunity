@@ -19,6 +19,23 @@
         color: inherit; /* Màu chữ của liên kết đã truy cập, kế thừa từ thẻ cha (.shop-name) */
     }
 
+    /* Đổ bóng đậm hơn cho các phần tử */
+    .shop-group,
+    .card {
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Điều chỉnh giá trị rgba để tăng độ đậm */
+    }
+
+    .card-body {
+        box-shadow: 0 0 3px rgba(0, 0, 0, 0.1); /* Đổ bóng đậm hơn cho card-body */
+    }
+
+    /* Thay đổi màu nền và bo góc */
+    .card-body {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+    }
+
+
 </style>
 <body>
 
