@@ -173,8 +173,8 @@
                     <c:forEach var="product" items="${productlist}">
                         <c:set var="imagefirst" value="${Shop_DB.getUploadFirstByProductID(product.productId)}" />
                         <c:if test="${product.quantity != 0}">
-                            <div style="width: 30%; " class="col-md-4">
-                                <div class=" mx-2 rounded shadow">
+                            <div style="width: 30%; " class="col-md-4 card-group">
+                                <div class=" mx-2 rounded shadow card-group">
                                     <a href="/FPTer/marketplace/allshop/shopdetail/productdetail?productid=${product.productId}&shopid=${shopid}">
                                         <img class="card-img-top rounded-top" src="${pageContext.request.contextPath}/static/${imagefirst.uploadPath}">
                                     </a>
@@ -188,7 +188,7 @@
                             </div>
                         </c:if> 
                         <c:if test="${product.quantity == 0}">
-                            <div style="width: 30%; " class="col-md-4">
+                            <div style="width: 30%; " class="col-md-4 card-group">
                                 <div class="card mx-1">
                                     <div class="position-relative image-container">
                                         <img class="card-img-top" src="${pageContext.request.contextPath}/static/${imagefirst.uploadPath}">
