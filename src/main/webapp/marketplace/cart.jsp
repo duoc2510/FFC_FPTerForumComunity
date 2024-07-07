@@ -19,21 +19,6 @@
         color: inherit; /* Màu chữ của liên kết đã truy cập, kế thừa từ thẻ cha (.shop-name) */
     }
 
-    /* Đổ bóng đậm hơn cho các phần tử */
-    .shop-group,
-    .card {
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Điều chỉnh giá trị rgba để tăng độ đậm */
-    }
-
-    .card-body {
-        box-shadow: 0 0 3px rgba(0, 0, 0, 0.1); /* Đổ bóng đậm hơn cho card-body */
-    }
-
-    /* Thay đổi màu nền và bo góc */
-    .card-body {
-        background-color: #f8f9fa;
-        border-radius: 10px;
-    }
 
 
 </style>
@@ -84,7 +69,7 @@
                 <c:if test="${not empty ORDERITEMLIST}">
                     <div class="row card-group" id="billing">                    
                         <div class="col-md-6 rounded">
-                            <div class="mx-2 ">
+                            <div class="mx-3 ">
                                 <!--loop this-->
                                 <form action="confirmorder" method="post">
 
@@ -98,7 +83,7 @@
                                                 <!-- Close the previous shop group and add discount/total sections -->
                                                 <div id="discountSection-${previousShopId}" style="display: none;">
                                                     <label class="form-label mt-3" for="typeText">Discount</label>
-                                                    <select id="discountSelect-${previousShopId}" class="form-control discountSelect" name="discountSelect" data-shop-id="${previousShopId}" onchange="updateDiscount('${previousShopId}')">
+                                                    <select id="discountSelect-${previousShopId}" class="rounded form-control discountSelect" name="discountSelect" data-shop-id="${previousShopId}" onchange="updateDiscount('${previousShopId}')">
                                                         <option value="" data-percent="0" data-condition="0">No Discount</option>
                                                         <c:forEach var="discount" items="${Shop_DB.getAllDiscountOrder(USER.userId, previousShopId)}">
                                                             <option value="${discount.discountId}" data-percent="${discount.discountPercent}" data-condition="${discount.condition}">Giảm ${discount.discountPercent}% đơn từ ${discount.condition}VNĐ</option>
@@ -122,7 +107,7 @@
                                                 </div>
                                         </div> <!-- Close the previous shop group -->
                                     </c:if>
-                                    <div class="shop-group rounded card">
+                                    <div class="shop-group rounded shadow rounded border">
                                         <h3 class="shop-name">
                                             <a href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?shopid=${currentShopId}">
                                                 <i class="ti ti-basket"></i> <!-- Icon before -->
@@ -133,7 +118,7 @@
                                         <hr>
                                     </c:if>
 
-                                    <div class="card mb-3 rounded card">
+                                    <div class="shadow mb-3 rounded ">
                                         <div class="card-body">
                                             <div class="d-flex justify-content-between">
                                                 <div class="d-flex flex-row align-items-center">
@@ -150,13 +135,13 @@
                                                 <div class="d-flex flex-row align-items-center">
                                                     <div class="mx-1" style="width: 70px;">
                                                         <c:if test="${product.quantity > 0}">
-                                                            <input data-action="update" type="number" name="quantity" class="form-control" value="${item.quantity}" min="1" max="${product.quantity}" oninput="handleQuantityChange('${item.getOrderItem_id()}', this.value)">
+                                                            <input data-action="update" type="number" name="quantity" class="rounded form-control" value="${item.quantity}" min="1" max="${product.quantity}" oninput="handleQuantityChange('${item.getOrderItem_id()}', this.value)">
                                                             <c:if test="${item.quantity == product.quantity}">
                                                                 <p class="text-danger position-absolute">Quantity was maximum</p>
                                                             </c:if>
                                                         </c:if>
                                                         <c:if test="${product.quantity == 0}">
-                                                            <input type="number" class="form-control" name="quantity" value="0" readonly>
+                                                            <input type="number" class="rounded form-control" name="quantity" value="0" readonly>
                                                             <p style="font-size: 11px;" class="text-danger position-absolute">This product had sold out! Please delete!</p>
                                                         </c:if>
                                                     </div>
@@ -165,7 +150,7 @@
                                                         <h5 class="mb-0">${totalPrice1}</h5>
                                                     </div>
                                                     <c:set var="totalPrice" value="${totalPrice1 + totalPrice}" />
-                                                    <a class="mx-1" onclick="moveOutProductFromCart('${item.getOrderItem_id()}')" style="color: #cecece;" data-action="delete"><i class="fas fa-trash-alt"></i></a>
+                                                    <a class="btn-close mx-1" onclick="moveOutProductFromCart('${item.getOrderItem_id()}')"  data-action="delete"></a>
                                                 </div>
                                             </div>
                                         </div>
@@ -178,7 +163,7 @@
                                 <c:if test="${previousShopId != -1}">
                                     <div id="discountSection-${previousShopId}" style="display: none;">
                                         <label class="form-label mt-3" for="typeText">Discount</label>
-                                        <select id="discountSelect-${previousShopId}" class="form-control discountSelect" name="discountSelect" data-shop-id="${previousShopId}" onchange="updateDiscount('${previousShopId}')">
+                                        <select id="discountSelect-${previousShopId}" class="rounded form-control discountSelect" name="discountSelect" data-shop-id="${previousShopId}" onchange="updateDiscount('${previousShopId}')">
                                             <option value="" data-percent="0" data-condition="0">No Discount</option>
                                             <c:forEach var="discount" items="${Shop_DB.getAllDiscountOrder(USER.userId, previousShopId)}">
                                                 <option value="${discount.discountId}" data-percent="${discount.discountPercent}" data-condition="${discount.condition}">Giảm ${discount.discountPercent}% đơn từ ${discount.condition}VNĐ</option>
@@ -209,8 +194,8 @@
                         </div>
                     </div>
 
-                    <div class="col-md-6">
-                        <div class="card rounded">
+                    <div class="col-md-6 pe-3">
+                        <div class=" rounded shadow border card-group">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-4">
                                     <h5 class="mb-0">Billing</h5>
@@ -218,21 +203,21 @@
                                 <div class="col-md-12">
                                     <div class="form-outline form-white">
                                         <label class="form-label" for="typeText">Full Name </label>
-                                        <input name="fullname" class="form-control form-control" placeholder="Full Name" value="${USER.userFullName}" readonly> 
+                                        <input name="fullname" class="rounded form-control" placeholder="Full Name" value="${USER.userFullName}" readonly> 
 
                                         <label class="form-label mt-3" for="typeText">Phone</label>
-                                        <input name="phone" class="form-control form-control" placeholder="Phone" required>
+                                        <input name="phone" class="rounded form-control" placeholder="Phone" required>
 
                                         <c:set var="shop" value="${Shop_DB.getShopHaveStatusIs1ByShopID(product.getShopId())}" />
                                         <label hidden class="form-label mt-3" for="typeText">Shop</label>
-                                        <input name="shopid" class="form-control form-control" placeholder="shopid" value="${shop.shopID}" hidden>
+                                        <input name="shopid" class="rounded form-control" placeholder="shopid" value="${shop.shopID}" hidden>
 
                                         <label class="form-label mt-3" for="typeText">Campus</label>
-                                        <input name="campus" class="form-control form-control" placeholder="Campus" value="${shop.campus}" readonly>
+                                        <input name="campus" class="rounded form-control" placeholder="Campus" value="${shop.campus}" readonly>
 
 
                                         <label class="form-label mt-3" for="typeText">Note</label>
-                                        <input name="note" class="form-control" placeholder="Note" rows="4">
+                                        <input name="note" class="rounded form-control" placeholder="Note" rows="4">
                                     </div>
                                 </div>
 
@@ -242,11 +227,11 @@
 
                                 <div class="mb-3" hidden="">
                                     <label class="form-label">Total</label>
-                                    <input type="text" class="form-control" id="totalInput" name="total" value="0">
+                                    <input type="text" class="rounded form-control" id="totalInput" name="total" value="0">
                                 </div>
                                 <input type="hidden" name="action" value="confirm1">
                                 <div class="d-flex justify-content-between">
-                                    <button style="margin-top: 30px;" type="submit" class="btn btn-info btn-block btn-lg">
+                                    <button stype="submit" class="rounded btn btn-info btn-block btn-lg mt-4">
                                         <span id="checkoutTotal">0 VND</span>
                                         <span>Checkout <i class="fas fa-long-arrow-alt-right ms-2"></i></span>
                                     </button>                                                    
