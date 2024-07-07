@@ -134,8 +134,8 @@
 
                 <div class="row">
                     <div class="col-md">
-                        <div class="card mx-2">
-                            <img style="height: 100%;" class="card-img-top" src="${pageContext.request.contextPath}/static/${shop.image}" alt="Card image cap">
+                        <div class="card mx-2 rounded">
+                            <img style="height: 100%;" class="card-img-top rounded-top" src="${pageContext.request.contextPath}/static/${shop.image}" alt="Card image cap">
                             <div class="card-body">
                                 <c:set var="orderlist" value="${Shop_DB.getOrdersByShopIdWithStatusSuccess(shop.shopID)}" />
                                 <c:set var="starshop" value="0"/>
@@ -169,20 +169,20 @@
                 </div>
 
                 <!--All product of shop-->
-                <div id="allProduct" class="row">
+                <div id="allProduct" class="row mb-4">
                     <c:forEach var="product" items="${productlist}">
                         <c:set var="imagefirst" value="${Shop_DB.getUploadFirstByProductID(product.productId)}" />
                         <c:if test="${product.quantity != 0}">
                             <div style="width: 30%; " class="col-md-4">
-                                <div class="card mx-2">
+                                <div class=" mx-2 rounded shadow">
                                     <a href="/FPTer/marketplace/allshop/shopdetail/productdetail?productid=${product.productId}&shopid=${shopid}">
-                                        <img class="card-img-top" src="${pageContext.request.contextPath}/static/${imagefirst.uploadPath}">
+                                        <img class="card-img-top rounded-top" src="${pageContext.request.contextPath}/static/${imagefirst.uploadPath}">
                                     </a>
                                     <div class="card-body">
                                         <h5 class="card-title">${product.name}</h5>
                                         <p class="card-text"><i class="fas fa-tag"></i> Price: ${product.price} VNĐ</p>
                                         <p class="card-text"><i class="fas fa-info-circle"></i> ${product.productDescription}</p>
-                                        <a href="/FPTer/marketplace/allshop/shopdetail/productdetail?productid=${product.productId}&shopid=${shopid}" class="btn btn-primary mt-3 w-100">Buy now</a>
+                                        <a href="/FPTer/marketplace/allshop/shopdetail/productdetail?productid=${product.productId}&shopid=${shopid}" class="btn btn-primary mt-3 w-100 rounded">Buy now</a>
                                     </div>
                                 </div>
                             </div>
@@ -209,7 +209,7 @@
                 <!--RATING-->
                 <div id="rating" class="row">
                     <div class="col-md">
-                        <div class="card mx-1">
+                        <div class=" mx-1 rounded shadow">
                             <div class="card-body" style="overflow-x: auto">
                                 <p class="mb-4"><span class="text-primary font-italic me-1">Shop's rating</span></p>
                                 <c:forEach var="order" items="${orderlist}">

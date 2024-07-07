@@ -62,7 +62,7 @@
                         <c:forEach var="shop" items="${shoplist}">
                             <div class="col-md-4">
                                 <div class="card mx-2">
-                                    <a href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?shopid=${shop.shopID}" data-toggle="modal" data-target="#productID1">
+                                    <a href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?shopid=${shop.shopID}">
                                         <img style="height: 100%" class="card-img-top" src="${pageContext.request.contextPath}/static/${shop.getImage()}">
                                     </a>
                                     <div class="card-body">
