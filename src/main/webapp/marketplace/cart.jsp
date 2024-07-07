@@ -1,5 +1,16 @@
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" import="model.*" import="model.DAO.*"%>
 <%@ include file="../include/header.jsp" %>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Page Title</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <!-- SweetAlert JS -->
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+</head>
 <style>
     .shop-group {
         padding: 20px; /* Padding inside the box */
@@ -17,6 +28,11 @@
 
     .shop-name a:visited {
         color: inherit; /* Màu chữ của liên kết đã truy cập, kế thừa từ thẻ cha (.shop-name) */
+    }
+    .responsive-text {
+        font-size: calc(2px + 0.8vw);
+        min-font-size: 5px;
+        max-font-size: 12px;
     }
 
 
@@ -146,11 +162,13 @@
                                                         </c:if>
                                                     </div>
                                                     <c:set var="totalPrice1" value="${item.quantity * item.price}" />
-                                                    <div class="mx-1" style="width: 80px;">
-                                                        <h5 class="mb-0">${totalPrice1}</h5>
+                                                    <div class="mx-1" style="width: 80px; display: flex; justify-content: center; align-items: center;">
+                                                        <h5 class="mb-0 responsive-text">${totalPrice1}</h5>
                                                     </div>
                                                     <c:set var="totalPrice" value="${totalPrice1 + totalPrice}" />
-                                                    <a class="btn-close mx-1" onclick="moveOutProductFromCart('${item.getOrderItem_id()}')"  data-action="delete"></a>
+                                                    <a class="mx-1" onclick="moveOutProductFromCart('${item.getOrderItem_id()}')" data-action="delete">
+                                                        <i class="fas fa-trash"></i>
+                                                    </a>
                                                 </div>
                                             </div>
                                         </div>
