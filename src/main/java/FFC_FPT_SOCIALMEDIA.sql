@@ -483,4 +483,15 @@ VALUES
 (1, 2, 'Welcome!'),
 (2, 1, 'I recommend trying the Italian restaurant downtown.');
 
-SELECT * FROM Shop WHERE Status = 1
+SELECT * FROM dbo.Report
+SELECT * FROM dbo.Post
+SELECT * FROM dbo.Notification
+SELECT * FROM dbo.Users
+
+INSERT INTO Report (Reporter_id, User_id, Post_id, Shop_id, Reason, Status)
+VALUES 
+    (1, 4, NULL, NULL, N'tệ', N'pending'),
+    (2, 4, NULL, NULL, N'tệ', N'pending'),
+    (3, 4, NULL, NULL, N'tệ', N'pending');
+
+
