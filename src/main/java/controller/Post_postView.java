@@ -43,6 +43,7 @@ public class Post_postView extends HttpServlet {
             User author = Post_DB.getUserByPostId(post.getPostId());
             post.setUser(author);
             post.setHasReportPost(Report_DB.hasReportedPost(userId, post.getPostId()));
+            post.setHasReportedPost(Report_DB.postReportedAtLeastThreeTimes(post.getPostId()));
             List<Comment> comments = Comment_DB.getCommentsByPostId(post.getPostId());
             for (Comment comment : comments) {
                 User commentUser = User_DB.getUserById(comment.getUserId());

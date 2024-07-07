@@ -22,7 +22,7 @@ public class Post {
     private boolean hasReportPost;
     private int likeCount; // Thêm trường này để lưu số lượt like
     private boolean likedByCurrentUser; // Trạng thái đã like của người dùng hiện tại
-
+    private boolean hasReportedPost;
     public Post() {
     }
 
@@ -244,4 +244,12 @@ public class Post {
         this.likedByCurrentUser = likedByCurrentUser;
     }
 
+    public boolean isHasReportedPost() {
+        return hasReportedPost;
+    }
+
+    public void setHasReportedPost(boolean hasReportedPost) {
+        this.hasReportedPost = hasReportedPost;
+    }
+    
 }
