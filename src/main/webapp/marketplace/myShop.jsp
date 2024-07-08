@@ -21,7 +21,7 @@
         opacity: .7;
     }
     .thumbnail img:hover{
-         opacity: 1;
+        opacity: 1;
     }
     .table thead th{
         font-size: 14px;

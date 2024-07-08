@@ -1,5 +1,16 @@
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" import="model.*" import="model.DAO.*"%>
 <%@ include file="../include/header.jsp" %>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Page Title</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <!-- SweetAlert JS -->
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+</head>
 
 <body>
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
@@ -29,11 +40,12 @@
                             </div>
                             <div class="card-body">
                                 <div class="invoice p-5">
-                                    <h5>Your order Confirmed!</h5>
-                                    <span class="font-weight-bold d-block mt-4">Hello, ${fullname}</span>
-                                    <span>The order will not be changed if you confirm!</span>
+                                    <h5><i class="fas fa-check-circle"></i> Your order Confirmed!</h5>
+                                    <span class="font-weight-bold d-block mt-4"><i class="fas fa-user"></i> Hello, ${fullname}</span>
+                                    <span><i class="fas fa-info-circle"></i> The order will not be changed if you confirm!</span>
                                     <c:set var="totalfinal" value="0" />
                                     <c:forEach var="order" items="${orderList}">
+                                        <c:set var="totalPrice" value="0" />
                                         <c:set var="orderitemlist" value="${Shop_DB.getAllOrderItemByOrderID(order.order_ID)}" />
                                         <c:set var="firstItem" value="${orderitemlist[0]}" />
                                         <c:set var="product1" value="${Shop_DB.getProductByID(firstItem.getProductID())}" />
@@ -45,19 +57,19 @@
                                                     <tr>
                                                         <td>
                                                             <div class="py-2">
-                                                                <span style="font-weight: bold;" class="d-block text-muted">Shop Name:</span>
+                                                                <span class="d-block text-muted"><i class="fas fa-store"></i> Shop Name:</span>
                                                                 <span>${shop1.name}</span>
                                                             </div>
                                                         </td>
                                                         <td>
                                                             <div class="py-2">
-                                                                <span style="font-weight: bold;" class="d-block text-muted">Shop Phone:</span>
+                                                                <span class="d-block text-muted"><i class="fas fa-phone"></i> Shop Phone:</span>
                                                                 <span>${shop1.phone}</span>
                                                             </div>
                                                         </td>
                                                         <td>
                                                             <div class="py-2">
-                                                                <span style="font-weight: bold;" class="d-block text-muted">Shop Campus:</span>
+                                                                <span class="d-block text-muted"><i class="fas fa-map-marker-alt"></i> Shop Campus:</span>
                                                                 <span>${shop1.campus}</span>
                                                             </div>
                                                         </td>
@@ -95,7 +107,7 @@
                                                         <tr>
                                                             <td>
                                                                 <div class="text-left">
-                                                                    <span class="text-muted">Subtotal</span>
+                                                                    <span class="text-muted">Total</span>
                                                                 </div>
                                                             </td>
                                                             <td>
@@ -142,25 +154,25 @@
                                                 <tr>
                                                     <td>
                                                         <div class="py-2">
-                                                            <span style="font-weight: bold;" class="d-block text-muted">Order Receiver:</span>
+                                                            <span class="d-block text-muted"><i class="fas fa-user"></i> Order Receiver:</span>
                                                             <span>${fullname}</span>
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="py-2">
-                                                            <span style="font-weight: bold;" class="d-block text-muted">Order Date:</span>
+                                                            <span class="d-block text-muted"><i class="fas fa-calendar-alt"></i> Order Date:</span>
                                                             <span>${date}</span>
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="py-2">
-                                                            <span style="font-weight: bold;" class="d-block text-muted">Receiver Phone:</span>
+                                                            <span class="d-block text-muted"><i class="fas fa-phone"></i> Receiver Phone:</span>
                                                             <span>${phone}</span>
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="py-2">
-                                                            <span style="font-weight: bold;" class="d-block text-muted">Note:</span>
+                                                            <span class="d-block text-muted"><i class="fas fa-sticky-note"></i> Note:</span>
                                                             <span>${note}</span>
                                                         </div>
                                                     </td>
@@ -186,18 +198,20 @@
                                             <div class="form-check">
                                                 <input class="form-check-input" type="radio" name="paymentMethod" id="cod" value="cod" checked>
                                                 <label class="form-check-label" for="cod">
-                                                    Cash on Delivery
+                                                    <i class="fas fa-money-bill-wave"></i> Cash on Delivery
                                                 </label>
                                             </div>
                                             <c:if test="${sessionScope.USER.userWallet >= totalfinal}">
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="radio" name="paymentMethod" id="systemWallet" value="systemWallet">
                                                     <label class="form-check-label" for="systemWallet">
-                                                        System Wallet
+                                                        <i class="fas fa-wallet"></i> System Wallet
                                                     </label>
                                                 </div>
                                             </c:if>
-                                            <button type="button" class="btn btn-danger mx-2" onclick="javascript:history.go(-1);">Back</button>
+                                            <button type="button" class="btn btn-danger mx-2" onclick="javascript:history.go(-1);">
+                                                <i class="fas fa-arrow-left"></i> Back
+                                            </button>
                                             <input type="submit" value="Confirm" class="btn btn-primary">
                                         </form>
                                     </div>

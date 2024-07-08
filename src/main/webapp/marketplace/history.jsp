@@ -105,6 +105,11 @@
                                                                 <p class="text-success">Success.</p>
                                                             </c:when>
                                                         </c:choose>
+                                                        <!-- Thêm nút Xem Chi Tiết -->
+                                                        <form action="orderdetail" method="get">
+                                                            <input type="hidden" name="orderid" value="${order.order_ID}" />
+                                                            <button type="submit" class="btn btn-info w-100 mt-2">Xem Chi Tiết</button>
+                                                        </form>
                                                     </td>
                                                 </tr>
                                             </c:forEach>
@@ -115,5 +120,8 @@
                         </div>
                     </div>
                 </div>
-                </body>
-                <%@ include file="../include/footer.jsp" %>
+            </div>
+            <%@ include file="../include/footer.jsp" %>
+        </div>
+    </div>
+</body>
