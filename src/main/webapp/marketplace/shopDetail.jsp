@@ -53,7 +53,7 @@
     .card-img-top {
         display: block;
         width: 100%;
-        height: auto;
+        height: 250px;
     }
 
     .sold-out-overlay {
@@ -173,8 +173,8 @@
                     <c:forEach var="product" items="${productlist}">
                         <c:set var="imagefirst" value="${Shop_DB.getUploadFirstByProductID(product.productId)}" />
                         <c:if test="${product.quantity != 0}">
-                            <div style="width: 30%; " class="col-md-4 card-group">
-                                <div class=" mx-2 rounded shadow card-group">
+                            <div class="col-md-4 ">
+                                <div class=" mx-2 rounded shadow ">
                                     <a href="/FPTer/marketplace/allshop/shopdetail/productdetail?productid=${product.productId}&shopid=${shopid}">
                                         <img class="card-img-top rounded-top" src="${pageContext.request.contextPath}/static/${imagefirst.uploadPath}">
                                     </a>
@@ -188,17 +188,17 @@
                             </div>
                         </c:if> 
                         <c:if test="${product.quantity == 0}">
-                            <div style="width: 30%; " class="col-md-4 card-group">
-                                <div class="card mx-1">
+                            <div  class="col-md-4 ">
+                                <div class=" mx-2 rounded shadow ">
                                     <div class="position-relative image-container">
-                                        <img class="card-img-top" src="${pageContext.request.contextPath}/static/${imagefirst.uploadPath}">
+                                        <img class="card-img-top rounded-top" src="${pageContext.request.contextPath}/static/${imagefirst.uploadPath}">
                                         <img class="sold-out-overlay" src="${pageContext.request.contextPath}/static/images/soldout.jpg">
                                     </div>
                                     <div class="card-body">
                                         <h5 class="card-title">${product.name}</h5>
                                         <p class="card-text"><i class="fas fa-tag"></i> ${product.price} VNĐ</p>
                                         <p class="card-text"><i class="fas fa-info-circle"></i> ${product.productDescription}</p>
-                                        <button class="btn btn-danger mt-3 w-100" disabled>Sold out</button>
+                                        <button class="btn rounded btn-danger mt-3 w-100" disabled>Sold out</button>
                                     </div>
                                 </div>
                             </div>
