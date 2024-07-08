@@ -73,6 +73,7 @@ public class Shop_allshop extends HttpServlet {
 
         // Loại bỏ những shop có status là 0
         shoplist.removeIf(shop -> shop.getStatus() == 0);
+        shoplist.removeIf(shop -> shop.getStatus() == 2);
 
         request.setAttribute("shoplist", shoplist);
         request.setAttribute("message", message);

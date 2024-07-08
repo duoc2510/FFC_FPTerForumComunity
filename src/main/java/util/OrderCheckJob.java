@@ -32,7 +32,7 @@ public class OrderCheckJob implements Job {
             String paymentStatus = order.getPayment_status();
 
             // Kiểm tra orderDate có từ 3 ngày trước và có payment_status là "thanhtoankhinhanhang"
-            if (orderDate.before(threeDaysAgo) && "thanhtoankhinhanhang".equals(paymentStatus)) {
+            if (orderDate.before(threeDaysAgo) && "dathanhtoan".equals(paymentStatus)) {
                 ArrayList<OrderItem> orderitemlistnewnew = sdb.getAllOrderItemByOrderID(order.getOrder_ID());
                 for (OrderItem ot : orderitemlistnewnew) {
                     Product p1 = sdb.getProductByID(ot.getProductID());
