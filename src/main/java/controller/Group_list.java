@@ -70,7 +70,6 @@ public class Group_list extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("USER");
         int userId = user.getUserId();
-
         // Khởi tạo danh sách groups và lưu vào session nếu chưa tồn tại
         if (session.getAttribute("groups") == null) {
             // Retrieve all groups and filter out inactive ones
