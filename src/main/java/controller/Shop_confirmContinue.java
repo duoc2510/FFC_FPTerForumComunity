@@ -103,6 +103,7 @@ public class Shop_confirmContinue extends HttpServlet {
 
         Order currentOrder = sdb.getOrderHasStatusIsNullByUserID(user.getUserId());
         ArrayList<OrderItem> currentOrderItems = sdb.getAllOrderItemByOrderIdHasStatusIsNull(currentOrder.getOrder_ID());
+
         // Nested loops to check product IDs and delete matching items
         for (OrderItem currentOrderItem : currentOrderItems) {
             for (OrderItem selectedOrderItem : selectedOrderItems) {
@@ -116,6 +117,7 @@ public class Shop_confirmContinue extends HttpServlet {
 
         boolean isOutOfStock = false;
         boolean isDiscountExpired = false;
+        boolean isDiscountLimitReached = false;
         String discountMessage = "";
 
         // Check if any selected products are out of stock
@@ -127,18 +129,20 @@ public class Shop_confirmContinue extends HttpServlet {
             }
         }
 
-        // Check if the discount is expired
+        // Check if the discount is expired or has reached its usage limit
         if (o.getDiscountid() != 0) {
             Discount discount = sdb.getDiscountByID(o.getDiscountid());
             if (discount.getValidTo().before(new Date())) {
                 isDiscountExpired = true;
                 discountMessage = "Your discount code has expired.";
+            } else if (discount.getUsageLimit() <= 0) {
+                isDiscountLimitReached = true;
+                discountMessage = "The discount limit has been reached.";
             }
         }
 
-        if (!isOutOfStock && !isDiscountExpired) {
-
-            // If no products are out of stock and the discount is not expired, proceed to update the order
+        if (!isOutOfStock && !isDiscountExpired && !isDiscountLimitReached) {
+            // If no products are out of stock and the discount is not expired or limited, proceed to update the order
             for (OrderItem orderItem : selectedOrderItems) {
                 Product product = sdb.getProductByID(orderItem.getProductID());
                 product.setQuantity(product.getQuantity() - orderItem.getQuantity()); // Reduce the quantity by the amount ordered
@@ -167,7 +171,6 @@ public class Shop_confirmContinue extends HttpServlet {
                 nw.sendNotificationToClient(shop.getOwnerID(), "Shop của bạn có đơn hàng mới!", "/marketplace/myshop");
 
             } else {
-
                 // Check if there is a discount and update its usage
                 if (o.getDiscountid() != 0) {
                     Discount discount = sdb.getDiscountByID(o.getDiscountid());
@@ -182,7 +185,6 @@ public class Shop_confirmContinue extends HttpServlet {
 
                 nw.saveNotificationToDatabase(shop.getOwnerID(), "Shop của bạn có đơn hàng mới!", "/marketplace/myshop");
                 nw.sendNotificationToClient(shop.getOwnerID(), "Shop của bạn có đơn hàng mới!", "/marketplace/myshop");
-
             }
 
             // Retrieve the new order and set it in the session
@@ -194,7 +196,7 @@ public class Shop_confirmContinue extends HttpServlet {
             // Redirect to the allshop page with a success message
             String msg = "Thanks for your order!";
             session.setAttribute("message", msg);
-            response.sendRedirect("allshop");
+            response.sendRedirect("/FPTer/martketplace/allshop");
 
         } else if (isOutOfStock) {
             // If any products are out of stock, redirect to the cart page with an error message
@@ -202,7 +204,7 @@ public class Shop_confirmContinue extends HttpServlet {
             session.setAttribute("message", msg);
             response.sendRedirect("cart");
         } else {
-            // If the discount is expired, redirect to the cart page with an error message
+            // If the discount is expired or the limit is reached, redirect to the cart page with an error message
             session.setAttribute("message", discountMessage);
             response.sendRedirect("cart");
         }

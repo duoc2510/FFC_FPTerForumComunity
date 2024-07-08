@@ -10,10 +10,10 @@ Không pull cái này lên chỉ test Advertising
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
 
 
-<div class="showAds card">
+<div id="showAds" class="showAds card rounded" style="display:none">
     <a id="adURL" href="" target="_blank">
 
-        <img id="adImage" class="card-img-top event-img" alt="...">
+        <img id="adImage" class="card-img-top event-img rounded-top" alt="..." style="border-radius: ">
     </a>
     <div class="card-body">
         <h5 id="adTitle" class="card-title  my-3"><strong>Loading ad...</strong></h5>
@@ -41,7 +41,9 @@ Không pull cái này lên chỉ test Advertising
                         document.getElementById('adImage').alt = data.ad.title;
                         document.getElementById('adDate').innerText = data.ad.startDate; // Assuming startDate is a valid date field
                         document.getElementById('adOrganizer').innerText = 'Sponsored by: ' + data.user.userFullName; // Use userFullName for the sponsor name
-                    } else {
+                    
+document.getElementById('showAds').style.display = 'block';
+} else {
                         document.getElementById('adTitle').innerText = 'No ad found';
                         document.getElementById('adImage').src = ''; // Clear image if no ad found
                         document.getElementById('adDate').innerText = '';
@@ -60,6 +62,7 @@ Không pull cái này lên chỉ test Advertising
 // Call loadAd() when the window loads
     window.onload = function () {
         loadAd();
+        
     };
 
 </script>

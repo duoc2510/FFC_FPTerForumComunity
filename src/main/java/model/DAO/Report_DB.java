@@ -21,6 +21,7 @@ import model.Post;
 import model.Report;
 import model.User;
 
+
 /**
  *
  * @author PC
@@ -418,44 +419,45 @@ public class Report_DB {
     }
 
     public static List<Integer> getReporterIdsByUserId(int userId) {
-        List<Integer> reporterIds = new ArrayList<>();
-        String selectQuery = "SELECT Reporter_id FROM Report WHERE User_id = ? AND Post_id IS NULL AND Status = 'pending'";
+    List<Integer> reporterIds = new ArrayList<>();
+    String selectQuery = "SELECT Reporter_id FROM Report WHERE User_id = ? AND Post_id IS NULL";
 
-        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(selectQuery)) {
-            stmt.setInt(1, userId);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    int reporterId = rs.getInt("Reporter_id");
-                    reporterIds.add(reporterId);
-                }
+    try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(selectQuery)) {
+        stmt.setInt(1, userId);
+        try (ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                int reporterId = rs.getInt("Reporter_id");
+                reporterIds.add(reporterId);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            Logger.getLogger(Report_DB.class.getName()).log(Level.SEVERE, "Error occurred while fetching reporter IDs by user ID", e);
         }
-
-        return reporterIds;
+    } catch (SQLException e) {
+        e.printStackTrace();
+        Logger.getLogger(Report_DB.class.getName()).log(Level.SEVERE, "Error occurred while fetching reporter IDs by user ID", e);
     }
 
-    public static List<Integer> getReporterIdsByPostId(int postId) {
-        List<Integer> reporterIds = new ArrayList<>();
-        String selectQuery = "SELECT Reporter_id FROM Report WHERE Post_id = ? AND Status = 'pending'";
+    return reporterIds;
+}
 
-        try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(selectQuery)) {
-            stmt.setInt(1, postId);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    int reporterId = rs.getInt("Reporter_id");
-                    reporterIds.add(reporterId);
-                }
+public static List<Integer> getReporterIdsByPostId(int postId) {
+    List<Integer> reporterIds = new ArrayList<>();
+    String selectQuery = "SELECT Reporter_id FROM Report WHERE Post_id = ?";
+
+    try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(selectQuery)) {
+        stmt.setInt(1, postId);
+        try (ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                int reporterId = rs.getInt("Reporter_id");
+                reporterIds.add(reporterId);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            Logger.getLogger(Report_DB.class.getName()).log(Level.SEVERE, "Error occurred while fetching reporter IDs by post ID", e);
         }
-
-        return reporterIds;
+    } catch (SQLException e) {
+        e.printStackTrace();
+        Logger.getLogger(Report_DB.class.getName()).log(Level.SEVERE, "Error occurred while fetching reporter IDs by post ID", e);
     }
+
+    return reporterIds;
+}
+
 
     public static boolean cancelApproveManager(int userId) {
         String query = "UPDATE managerRegistr SET Status = 'cancelled' WHERE User_id = ?";
@@ -472,7 +474,7 @@ public class Report_DB {
     }
 
     public static boolean banPost(int postId, String banReason) {
-        String updateQuery = "UPDATE Post SET Status = 'inactive', Reason = ? WHERE Post_id = ?";
+        String updateQuery = "UPDATE Post SET Status = 'banned', Reason = ? WHERE Post_id = ?";
 
         try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
 
@@ -673,5 +675,102 @@ public class Report_DB {
             return false;
         }
     }
+public static boolean postReportedAtLeastThreeTimes(int postId) {
+    System.out.println("Checking if post with ID " + postId + " has been reported at least three times.");
 
+    String selectQuery = "SELECT COUNT(*) as ReportCount "
+            + "FROM Report "
+            + "WHERE Post_id = ? "
+            + "  AND Status = 'pending'"; // Thêm điều kiện Status = 'pending'
+
+    try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); 
+         PreparedStatement stmt = conn.prepareStatement(selectQuery)) {
+
+        System.out.println("Database connection established.");
+
+        stmt.setInt(1, postId);
+
+        try (ResultSet rs = stmt.executeQuery()) {
+            System.out.println("SQL query executed.");
+
+            if (rs.next()) {
+                int reportCount = rs.getInt("ReportCount");
+                System.out.println("Post with ID " + postId + " has " + reportCount + " reports.");
+                return reportCount >= 3;
+            }
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+        System.out.println("Error occurred while checking report count for post with ID " + postId);
+    }
+
+    return false;
+}
+ public static List<Report> getReportsByUserId(int userId) {
+    List<Report> reports = new ArrayList<>();
+    String selectQuery = "SELECT * FROM Report WHERE User_id = ? AND Post_id IS NULL";
+
+    try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(selectQuery)) {
+        stmt.setInt(1, userId);
+        try (ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                Report report = new Report(
+                    rs.getInt("Report_id"),
+                    rs.getInt("Reporter_id"),
+                    rs.getInt("User_id"),
+                    rs.getInt("Post_id"),
+                    rs.getString("Reason"),
+                    rs.getString("Status")
+                );
+                reports.add(report);
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+        Logger.getLogger(Report_DB.class.getName()).log(Level.SEVERE, "Error occurred while fetching reports by user ID", e);
+    }
+
+    return reports;
+}
+public static List<Report> getReportsByPostId(int postId) {
+    List<Report> reports = new ArrayList<>();
+    String selectQuery = "SELECT * FROM Report WHERE Post_id = ?";
+
+    try (Connection conn = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement stmt = conn.prepareStatement(selectQuery)) {
+        stmt.setInt(1, postId);
+        try (ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                Report report = new Report(
+                    rs.getInt("Report_id"),
+                    rs.getInt("Reporter_id"),
+                    rs.getInt("User_id"),
+                    rs.getInt("Post_id"),
+                    rs.getString("Reason"),
+                    rs.getString("Status")
+                );
+                reports.add(report);
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+        Logger.getLogger(Report_DB.class.getName()).log(Level.SEVERE, "Error occurred while fetching reports by post ID", e);
+    }
+
+    return reports;
+}
+
+  public static void main(String[] args) {
+        int userId = 4;
+        List<Report> reports = getReportsByUserId(userId);
+        List<Integer> reporterIds = new ArrayList<>();
+
+        for (Report report : reports) {
+            if ("pending".equals(report.getStatus())) {
+                reporterIds.add(report.getReporter_id());
+            }
+        }
+
+        System.out.println("Reporter IDs with status 'pending' for user ID " + userId + ": " + reporterIds);
+    }
 }

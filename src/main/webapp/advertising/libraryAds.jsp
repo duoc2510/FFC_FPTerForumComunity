@@ -154,8 +154,8 @@
 //            console.log(adUser[key.adsDetailId].userAvatar);
 
             return `
-         <div class="col-6 px-2 mb-4">
-             <img src="${pageContext.request.contextPath}/` + key.image + `" class="card-img w-100" style="height: 300px; object-fit: cover; border: 0px solid; border-radius: 10px 10px 0 0;">
+         <div class="col-6 px-2 mb-4 rounded">
+             <img src="${pageContext.request.contextPath}/` + key.image + `" class="card-img w-100 rouded-top" style="height: 300px; object-fit: cover; border: 0px solid; border-radius: 10px 10px 0 0;">
              <div class="card p-4">
                  <p>Advertising ID: ` + key.adsId + `</p>
                  <h5 class="card-title mt-2">` + key.title + `</h5>

@@ -195,7 +195,7 @@
                                                                     </form>
                                                                 </li>
                                                             </c:when>
-                                                                <c:when test="${user.userRole == 3}">
+                                                            <c:when test="${user.userRole == 3}">
                                                                 <li>
                                                                     <button type="button" class="dropdown-item" disabled>
                                                                         Admin
@@ -293,6 +293,11 @@
                                                                     </c:when>
 
                                                                     <c:otherwise>
+                                                                        <c:if test="${user.userRole == 2}">
+                                                                            <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#reportModal" disabled>
+                                                                                Manager
+                                                                            </button>
+                                                                        </c:if>
                                                                         <li>
                                                                             <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#reportModal">
                                                                                 Report profile

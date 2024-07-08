@@ -107,7 +107,7 @@ public class Admin_handelRpManager extends HttpServlet {
                     List<Integer> reporterIds = Report_DB.getReporterIdsByPostId(postId);
 
                     // Send notifications to each reporter
-                    for (int reporterId : reporterIds) {
+                    for (Integer reporterId : reporterIds) {
                         nw.saveNotificationToDatabase(reporterId, "Report on post " + postContent + " processed!", "");
                         nw.sendNotificationToClient(reporterId, "Report on post " + postContent + " processed!", "");
                     }
@@ -126,7 +126,7 @@ public class Admin_handelRpManager extends HttpServlet {
                     List<Integer> reporterIds = Report_DB.getReporterIdsByUserId(userId);
 
                     // Send notifications to each reporter
-                    for (int reporterId : reporterIds) {
+                    for (Integer reporterId : reporterIds) {
                         nw.saveNotificationToDatabase(reporterId, "Report on user " + username + " processed!", "");
                         nw.sendNotificationToClient(reporterId, "Report on user " + username + " processed!", "");
                     }

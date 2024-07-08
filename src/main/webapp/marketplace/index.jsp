@@ -1,5 +1,21 @@
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" import="model.*" import="model.DAO.*"%>
 <%@ include file="../include/header.jsp" %>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Page Title</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <!-- SweetAlert JS -->
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <style>
+        .custom-list li {
+            line-height: 2.0; /* Adjust this value as needed */
+        }
+    </style>
+</head>
 
 <body class="marketplace">
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
@@ -18,20 +34,22 @@
                 <%@ include file="../include/navbar_guest.jsp" %>
             </c:if>
             <div class="container-fluid">
-                <!--Control panel-->
-                <%@ include file="panel.jsp" %>
-                <div class="row my-5">
+
+                <div class="row my-4 rounded shadow">
                     <div class="col-md-12 p-2">
                         <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel" data-bs-interval="2000">
                             <div class="carousel-inner">
-                                <div class="carousel-item active">
-                                    <img src="${pageContext.request.contextPath}/static/images/bannerdangkishop.png" class="d-block w-100" alt="Banner 2">
+                                <div class="carousel-item rounded active">
+                                    <div class="cel-overplay"></div>
+                                    <img src="${pageContext.request.contextPath}/static/images/bannerdangkishop.png" class="rounded d-block w-100" alt="Banner 2">
                                 </div>
-                                <div class="carousel-item">
-                                    <img src="${pageContext.request.contextPath}/static/images/bannermonan.png" class="d-block w-100" alt="Banner 3">
+                                <div class="carousel-item rounded">
+                                    <div class="cel-overplay"></div>
+                                    <img src="${pageContext.request.contextPath}/static/images/bannermonan.png" class="rounded d-block w-100" alt="Banner 3">
                                 </div>
-                                <div class="carousel-item">
-                                    <img src="${pageContext.request.contextPath}/static/images/bannersale.png" class="d-block w-100" alt="Banner 4">
+                                <div class="carousel-item rounded">
+                                    <div class="cel-overplay"></div>
+                                    <img src="${pageContext.request.contextPath}/static/images/bannersale.png" class="rounded d-block w-100" alt="Banner 4">
                                 </div>
                             </div>
                             <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
@@ -46,35 +64,39 @@
                     </div>
                 </div>
 
-                <div class="row mt-5">
+                <!--Control panel-->
+                <%@ include file="panel.jsp" %>
+
+                <div class="row mt-5 rounded px-3 py-5 shadow">
                     <div class="col-md-7 p-2">
-                        <div class="section-container">
-                            <h3 class="section-title">FFC Shop - Nơi Trao Đổi Mua Bán Các Mặt Hàng Giữa FPTer</h3>
+                        <div>
+                            <h3 class="section-title"><i class="fas fa-store me-2"></i>FFC Shop - Nơi Trao Đổi Mua Bán Các Mặt Hàng Giữa FPTer</h3>
                             <div class="imgs-grid">
-                                <div class="grid grid-1"><img src="${pageContext.request.contextPath}/static/images/rank/sanpham.jpg"></div>
-                                <div class="grid grid-2"><img src="${pageContext.request.contextPath}/static/images/rank/sanpham2.jpg"></div>
-                                <div class="grid grid-3"><img src="${pageContext.request.contextPath}/static/images/rank/sanpham3.jpg"></div>
+                                <div class="grid grid-1 rounded"><img src="${pageContext.request.contextPath}/static/images/rank/sanpham.jpg"></div>
+                                <div class="grid grid-2 rounded"><img src="${pageContext.request.contextPath}/static/images/rank/sanpham2.jpg"></div>
+                                <div class="grid grid-3 rounded"><img src="${pageContext.request.contextPath}/static/images/rank/sanpham3.jpg"></div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-5 p-2">
-                        <div class="section-container">
-                            <h3>Rất Nhiều Sản Phẩm Đa Dạng</h3>
+                    <div class="col-md-5 p-4 d-flex align-items-center">
+                        <div>
+                            <h3><i class="fas fa-shopping-cart me-2"></i>Rất Nhiều Sản Phẩm Đa Dạng</h3>
                             <ul class="list-unstyled custom-list my-4">
                                 <li>Nhận ưu đãi đặc biệt, dịch vụ chăm sóc tận tâm</li>
                                 <li>Tiết kiệm chi phí mua hàng và giao hàng</li>
                                 <li>An tâm mua sắm với dịch vụ chăm sóc</li>
                                 <li>Tiện lợi, an toàn, trả tiền khi nhận hàng</li>
                             </ul>
-                            <a href="${pageContext.request.contextPath}/marketplace/allshop" class="btn btn-primary btn-custom mt-3">Buy Now</a>
+
+                            <a href="${pageContext.request.contextPath}/martketplace/allshop" class="btn btn-primary btn-custom mt-3">Mua Ngay</a>
                         </div>
                     </div>
                 </div>
 
-                <div class="row mt-5">
-                    <div class="col-md-5 p-2">
-                        <div class="section-container bg-light">
-                            <h3 class="section-title">Hàng Ngàn Ưu Đãi Quyền Lợi Dành Cho Shop Owner</h3>
+                <div class="row mt-5 rounded px-3 py-5 shadow">
+                    <div class="col-md-5 p-4 d-flex align-items-center">
+                        <div>
+                            <h3 class="section-title"><i class="fas fa-medal me-2"></i>Hàng Ngàn Ưu Đãi Quyền Lợi Dành Cho Shop Owner</h3>
                             <p>Tạo shop dễ dàng và bán hàng nhanh chóng</p>
                             <ul class="list-unstyled custom-list my-4">
                                 <li>Hỗ trợ voucher</li>
@@ -82,11 +104,11 @@
                                 <li>An tâm làm đối tác với nhau vì có sự minh bạch</li>
                                 <li>Bảo vệ quyền lợi cho Shop Owner</li>
                             </ul>
-                            <a href="${pageContext.request.contextPath}/marketplace/myshop" class="btn btn-primary btn-custom mt-3">Join with us</a>
+                            <a href="${pageContext.request.contextPath}/marketplace/myshop" class="btn btn-primary btn-custom mt-3">Tham Gia Ngay</a>
                         </div>
                     </div>
                     <div class="col-md-7 p-2">
-                        <div class="section-container">
+                        <div>
                             <div class="imgs-grid">
                                 <div class="grid grid-1"><img src="${pageContext.request.contextPath}/static/images/rank/giaohang.jpg"></div>
                                 <div class="grid grid-2"><img src="${pageContext.request.contextPath}/static/images/rank/doitac1.jpg"></div>
@@ -96,26 +118,26 @@
                     </div>
                 </div>
 
-                <div class="row mt-5">
-                    <div class="col-md-7 p-2">
-                        <div class="section-container">
+                <div class="row mt-5 rounded px-3 py-5 shadow">
+                    <div class="col-12 col-md-7 p-2">
+                        <div>
                             <div class="imgs-grid">
-                                <div class="grid grid-1"><img src="${pageContext.request.contextPath}/static/images/rank/sale3.jpg"></div>
-                                <div class="grid grid-2"><img src="${pageContext.request.contextPath}/static/images/rank/sale2.jpg"></div>
-                                <div class="grid grid-3"><img src="${pageContext.request.contextPath}/static/images/rank/sale1.jpg"></div>
+                                <div class="grid grid-1"><img src="${pageContext.request.contextPath}/static/images/30.png"></div>
+                                <div class="grid grid-2"><img src="${pageContext.request.contextPath}/static/images/50.png"></div>
+                                <div class="grid grid-3"><img src="${pageContext.request.contextPath}/static/images/70.png"></div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-5 p-2">
-                        <div class="section-container">
-                            <h3 class="section-title">Hàng Ngàn Voucher Hấp Dẫn</h3>
+                    <div class="col-12 col-md-5 p-4 d-flex align-items-center">
+                        <div>
+                            <h3 class="section-title"><i class="fas fa-gift me-2"></i>Hàng Ngàn Voucher Hấp Dẫn</h3>
                             <ul class="list-unstyled custom-list my-4">
                                 <li>Nhận ưu đãi đặc biệt, hàng ngàn voucher miễn phí</li>
                                 <li>Chính sách mở hoàn toàn mới</li>
                                 <li>Lần đầu tiên xuất hiện: Leo rank cao, voucher khủng</li>
                                 <li>Đa dạng các loại voucher của shop và của hệ thống</li>
                             </ul>
-                            <a href="${pageContext.request.contextPath}/marketplace/cart" class="btn btn-primary btn-custom mt-3">Go to cart now</a>
+                            <a href="${pageContext.request.contextPath}/marketplace/cart" class="btn btn-primary btn-custom mt-3">Đi Đến Giỏ Hàng</a>
                         </div>
                     </div>
                 </div>
@@ -123,4 +145,5 @@
         </div>
     </div>
 
-        <%@ include file="../include/footer.jsp" %>
+    <%@ include file="../include/footer.jsp" %>
+</body>

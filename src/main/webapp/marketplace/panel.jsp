@@ -1,5 +1,4 @@
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" import="model.*" import="model.DAO.*"%>
-<%@ include file="../include/header.jsp" %>
 
         <style>
             .slider {
@@ -13,36 +12,38 @@
             }
             .nav-pills {
                 position: relative;
-                padding-bottom: 10px; /* To provide space for the taller slider */
+                   padding:10px 0;
+               
             }
             .nav-pills .nav-link {
                 position: relative;
             }
+            .slider{
+                background-color:#5e87ff;
+            }
         </style>
 
     <body>
-        <div class="container mt-5">
-            <div class="col-lg-12 mb-4">
+        <div class="container border rounded shadow mb-5 ">
+            <div class="col-lg-12">
                 <ul class="nav nav-pills nav-fill" id="nav-pills">
                     <li class="nav-item">
-                        <a class="nav-link nav-link-main-redirect" href="${pageContext.request.contextPath}/martketplace/allshop">All shop</a>
+                        <a class="rounded nav-link nav-link-main-redirect" href="${pageContext.request.contextPath}/martketplace/allshop">All shop</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link nav-link-main-redirect" href="${pageContext.request.contextPath}/marketplace/myshop">My shop</a>
+                        <a class="rounded nav-link nav-link-main-redirect" href="${pageContext.request.contextPath}/marketplace/myshop">My shop</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link nav-link-main-redirect" href="${pageContext.request.contextPath}/marketplace/cart">Cart</a>
+                        <a class="rounded nav-link nav-link-main-redirect" href="${pageContext.request.contextPath}/marketplace/cart">Cart</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link nav-link-main-redirect" href="${pageContext.request.contextPath}/marketplace/history">History</a>
+                        <a class="rounded nav-link nav-link-main-redirect" href="${pageContext.request.contextPath}/marketplace/history">History</a>
                     </li>
                     <div class="slider" id="slider"></div>
                 </ul>
             </div>
         </div>
-        <!-- jQuery and Bootstrap JS -->
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+       
         <script>
             $(document).ready(function () {
                 var $slider = $('#slider');

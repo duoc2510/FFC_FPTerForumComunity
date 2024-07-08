@@ -525,7 +525,7 @@ public class Shop_product extends HttpServlet {
                 sdb.updateOrderStar(orderid6, star);
                 String msg = "Thanks for your order! ";
                 session.setAttribute("message", msg);
-                response.sendRedirect("allshop");
+                response.sendRedirect("/FPTer/martketplace/allshop");
                 break;
 
         }

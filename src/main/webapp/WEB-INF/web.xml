@@ -141,10 +141,6 @@
         <servlet-class>controller.Event_addEvent</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>Event_eventList</servlet-name>
-        <servlet-class>controller.Event_eventList</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>Group_list</servlet-name>
         <servlet-class>controller.Group_list</servlet-class>
     </servlet>
@@ -337,8 +333,6 @@
         <servlet-name>Shop_allshop</servlet-name>
         <servlet-class>controller.Shop_allshop</servlet-class>
     </servlet>
-    
-    
     <servlet>
         <servlet-name>Admin_transaction</servlet-name>
         <servlet-class>controller.Admin_transaction</servlet-class>
@@ -347,6 +341,18 @@
     <servlet>
         <servlet-name>Advertising_Show</servlet-name>
         <servlet-class>controller.Advertising_Show</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Event_interested</servlet-name>
+        <servlet-class>controller.Event_interested</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Event_viewEvent</servlet-name>
+        <servlet-class>controller.Event_viewEvent</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Event_eventList</servlet-name>
+        <servlet-class>controller.Event_eventList</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>PostComment</servlet-name>
@@ -427,10 +433,6 @@
     <servlet-mapping>
         <servlet-name>Event_addEvent</servlet-name>
         <url-pattern>/addEvent</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Event_eventList</servlet-name>
-        <url-pattern>/listEvent</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>User_groupEdit</servlet-name>
@@ -650,6 +652,19 @@
     <servlet-mapping>
         <servlet-name>Advertising_Show</servlet-name>
         <url-pattern>/advertising/show</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+
+        <servlet-name>Event_interested</servlet-name>
+        <url-pattern>/interested</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Event_viewEvent</servlet-name>
+        <url-pattern>/viewEvent</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Event_eventList</servlet-name>
+        <url-pattern>/listEvent</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index_guest.jsp</welcome-file>

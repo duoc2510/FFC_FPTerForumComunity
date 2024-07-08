@@ -1,20 +1,23 @@
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" import="model.*" import="model.DAO.*"%>
 <%@ include file="../include/header.jsp" %>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Page Title</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <!-- SweetAlert JS -->
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+</head>
+
 <style>
     .shop-group {
-        border: 1px solid #ddd; /* Light grey border */
-        border-radius: 5px; /* Rounded corners */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
         padding: 20px; /* Padding inside the box */
         margin-bottom: 20px; /* Space between shop groups */
-        background-color: #fff; /* White background */
     }
-    .shop-name {
-        text-align: center;
-        font-weight: bold;
-        font-size: 1.5em;
-        text-decoration: underline; /* Underline text */
-    }
+
     .shop-name a {
         color: inherit; /* Màu chữ sẽ kế thừa từ thẻ cha (.shop-name) */
         text-decoration: none; /* Bỏ gạch chân mặc định của liên kết */
@@ -27,25 +30,17 @@
     .shop-name a:visited {
         color: inherit; /* Màu chữ của liên kết đã truy cập, kế thừa từ thẻ cha (.shop-name) */
     }
+    .responsive-text {
+        font-size: calc(2px + 0.8vw);
+        min-font-size: 5px;
+        max-font-size: 12px;
+    }
+
+
 
 </style>
 <body>
 
-    <script>
-        // Check if the message variable is set or not
-        document.addEventListener("DOMContentLoaded", (event) => {
-            var errorMessage = "${message}";
-            // Kiểm tra nếu errorMessage không rỗng, hiển thị thông báo lỗi
-            if (errorMessage != "") {
-                swal({
-                    title: "Error!",
-                    text: errorMessage,
-                    icon: "error",
-                    button: "OK",
-                });
-            }
-        });
-    </script>
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
          data-sidebar-position="fixed" data-header-position="fixed">
         <c:if test="${not empty sessionScope.USER}">
@@ -73,8 +68,8 @@
                             display: none;
                         }
                     </style>
-                    <div class='row mt-5'>
-                        <div class='col-12 mx-auto text-center'>
+                    <div class='row mt-5 '>
+                        <div class='col-12 mx-auto text-center rounded'>
                             <img src="${pageContext.request.contextPath}/static/images/bag-empty.jpg" alt="alt" width='200px'/>
                             <h1 class="text-uppercase text-bold my-3">bag is empty</h1>
                         </div>
@@ -89,9 +84,9 @@
                 </c:if>
 
                 <c:if test="${not empty ORDERITEMLIST}">
-                    <div class="row" id="billing">                    
-                        <div class="col-md-6">
-                            <div class="mx-2">
+                    <div class="row card-group" id="billing">                    
+                        <div class="col-md-6 rounded">
+                            <div class="mx-3 ">
                                 <!--loop this-->
                                 <form action="confirmorder" method="post">
 
@@ -105,7 +100,7 @@
                                                 <!-- Close the previous shop group and add discount/total sections -->
                                                 <div id="discountSection-${previousShopId}" style="display: none;">
                                                     <label class="form-label mt-3" for="typeText">Discount</label>
-                                                    <select id="discountSelect-${previousShopId}" class="form-control discountSelect" name="discountSelect" data-shop-id="${previousShopId}" onchange="updateDiscount('${previousShopId}')">
+                                                    <select id="discountSelect-${previousShopId}" class="rounded form-control discountSelect" name="discountSelect" data-shop-id="${previousShopId}" onchange="updateDiscount('${previousShopId}')">
                                                         <option value="" data-percent="0" data-condition="0">No Discount</option>
                                                         <c:forEach var="discount" items="${Shop_DB.getAllDiscountOrder(USER.userId, previousShopId)}">
                                                             <option value="${discount.discountId}" data-percent="${discount.discountPercent}" data-condition="${discount.condition}">Giảm ${discount.discountPercent}% đơn từ ${discount.condition}VNĐ</option>
@@ -113,7 +108,7 @@
                                                     </select>
 
                                                 </div>
-
+                                                <hr>
                                                 <div class="d-flex justify-content-between mt-3">
                                                     <p class="mb-2">Sub total</p>
                                                     <p class="mb-2" id="subtotal-${previousShopId}">0 VND</p>
@@ -129,7 +124,7 @@
                                                 </div>
                                         </div> <!-- Close the previous shop group -->
                                     </c:if>
-                                    <div class="shop-group">
+                                    <div class="shop-group rounded shadow rounded border">
                                         <h3 class="shop-name">
                                             <a href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?shopid=${currentShopId}">
                                                 <i class="ti ti-basket"></i> <!-- Icon before -->
@@ -137,9 +132,10 @@
                                                 <i class="ti ti-arrow-right-square"></i> <!-- Icon after -->
                                             </a>
                                         </h3>
+                                        <hr>
                                     </c:if>
 
-                                    <div class="card mb-3">
+                                    <div class="shadow mb-3 rounded ">
                                         <div class="card-body">
                                             <div class="d-flex justify-content-between">
                                                 <div class="d-flex flex-row align-items-center">
@@ -156,22 +152,24 @@
                                                 <div class="d-flex flex-row align-items-center">
                                                     <div class="mx-1" style="width: 70px;">
                                                         <c:if test="${product.quantity > 0}">
-                                                            <input data-action="update" type="number" name="quantity" class="form-control" value="${item.quantity}" min="1" max="${product.quantity}" oninput="handleQuantityChange('${item.getOrderItem_id()}', this.value)">
+                                                            <input data-action="update" type="number" name="quantity" class="rounded form-control" value="${item.quantity}" min="1" max="${product.quantity}" oninput="handleQuantityChange('${item.getOrderItem_id()}', this.value)">
                                                             <c:if test="${item.quantity == product.quantity}">
                                                                 <p class="text-danger position-absolute">Quantity was maximum</p>
                                                             </c:if>
                                                         </c:if>
                                                         <c:if test="${product.quantity == 0}">
-                                                            <input type="number" class="form-control" name="quantity" value="0" readonly>
+                                                            <input type="number" class="rounded form-control" name="quantity" value="0" readonly>
                                                             <p style="font-size: 11px;" class="text-danger position-absolute">This product had sold out! Please delete!</p>
                                                         </c:if>
                                                     </div>
                                                     <c:set var="totalPrice1" value="${item.quantity * item.price}" />
-                                                    <div class="mx-1" style="width: 80px;">
-                                                        <h5 class="mb-0">${totalPrice1}</h5>
+                                                    <div class="mx-1" style="width: 80px; display: flex; justify-content: center; align-items: center;">
+                                                        <h5 class="mb-0 responsive-text">${totalPrice1}</h5>
                                                     </div>
                                                     <c:set var="totalPrice" value="${totalPrice1 + totalPrice}" />
-                                                    <a class="mx-1" onclick="moveOutProductFromCart('${item.getOrderItem_id()}')" style="color: #cecece;" data-action="delete"><i class="fas fa-trash-alt"></i></a>
+                                                    <a class="mx-1" onclick="moveOutProductFromCart('${item.getOrderItem_id()}')" data-action="delete">
+                                                        <i class="fas fa-trash"></i>
+                                                    </a>
                                                 </div>
                                             </div>
                                         </div>
@@ -184,7 +182,7 @@
                                 <c:if test="${previousShopId != -1}">
                                     <div id="discountSection-${previousShopId}" style="display: none;">
                                         <label class="form-label mt-3" for="typeText">Discount</label>
-                                        <select id="discountSelect-${previousShopId}" class="form-control discountSelect" name="discountSelect" data-shop-id="${previousShopId}" onchange="updateDiscount('${previousShopId}')">
+                                        <select id="discountSelect-${previousShopId}" class="rounded form-control discountSelect" name="discountSelect" data-shop-id="${previousShopId}" onchange="updateDiscount('${previousShopId}')">
                                             <option value="" data-percent="0" data-condition="0">No Discount</option>
                                             <c:forEach var="discount" items="${Shop_DB.getAllDiscountOrder(USER.userId, previousShopId)}">
                                                 <option value="${discount.discountId}" data-percent="${discount.discountPercent}" data-condition="${discount.condition}">Giảm ${discount.discountPercent}% đơn từ ${discount.condition}VNĐ</option>
@@ -192,7 +190,7 @@
                                         </select>
 
                                     </div>
-
+                                    <hr>
                                     <div class="d-flex justify-content-between mt-3">
                                         <p class="mb-2">Sub total</p>
                                         <p class="mb-2" id="subtotal-${previousShopId}">0 VND</p>
@@ -215,8 +213,8 @@
                         </div>
                     </div>
 
-                    <div class="col-md-6">
-                        <div class="card ">
+                    <div class="col-md-6 pe-3">
+                        <div class=" rounded shadow border card-group">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-4">
                                     <h5 class="mb-0">Billing</h5>
@@ -224,21 +222,21 @@
                                 <div class="col-md-12">
                                     <div class="form-outline form-white">
                                         <label class="form-label" for="typeText">Full Name </label>
-                                        <input name="fullname" class="form-control form-control" placeholder="Full Name" value="${USER.userFullName}" readonly> 
+                                        <input name="fullname" class="rounded form-control" placeholder="Full Name" value="${USER.userFullName}" readonly> 
 
                                         <label class="form-label mt-3" for="typeText">Phone</label>
-                                        <input name="phone" class="form-control form-control" placeholder="Phone" required>
+                                        <input name="phone" class="rounded form-control" placeholder="Phone" required>
 
                                         <c:set var="shop" value="${Shop_DB.getShopHaveStatusIs1ByShopID(product.getShopId())}" />
                                         <label hidden class="form-label mt-3" for="typeText">Shop</label>
-                                        <input name="shopid" class="form-control form-control" placeholder="shopid" value="${shop.shopID}" hidden>
+                                        <input name="shopid" class="rounded form-control" placeholder="shopid" value="${shop.shopID}" hidden>
 
                                         <label class="form-label mt-3" for="typeText">Campus</label>
-                                        <input name="campus" class="form-control form-control" placeholder="Campus" value="${shop.campus}" readonly>
+                                        <input name="campus" class="rounded form-control" placeholder="Campus" value="${shop.campus}" readonly>
 
 
                                         <label class="form-label mt-3" for="typeText">Note</label>
-                                        <input name="note" class="form-control" placeholder="Note" rows="4">
+                                        <input name="note" class="rounded form-control" placeholder="Note" rows="4">
                                     </div>
                                 </div>
 
@@ -248,11 +246,11 @@
 
                                 <div class="mb-3" hidden="">
                                     <label class="form-label">Total</label>
-                                    <input type="text" class="form-control" id="totalInput" name="total" value="0">
+                                    <input type="text" class="rounded form-control" id="totalInput" name="total" value="0">
                                 </div>
                                 <input type="hidden" name="action" value="confirm1">
                                 <div class="d-flex justify-content-between">
-                                    <button style="margin-top: 30px;" type="submit" class="btn btn-info btn-block btn-lg">
+                                    <button stype="submit" class="rounded btn btn-info btn-block btn-lg mt-4">
                                         <span id="checkoutTotal">0 VND</span>
                                         <span>Checkout <i class="fas fa-long-arrow-alt-right ms-2"></i></span>
                                     </button>                                                    
@@ -266,9 +264,13 @@
         </div>
     </div>
 </div>
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<!--<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>-->
 
 <script>
+    function listenForQuantityChange(){
+        console.log(1);
+         loadAd();
+    }
                                             var selectedItemsMap = new Map();
                                             var selectedDiscounts = [];
 
@@ -364,6 +366,9 @@
 
                                                 discountSection.style.display = selectedItems.size === 0 ? 'none' : 'block';
                                                 discountSelect.disabled = selectedItems.size === 0;
+                                                if (selectedItems.size === 0) {
+                                                    discountSelect.value = ""; // Reset discount to "No Discount"
+                                                }
                                                 filterDiscountOptions(shopId, subtotal);
                                                 updateDiscount(shopId);
                                             }
@@ -495,6 +500,20 @@
                                                 listenForQuantityChange();
                                             }
 
+
+                                            // Check if the message variable is set or not
+                                            document.addEventListener("DOMContentLoaded", (event) => {
+                                                var errorMessage = "${message}";
+                                                // Kiểm tra nếu errorMessage không rỗng, hiển thị thông báo lỗi
+                                                if (errorMessage != "") {
+                                                    swal({
+                                                        title: "Error!",
+                                                        text: errorMessage,
+                                                        icon: "error",
+                                                        button: "OK",
+                                                    });
+                                                }
+                                            });
 </script>
 
 </body>

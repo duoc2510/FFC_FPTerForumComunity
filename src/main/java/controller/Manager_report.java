@@ -123,9 +123,13 @@ public class Manager_report extends HttpServlet {
                 String reason = request.getParameter("banReason");
                 boolean postBanned = Report_DB.banPost(postId, reason);
                 String postContent = request.getParameter("postContent");
+              
                 if (postBanned) {
-                    List<Integer> reporterIds = Report_DB.getReporterIdsByPostId(postId);
-                    for (int reporterId : reporterIds) {
+                  List<Integer> reporterIds = Report_DB.getReporterIdsByPostId(postId);
+                 
+                  
+                    for (Integer reporterId : reporterIds) {
+                        
                         nw.saveNotificationToDatabase(reporterId, "Report on post " + postContent + " processed!", "");
                         nw.sendNotificationToClient(reporterId, "Report on post " + postContent + " processed!", "");
                     }
@@ -141,9 +145,10 @@ public class Manager_report extends HttpServlet {
                 boolean userBanned = Report_DB.banUser(userId);
                 String username = request.getParameter("username");
 
-                List<Integer> reporterIds = Report_DB.getReporterIdsByUserId(userId);
+               
                 if (userBanned) {
-                    for (int reporterId : reporterIds) {
+                     List<Integer> reporterIds = Report_DB.getReporterIdsByUserId(userId);
+                    for (Integer reporterId : reporterIds) {
                         nw.saveNotificationToDatabase(reporterId, "Report on user " + username + " processed!", "");
                         nw.sendNotificationToClient(reporterId, "Report on user " + username + " processed!", "");
                     }
@@ -166,13 +171,39 @@ public class Manager_report extends HttpServlet {
                 // Redirect to the profile page with the username
                 response.sendRedirect(request.getContextPath() + "/profile?username=" + username);
                 return; // Exit the method to prevent further processing
+            } else if (action.equals("banPostMore3Time")) {
+                int postId = Integer.parseInt(request.getParameter("postId"));
+                int reportedId = Integer.parseInt(request.getParameter("reportedId"));
+                String reason = request.getParameter("banReason");
+                boolean postBanned = Report_DB.banPost(postId, reason);
+                String postContent = request.getParameter("postContent");
+               
+                if (postBanned) {
+                  List<Integer> reporterIds = Report_DB.getReporterIdsByPostId(postId);
+                    for (Integer reporterId : reporterIds) {
+                        nw.saveNotificationToDatabase(reporterId, "Report on post " + postContent + " processed!", "");
+                        nw.sendNotificationToClient(reporterId, "Report on post " + postContent + " processed!", "");
+                    }
+
+                    nw.saveNotificationToDatabase(reportedId, "Your post " + postContent + " has been banned for a reason " + reason, "");
+                    nw.sendNotificationToClient(reportedId, "Your post " + postContent + " has been banned for a reason " + reason, "");
+                    msg = "Post has been banned successfully.";
+                } else {
+                    msg = "Failed to ban the post.";
+                }
+                request.getSession().setAttribute("msg", msg);
+                response.sendRedirect(request.getContextPath() + "/post");
+                return; // Exit the method to prevent further processing
             } else if (action.equals("banUserByM")) {
                 int userId = Integer.parseInt(request.getParameter("userId"));
                 String username = request.getParameter("username");
-                boolean userBanned = Report_DB.banUser(userId);
-
+                boolean userBanned = Report_DB.banUser(userId);      
                 if (userBanned) {
-                    msg = "User has been banned successfully.";
+                     List<Integer> reporterIds = Report_DB.getReporterIdsByUserId(userId);
+                    for (Integer reporterId : reporterIds) {
+                        nw.saveNotificationToDatabase(reporterId, "Report on user " + username + " processed!", "");
+                        nw.sendNotificationToClient(reporterId, "Report on user " + username + " processed!", "");
+                    }
                 } else {
                     msg = "Failed to ban the user.";
                 }

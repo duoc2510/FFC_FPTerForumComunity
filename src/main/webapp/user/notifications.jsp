@@ -7,42 +7,7 @@
         <div class="body-wrapper">
             <%@ include file="../include/navbar.jsp" %>
             <style>
-                .notification-item {
-                    display: flex;
-                    align-items: center;
-                    padding: 10px;
-                    border-bottom: 1px solid #ddd;
-                    background-color: #fff;
-                    margin-bottom: 10px;
-                    border-radius: 4px;
-                    flex-direction: row;
-                    border: none;
-                }
-
-                .notification-item .content {
-                    flex-grow: 1;
-                }
-
-                .notification-item .content .message {
-                    margin: 0;
-                    font-weight: bold;
-                }
-
-                .notification-item .content .date {
-                    font-size: 0.8em;
-                    color: #888;
-                }
-
-                .notification-item .status {
-                    margin-left: 10px;
-                }
-
-                .notification-item .status .status-icon {
-                    width: 10px;
-                    height: 10px;
-                    border-radius: 50%;
-                    background-color: blue;
-                }
+               
 
                 .tab-content {
                     display: none;
@@ -64,16 +29,16 @@
             </style>
             </head>
             <div class="container-fluid">
-                <div class="notification-container card">
+                <div class="notification-container card rounded no-border">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h2 class="card-title mb-0">Thông báo</h2>
                     </div>
-                    <ul class="nav nav-tabs card-header-tabs my-3  justify-content-center" style="width: 100%; margin-left: 0.09px;">
-                        <li class="nav-item">
-                            <button class="nav-link active tab-link" onclick="openTab(event, 'all')">Tất cả</button>
+                    <ul class="nav nav-tabs card-header-tabs my-3 mx-4" style="width: 100%; margin-left: 0.09px;">
+                        <li class="nav-item me-1">
+                            <button class="btn border rounded nav-link active tab-link" onclick="openTab(event, 'all')">Tất cả</button>
                         </li>
                         <li class="nav-item">
-                            <button class="nav-link tab-link" onclick="openTab(event, 'unread')">Chưa đọc</button>
+                            <button class="btn border rounded nav-link tab-link" onclick="openTab(event, 'unread')">Chưa đọc</button>
                         </li>
                     </ul>
                     <div class="card-body">
