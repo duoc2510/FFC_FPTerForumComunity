@@ -70,7 +70,7 @@ public class DailyScheduler implements ServletContextListener {
 
             // Set the trigger to run at 13:57 on June 30, 2024
             Calendar cal = Calendar.getInstance();
-            cal.set(2024, Calendar.JUNE, 30, 14, 17, 0);
+            cal.set(2024, Calendar.JULY, 8, 7, 46, 0);
             Date triggerDate = cal.getTime();
 
             Trigger trigger = TriggerBuilder.newTrigger()

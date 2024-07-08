@@ -189,7 +189,7 @@
                         </c:if> 
                         <c:if test="${product.quantity == 0}">
                             <div  class="col-md-4 ">
-                                <div class=" mx-2 rounded shadow ">
+                                <div class=" mx-2 rounded shadow "> 
                                     <div class="position-relative image-container">
                                         <img class="card-img-top rounded-top" src="${pageContext.request.contextPath}/static/${imagefirst.uploadPath}">
                                         <img class="sold-out-overlay" src="${pageContext.request.contextPath}/static/images/soldout.jpg">
