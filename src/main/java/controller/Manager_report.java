@@ -123,13 +123,12 @@ public class Manager_report extends HttpServlet {
                 String reason = request.getParameter("banReason");
                 boolean postBanned = Report_DB.banPost(postId, reason);
                 String postContent = request.getParameter("postContent");
-              
+
                 if (postBanned) {
-                  List<Integer> reporterIds = Report_DB.getReporterIdsByPostId(postId);
-                 
-                  
+                    List<Integer> reporterIds = Report_DB.getReporterIdsByPostId(postId);
+
                     for (Integer reporterId : reporterIds) {
-                        
+
                         nw.saveNotificationToDatabase(reporterId, "Report on post " + postContent + " processed!", "");
                         nw.sendNotificationToClient(reporterId, "Report on post " + postContent + " processed!", "");
                     }
@@ -145,12 +144,13 @@ public class Manager_report extends HttpServlet {
                 boolean userBanned = Report_DB.banUser(userId);
                 String username = request.getParameter("username");
 
-               
                 if (userBanned) {
-                     List<Integer> reporterIds = Report_DB.getReporterIdsByUserId(userId);
-                    for (Integer reporterId : reporterIds) {
-                        nw.saveNotificationToDatabase(reporterId, "Report on user " + username + " processed!", "");
-                        nw.sendNotificationToClient(reporterId, "Report on user " + username + " processed!", "");
+                    List<Report> reports = Report_DB.getReportsByUserId(userId);
+                   
+                   
+                    for (Report report : reports) {
+                        nw.saveNotificationToDatabase(report.getReporter_id(), "Report on user " + username + " processed!", "");
+                        nw.sendNotificationToClient(report.getReporter_id(), "Report on user " + username + " processed!", "");
                     }
                     msg = "User has been banned successfully.";
                 } else {
@@ -177,9 +177,9 @@ public class Manager_report extends HttpServlet {
                 String reason = request.getParameter("banReason");
                 boolean postBanned = Report_DB.banPost(postId, reason);
                 String postContent = request.getParameter("postContent");
-               
+
                 if (postBanned) {
-                  List<Integer> reporterIds = Report_DB.getReporterIdsByPostId(postId);
+                    List<Integer> reporterIds = Report_DB.getReporterIdsByPostId(postId);
                     for (Integer reporterId : reporterIds) {
                         nw.saveNotificationToDatabase(reporterId, "Report on post " + postContent + " processed!", "");
                         nw.sendNotificationToClient(reporterId, "Report on post " + postContent + " processed!", "");
@@ -197,9 +197,9 @@ public class Manager_report extends HttpServlet {
             } else if (action.equals("banUserByM")) {
                 int userId = Integer.parseInt(request.getParameter("userId"));
                 String username = request.getParameter("username");
-                boolean userBanned = Report_DB.banUser(userId);      
+                boolean userBanned = Report_DB.banUser(userId);
                 if (userBanned) {
-                     List<Integer> reporterIds = Report_DB.getReporterIdsByUserId(userId);
+                    List<Integer> reporterIds = Report_DB.getReporterIdsByUserId(userId);
                     for (Integer reporterId : reporterIds) {
                         nw.saveNotificationToDatabase(reporterId, "Report on user " + username + " processed!", "");
                         nw.sendNotificationToClient(reporterId, "Report on user " + username + " processed!", "");

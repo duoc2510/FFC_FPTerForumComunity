@@ -126,7 +126,7 @@
         }
 
         function confirmapproveM(formId) {
-            if (confirm("Bạn có chắc chắn muốn thu hồi quyền manager của người dùng này?")) {
+            if (confirm("Bạn có chắc chắn duyệt làm manager của người dùng này?")) {
                 document.getElementById(formId).submit();
             }
         }

@@ -288,7 +288,8 @@ CREATE TABLE Report (
     FOREIGN KEY (Reporter_id) REFERENCES Users(User_id), -- Khóa ngoại tham chiếu đến người báo cáo
     FOREIGN KEY (User_id) REFERENCES Users(User_id), -- Khóa ngoại tham chiếu đến người dùng bị báo cáo
     FOREIGN KEY (Shop_id) REFERENCES Shop(Shop_id), -- Khóa ngoại tham chiếu đến shop
-    FOREIGN KEY (Post_id) REFERENCES Post(Post_id) -- Khóa ngoại tham chiếu đến bài viết bị báo cáo
+    FOREIGN KEY (Post_id) REFERENCES Post(Post_id)
+	-- Khóa ngoại tham chiếu đến bài viết bị báo cáo
 );
 GO
 CREATE TABLE UserFollow (
@@ -489,10 +490,19 @@ SELECT * FROM dbo.Post
 SELECT * FROM dbo.Notification
 SELECT * FROM dbo.Users
 
+
+
+
+INSERT INTO Post (User_id, Group_id, Topic_id, Content, Status, postStatus)
+VALUES 
+(3, Null, Null,'Love fpt.', 'Active', 'Public');
 INSERT INTO Report (Reporter_id, User_id, Post_id, Shop_id, Reason, Status)
 VALUES 
-    (1, 4, NULL, NULL, N'tệ', N'pending'),
-    (2, 4, NULL, NULL, N'tệ', N'pending'),
-    (3, 4, NULL, NULL, N'tệ', N'pending');
+    (1, 3, NULL, NULL, N'tệ', N'pending'),
+    (2, 3, NULL, NULL, N'tệ', N'pending');
 
+INSERT INTO Report (Reporter_id, User_id, Post_id, Shop_id, Reason, Status)
+VALUES 
+    (2, 3, 7, NULL, N'tệ', N'pending'),
+    (3, 3, 7, NULL, N'tệ', N'pending');
 
