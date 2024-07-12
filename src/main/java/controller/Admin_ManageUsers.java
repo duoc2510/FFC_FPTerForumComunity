@@ -155,9 +155,9 @@ public class Admin_ManageUsers extends HttpServlet {
             boolean userBanned = Report_DB.banUser(userId);
 
             if (userBanned) {
-                request.getSession().setAttribute("msg", "User has been banned successfully.");
+                request.getSession().setAttribute("msg", "User role has been banned successfully.");
             } else {
-                request.getSession().setAttribute("msg", "Failed to ban the user.");
+                request.getSession().setAttribute("msg", "Failed to ban manager the user.");
             }
             response.sendRedirect(request.getContextPath() + "/admin/ManageUsers?action=listManager");
         } else if ("banUserInAllUser".equals(action)) {
@@ -165,9 +165,9 @@ public class Admin_ManageUsers extends HttpServlet {
             boolean userBanned = Report_DB.banUser(userId);
 
             if (userBanned) {
-                request.getSession().setAttribute("msg", "User role has been banned successfully.");
+                request.getSession().setAttribute("msg", "User has been banned successfully.");
             } else {
-                request.getSession().setAttribute("msg", "Failed to ban manager role.");
+                request.getSession().setAttribute("msg", "Failed to ban role.");
             }
             response.sendRedirect(request.getContextPath() + "/admin/ManageUsers?action=allUser");
         } else if ("revokeMInAllUser".equals(action)) {
