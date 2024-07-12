@@ -10,17 +10,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import model.DAO.Shop_DB;
-import model.DAO.User_DB;
-import model.Shop;
-import model.User;
 
 /**
  *
  * @author Admin
  */
-public class Shop_allshop extends HttpServlet {
+public class Shop_orderDetail extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,10 +34,10 @@ public class Shop_allshop extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Shop_allshop</title>");
+            out.println("<title>Servlet Shop_orderDetail</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Shop_allshop at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet Shop_orderDetail at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -60,24 +55,11 @@ public class Shop_allshop extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        Shop_DB sdb = new Shop_DB();
-        User_DB udb = new User_DB();
-        String message = request.getParameter("message");
-        ArrayList<Shop> shoplist = sdb.getAllShop();
+        String id = request.getParameter("orderid");
+        int orderid = Integer.parseInt(id);
 
-        // Loại bỏ các shop có owner với userRole = 0
-        shoplist.removeIf(shop -> {
-            User u = udb.getUserById(shop.getOwnerID());
-            return u.getUserRole() == 0;
-        });
-
-        // Loại bỏ những shop có status là 0
-        shoplist.removeIf(shop -> shop.getStatus() == 0);
-        shoplist.removeIf(shop -> shop.getStatus() == 2);
-
-        request.setAttribute("shoplist", shoplist);
-        request.setAttribute("message", message);
-        request.getRequestDispatcher("/marketplace/allShop.jsp").forward(request, response);
+        request.setAttribute("orderid", orderid);
+        request.getRequestDispatcher("/marketplace/orderdetail.jsp").forward(request, response);
     }
 
     /**

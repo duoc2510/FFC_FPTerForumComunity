@@ -211,9 +211,9 @@ public class Shop_DB {
                 String description = rs.getString("Description");
                 int ownerID = rs.getInt("Owner_id");
                 String image = rs.getString("Image");
-                boolean status = rs.getBoolean("Status");
+                int status = rs.getInt("Status");
 
-                Shop shop = new Shop(shopID, shopName, shopPhone, shopCampus, description, ownerID, image, status ? 1 : 0);
+                Shop shop = new Shop(shopID, shopName, shopPhone, shopCampus, description, ownerID, image, status);
                 shops.add(shop);
             }
             System.out.println("lay thanh cong");
@@ -848,7 +848,7 @@ public class Shop_DB {
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
 
             pstmt.setString(1, "completed"); // Filter by Order_status = 'completed'
-            pstmt.setString(2, "thanhtoankhinhanhang"); // Filter by Payment_status = 'thanhtoankhinhanhang'
+            pstmt.setString(2, "dathanhtoan"); // Filter by Payment_status = 'thanhtoankhinhanhang'
 
             ResultSet rs = pstmt.executeQuery();
 

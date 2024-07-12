@@ -195,7 +195,7 @@
                                     friendImg.classList.add("d-inline");
 
                                     if (sender.avatar == null || sender.avatar.trim() === "") {
-                                        friendImg.src = "/path/to/default/avatar.jpg"; // Đường dẫn ảnh mặc định
+                                        friendImg.src = "${pageContext.request.contextPath}/static/images/user-default.webpg"; // Đường dẫn ảnh mặc định
                                     } else {
                                         friendImg.src = sender.avatar;
                                     }

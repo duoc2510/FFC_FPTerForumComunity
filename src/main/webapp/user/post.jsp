@@ -72,7 +72,7 @@
 
                                             <c:when test="${USER.userRole == 1 || (post.user.userRole == 2 && USER.userRole==2)}">
                                                 <li>
-                                                    <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#reportPostModal">
+                                                    <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#reportPostModal_${post.postId}">
                                                         Report post
                                                     </button>
                                                 </li>
@@ -80,13 +80,26 @@
 
                                             <c:when test="${USER.userRole == 2 || USER.userRole == 3}">
                                                 <li>
-                                                    <form id="banPostForm_${post.postId}" action="${pageContext.request.contextPath}/manager/report" method="post">
-                                                        <input type="hidden" name="postId" value="${post.postId}">
-                                                        <input type="hidden" name="action" value="banPostByAd">
-                                                        <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#reportPostModal_${post.postId}">
-                                                            Ban Post
-                                                        </button>
-                                                    </form>
+                                                    <c:choose>
+                                                        <c:when test="${post.hasReportedPost}">
+                                                            <form id="banPostForm_${post.postId}" action="${pageContext.request.contextPath}/manager/report" method="post">
+                                                                <input type="hidden" name="postId" value="${post.postId}">
+                                                                <input type="hidden" name="action" value="banPostMore3Time">
+                                                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#banPostModal3Time_${post.postId}">
+                                                                    Ban Post(has been reported) 
+                                                                </button>
+                                                            </form>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <form id="banPostForm_${post.postId}" action="${pageContext.request.contextPath}/manager/report" method="post">
+                                                                <input type="hidden" name="postId" value="${post.postId}">
+                                                                <input type="hidden" name="action" value="banPostByAd">
+                                                                <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#banPostModal_${post.postId}">
+                                                                    Ban Post
+                                                                </button>
+                                                            </form>
+                                                        </c:otherwise>
+                                                    </c:choose>
                                                 </li>
                                             </c:when>
                                         </c:choose>
@@ -96,18 +109,18 @@
                         </div>
 
 
-                        <div class="modal fade" id="reportPostModal" tabindex="-1" aria-labelledby="reportPostModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="reportPostModal_${post.postId}" tabindex="-1" aria-labelledby="reportPostModalLabel_${post.postId}" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
-                                    <form id="reportPostForm" action="${pageContext.request.contextPath}/report" method="post">
+                                    <form id="reportPostForm_${post.postId}" action="${pageContext.request.contextPath}/report" method="post">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="reportPostModalLabel">Report post</h5>
+                                            <h5 class="modal-title" id="reportPostModalLabel_${post.postId}">Report post</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
                                             <div class="mb-3">
-                                                <label for="reportPostReason" class="form-label">Reason</label>
-                                                <textarea class="form-control" id="reportPostReason" name="reportReason" rows="3" required></textarea>
+                                                <label for="reportPostReason_${post.postId}" class="form-label">Reason</label>
+                                                <textarea class="form-control" id="reportPostReason_${post.postId}" name="reportReason" rows="3" required></textarea>
                                             </div>
 
                                             <input type="hidden" name="postId" value="${post.postId}">
@@ -162,6 +175,60 @@
                                             <button type="submit" class="btn btn-primary">Save Changes</button>
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                         </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="banPostModal_${post.postId}" tabindex="-1" aria-labelledby="banPostModalLabel_${post.postId}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="banPostModalLabel_${post.postId}">Enter the reason for banning the post</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="banPostFormReason_${post.postId}" action="${pageContext.request.contextPath}/manager/report" method="post">
+                                            <input type="hidden" name="postId" value="${post.postId}">
+
+                                            <input type="hidden" name="reportedId" value="${post.userId}">
+                                            <input type="hidden" name="postContent" value="${post.content}">
+                                            <input type="hidden" name="action" value="banPost">   
+                                            <div class="mb-3">
+                                                <label for="banReason_${post.postId}" class="form-label">Reason for banning posts:</label>
+                                                <textarea class="form-control" id="banReason_${post.postId}" name="banReason" rows="3" required></textarea>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" form="banPostFormReason_${post.postId}" class="btn btn-danger">Ban post</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="banPostModal3Time_${post.postId}" tabindex="-1" aria-labelledby="banPostModalLabel_${post.postId}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="banPostModalLabel_${post.postId}">Enter the reason for banning the post </h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="banPostFormReason3Time_${post.postId}" action="${pageContext.request.contextPath}/manager/report" method="post">
+                                            <input type="hidden" name="postId" value="${post.postId}">
+
+                                            <input type="hidden" name="reportedId" value="${post.userId}">
+                                            <input type="hidden" name="postContent" value="${post.content}">
+                                            <input type="hidden" name="action" value="banPostMore3Time">   
+                                            <div class="mb-3">
+                                                <label for="banReason_${post.postId}" class="form-label">Reason for banning posts:</label>
+                                                <textarea class="form-control" id="banReason_${post.postId}" name="banReason" rows="3" required></textarea>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" form="banPostFormReason3Time_${post.postId}" class="btn btn-danger">Ban post</button>
                                     </div>
                                 </div>
                             </div>

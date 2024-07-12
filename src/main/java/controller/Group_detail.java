@@ -98,7 +98,9 @@ public class Group_detail extends HttpServlet {
             }
         }
         // Kiểm tra nếu posts đã có trong session
+        session.removeAttribute("postsGroup");
         List<Post> posts = (List<Post>) session.getAttribute("postsGroup");
+
         if (posts == null) {
             posts = Post_DB.getPostsWithGroupId();
             for (Post post : posts) {
@@ -162,8 +164,8 @@ public class Group_detail extends HttpServlet {
                     int groupId = Integer.parseInt(request.getParameter("groupId"));
                     Group group = Group_DB.getGroupById(groupId);
                     result = Group_DB.accept(memberGroupId);
-                    nw.saveNotificationToDatabase(memberGroupId, "Chủ group "+group.getGroupName()+ " đã duyệt bạn vào nhóm!", "/group/detail?groupId="+groupId);
-                    nw.sendNotificationToClient(memberGroupId, "Chủ group "+ group.getGroupName()+ " đã duyệt bạn vào nhóm!", "/group/detail?groupId="+groupId);
+                    nw.saveNotificationToDatabase(memberGroupId, "Chủ group " + group.getGroupName() + " đã duyệt bạn vào nhóm!", "/group/detail?groupId=" + groupId);
+                    nw.sendNotificationToClient(memberGroupId, "Chủ group " + group.getGroupName() + " đã duyệt bạn vào nhóm!", "/group/detail?groupId=" + groupId);
                     messageOfApprove = result ? "Member approved successfully!" : "Failed to approve member.";
                 } else if ("deny".equals(action)) {
                     result = Group_DB.deny(memberGroupId);

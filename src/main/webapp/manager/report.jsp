@@ -37,7 +37,7 @@
                                                 <th>Bài viết</th>
                                                 <th>Lý do</th>
                                                 <th>Trạng thái</th>
-
+                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -60,7 +60,47 @@
                                                 </td>
                                                 <td>${report.reason}</td>
                                                 <td>${report.status}</td>
+                                                <td>
+                                                    <form id="banPostForm_${report.post.postId}" action="${pageContext.request.contextPath}/manager/report" method="post">
+                                                        <input type="hidden" name="postId" value="${report.post.postId}">
 
+
+                                                        <input type="hidden" name="action" value="banPost">
+                                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#banPostModal3time_${report.post.postId}">Ban bài viết</button>
+                                                    </form>
+                                                    <form id="cancelReportPostForm_${report.post.postId}" action="${pageContext.request.contextPath}/manager/report" method="post">
+                                                        <input type="hidden" name="postId" value="${report.post.postId}">
+                                                        <input type="hidden" name="action" value="cancelReportMgP">
+                                                        <button type="button" class="btn btn-warning" onclick="confirmCancel('cancelReportPostForm_${report.post.postId}')">Cancel Report</button>
+                                                    </form>
+                                                </td>
+                                            <div class="modal fade" id="banPostModal3time_${report.post.postId}" tabindex="-1" aria-labelledby="banPostModalLabel_${report.post.postId}" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="banPostModalLabel_${report.post.postId}">Nhập lý do cấm bài viết</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form id="banPostFormReason3Time_${report.post.postId}" action="${pageContext.request.contextPath}/manager/report" method="post">
+                                                                <input type="hidden" name="postId" value="${report.post.postId}">
+
+                                                                <input type="hidden" name="reportedId" value="${report.post.userId}">
+                                                                <input type="hidden" name="postContent" value="${report.post.content}">
+                                                                <input type="hidden" name="action" value="banPost">   
+                                                                <div class="mb-3">
+                                                                    <label for="banReason_${report.post.postId}" class="form-label">Lý do cấm bài viết:</label>
+                                                                    <textarea class="form-control" id="banReason_${report.post.postId}" name="banReason" rows="3" required></textarea>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                                            <button type="submit" form="banPostFormReason3Time_${report.post.postId}" class="btn btn-danger">Cấm bài viết</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             </tr>
                                         </c:forEach>
                                         </tbody>
@@ -131,10 +171,10 @@
                                             </td>
 
                                             <td>${reportedPosts.user.username}</td>
-                                            <td> <a href="${pageContext.request.contextPath}/post/detail?postId=${report.post.postId}">
-                                                        ${report.post.content}
-                                                    </a>
-                                                </td>
+                                            <td> <a href="${pageContext.request.contextPath}/post/detail?postId=${reportedPosts.post.postId}">
+                                                    ${reportedPosts.post.content}
+                                                </a>
+                                            </td>
                                             <td>${reportedPosts.reason}</td>
                                             <td>
                                                 <form id="banPostForm_${reportedPosts.post.postId}" action="${pageContext.request.contextPath}/manager/report" method="post">

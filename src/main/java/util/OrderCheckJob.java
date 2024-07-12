@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import model.DAO.Shop_DB;
 import model.DAO.User_DB;
+import model.Discount;
 import model.Order;
 import model.OrderItem;
 import model.Product;
@@ -32,12 +33,28 @@ public class OrderCheckJob implements Job {
             String paymentStatus = order.getPayment_status();
 
             // Kiểm tra orderDate có từ 3 ngày trước và có payment_status là "thanhtoankhinhanhang"
-            if (orderDate.before(threeDaysAgo) && "thanhtoankhinhanhang".equals(paymentStatus)) {
+            if (orderDate.before(threeDaysAgo) && "dathanhtoan".equals(paymentStatus)) {
                 ArrayList<OrderItem> orderitemlistnewnew = sdb.getAllOrderItemByOrderID(order.getOrder_ID());
+                double total1 = 0;
+                for (OrderItem o : orderitemlistnewnew) {
+                    total1 = total1 + (o.getPrice() * o.getQuantity());
+                }
                 for (OrderItem ot : orderitemlistnewnew) {
                     Product p1 = sdb.getProductByID(ot.getProductID());
                     Shop shop1 = sdb.getShopHaveStatusIs1ByShopID(p1.getShopId());
                     User owner = User_DB.getUserById(shop1.getOwnerID());
+                    if (order.getDiscountid() > 0) {
+                        Discount dis = sdb.getDiscountByID(order.getDiscountid());
+                        if (dis.getShopId() == 0) {
+                            boolean check = User_DB.updateWalletByEmail(owner.getUserEmail(), owner.getUserWallet() + (total1 - order.getTotal()) - (total1 * 5 / 100));
+                            nw.saveNotificationToDatabaseWithStatusIsBalance(owner.getUserId(), "Trả lại tiền voucher hệ thống :" + (total1 - order.getTotal()) + "và trừ tiền hoa hồng đơn hàng :" + (total1 * 5 / 100), "/walletbalance");
+
+                        } else {
+                            boolean check = User_DB.updateWalletByEmail(owner.getUserEmail(), owner.getUserWallet() - (total1 * 5 / 100));
+                            nw.saveNotificationToDatabaseWithStatusIsBalance(owner.getUserId(), "Trừ tiền hoa hồng đơn hàng :" + (total1 * 5 / 100), "/walletbalance");
+
+                        }
+                    }
 
                     boolean updateSuccess = User_DB.updateWalletByEmail(owner.getUserEmail(), owner.getUserWallet() + order.getTotal());
                     ///Trả về thông báo tại đây

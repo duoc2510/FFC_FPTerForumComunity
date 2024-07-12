@@ -1,11 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ include file="../include/header.jsp" %>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.0/main.min.css">
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.0/main.min.js"></script>
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+<%--<%@ include file="../include/header.jsp" %>--%>
+
 
 <body>
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
@@ -13,102 +9,112 @@
         <c:if test="${USER.userRole > 1}">
             <div class="row mt-3 p-2">
                 <div class="col-md-6">
-                    <button id="showFormBtn" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addEventModal">Add Event</button>
+                    <button id="showFormBtn" class="btn rounded btn-success rounded mb-3" data-bs-toggle="modal" data-bs-target="#addEventModal">Add Event</button>
                 </div>
             </div>
         </c:if>
 
     </div>
-    <h3>Event Calendar</h3>
-    <div id="calendar"></div>
-    <!-- Event Cards -->
-    <div class="row">
+    <div class="row shadow rounded">
 
-        <c:if test="${not empty eventList}">
-            <c:forEach var="event" items="${eventList}">
-                <div class="col-sm-4">
-                    <div class="card m-2">
-                        <!-- Check if uploadPath exists -->
-                        <c:choose>
-                            <c:when test="${not empty event.uploadPath}">
-                                <c:set var="uploadPath" value="${event.uploadPath}" />
-                            </c:when>
-                            <c:otherwise>
-                                <c:set var="uploadPath" value="" />
-                            </c:otherwise>
-                        </c:choose>
-                        <!-- Display Event Image -->
-                        <img src="${pageContext.request.contextPath}/${uploadPath}" class="card-img-top event-img" alt="...">
-                        <!-- Event Details -->
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                <!-- Event Title -->
-                                <a href="${pageContext.request.contextPath}/viewEvent?eventId=${event.eventId}" class="event-link">
-                                    ${event.title}
-                                </a>
-                                <!-- Three-dot menu for delete -->
-                                <div class="dropdown float-end">
-                                    <c:if test="${USER.userRole > 1}">
-                                        <div class="dropdown">
-                                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton${event.eventId}" data-bs-toggle="dropdown" aria-expanded="false"></button>
-                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton${event.eventId}">
-                                                <li>
-                                                    <a class="dropdown-item update-event-btn" 
-                                                       onclick="editEvent('${event.eventId}', '${event.title}', '${event.description}', '${event.startDate}',
-                                                                       '${event.endDate}', '${event.location}', '${event.place}', '${not empty event.uploadPath ? event.uploadPath : ''}')">
-                                                        Edit
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item" href="#" onclick="deleteEvent('${event.eventId}')">Delete</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </c:if>
-                                </div>
-                            </h5>
-                            <!-- Other Event Details -->
-                            <p class="card-text">${event.description}</p>
-                            <p class="card-text">Start Date: ${event.formattedStartDate}</p>
-                            <p class="card-text">End Date: ${event.formattedEndDate}</p>
-                            <p class="card-text">Location: ${event.location}</p>
-                            <p class="card-text">Place: ${event.place}</p>
-                            <p class="card-text">Created At: ${event.createdAt}"</p>
+        <!-- Event Cards -->
+        <div class="col-12 col-md-6  mb-5">
 
-                            <!-- Check Event Status -->
+            <c:if test="${not empty eventList}">
+                <c:forEach var="event" items="${eventList}">
+                    <div class="col-12 col-sm-6  mb-3">
+                        <div class="card m-2 rounded">
+                            <!-- Check if uploadPath exists -->
                             <c:choose>
-                                <c:when test="${event.endDate < now}">
-                                    <p class="text-danger"><strong>This event has ended</strong></p>
+                                <c:when test="${not empty event.uploadPath}">
+                                    <c:set var="uploadPath" value="${event.uploadPath}" />
                                 </c:when>
                                 <c:otherwise>
-                                    <p class="text-success"><strong>This event is ongoing</strong></p>
+                                    <c:set var="uploadPath" value="" />
                                 </c:otherwise>
                             </c:choose>
+                            <!-- Display Event Image -->
+                            <a href="${pageContext.request.contextPath}/viewEvent?eventId=${event.eventId}">
+                                <img src="${pageContext.request.contextPath}/${uploadPath}" class="card-img-top event-img rounded-top" alt="...">
+                                <!-- Event Details -->
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <!-- Event Title -->
 
-                            <!-- Interest Button -->
-                            <div class="interest-button">
-                                <c:choose>
-                                    <c:when test="${event.isInterest}">
-                                        <form action="${pageContext.request.contextPath}/interested" method="post">
-                                            <input type="hidden" name="eventId" value="${event.eventId}">
-                                            <input type="hidden" name="action" value="cancel">
-                                            <button type="submit" class="btn btn-secondary">Interested</button>
-                                        </form>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <form action="${pageContext.request.contextPath}/interested" method="post">
-                                            <input type="hidden" name="eventId" value="${event.eventId}">
-                                            <input type="hidden" name="action" value="add">
-                                            <button type="submit" class="btn btn-primary">Interest</button>
-                                        </form>
-                                    </c:otherwise>
-                                </c:choose>
-                            </div>
+                                        <h3>${event.title}</h3>
+                                         <!-- Check Event Status -->
+                                    <c:choose>
+                                        <c:when test="${event.endDate < now}">
+                                            <p class="text-danger mb-2"><strong>Ended</strong></p>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <p class="text-success mb-2"><strong>On Going</strong></p>
+                                        </c:otherwise>
+                                    </c:choose>
+
+
+                                        <!-- Three-dot menu for delete -->
+                                        <div class="dropdown float-end ">
+                                            <c:if test="${USER.userRole > 1}">
+                                                <div class="dropdown">
+                                                    <button class="p-0 btn rounded dropdown-toggle" type="button" id="dropdownMenuButton${event.eventId}" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton${event.eventId}">
+                                                        <li>
+                                                            <a class="dropdown-item update-event-btn" 
+                                                               onclick="editEvent('${event.eventId}', '${event.title}', '${event.description}', '${event.startDate}',
+                                                                           '${event.endDate}', '${event.location}', '${event.place}', '${not empty event.uploadPath ? event.uploadPath : ''}')">
+                                                                Edit
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="dropdown-item" href="#" onclick="deleteEvent('${event.eventId}')">Delete</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </c:if>
+                                        </div>
+                                    </h5>
+                        
+                                    <!-- Other Event Details -->
+                                    <p class="card-text mb-1">${event.description}</p>
+                                    <p class="card-text mb-1">Start Date: ${event.formattedStartDate}</p>
+                                    <p class="card-text mb-1">End Date: ${event.formattedEndDate}</p>
+                                    <p class="card-text mb-1">Location: ${event.location}</p>
+                                    <p class="card-text mb-3">Place: ${event.place}</p>
+                                    <!--<p class="card-text">Created At: ${event.createdAt}"</p>-->
+
+                                   
+                                    <!-- Interest Button -->
+                                    <div class="interest-button">
+                                        <c:choose>
+                                            <c:when test="${event.isInterest}">
+                                                <form action="${pageContext.request.contextPath}/interested" method="post">
+                                                    <input type="hidden" name="eventId" value="${event.eventId}">
+                                                    <input type="hidden" name="action" value="cancel">
+                                                    <button type="submit" class="btn rounded btn-secondary">Interested</button>
+                                                </form>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <form action="${pageContext.request.contextPath}/interested" method="post">
+                                                    <input type="hidden" name="eventId" value="${event.eventId}">
+                                                    <input type="hidden" name="action" value="add">
+                                                    <button type="submit" class="btn rounded btn-primary w-100">Interest</button>
+                                                </form>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </div>
+                                </div>
+                            </a>
                         </div>
                     </div>
-                </div>
-            </c:forEach>
-        </c:if>
+                </c:forEach>
+            </c:if>
+        </div>
+        <div class="col-12 col-md-6 p-3">
+            <h3>Event Calendar</h3>
+            <hr/>
+            <div id="calendar"></div>
+        </div>
     </div>
 
     <!-- Modal for editing event -->
@@ -117,7 +123,7 @@
             <div class="modal-content px-3 py-2">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editEventModalLabel">Edit Event</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="rounded btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="editEventForm" action="${pageContext.request.contextPath}/updateEvent" method="post" enctype="multipart/form-data">
                     <div class="modal-body">
@@ -127,27 +133,27 @@
 
                         <div class="form-group my-2">
                             <label for="editEventTitle">Title:</label>
-                            <input type="text" class="form-control" id="editEventTitle" name="title" required>
+                            <input type="text" class="rounded mb-3 form-control" id="editEventTitle" name="title" required>
                         </div>
 
                         <div class="form-group my-2">
                             <label for="editEventDescription">Description:</label>
-                            <textarea class="form-control" id="editEventDescription" name="description" rows="3" required></textarea>
+                            <textarea class="rounded mb-3 form-control" id="editEventDescription" name="description" rows="3" required></textarea>
                         </div>
 
                         <div class="form-group my-2">
                             <label for="editEventStartDate">Start Date:</label>
-                            <input type="datetime-local" class="form-control" id="editEventStartDate" name="startDate" required>
+                            <input type="datetime-local" class="rounded mb-3 form-control" id="editEventStartDate" name="startDate" required>
                         </div>
 
                         <div class="form-group my-2">
                             <label for="editEventEndDate">End Date:</label>
-                            <input type="datetime-local" class="form-control" id="editEventEndDate" name="endDate" required>
+                            <input type="datetime-local" class="rounded mb-3 form-control" id="editEventEndDate" name="endDate" required>
                         </div>
 
                         <div class="form-group my-2">
                             <label for="editEventLocation">Location:</label>
-                            <select class="form-control" id="editEventLocation" name="location" required>
+                            <select class="rounded mb-3 form-control" id="editEventLocation" name="location" required>
                                 <option value="Đại học FPT Hà Nội" ${event.location == 'Đại học FPT Hà Nội' ? 'selected' : ''}>Đại học FPT Hà Nội</option>
                                 <option value="Đại học FPT HCM" ${event.location == 'Đại học FPT HCM' ? 'selected' : ''}>Đại học FPT HCM</option>
                                 <option value="Đại học FPT Đà Nẵng" ${event.location == 'Đại học FPT Đà Nẵng' ? 'selected' : ''}>Đại học FPT Đà Nẵng</option>
@@ -157,12 +163,12 @@
 
                         <div class="form-group my-2">
                             <label for="editEventPlace">Place:</label>
-                            <input type="text" class="form-control" id="editEventPlace" name="place" required>
+                            <input type="text" class="rounded mb-3 form-control" id="editEventPlace" name="place" required>
                         </div>
 
                         <div class="form-group my-2">
                             <label for="editEventUploadPath">Upload Image:</label>
-                            <input type="file" class="form-control" id="editEventUploadPath" name="newUploadPath">
+                            <input type="file" class="rounded mb-3 form-control" id="editEventUploadPath" name="newUploadPath">
                         </div>
 
                         <div class="form-group my-2">
@@ -171,8 +177,8 @@
                         </div>
                     </div>
                     <div class="modal-footer my-2">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
+                        <button type="button" class="btn fsecondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn rounded btn-primary">Save changes</button>
                     </div>
                 </form>
             </div>
@@ -180,37 +186,37 @@
     </div>
 
     <!-- Modal for add new event -->
-    <div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade rounded" id="addEventModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content px-3 py-2">
-                <div class="modal-header">
+                <div class="modal-header px-0">
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Add new event</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="rounded btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div id="eventForm" class="row mt-3">
+                    <div id="eventForm" class="row">
                         <div class="col-md-12">
-                            <h2>Add Event</h2>
+
                             <form action="addEvent" method="POST" enctype="multipart/form-data">
                                 <div class="form-group my-2">
                                     <label for="title">Title</label>
-                                    <input type="text" class="form-control" id="title" name="title" required>
+                                    <input type="text" class="rounded mb-3 form-control" id="title" name="title" required>
                                 </div>
                                 <div class="form-group my-2">
                                     <label for="description">Description</label>
-                                    <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                                    <textarea class="rounded mb-3 form-control" id="description" name="description" rows="3" required></textarea>
                                 </div>
                                 <div class="form-group my-2">
                                     <label for="startDate">Start Date</label>
-                                    <input type="datetime-local" class="form-control" id="startDate" name="start_date" required>
+                                    <input type="datetime-local" class="rounded mb-3 form-control" id="startDate" name="start_date" required>
                                 </div>
                                 <div class="form-group my-2">
                                     <label for="endDate">End Date</label>
-                                    <input type="datetime-local" class="form-control" id="endDate" name="end_date" required>
+                                    <input type="datetime-local" class="rounded mb-3 form-control" id="endDate" name="end_date" required>
                                 </div>
                                 <div class="form-group my-2">
                                     <label for="location">Location</label>
-                                    <select class="form-control" id="location" name="location">
+                                    <select class="rounded mb-3 form-control" id="location" name="location">
                                         <option value="Đại học FPT Hà Nội" ${event.location == 'Đại học FPT Hà Nội' ? 'selected' : ''}>Đại học FPT Hà Nội</option>
                                         <option value="Đại học FPT HCM" ${event.location == 'Đại học FPT HCM' ? 'selected' : ''}>Đại học FPT HCM</option>
                                         <option value="Đại học FPT Đà Nẵng" ${event.location == 'Đại học FPT Đà Nẵng' ? 'selected' : ''}>Đại học FPT Đà Nẵng</option>
@@ -219,15 +225,15 @@
                                 </div>
                                 <div class="form-group my-2">
                                     <label for="place">Place</label>
-                                    <input type="text" class="form-control" id="place" name="place">
+                                    <input type="text" class="rounded mb-3 form-control" id="place" name="place">
                                 </div>
                                 <div class="form-group my-2">
                                     <label for="image">Image</label>
-                                    <input type="file" class="form-control-file" id="image" name="upload_path" required>
+                                    <input type="file" class="rounded mb-3 form-control-file" id="image" name="upload_path" required>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="submit" class="btn btn-success my-2">Submit</button>
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn rounded btn-success my-2">Submit</button>
+                                    <button type="button" class="btn rounded btn-secondary" data-bs-dismiss="modal">Close</button>
                                 </div>                                   
                             </form>
                         </div>

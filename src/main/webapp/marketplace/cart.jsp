@@ -1,5 +1,17 @@
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" import="model.*" import="model.DAO.*"%>
 <%@ include file="../include/header.jsp" %>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Page Title</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <!-- SweetAlert JS -->
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+</head>
+
 <style>
     .shop-group {
         padding: 20px; /* Padding inside the box */
@@ -18,9 +30,31 @@
     .shop-name a:visited {
         color: inherit; /* Màu chữ của liên kết đã truy cập, kế thừa từ thẻ cha (.shop-name) */
     }
+    .responsive-text {
+        font-size: calc(2px + 0.8vw);
+        min-font-size: 5px;
+        max-font-size: 12px;
+    }
+
+
 
 </style>
 <body>
+    <script>
+        // Check if the message variable is set or not
+        document.addEventListener("DOMContentLoaded", (event) => {
+            var errorMessage = "${message}";
+            // Kiểm tra nếu errorMessage không rỗng, hiển thị thông báo lỗi
+            if (errorMessage != "") {
+                swal({
+                    title: "Error!",
+                    text: errorMessage,
+                    icon: "error",
+                    button: "OK",
+                });
+            }
+        });
+    </script>
 
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
          data-sidebar-position="fixed" data-header-position="fixed">
@@ -67,7 +101,7 @@
                 <c:if test="${not empty ORDERITEMLIST}">
                     <div class="row card-group" id="billing">                    
                         <div class="col-md-6 rounded">
-                            <div class="mx-2 ">
+                            <div class="mx-3 ">
                                 <!--loop this-->
                                 <form action="confirmorder" method="post">
 
@@ -81,7 +115,7 @@
                                                 <!-- Close the previous shop group and add discount/total sections -->
                                                 <div id="discountSection-${previousShopId}" style="display: none;">
                                                     <label class="form-label mt-3" for="typeText">Discount</label>
-                                                    <select id="discountSelect-${previousShopId}" class="form-control discountSelect" name="discountSelect" data-shop-id="${previousShopId}" onchange="updateDiscount('${previousShopId}')">
+                                                    <select id="discountSelect-${previousShopId}" class="rounded form-control discountSelect" name="discountSelect" data-shop-id="${previousShopId}" onchange="updateDiscount('${previousShopId}')">
                                                         <option value="" data-percent="0" data-condition="0">No Discount</option>
                                                         <c:forEach var="discount" items="${Shop_DB.getAllDiscountOrder(USER.userId, previousShopId)}">
                                                             <option value="${discount.discountId}" data-percent="${discount.discountPercent}" data-condition="${discount.condition}">Giảm ${discount.discountPercent}% đơn từ ${discount.condition}VNĐ</option>
@@ -105,7 +139,7 @@
                                                 </div>
                                         </div> <!-- Close the previous shop group -->
                                     </c:if>
-                                    <div class="shop-group rounded card">
+                                    <div class="shop-group rounded shadow rounded border">
                                         <h3 class="shop-name">
                                             <a href="${pageContext.request.contextPath}/marketplace/allshop/shopdetail?shopid=${currentShopId}">
                                                 <i class="ti ti-basket"></i> <!-- Icon before -->
@@ -116,7 +150,7 @@
                                         <hr>
                                     </c:if>
 
-                                    <div class="card mb-3 rounded card">
+                                    <div class="shadow mb-3 rounded ">
                                         <div class="card-body">
                                             <div class="d-flex justify-content-between">
                                                 <div class="d-flex flex-row align-items-center">
@@ -133,22 +167,24 @@
                                                 <div class="d-flex flex-row align-items-center">
                                                     <div class="mx-1" style="width: 70px;">
                                                         <c:if test="${product.quantity > 0}">
-                                                            <input data-action="update" type="number" name="quantity" class="form-control" value="${item.quantity}" min="1" max="${product.quantity}" oninput="handleQuantityChange('${item.getOrderItem_id()}', this.value)">
+                                                            <input data-action="update" type="number" name="quantity" class="rounded form-control" value="${item.quantity}" min="1" max="${product.quantity}" oninput="handleQuantityChange('${item.getOrderItem_id()}', this.value)">
                                                             <c:if test="${item.quantity == product.quantity}">
                                                                 <p class="text-danger position-absolute">Quantity was maximum</p>
                                                             </c:if>
                                                         </c:if>
                                                         <c:if test="${product.quantity == 0}">
-                                                            <input type="number" class="form-control" name="quantity" value="0" readonly>
+                                                            <input type="number" class="rounded form-control" name="quantity" value="0" readonly>
                                                             <p style="font-size: 11px;" class="text-danger position-absolute">This product had sold out! Please delete!</p>
                                                         </c:if>
                                                     </div>
                                                     <c:set var="totalPrice1" value="${item.quantity * item.price}" />
-                                                    <div class="mx-1" style="width: 80px;">
-                                                        <h5 class="mb-0">${totalPrice1}</h5>
+                                                    <div class="mx-1" style="width: 80px; display: flex; justify-content: center; align-items: center;">
+                                                        <h5 class="mb-0 responsive-text">${totalPrice1}</h5>
                                                     </div>
                                                     <c:set var="totalPrice" value="${totalPrice1 + totalPrice}" />
-                                                    <a class="mx-1" onclick="moveOutProductFromCart('${item.getOrderItem_id()}')" style="color: #cecece;" data-action="delete"><i class="fas fa-trash-alt"></i></a>
+                                                    <a class="mx-1" onclick="moveOutProductFromCart('${item.getOrderItem_id()}')" data-action="delete">
+                                                        <i class="fas fa-trash"></i>
+                                                    </a>
                                                 </div>
                                             </div>
                                         </div>
@@ -161,7 +197,7 @@
                                 <c:if test="${previousShopId != -1}">
                                     <div id="discountSection-${previousShopId}" style="display: none;">
                                         <label class="form-label mt-3" for="typeText">Discount</label>
-                                        <select id="discountSelect-${previousShopId}" class="form-control discountSelect" name="discountSelect" data-shop-id="${previousShopId}" onchange="updateDiscount('${previousShopId}')">
+                                        <select id="discountSelect-${previousShopId}" class="rounded form-control discountSelect" name="discountSelect" data-shop-id="${previousShopId}" onchange="updateDiscount('${previousShopId}')">
                                             <option value="" data-percent="0" data-condition="0">No Discount</option>
                                             <c:forEach var="discount" items="${Shop_DB.getAllDiscountOrder(USER.userId, previousShopId)}">
                                                 <option value="${discount.discountId}" data-percent="${discount.discountPercent}" data-condition="${discount.condition}">Giảm ${discount.discountPercent}% đơn từ ${discount.condition}VNĐ</option>
@@ -192,8 +228,8 @@
                         </div>
                     </div>
 
-                    <div class="col-md-6">
-                        <div class="card rounded">
+                    <div class="col-md-6 pe-3">
+                        <div class=" rounded shadow border card-group">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-4">
                                     <h5 class="mb-0">Billing</h5>
@@ -201,21 +237,21 @@
                                 <div class="col-md-12">
                                     <div class="form-outline form-white">
                                         <label class="form-label" for="typeText">Full Name </label>
-                                        <input name="fullname" class="form-control form-control" placeholder="Full Name" value="${USER.userFullName}" readonly> 
+                                        <input name="fullname" class="rounded form-control" placeholder="Full Name" value="${USER.userFullName}" readonly> 
 
                                         <label class="form-label mt-3" for="typeText">Phone</label>
-                                        <input name="phone" class="form-control form-control" placeholder="Phone" required>
+                                        <input name="phone" class="rounded form-control" placeholder="Phone" required>
 
                                         <c:set var="shop" value="${Shop_DB.getShopHaveStatusIs1ByShopID(product.getShopId())}" />
                                         <label hidden class="form-label mt-3" for="typeText">Shop</label>
-                                        <input name="shopid" class="form-control form-control" placeholder="shopid" value="${shop.shopID}" hidden>
+                                        <input name="shopid" class="rounded form-control" placeholder="shopid" value="${shop.shopID}" hidden>
 
                                         <label class="form-label mt-3" for="typeText">Campus</label>
-                                        <input name="campus" class="form-control form-control" placeholder="Campus" value="${shop.campus}" readonly>
+                                        <input name="campus" class="rounded form-control" placeholder="Campus" value="${shop.campus}" readonly>
 
 
                                         <label class="form-label mt-3" for="typeText">Note</label>
-                                        <input name="note" class="form-control" placeholder="Note" rows="4">
+                                        <input name="note" class="rounded form-control" placeholder="Note" rows="4">
                                     </div>
                                 </div>
 
@@ -225,11 +261,11 @@
 
                                 <div class="mb-3" hidden="">
                                     <label class="form-label">Total</label>
-                                    <input type="text" class="form-control" id="totalInput" name="total" value="0">
+                                    <input type="text" class="rounded form-control" id="totalInput" name="total" value="0">
                                 </div>
                                 <input type="hidden" name="action" value="confirm1">
                                 <div class="d-flex justify-content-between">
-                                    <button style="margin-top: 30px;" type="submit" class="btn btn-info btn-block btn-lg">
+                                    <button stype="submit" class="rounded btn btn-info btn-block btn-lg mt-4">
                                         <span id="checkoutTotal">0 VND</span>
                                         <span>Checkout <i class="fas fa-long-arrow-alt-right ms-2"></i></span>
                                     </button>                                                    
@@ -243,252 +279,244 @@
         </div>
     </div>
 </div>
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<!--<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>-->
 
 <script>
-                                            var selectedItemsMap = new Map();
-                                            var selectedDiscounts = [];
+    function listenForQuantityChange() {
+        console.log(1);
+        loadAd();
+    }
+    var selectedItemsMap = new Map();
+    var selectedDiscounts = [];
 
-                                            function handleQuantityChange(orderItemId, newQuantity) {
-                                                // Nếu newQuantity là null hoặc rỗng, gán giá trị là 0
-                                                if (!newQuantity) {
-                                                    newQuantity = 0;
-                                                }
+    function handleQuantityChange(orderItemId, newQuantity) {
+        // Nếu newQuantity là null hoặc rỗng, gán giá trị là 0
+        if (!newQuantity) {
+            newQuantity = 0;
+        }
 
-                                                var data = {
-                                                    action: "update",
-                                                    orderItemId: orderItemId,
-                                                    newQuantity: newQuantity
-                                                };
+        var data = {
+            action: "update",
+            orderItemId: orderItemId,
+            newQuantity: newQuantity
+        };
 
-                                                $.ajax({
-                                                    url: 'cart',
-                                                    type: 'POST',
-                                                    data: data,
-                                                    dataType: 'json',
-                                                    success: function (response) {
-                                                        if (response.success) {
-                                                            location.reload();
-                                                        } else {
-                                                            swal("Error!", response.message, "error");
-                                                        }
-                                                    },
-                                                    error: function (xhr, status, error) {
-                                                        swal("Error!", "Unable to update the item quantity.", "error");
-                                                    }
-                                                });
-                                            }
+        $.ajax({
+            url: 'cart',
+            type: 'POST',
+            data: data,
+            dataType: 'json',
+            success: function (response) {
+                if (response.success) {
+                    location.reload();
+                } else {
+                    swal("Error!", response.message, "error");
+                }
+            },
+            error: function (xhr, status, error) {
+                swal("Error!", "Unable to update the item quantity.", "error");
+            }
+        });
+    }
 
-                                            function moveOutProductFromCart(id) {
-                                                swal({
-                                                    title: "Are you sure?",
-                                                    text: "Once deleted, you will not be able to recover this item!",
-                                                    icon: "warning",
-                                                    buttons: true,
-                                                    dangerMode: true,
-                                                }).then((willDelete) => {
-                                                    if (willDelete) {
-                                                        $.ajax({
-                                                            url: 'cart',
-                                                            type: 'POST',
-                                                            data: {id: id, action: 'delete'},
-                                                            dataType: 'json',
-                                                            success: function (response) {
-                                                                if (response.success) {
-                                                                    swal("Success! Your item has been removed from the cart!", {
-                                                                        icon: "success",
-                                                                    }).then(() => {
-                                                                        location.reload();
-                                                                    });
-                                                                } else {
-                                                                    swal("Error! Unable to remove the item from the cart.", {
-                                                                        icon: "error",
-                                                                    });
-                                                                }
-                                                            },
-                                                            error: function (xhr, status, error) {
-                                                                swal("Error! Unable to remove the item from the cart.", {
-                                                                    icon: "error",
-                                                                });
-                                                            }
-                                                        });
-                                                    } else {
-                                                        swal("Your item is safe!");
-                                                    }
-                                                });
-                                            }
+    function moveOutProductFromCart(id) {
+        swal({
+            title: "Are you sure?",
+            text: "Once deleted, you will not be able to recover this item!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                $.ajax({
+                    url: 'cart',
+                    type: 'POST',
+                    data: {id: id, action: 'delete'},
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.success) {
+                            swal("Success! Your item has been removed from the cart!", {
+                                icon: "success",
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            swal("Error! Unable to remove the item from the cart.", {
+                                icon: "error",
+                            });
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        swal("Error! Unable to remove the item from the cart.", {
+                            icon: "error",
+                        });
+                    }
+                });
+            } else {
+                swal("Your item is safe!");
+            }
+        });
+    }
 
-                                            function updateSummary(shopId) {
-                                                var subtotal = 0;
-                                                var selectedItems = selectedItemsMap.get(shopId) || new Set();
+    function updateSummary(shopId) {
+        var subtotal = 0;
+        var selectedItems = selectedItemsMap.get(shopId) || new Set();
 
-                                                selectedItems.forEach(function (item) {
-                                                    subtotal += item.quantity * item.price;
-                                                });
+        selectedItems.forEach(function (item) {
+            subtotal += item.quantity * item.price;
+        });
 
-                                                var subtotalElement = document.getElementById("subtotal-" + shopId);
-                                                var discountSection = document.getElementById("discountSection-" + shopId);
-                                                var discountSelect = document.getElementById("discountSelect-" + shopId);
-                                                var discountFeeElement = document.getElementById("discountFee-" + shopId);
-                                                var totalFeeElement = document.getElementById("totalFee-" + shopId);
+        var subtotalElement = document.getElementById("subtotal-" + shopId);
+        var discountSection = document.getElementById("discountSection-" + shopId);
+        var discountSelect = document.getElementById("discountSelect-" + shopId);
+        var discountFeeElement = document.getElementById("discountFee-" + shopId);
+        var totalFeeElement = document.getElementById("totalFee-" + shopId);
 
-                                                if (!subtotalElement || !discountSection || !discountSelect || !discountFeeElement || !totalFeeElement) {
-                                                    console.error(`Missing elements for shopId: ${shopId}`);
-                                                    return;
-                                                }
+        if (!subtotalElement || !discountSection || !discountSelect || !discountFeeElement || !totalFeeElement) {
+            console.error(`Missing elements for shopId: ${shopId}`);
+            return;
+        }
 
-                                                subtotalElement.textContent = subtotal.toFixed(2) + ' VND';
+        subtotalElement.textContent = subtotal.toFixed(2) + ' VND';
 
-                                                discountSection.style.display = selectedItems.size === 0 ? 'none' : 'block';
-                                                discountSelect.disabled = selectedItems.size === 0;
-                                                if (selectedItems.size === 0) {
-                                                    discountSelect.value = ""; // Reset discount to "No Discount"
-                                                }
-                                                filterDiscountOptions(shopId, subtotal);
-                                                updateDiscount(shopId);
-                                            }
+        discountSection.style.display = selectedItems.size === 0 ? 'none' : 'block';
+        discountSelect.disabled = selectedItems.size === 0;
+        if (selectedItems.size === 0) {
+            discountSelect.value = ""; // Reset discount to "No Discount"
+        }
+        filterDiscountOptions(shopId, subtotal);
+        updateDiscount(shopId);
+    }
 
-                                            function filterDiscountOptions(shopId, subtotal) {
-                                                var discountSelect = document.getElementById("discountSelect-" + shopId);
+    function filterDiscountOptions(shopId, subtotal) {
+        var discountSelect = document.getElementById("discountSelect-" + shopId);
 
-                                                if (!discountSelect) {
-                                                    console.error(`Missing discountSelect element for shopId: ${shopId}`);
-                                                    return;
-                                                }
+        if (!discountSelect) {
+            console.error(`Missing discountSelect element for shopId: ${shopId}`);
+            return;
+        }
 
-                                                var options = discountSelect.options;
+        var options = discountSelect.options;
 
-                                                for (var i = options.length - 1; i >= 0; i--) {
-                                                    var condition = parseFloat(options[i].getAttribute("data-condition"));
-                                                    if (subtotal >= condition) {
-                                                        options[i].disabled = false;
-                                                        options[i].style.display = 'block';
-                                                    } else {
-                                                        options[i].disabled = true;
-                                                        options[i].style.display = 'none';
-                                                    }
-                                                }
-                                            }
+        for (var i = options.length - 1; i >= 0; i--) {
+            var condition = parseFloat(options[i].getAttribute("data-condition"));
+            if (subtotal >= condition) {
+                options[i].disabled = false;
+                options[i].style.display = 'block';
+            } else {
+                options[i].disabled = true;
+                options[i].style.display = 'none';
+            }
+        }
+    }
 
-                                            function updateDiscount(shopId) {
-                                                var discountSelect = document.getElementById("discountSelect-" + shopId);
-                                                var subtotalElement = document.getElementById("subtotal-" + shopId);
-                                                var discountFeeElement = document.getElementById("discountFee-" + shopId);
-                                                var totalFeeElement = document.getElementById("totalFee-" + shopId);
+    function updateDiscount(shopId) {
+        var discountSelect = document.getElementById("discountSelect-" + shopId);
+        var subtotalElement = document.getElementById("subtotal-" + shopId);
+        var discountFeeElement = document.getElementById("discountFee-" + shopId);
+        var totalFeeElement = document.getElementById("totalFee-" + shopId);
 
-                                                if (!discountSelect || !subtotalElement || !discountFeeElement || !totalFeeElement) {
-                                                    console.error(`Missing elements for shopId: ${shopId}`);
-                                                    return;
-                                                }
+        if (!discountSelect || !subtotalElement || !discountFeeElement || !totalFeeElement) {
+            console.error(`Missing elements for shopId: ${shopId}`);
+            return;
+        }
 
-                                                var selectedOption = discountSelect.options[discountSelect.selectedIndex];
-                                                var subtotal = parseFloat(subtotalElement.textContent);
-                                                var discountFee = 0;
+        var selectedOption = discountSelect.options[discountSelect.selectedIndex];
+        var subtotal = parseFloat(subtotalElement.textContent);
+        var discountFee = 0;
 
-                                                if (selectedOption && selectedOption.value !== "") {
-                                                    var percent = parseFloat(selectedOption.getAttribute("data-percent"));
-                                                    discountFee = (percent * subtotal / 100).toFixed(2);
-                                                    discountFeeElement.textContent = '-' + discountFee + ' VND';
-                                                } else {
-                                                    discountFeeElement.textContent = '-0.00 VND';
-                                                }
+        if (selectedOption && selectedOption.value !== "") {
+            var percent = parseFloat(selectedOption.getAttribute("data-percent"));
+            discountFee = (percent * subtotal / 100).toFixed(2);
+            discountFeeElement.textContent = '-' + discountFee + ' VND';
+        } else {
+            discountFeeElement.textContent = '-0.00 VND';
+        }
 
-                                                var newTotal = subtotal - parseFloat(discountFee);
-                                                totalFeeElement.textContent = newTotal.toFixed(2) + ' VND';
+        var newTotal = subtotal - parseFloat(discountFee);
+        totalFeeElement.textContent = newTotal.toFixed(2) + ' VND';
 
-                                                updateCheckoutTotal();
+        updateCheckoutTotal();
 
-                                                // Update selected discounts array
-                                                var discountId = selectedOption && selectedOption.value !== "" ? selectedOption.value : "0";
-                                                var existingDiscount = selectedDiscounts.find(discount => discount.shopId === shopId);
-                                                if (existingDiscount) {
-                                                    existingDiscount.discountId = discountId;
-                                                    existingDiscount.total = newTotal;
-                                                } else {
-                                                    selectedDiscounts.push({shopId: shopId, discountId: discountId, total: newTotal});
-                                                }
-                                            }
+        // Update selected discounts array
+        var discountId = selectedOption && selectedOption.value !== "" ? selectedOption.value : "0";
+        var existingDiscount = selectedDiscounts.find(discount => discount.shopId === shopId);
+        if (existingDiscount) {
+            existingDiscount.discountId = discountId;
+            existingDiscount.total = newTotal;
+        } else {
+            selectedDiscounts.push({shopId: shopId, discountId: discountId, total: newTotal});
+        }
+    }
 
-                                            function updateCheckoutTotal() {
-                                                var totalFees = 0;
-                                                document.querySelectorAll('[id^="totalFee-"]').forEach(function (totalFeeElement) {
-                                                    var total = parseFloat(totalFeeElement.textContent);
-                                                    if (!isNaN(total)) {
-                                                        totalFees += total;
-                                                    }
-                                                });
+    function updateCheckoutTotal() {
+        var totalFees = 0;
+        document.querySelectorAll('[id^="totalFee-"]').forEach(function (totalFeeElement) {
+            var total = parseFloat(totalFeeElement.textContent);
+            if (!isNaN(total)) {
+                totalFees += total;
+            }
+        });
 
-                                                document.getElementById("checkoutTotal").textContent = totalFees.toFixed(2) + ' VND';
-                                                document.getElementById("totalInput").value = totalFees.toFixed(2);
-                                            }
+        document.getElementById("checkoutTotal").textContent = totalFees.toFixed(2) + ' VND';
+        document.getElementById("totalInput").value = totalFees.toFixed(2);
+    }
 
-                                            document.addEventListener("DOMContentLoaded", (event) => {
-                                                var checkboxes = document.querySelectorAll('.orderItemCheckbox');
-                                                checkboxes.forEach(function (checkbox) {
-                                                    checkbox.addEventListener('change', function () {
-                                                        var itemId = this.dataset.itemId;
-                                                        var shopId = this.getAttribute("data-shop-id");
-                                                        var item = {
-                                                            id: this.dataset.itemId,
-                                                            price: parseFloat(this.dataset.itemPrice),
-                                                            quantity: parseInt(this.dataset.itemQuantity),
-                                                            productQuantity: parseInt(this.dataset.productQuantity)
-                                                        };
+    document.addEventListener("DOMContentLoaded", (event) => {
+        var checkboxes = document.querySelectorAll('.orderItemCheckbox');
+        checkboxes.forEach(function (checkbox) {
+            checkbox.addEventListener('change', function () {
+                var itemId = this.dataset.itemId;
+                var shopId = this.getAttribute("data-shop-id");
+                var item = {
+                    id: this.dataset.itemId,
+                    price: parseFloat(this.dataset.itemPrice),
+                    quantity: parseInt(this.dataset.itemQuantity),
+                    productQuantity: parseInt(this.dataset.productQuantity)
+                };
 
-                                                        if (!selectedItemsMap.has(shopId)) {
-                                                            selectedItemsMap.set(shopId, new Set());
-                                                        }
+                if (!selectedItemsMap.has(shopId)) {
+                    selectedItemsMap.set(shopId, new Set());
+                }
 
-                                                        var selectedItems = selectedItemsMap.get(shopId);
+                var selectedItems = selectedItemsMap.get(shopId);
 
-                                                        if (this.checked) {
-                                                            selectedItems.add(item);
-                                                        } else {
-                                                            selectedItems.forEach(function (selectedItem) {
-                                                                if (selectedItem.id === item.id) {
-                                                                    selectedItems.delete(selectedItem);
-                                                                }
-                                                            });
-                                                        }
+                if (this.checked) {
+                    selectedItems.add(item);
+                } else {
+                    selectedItems.forEach(function (selectedItem) {
+                        if (selectedItem.id === item.id) {
+                            selectedItems.delete(selectedItem);
+                        }
+                    });
+                }
 
-                                                        updateSummary(shopId);
-                                                    });
-                                                });
+                updateSummary(shopId);
+            });
+        });
 
-                                                // Initial call to hide the discount select box if no items are selected
-                                                checkboxes.forEach(function (checkbox) {
-                                                    var shopId = checkbox.getAttribute("data-shop-id");
-                                                    updateSummary(shopId);
-                                                });
-                                            });
+        // Initial call to hide the discount select box if no items are selected
+        checkboxes.forEach(function (checkbox) {
+            var shopId = checkbox.getAttribute("data-shop-id");
+            updateSummary(shopId);
+        });
+    });
 
 // Append discount information to the form before submission
-                                            document.querySelector('form[action="confirmorder"]').addEventListener('submit', function (e) {
-                                                var discountInput = document.createElement('input');
-                                                discountInput.type = 'hidden';
-                                                discountInput.name = 'selectedDiscounts';
-                                                discountInput.value = JSON.stringify(selectedDiscounts);
-                                                this.appendChild(discountInput);
-                                            });
+    document.querySelector('form[action="confirmorder"]').addEventListener('submit', function (e) {
+        var discountInput = document.createElement('input');
+        discountInput.type = 'hidden';
+        discountInput.name = 'selectedDiscounts';
+        discountInput.value = JSON.stringify(selectedDiscounts);
+        this.appendChild(discountInput);
+    });
 
-                                            window.onload = function () {
-                                                listenForQuantityChange();
-                                            }
+    window.onload = function () {
+        listenForQuantityChange();
+    }
 
 
-                                            // Check if the message variable is set or not
-                                            document.addEventListener("DOMContentLoaded", (event) => {
-                                                var errorMessage = "${message}";
-                                                // Kiểm tra nếu errorMessage không rỗng, hiển thị thông báo lỗi
-                                                if (errorMessage != "") {
-                                                    swal({
-                                                        title: "Error!",
-                                                        text: errorMessage,
-                                                        icon: "error",
-                                                        button: "OK",
-                                                    });
-                                                }
-                                            });
+
 </script>
 
 </body>
