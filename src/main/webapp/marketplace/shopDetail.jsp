@@ -151,17 +151,17 @@
                                 <c:set var="countorder" value="${Shop_DB.countSuccessAndCompletedOrdersByShopID(shop.shopID)}" />
                                 <div class="row thongtin">
                                     <div class="col-md-6">
-                                        <p style="font-size: 15px;  line-height: 2.0;" class="card-text"><i class="fas fa-check-circle"></i> Đã hoàn thành: ${countorder} Đơn</p>
+                                        <p style="font-size: 15px;  line-height: 2.0;" class="card-text"><i class="fas fa-check-circle"></i> Completed: ${countorder} Đơn</p>
                                         <p style="font-size: 15px;  line-height: 2.0;" class="card-text"><i class="fas fa-phone"></i> ${shop.phone}</p>
                                     </div>
                                     <div class="col-md-6">
                                         <p style="font-size: 15px;  line-height: 2.0;" class="card-text"><i class="fas fa-map-marker-alt"></i> ${shop.campus}</p>
-                                        <p style="font-size: 15px;  line-height: 2.0;" class="card-text"><i class="fas fa-info-circle"></i> Giới thiệu: ${shop.description}</p>
+                                        <p style="font-size: 15px;  line-height: 2.0;" class="card-text"><i class="fas fa-info-circle"></i> Description: ${shop.description}</p>
                                     </div>
                                 </div>
 
                                 <c:if test="${shop.ownerID != USER.userId}">
-                                    <a href="${pageContext.request.contextPath}/marketplace/confirmcontinue?shopid=${shopid}" class="btn btn-primary">Tiếp tục mua</a>
+                                    <a href="${pageContext.request.contextPath}/marketplace/confirmcontinue?shopid=${shopid}" class="btn btn-primary">Continue shopping</a>
                                 </c:if>
                             </div>
                         </div>

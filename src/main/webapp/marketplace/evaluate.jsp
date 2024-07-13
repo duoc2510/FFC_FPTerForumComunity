@@ -93,7 +93,7 @@
                         <div class="card w-100">
                             <div class="card-body p-4">
                                 <div class="container">
-                                    <h2 class="my-3 text-center"><i class="fas fa-star"></i> Đánh giá đơn hàng</h2>
+                                    <h2 class="my-3 text-center"><i class="fas fa-star"></i> Rate Your Order</h2>
                                     <form action="product" method="post">
                                         <div class="form-group my-3 text-center">
                                             <div class="star-rating">

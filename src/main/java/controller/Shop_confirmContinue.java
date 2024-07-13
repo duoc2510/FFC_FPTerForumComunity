@@ -17,6 +17,7 @@ import model.DAO.Shop_DB;
 import model.DAO.User_DB;
 import model.Discount;
 import model.Order;
+import model.OrderDiscount;
 import model.OrderItem;
 import model.Product;
 import model.Shop;
@@ -130,14 +131,17 @@ public class Shop_confirmContinue extends HttpServlet {
         }
 
         // Check if the discount is expired or has reached its usage limit
-        if (o.getDiscountid() != 0) {
-            Discount discount = sdb.getDiscountByID(o.getDiscountid());
-            if (discount.getValidTo().before(new Date())) {
-                isDiscountExpired = true;
-                discountMessage = "Your discount code has expired.";
-            } else if (discount.getUsageLimit() <= 0) {
-                isDiscountLimitReached = true;
-                discountMessage = "The discount limit has been reached.";
+        ArrayList<OrderDiscount> orderdislist = sdb.getAllOrderDiscountByOrderID(o.getOrder_ID());
+        for (OrderDiscount ord : orderdislist) {
+            if (ord.getDiscountID() != 0) {
+                Discount discount = sdb.getDiscountByID(ord.getDiscountID());
+                if (discount.getValidTo().before(new Date())) {
+                    isDiscountExpired = true;
+                    discountMessage = "Your discount code has expired.";
+                } else if (discount.getUsageLimit() <= 0) {
+                    isDiscountLimitReached = true;
+                    discountMessage = "The discount limit has been reached.";
+                }
             }
         }
 
@@ -154,37 +158,42 @@ public class Shop_confirmContinue extends HttpServlet {
                 boolean updateSuccess = User_DB.updateWalletByEmail(user.getUserEmail(), user.getUserWallet() - o.getTotal());
 
                 // Return notification of money deduction here:
-                nw.saveNotificationToDatabaseWithStatusIsBalance(user.getUserId(), "Trừ tiền đơn hàng :" + o.getTotal(), "/walletbalance");
+                nw.saveNotificationToDatabaseWithStatusIsBalance(user.getUserId(), "Deduct the order amount :" + o.getTotal(), "/walletbalance");
                 // Check if there is a discount and update its usage
-                if (o.getDiscountid() != 0) {
-                    Discount discount = sdb.getDiscountByID(o.getDiscountid());
-                    sdb.updateUsageLimit(o.getDiscountid(), discount.getUsageLimit() - 1);
-                    sdb.updateUsageCount(o.getDiscountid(), discount.getUsageCount() + 1);
+                for (OrderDiscount ord : orderdislist) {
+
+                    if (ord.getDiscountID() != 0) {
+                        Discount discount = sdb.getDiscountByID(ord.getDiscountID());
+                        sdb.updateUsageLimit(ord.getDiscountID(), discount.getUsageLimit() - 1);
+                        sdb.updateUsageCount(ord.getDiscountID(), discount.getUsageCount() + 1);
+                    }
                 }
                 o.setPayment_status("dathanhtoan");
                 o.setStatus("Pending");
-                sdb.updateOrderbyID(o);
+                sdb.updateOrderByID(o);
 
                 Shop shop = sdb.getShopHaveStatusIs1ByShopID(shopidnew);
 
-                nw.saveNotificationToDatabase(shop.getOwnerID(), "Shop của bạn có đơn hàng mới!", "/marketplace/myshop");
-                nw.sendNotificationToClient(shop.getOwnerID(), "Shop của bạn có đơn hàng mới!", "/marketplace/myshop");
+                nw.saveNotificationToDatabase(shop.getOwnerID(), "Your shop has a new order!", "/marketplace/myshop");
+                nw.sendNotificationToClient(shop.getOwnerID(), "Your shop has a new order!", "/marketplace/myshop");
 
             } else {
                 // Check if there is a discount and update its usage
-                if (o.getDiscountid() != 0) {
-                    Discount discount = sdb.getDiscountByID(o.getDiscountid());
-                    sdb.updateUsageLimit(o.getDiscountid(), discount.getUsageLimit() - 1);
-                    sdb.updateUsageCount(o.getDiscountid(), discount.getUsageCount() + 1);
+                for (OrderDiscount ord : orderdislist) {
+                    if (ord.getDiscountID() != 0) {
+                        Discount discount = sdb.getDiscountByID(ord.getDiscountID());
+                        sdb.updateUsageLimit(ord.getDiscountID(), discount.getUsageLimit() - 1);
+                        sdb.updateUsageCount(ord.getDiscountID(), discount.getUsageCount() + 1);
+                    }
                 }
                 o.setPayment_status("thanhtoankhinhanhang");
                 o.setStatus("Pending");
-                sdb.updateOrderbyID(o);
+                sdb.updateOrderByID(o);
 
                 Shop shop = sdb.getShopHaveStatusIs1ByShopID(shopidnew);
 
-                nw.saveNotificationToDatabase(shop.getOwnerID(), "Shop của bạn có đơn hàng mới!", "/marketplace/myshop");
-                nw.sendNotificationToClient(shop.getOwnerID(), "Shop của bạn có đơn hàng mới!", "/marketplace/myshop");
+                nw.saveNotificationToDatabase(shop.getOwnerID(), "Your shop has a new order!", "/marketplace/myshop");
+                nw.sendNotificationToClient(shop.getOwnerID(), "Your shop has a new order!", "/marketplace/myshop");
             }
 
             // Retrieve the new order and set it in the session

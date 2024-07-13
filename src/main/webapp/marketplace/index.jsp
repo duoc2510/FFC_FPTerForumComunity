@@ -70,7 +70,7 @@
                 <div class="row mt-5 rounded px-3 py-5 shadow">
                     <div class="col-md-7 p-2">
                         <div>
-                            <h3 class="section-title"><i class="fas fa-store me-2"></i>FFC Shop - Nơi Trao Đổi Mua Bán Các Mặt Hàng Giữa FPTer</h3>
+                            <h3 class="section-title"><i class="fas fa-store me-2"></i>FFC Shop - The Place for FPTer to Buy and Sell Products</h3>
                             <div class="imgs-grid">
                                 <div class="grid grid-1 rounded"><img src="${pageContext.request.contextPath}/static/images/rank/sanpham.jpg"></div>
                                 <div class="grid grid-2 rounded"><img src="${pageContext.request.contextPath}/static/images/rank/sanpham2.jpg"></div>
@@ -80,15 +80,15 @@
                     </div>
                     <div class="col-md-5 p-4 d-flex align-items-center">
                         <div>
-                            <h3><i class="fas fa-shopping-cart me-2"></i>Rất Nhiều Sản Phẩm Đa Dạng</h3>
+                            <h3><i class="fas fa-shopping-cart me-2"></i>Various Products</h3>
                             <ul class="list-unstyled custom-list my-4">
-                                <li>Nhận ưu đãi đặc biệt, dịch vụ chăm sóc tận tâm</li>
-                                <li>Tiết kiệm chi phí mua hàng và giao hàng</li>
-                                <li>An tâm mua sắm với dịch vụ chăm sóc</li>
-                                <li>Tiện lợi, an toàn, trả tiền khi nhận hàng</li>
+                                <li>Receive special offers and attentive service</li>
+                                <li>Save on purchase and delivery costs</li>
+                                <li>Shop with peace of mind with attentive service</li>
+                                <li>Convenient, safe, pay on delivery</li>
                             </ul>
 
-                            <a href="${pageContext.request.contextPath}/martketplace/allshop" class="btn btn-primary btn-custom mt-3">Mua Ngay</a>
+                            <a href="${pageContext.request.contextPath}/martketplace/allshop" class="btn btn-primary btn-custom mt-3">Shop Now</a>
                         </div>
                     </div>
                 </div>
@@ -96,15 +96,15 @@
                 <div class="row mt-5 rounded px-3 py-5 shadow">
                     <div class="col-md-5 p-4 d-flex align-items-center">
                         <div>
-                            <h3 class="section-title"><i class="fas fa-medal me-2"></i>Hàng Ngàn Ưu Đãi Quyền Lợi Dành Cho Shop Owner</h3>
-                            <p>Tạo shop dễ dàng và bán hàng nhanh chóng</p>
+                            <h3 class="section-title"><i class="fas fa-medal me-2"></i>Thousands of Benefits for Shop Owners</h3>
+                            <p>Easy shop setup and fast sales</p>
                             <ul class="list-unstyled custom-list my-4">
-                                <li>Hỗ trợ voucher</li>
-                                <li>Bán hàng lành mạnh 2 bên cùng có lợi</li>
-                                <li>An tâm làm đối tác với nhau vì có sự minh bạch</li>
-                                <li>Bảo vệ quyền lợi cho Shop Owner</li>
+                                <li>Voucher support</li>
+                                <li>Healthy sales for mutual benefit</li>
+                                <li>Peace of mind with transparent partnerships</li>
+                                <li>Protection of Shop Owner rights</li>
                             </ul>
-                            <a href="${pageContext.request.contextPath}/marketplace/myshop" class="btn btn-primary btn-custom mt-3">Tham Gia Ngay</a>
+                            <a href="${pageContext.request.contextPath}/marketplace/myshop" class="btn btn-primary btn-custom mt-3">Join Now</a>
                         </div>
                     </div>
                     <div class="col-md-7 p-2">
@@ -130,14 +130,14 @@
                     </div>
                     <div class="col-12 col-md-5 p-4 d-flex align-items-center">
                         <div>
-                            <h3 class="section-title"><i class="fas fa-gift me-2"></i>Hàng Ngàn Voucher Hấp Dẫn</h3>
+                            <h3 class="section-title"><i class="fas fa-gift me-2"></i>Thousands of Attractive Vouchers</h3>
                             <ul class="list-unstyled custom-list my-4">
-                                <li>Nhận ưu đãi đặc biệt, hàng ngàn voucher miễn phí</li>
-                                <li>Chính sách mở hoàn toàn mới</li>
-                                <li>Lần đầu tiên xuất hiện: Leo rank cao, voucher khủng</li>
-                                <li>Đa dạng các loại voucher của shop và của hệ thống</li>
+                                <li>Receive special offers, thousands of free vouchers</li>
+                                <li>Completely new open policy</li>
+                                <li>First time ever: High rank, huge vouchers</li>
+                                <li>Various types of shop and system vouchers</li>
                             </ul>
-                            <a href="${pageContext.request.contextPath}/marketplace/cart" class="btn btn-primary btn-custom mt-3">Đi Đến Giỏ Hàng</a>
+                            <a href="${pageContext.request.contextPath}/marketplace/cart" class="btn btn-primary btn-custom mt-3">Go to Cart</a>
                         </div>
                     </div>
                 </div>

@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import model.DAO.User_DB;
+import model.OrderDiscount;
 
 /**
  *
@@ -105,6 +106,7 @@ public class Shop_confirmOrder extends HttpServlet {
 
                 // Get the selected discounts from the request
                 String selectedDiscountsJson = request.getParameter("selectedDiscounts");
+                String billingDiscount = request.getParameter("billingDiscount");
                 ArrayList<Discount> discountList = new ArrayList<>();
                 ArrayList<Order> orderList = new ArrayList<>();
                 Map<Integer, Double> shopTotals = new HashMap<>(); // To store totals per shop
@@ -115,18 +117,17 @@ public class Shop_confirmOrder extends HttpServlet {
                     try {
                         List<Map<String, Object>> selectedDiscounts = mapper.readValue(selectedDiscountsJson, List.class);
 
-                        // Print out the selected discounts for demonstration purposes
+                        // Process each discount
                         for (Map<String, Object> discount : selectedDiscounts) {
                             int discountShopId = Integer.parseInt((String) discount.get("shopId"));
                             int discountId = Integer.parseInt((String) discount.get("discountId"));
                             double total = Double.parseDouble(discount.get("total").toString());
 
-                            // Kiểm tra số lượng giới hạn của discount
+                            // Check discount usage limit
                             if (discountId != 0) {
                                 Discount discountObj = sdb.getDiscountByID(discountId);
                                 if (discountObj.getUsageLimit() <= 0) {
-                                    String msg = "The selected discount has run out, please choose another.";
-                                    session.setAttribute("message", msg);
+                                    session.setAttribute("message", "The selected discount has run out, please choose another.");
                                     response.sendRedirect("cart");
                                     return;
                                 }
@@ -136,20 +137,30 @@ public class Shop_confirmOrder extends HttpServlet {
                             discountList.add(dis);
                             shopTotals.put(discountShopId, total);
                         }
-
-                        // You can now use the selectedDiscounts list for further processing, such as applying discounts to the order, saving to the database, etc.
                     } catch (IOException e) {
                         e.printStackTrace();
-                        String msg = "Invalid discount data";
-                        session.setAttribute("message", msg);
+                        session.setAttribute("message", "Invalid discount data");
                         response.sendRedirect("cart");
                         return;
                     }
                 } else {
-                    String msg = "No discount data provided";
-                    session.setAttribute("message", msg);
+                    session.setAttribute("message", "No discount data provided");
                     response.sendRedirect("cart");
                     return;
+                }
+
+                // Process billing discount
+                int billingDiscountId = 0;
+                if (billingDiscount != null && !billingDiscount.isEmpty()) {
+                    billingDiscountId = Integer.parseInt(billingDiscount);
+                    if (billingDiscountId != 0) {
+                        Discount billingDiscountObj = sdb.getDiscountByID(billingDiscountId);
+                        if (billingDiscountObj.getUsageLimit() <= 0) {
+                            session.setAttribute("message", "The selected billing discount has run out, please choose another.");
+                            response.sendRedirect("cart");
+                            return;
+                        }
+                    }
                 }
 
                 boolean check = false;
@@ -178,12 +189,7 @@ public class Shop_confirmOrder extends HttpServlet {
                 }
 
                 if (!check) {
-                    Collections.sort(selectedOrderItems, new Comparator<OrderItem>() {
-                        @Override
-                        public int compare(OrderItem o1, OrderItem o2) {
-                            return Integer.compare(sdb.getProductByID(o1.getProductID()).getShopId(), sdb.getProductByID(o2.getProductID()).getShopId());
-                        }
-                    });
+                    selectedOrderItems.sort((o1, o2) -> Integer.compare(sdb.getProductByID(o1.getProductID()).getShopId(), sdb.getProductByID(o2.getProductID()).getShopId()));
 
                     int currentShopId = -1;
                     Order newOrder = null;
@@ -201,7 +207,7 @@ public class Shop_confirmOrder extends HttpServlet {
                                 }
                             }
 
-                            newOrder = new Order(user.getUserId(), itemShopId, null, "NotConfirm", total, discountId, null, null, 5, null, null);
+                            newOrder = new Order(user.getUserId(), itemShopId, null, "NotConfirm", total, null, null, 5, null, null);
                             sdb.addOrder(newOrder);
                             currentShopId = itemShopId;
                         }
@@ -212,18 +218,37 @@ public class Shop_confirmOrder extends HttpServlet {
                         }
                         createdOrder.setReceiverPhone(phone);
                         createdOrder.setNote(note);
-                        sdb.updateOrderbyID(createdOrder);
+                        if (billingDiscount != null && !billingDiscount.isEmpty()) {
+                            int billingDiscountId1 = Integer.parseInt(billingDiscount);
+                            Discount discountbill = sdb.getDiscountByID(billingDiscountId1);
+                            createdOrder.setTotal(createdOrder.getTotal() - (createdOrder.getTotal() * discountbill.getDiscountPercent() / 100));
+                        }
+
+                        sdb.updateOrderByID(createdOrder);
+
+                        // Add discounts only for the current shop's order
+                        for (Discount discount : discountList) {
+                            if (discount.getShopId() == currentShopId) {
+                                OrderDiscount od = new OrderDiscount(createdOrder.getOrder_ID(), discount.getDiscountId());
+                                sdb.addNewOrderDiscount(od);
+                            }
+                        }
+
+                        if (billingDiscountId != 0) {
+                            OrderDiscount billingDiscountOrder = new OrderDiscount(createdOrder.getOrder_ID(), billingDiscountId);
+                            sdb.addNewOrderDiscount(billingDiscountOrder);
+                        }
 
                         OrderItem newOrderItem = new OrderItem(1, createdOrder.getOrder_ID(), item.getProductID(), item.getQuantity(), item.getPrice());
                         sdb.addNewOrderItem(newOrderItem);
                     }
 
-                    // Loại bỏ các phần tử trùng lặp
+                    // Remove duplicate orders
                     for (int i = 0; i < orderList.size(); i++) {
                         for (int j = i + 1; j < orderList.size(); j++) {
                             if (orderList.get(i).getOrder_ID() == orderList.get(j).getOrder_ID()) {
                                 orderList.remove(j);
-                                j--; // Giảm chỉ số j sau khi xóa phần tử để tránh bỏ qua phần tử tiếp theo
+                                j--; // Decrease j after removal to avoid skipping the next element
                             }
                         }
                     }
@@ -237,8 +262,7 @@ public class Shop_confirmOrder extends HttpServlet {
 
                     request.getRequestDispatcher("/marketplace/confirm.jsp").forward(request, response);
                 } else {
-                    String msg = "Your Cart Contains Sold Out Product!";
-                    session.setAttribute("message", msg);
+                    session.setAttribute("message", "Your Cart Contains Sold Out Product!");
                     response.sendRedirect("cart");
                     return;
                 }
@@ -287,13 +311,16 @@ public class Shop_confirmOrder extends HttpServlet {
                 for (String orderid : orderlistidnew) {
                     int id = Integer.parseInt(orderid);
                     Order order = sdb.getOrderbyID(id);
-                    if (order.getDiscountid() != 0) {
-                        Discount discount = sdb.getDiscountByID(order.getDiscountid());
-                        if (discount.getUsageLimit() <= 0) {
-                            String msg = "The selected discount has run out, please choose another.";
-                            session.setAttribute("message", msg);
-                            response.sendRedirect("cart");
-                            return;
+                    ArrayList<OrderDiscount> orderdislist = sdb.getAllOrderDiscountByOrderID(order.getOrder_ID());
+                    for (OrderDiscount ord : orderdislist) {
+                        if (ord.getDiscountID() != 0) {
+                            Discount discount = sdb.getDiscountByID(ord.getDiscountID());
+                            if (discount.getUsageLimit() <= 0) {
+                                String msg = "The selected discount has run out, please choose another.";
+                                session.setAttribute("message", msg);
+                                response.sendRedirect("cart");
+                                return;
+                            }
                         }
                     }
                 }
@@ -311,27 +338,30 @@ public class Shop_confirmOrder extends HttpServlet {
                         boolean updateSuccess = User_DB.updateWalletByEmail(user.getUserEmail(), user.getUserWallet() - total);
 
                         // Return notification of money deduction here:
-                        nw.saveNotificationToDatabaseWithStatusIsBalance(user.getUserId(), "Trừ tiền đơn hàng :" + total, "/walletbalance");
+                        nw.saveNotificationToDatabaseWithStatusIsBalance(user.getUserId(), "Deduct the order amount :" + total, "/walletbalance");
                         for (String orderid : orderlistidnew) {
                             int id = Integer.parseInt(orderid);
                             Order order = sdb.getOrderbyID(id);
+                            ArrayList<OrderDiscount> orderdislist = sdb.getAllOrderDiscountByOrderID(order.getOrder_ID());
                             // Check if there is a discount then update the usage limit
-                            if (order.getDiscountid() != 0) {
-                                Discount discount = sdb.getDiscountByID(order.getDiscountid());
-                                sdb.updateUsageLimit(order.getDiscountid(), discount.getUsageLimit() - 1);
-                                sdb.updateUsageCount(order.getDiscountid(), discount.getUsageCount() + 1);
+                            for (OrderDiscount ord : orderdislist) {
+                                if (ord.getDiscountID() != 0) {
+                                    Discount discount = sdb.getDiscountByID(ord.getDiscountID());
+                                    sdb.updateUsageLimit(ord.getDiscountID(), discount.getUsageLimit() - 1);
+                                    sdb.updateUsageCount(ord.getDiscountID(), discount.getUsageCount() + 1);
+                                }
                             }
                             order.setPayment_status("dathanhtoan");
                             order.setStatus("Pending");
-                            sdb.updateOrderbyID(order);
+                            sdb.updateOrderByID(order);
 
                             ArrayList<OrderItem> oditl = sdb.getAllOrderItemByOrderID(id);
                             OrderItem oderitem = oditl.get(0);
                             Product p = sdb.getProductByID(oderitem.getProductID());
                             Shop shop = sdb.getShopHaveStatusIs1ByShopID(p.getShopId());
 
-                            nw.saveNotificationToDatabase(shop.getOwnerID(), "Shop của bạn có đơn hàng mới!", "/marketplace/myshop");
-                            nw.sendNotificationToClient(shop.getOwnerID(), "Shop của bạn có đơn hàng mới!", "/marketplace/myshop");
+                            nw.saveNotificationToDatabase(shop.getOwnerID(), "Your shop has a new order!", "/marketplace/myshop");
+                            nw.sendNotificationToClient(shop.getOwnerID(), "Your shop has a new order!", "/marketplace/myshop");
 
                         }
 
@@ -340,22 +370,26 @@ public class Shop_confirmOrder extends HttpServlet {
                             int id = Integer.parseInt(orderid);
                             Order order = sdb.getOrderbyID(id);
                             // Check if there is a discount then update the usage limit
-                            if (order.getDiscountid() != 0) {
-                                Discount discount = sdb.getDiscountByID(order.getDiscountid());
-                                sdb.updateUsageLimit(order.getDiscountid(), discount.getUsageLimit() - 1);
-                                sdb.updateUsageCount(order.getDiscountid(), discount.getUsageCount() + 1);
+                            ArrayList<OrderDiscount> orderdislist = sdb.getAllOrderDiscountByOrderID(order.getOrder_ID());
+
+                            for (OrderDiscount ord : orderdislist) {
+                                if (ord.getDiscountID() != 0) {
+                                    Discount discount = sdb.getDiscountByID(ord.getDiscountID());
+                                    sdb.updateUsageLimit(ord.getDiscountID(), discount.getUsageLimit() - 1);
+                                    sdb.updateUsageCount(ord.getDiscountID(), discount.getUsageCount() + 1);
+                                }
                             }
                             order.setPayment_status("thanhtoankhinhanhang");
                             order.setStatus("Pending");
-                            sdb.updateOrderbyID(order);
+                            sdb.updateOrderByID(order);
 
                             ArrayList<OrderItem> oditl = sdb.getAllOrderItemByOrderID(id);
                             OrderItem oderitem = oditl.get(0);
                             Product p = sdb.getProductByID(oderitem.getProductID());
                             Shop shop = sdb.getShopHaveStatusIs1ByShopID(p.getShopId());
 
-                            nw.saveNotificationToDatabase(shop.getOwnerID(), "Shop của bạn có đơn hàng mới!", "/marketplace/myshop");
-                            nw.sendNotificationToClient(shop.getOwnerID(), "Shop của bạn có đơn hàng mới!", "/marketplace/myshop");
+                            nw.saveNotificationToDatabase(shop.getOwnerID(), "Your shop has a new order!", "/marketplace/myshop");
+                            nw.sendNotificationToClient(shop.getOwnerID(), "Your shop has a new order!", "/marketplace/myshop");
 
                         }
                     }

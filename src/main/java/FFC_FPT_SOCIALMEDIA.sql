@@ -56,10 +56,10 @@ GO
 -- Bảng Discount
 CREATE TABLE Discount (
     Code NVARCHAR(50) NOT NULL, -- Mã giảm giá, bắt buộc
-    Owner_id INT , -- ID của user
-    Shop_id INT , -- ID của shop
+    Owner_id INT, -- ID của user
+    Shop_id INT, -- ID của shop
     Discount_id INT IDENTITY(1,1) PRIMARY KEY, -- ID tự động tăng cho giảm giá
-	Condition DECIMAL(10, 2) NOT NULL DEFAULT 0, -- giá của đơn hàng cần đạt đến để dc áp dụng --thêm
+    Condition DECIMAL(10, 2) NOT NULL DEFAULT 0, -- Giá của đơn hàng cần đạt đến để được áp dụng
     Discount_percent DECIMAL(5, 2) NOT NULL, -- Phần trăm giảm giá, bắt buộc
     Valid_from DATE NOT NULL, -- Ngày bắt đầu hiệu lực của giảm giá, bắt buộc
     Valid_to DATE NOT NULL, -- Ngày hết hạn của giảm giá, bắt buộc
@@ -74,16 +74,23 @@ CREATE TABLE [Order] (
     User_id INT NOT NULL, -- ID của người dùng, bắt buộc
     Order_id INT IDENTITY(1,1) PRIMARY KEY, -- ID tự động tăng cho đơn hàng
     Order_date DATETIME DEFAULT GETDATE(), -- Ngày đặt hàng, mặc định là ngày hiện tại
-    Order_status NVARCHAR(50) CHECK (Order_status IN ('null','Pending','Accept','Completed','Cancelled','Success','Fail','NotConfirm','NotConfirmNew')) NOT NULL, -- Trạng thái của đơn hàng    Total_amount DECIMAL(10, 2) NOT NULL, -- Tổng số tiền của đơn hàng, bắt buộc
+    Order_status NVARCHAR(50) CHECK (Order_status IN ('null','Pending','Accept','Completed','Cancelled','Success','Fail','NotConfirm','NotConfirmNew')) NOT NULL, -- Trạng thái của đơn hàng
+    Total_amount DECIMAL(10, 2) NOT NULL, -- Tổng số tiền của đơn hàng, bắt buộc
     Note NVARCHAR(MAX), -- Ghi chú
-    Discount_id INT, -- ID của mã giảm giá
-    Feedback NVARCHAR(MAX), -- Phản hồi từ người dùng -thêm
-	Star int default 5,--số sao đánh giá   -- thêm
-	Total_amount DECIMAL(10, 2) NOT NULL, -- Tổng số tiền của đơn hàng, bắt buộc
-	Receiver_phone NVARCHAR(20),   --thêm
-    Payment_status NVARCHAR(50), -- thêm
-    CONSTRAINT fk_user_order FOREIGN KEY (User_id) REFERENCES Users(User_id), -- Tham chiếu đến User_id trong bảng Users
-    CONSTRAINT fk_discount_order FOREIGN KEY (Discount_id) REFERENCES Discount(Discount_id) -- Tham chiếu đến Discount_id trong bảng Discount
+    Feedback NVARCHAR(MAX), -- Phản hồi từ người dùng
+    Star INT DEFAULT 5, -- Số sao đánh giá
+    Receiver_phone NVARCHAR(20), -- Số điện thoại người nhận
+    Payment_status NVARCHAR(50), -- Trạng thái thanh toán
+    CONSTRAINT fk_user_order FOREIGN KEY (User_id) REFERENCES Users(User_id) -- Tham chiếu đến User_id trong bảng Users
+);
+Go
+-- Bảng nối giữa Order và Discount
+CREATE TABLE OrderDiscount (
+    Order_id INT NOT NULL, -- ID của đơn hàng
+    Discount_id INT NOT NULL, -- ID của mã giảm giá
+    CONSTRAINT fk_order_orderdiscount FOREIGN KEY (Order_id) REFERENCES [Order](Order_id), -- Tham chiếu đến Order_id trong bảng Order
+    CONSTRAINT fk_discount_orderdiscount FOREIGN KEY (Discount_id) REFERENCES Discount(Discount_id), -- Tham chiếu đến Discount_id trong bảng Discount
+    PRIMARY KEY (Order_id, Discount_id) -- Khóa chính kết hợp
 );
 GO
 -- Bảng OrderItem
@@ -494,5 +501,3 @@ VALUES
     (1, 4, NULL, NULL, N'tệ', N'pending'),
     (2, 4, NULL, NULL, N'tệ', N'pending'),
     (3, 4, NULL, NULL, N'tệ', N'pending');
-
-

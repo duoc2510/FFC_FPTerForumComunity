@@ -68,38 +68,38 @@
                                                     <td>
                                                         <c:choose>
                                                             <c:when test="${order.payment_status eq 'dathanhtoan'}">
-                                                                <span class="badge bg-success">Đã Thanh Toán Trước</span>
+                                                                <span class="badge bg-success">Paid In Advance</span>
                                                             </c:when>
                                                             <c:when test="${order.payment_status eq 'thanhtoankhinhanhang'}">
-                                                                <span class="badge bg-warning text-dark">Chưa Thanh Toán Trước</span>
+                                                                <span class="badge bg-warning text-dark">Payment on delivery</span>
                                                             </c:when>
                                                         </c:choose>
                                                     </td>
                                                     <td>
                                                         <c:choose>
                                                             <c:when test="${order.status eq 'Pending'}">
-                                                                <p class="text-warning">Đang chờ Shop xác nhận..</p>
+                                                                <p class="text-warning">Waiting for Shop confirmation..</p>
                                                                 <form class="my-1" action="product" method="post">
                                                                     <input type="hidden" name="orderid" value="${order.order_ID}" />
                                                                     <input type="hidden" name="action" value="huydon" />
-                                                                    <button type="submit" class="btn btn-danger w-100 mt-2">Hủy Đơn Hàng</button>
+                                                                    <button type="submit" class="btn btn-danger w-100 mt-2">Cancel order</button>
                                                                 </form>
                                                             </c:when>
                                                             <c:when test="${order.status eq 'Accept'}">
-                                                                <p class="text-info">Đơn đã được xác nhận và sẽ sớm gửi đến bạn.</p>
+                                                                <p class="text-info">The application has been confirmed and will be sent to you soon</p>
                                                             </c:when>
                                                             <c:when test="${order.status eq 'Completed'}">
                                                                 <form class="my-1" action="product" method="post">
                                                                     <input type="hidden" name="orderid" value="${order.order_ID}" />
                                                                     <input type="hidden" name="action" value="danhanhang" />
-                                                                    <button type="submit" class="btn btn-primary w-100 mt-2">Vui lòng bấm đã nhận hàng.</button>
+                                                                    <button type="submit" class="btn btn-primary w-100 mt-2">Please click received products</button>
                                                                 </form>
                                                             </c:when>
                                                             <c:when test="${order.status eq 'Cancelled'}">
-                                                                <p class="text-danger">Đơn hàng bị người dùng hủy.</p>
+                                                                <p class="text-danger">The order was canceled by the buyer</p>
                                                             </c:when>
                                                             <c:when test="${order.status eq 'Fail'}">
-                                                                <p class="text-danger">Đơn hàng bị shop hủy.</p>
+                                                                <p class="text-danger">The order was canceled by the store</p>
                                                             </c:when>
                                                             <c:when test="${order.status eq 'Success'}">
                                                                 <p class="text-success">Success.</p>
@@ -108,7 +108,7 @@
                                                         <!-- Thêm nút Xem Chi Tiết -->
                                                         <form action="orderdetail" method="get">
                                                             <input type="hidden" name="orderid" value="${order.order_ID}" />
-                                                            <button type="submit" class="btn btn-info w-100 mt-2">Xem Chi Tiết</button>
+                                                            <button type="submit" class="btn btn-info w-100 mt-2">See details</button>
                                                         </form>
                                                     </td>
                                                 </tr>

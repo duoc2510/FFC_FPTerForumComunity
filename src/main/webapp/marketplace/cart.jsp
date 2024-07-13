@@ -86,7 +86,7 @@
                     <div class='row mt-5 '>
                         <div class='col-12 mx-auto text-center rounded'>
                             <img src="${pageContext.request.contextPath}/static/images/bag-empty.jpg" alt="alt" width='200px'/>
-                            <h1 class="text-uppercase text-bold my-3">bag is empty</h1>
+                            <h1 class="text-uppercase text-bold my-3">Bag is empty</h1>
                         </div>
                     </div>
 
@@ -118,7 +118,7 @@
                                                     <select id="discountSelect-${previousShopId}" class="rounded form-control discountSelect" name="discountSelect" data-shop-id="${previousShopId}" onchange="updateDiscount('${previousShopId}')">
                                                         <option value="" data-percent="0" data-condition="0">No Discount</option>
                                                         <c:forEach var="discount" items="${Shop_DB.getAllDiscountOrder(USER.userId, previousShopId)}">
-                                                            <option value="${discount.discountId}" data-percent="${discount.discountPercent}" data-condition="${discount.condition}">Giảm ${discount.discountPercent}% đơn từ ${discount.condition}VNĐ</option>
+                                                            <option value="${discount.discountId}" data-percent="${discount.discountPercent}" data-condition="${discount.condition}">Reduce ${discount.discountPercent}% for order form ${discount.condition}VNĐ</option>
                                                         </c:forEach>
                                                     </select>
 
@@ -200,7 +200,7 @@
                                         <select id="discountSelect-${previousShopId}" class="rounded form-control discountSelect" name="discountSelect" data-shop-id="${previousShopId}" onchange="updateDiscount('${previousShopId}')">
                                             <option value="" data-percent="0" data-condition="0">No Discount</option>
                                             <c:forEach var="discount" items="${Shop_DB.getAllDiscountOrder(USER.userId, previousShopId)}">
-                                                <option value="${discount.discountId}" data-percent="${discount.discountPercent}" data-condition="${discount.condition}">Giảm ${discount.discountPercent}% đơn từ ${discount.condition}VNĐ</option>
+                                                <option value="${discount.discountId}" data-percent="${discount.discountPercent}" data-condition="${discount.condition}">Reduce ${discount.discountPercent}% for order from ${discount.condition}VNĐ</option>
                                             </c:forEach>
                                         </select>
 
@@ -229,7 +229,7 @@
                     </div>
 
                     <div class="col-md-6 pe-3">
-                        <div class=" rounded shadow border card-group">
+                        <div class="rounded shadow border card-group">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-4">
                                     <h5 class="mb-0">Billing</h5>
@@ -249,15 +249,25 @@
                                         <label class="form-label mt-3" for="typeText">Campus</label>
                                         <input name="campus" class="rounded form-control" placeholder="Campus" value="${shop.campus}" readonly>
 
-
                                         <label class="form-label mt-3" for="typeText">Note</label>
                                         <input name="note" class="rounded form-control" placeholder="Note" rows="4">
+
+                                        <label class="form-label mt-3" for="billingDiscountSelect">Billing Discount</label>
+                                        <select id="billingDiscountSelect" class="rounded form-control discountSelect" name="billingDiscountSelect" onchange="updateBillingDiscount()">
+                                            <option value="" data-percent="0" data-condition="0">No Discount</option>
+                                            <c:forEach var="discount" items="${Shop_DB.getAllDiscountOrderByOwner(USER.userId)}">
+                                                <option value="${discount.discountId}" data-percent="${discount.discountPercent}" data-condition="${discount.condition}">Reduce ${discount.discountPercent}% for order from ${discount.condition}VNĐ</option>
+                                            </c:forEach>
+                                        </select>
+
+                                        <!-- Add this element for the discount fee -->
+                                        <div class="d-flex justify-content-between" style="margin-top: 10px;">
+                                            <p style="font-weight: 600;" class="mb-2">Billing Discount fee</p>
+                                            <p class="mb-2" id="billingDiscountFee">-0 VND</p>
+                                        </div>
+
                                     </div>
                                 </div>
-
-
-
-
 
                                 <div class="mb-3" hidden="">
                                     <label class="form-label">Total</label>
@@ -265,15 +275,15 @@
                                 </div>
                                 <input type="hidden" name="action" value="confirm1">
                                 <div class="d-flex justify-content-between">
-                                    <button stype="submit" class="rounded btn btn-info btn-block btn-lg mt-4">
+                                    <button type="submit" class="rounded btn btn-info btn-block btn-lg mt-4">
                                         <span id="checkoutTotal">0 VND</span>
                                         <span>Checkout <i class="fas fa-long-arrow-alt-right ms-2"></i></span>
                                     </button>                                                    
                                 </div>
-                                </form>
                             </div>
                         </div>
                     </div>
+
                 </c:if>
             </div>
         </div>
@@ -286,11 +296,12 @@
         console.log(1);
         loadAd();
     }
+
     var selectedItemsMap = new Map();
     var selectedDiscounts = [];
+    var originalCheckoutTotal = 0;
 
     function handleQuantityChange(orderItemId, newQuantity) {
-        // Nếu newQuantity là null hoặc rỗng, gán giá trị là 0
         if (!newQuantity) {
             newQuantity = 0;
         }
@@ -382,7 +393,7 @@
         discountSection.style.display = selectedItems.size === 0 ? 'none' : 'block';
         discountSelect.disabled = selectedItems.size === 0;
         if (selectedItems.size === 0) {
-            discountSelect.value = ""; // Reset discount to "No Discount"
+            discountSelect.value = "";
         }
         filterDiscountOptions(shopId, subtotal);
         updateDiscount(shopId);
@@ -422,7 +433,7 @@
         }
 
         var selectedOption = discountSelect.options[discountSelect.selectedIndex];
-        var subtotal = parseFloat(subtotalElement.textContent);
+        var subtotal = parseFloat(subtotalElement.textContent.replace(' VND', ''));
         var discountFee = 0;
 
         if (selectedOption && selectedOption.value !== "") {
@@ -438,7 +449,6 @@
 
         updateCheckoutTotal();
 
-        // Update selected discounts array
         var discountId = selectedOption && selectedOption.value !== "" ? selectedOption.value : "0";
         var existingDiscount = selectedDiscounts.find(discount => discount.shopId === shopId);
         if (existingDiscount) {
@@ -452,14 +462,79 @@
     function updateCheckoutTotal() {
         var totalFees = 0;
         document.querySelectorAll('[id^="totalFee-"]').forEach(function (totalFeeElement) {
-            var total = parseFloat(totalFeeElement.textContent);
+            var total = parseFloat(totalFeeElement.textContent.replace(' VND', ''));
             if (!isNaN(total)) {
                 totalFees += total;
             }
         });
 
-        document.getElementById("checkoutTotal").textContent = totalFees.toFixed(2) + ' VND';
+        originalCheckoutTotal = totalFees;
+
+        var checkoutTotalElement = document.getElementById("checkoutTotal");
+        checkoutTotalElement.textContent = totalFees.toFixed(2) + ' VND';
         document.getElementById("totalInput").value = totalFees.toFixed(2);
+
+        var anyCheckboxChecked = document.querySelectorAll('.orderItemCheckbox:checked').length > 0;
+        var billingDiscountSelect = document.getElementById("billingDiscountSelect");
+
+        if (!anyCheckboxChecked) {
+            billingDiscountSelect.value = ""; // Reset to "No Discount"
+        }
+
+        filterDiscountTotal();
+
+        updateBillingDiscount();
+    }
+
+    function filterDiscountTotal() {
+        var checkoutTotal = parseFloat(document.getElementById("checkoutTotal").textContent.replace(' VND', ''));
+
+        var billingDiscountSelect = document.getElementById("billingDiscountSelect");
+        if (!billingDiscountSelect) {
+            console.error('Missing billingDiscountSelect element');
+            return;
+        }
+
+        var options = billingDiscountSelect.options;
+
+        for (var i = options.length - 1; i >= 0; i--) {
+            var condition = parseFloat(options[i].getAttribute("data-condition"));
+            if (checkoutTotal >= condition) {
+                options[i].disabled = false;
+                options[i].style.display = 'block';
+            } else {
+                options[i].disabled = true;
+                options[i].style.display = 'none';
+            }
+        }
+    }
+
+    function updateBillingDiscount() {
+        var billingDiscountSelect = document.getElementById("billingDiscountSelect");
+        var checkoutTotalElement = document.getElementById("checkoutTotal");
+        var billingDiscountFeeElement = document.getElementById("billingDiscountFee");
+
+        if (!billingDiscountSelect || !checkoutTotalElement || !billingDiscountFeeElement) {
+            console.error('Missing elements for billing discount');
+            return;
+        }
+
+        var selectedOption = billingDiscountSelect.options[billingDiscountSelect.selectedIndex];
+        var discountFee = 0;
+
+        var checkoutTotal = originalCheckoutTotal; // Use the original value
+
+        if (selectedOption && selectedOption.value !== "") {
+            var percent = parseFloat(selectedOption.getAttribute("data-percent"));
+            discountFee = (percent * checkoutTotal / 100).toFixed(2);
+            billingDiscountFeeElement.textContent = '-' + discountFee + ' VND';
+        } else {
+            billingDiscountFeeElement.textContent = '-0.00 VND';
+        }
+
+        var newTotal = checkoutTotal - parseFloat(discountFee);
+        checkoutTotalElement.textContent = newTotal.toFixed(2) + ' VND';
+        document.getElementById("totalInput").value = newTotal.toFixed(2);
     }
 
     document.addEventListener("DOMContentLoaded", (event) => {
@@ -489,35 +564,72 @@
                             selectedItems.delete(selectedItem);
                         }
                     });
+
+                    // Reset billingDiscountSelect to "No Discount"
+                    var billingDiscountSelect = document.getElementById("billingDiscountSelect");
+                    billingDiscountSelect.value = "";
                 }
 
                 updateSummary(shopId);
             });
         });
 
-        // Initial call to hide the discount select box if no items are selected
+        // Add change event listener to each discountSelect
+        var discountSelects = document.querySelectorAll('[id^="discountSelect-"]');
+        discountSelects.forEach(function (discountSelect) {
+            discountSelect.addEventListener('change', function () {
+                var shopId = this.getAttribute("data-shop-id");
+
+                // Reset billingDiscountSelect to "No Discount"
+                var billingDiscountSelect = document.getElementById("billingDiscountSelect");
+                billingDiscountSelect.value = "";
+
+                // Reset billingDiscountFee to 0 VND
+                var billingDiscountFeeElement = document.getElementById("billingDiscountFee");
+                if (billingDiscountFeeElement) {
+                    billingDiscountFeeElement.textContent = "-0.00 VND";
+                }
+
+                updateSummary(shopId);
+                updateBillingDiscount();
+            });
+        });
+
+
         checkboxes.forEach(function (checkbox) {
             var shopId = checkbox.getAttribute("data-shop-id");
             updateSummary(shopId);
         });
+
+        filterDiscountTotal();
     });
 
-// Append discount information to the form before submission
+
     document.querySelector('form[action="confirmorder"]').addEventListener('submit', function (e) {
         var discountInput = document.createElement('input');
         discountInput.type = 'hidden';
         discountInput.name = 'selectedDiscounts';
         discountInput.value = JSON.stringify(selectedDiscounts);
         this.appendChild(discountInput);
+
+        var billingDiscountSelect = document.getElementById("billingDiscountSelect");
+        var billingDiscountValue = billingDiscountSelect ? billingDiscountSelect.value : "";
+        var billingDiscountInput = document.createElement('input');
+        billingDiscountInput.type = 'hidden';
+        billingDiscountInput.name = 'billingDiscount';
+        billingDiscountInput.value = billingDiscountValue;
+        this.appendChild(billingDiscountInput);
     });
+
 
     window.onload = function () {
         listenForQuantityChange();
+        filterDiscountTotal();
     }
-
-
-
 </script>
+
+
+
 
 </body>
 <script src="../static/js/validation.js"></script>
