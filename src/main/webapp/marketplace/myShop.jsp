@@ -21,7 +21,7 @@
         opacity: .7;
     }
     .thumbnail img:hover{
-         opacity: 1;
+        opacity: 1;
     }
     .table thead th{
         font-size: 14px;
@@ -554,7 +554,7 @@
                             <c:set var="imagelist" value="${Shop_DB.getAllUploadByProductID(product.productId)}" />
                             <div class="row thumbnail text-center">
 
-                                <div class="mb-3">
+                                <div class="mb-3 row ps-4">
                                     <img class="col-3 images-list-item rounded" onclick="change_image(this, ${product.productId})" src="${pageContext.request.contextPath}/static/${imagefirst.uploadPath}">
                                     <c:if test="${not empty imagelist}">
                                         <c:forEach var="image" items="${imagelist}" begin="1">

@@ -55,7 +55,7 @@ public class Event_interested extends HttpServlet {
                     // Nếu action là add, thực hiện thêm quan tâm vào sự kiện
                     if (!isAlreadyInterested) {
                         boolean success = Event_DB.addUserInterest(userId, eventId);
-
+                         
                         if (success) {
                             // Nếu thêm quan tâm thành công
                             request.setAttribute("interestAdded", true);

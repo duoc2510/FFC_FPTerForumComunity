@@ -1,5 +1,16 @@
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" import="model.*" import="model.DAO.*"%>
 <%@ include file="../include/header.jsp" %>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Page Title</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <!-- SweetAlert JS -->
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+</head>
 
 <body>
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
@@ -28,37 +39,35 @@
                                 <div class="row">
                                     <div class="mx-2">
                                         <div class="card mb-3">
-                                            <div class="card-header">
-                                                <div class="text-center p-2 px-5" style="padding-top: 30px !important;">
-                                                    <img src="/FPTer/static/images/logo.png" width="100" alt="">
-                                                </div>
+                                            <div class="card-header text-center">
+                                                <img src="/FPTer/static/images/logo.png" width="100" alt="">
                                             </div>
                                             <div class="card-body">
                                                 <div class="invoice p-5">
                                                     <c:set var="shop" value="${Shop_DB.getShopHaveStatusIs1ByShopID(shopid)}" />
-                                                    <h5>Your order Confirmed!</h5>
-                                                    <span class="font-weight-bold d-block mt-4">Hello, ${fullname}</span>
-                                                    <span>The order will not be changed if you confirm!</span>
+                                                    <h5 class="text-center"><i class="fas fa-check-circle"></i> Your order Confirmed!</h5>
+                                                    <span class="font-weight-bold d-block mt-4"><i class="fas fa-user"></i> Hello, ${USER.userFullName}</span>
+                                                    <span><i class="fas fa-info-circle"></i> The order will not be changed if you confirm!</span>
 
                                                     <div class="payment border-top mt-3 mb-3 border-bottom table-responsive">
-                                                        <table class="my-3">
-                                                            <tbody class="table table-reponsive mx-0">
+                                                        <table class="table">
+                                                            <tbody>
                                                                 <tr>
                                                                     <td>
                                                                         <div class="py-2">
-                                                                            <span class="d-block text-muted">Shop Name:</span>
+                                                                            <span class="d-block text-muted"><i class="fas fa-store"></i> Shop Name:</span>
                                                                             <span>${shop.name}</span>
                                                                         </div>
                                                                     </td>
                                                                     <td>
                                                                         <div class="py-2">
-                                                                            <span class="d-block text-muted">Shop Phone:</span>
+                                                                            <span class="d-block text-muted"><i class="fas fa-phone"></i> Shop Phone:</span>
                                                                             <span>${shop.phone}</span>
                                                                         </div>
                                                                     </td>
                                                                     <td>
                                                                         <div class="py-2">
-                                                                            <span class="d-block text-muted">Shop campus:</span>
+                                                                            <span class="d-block text-muted"><i class="fas fa-map-marker-alt"></i> Shop Campus:</span>
                                                                             <span>${shop.campus}</span>
                                                                         </div>
                                                                     </td>
@@ -107,7 +116,7 @@
 
                                                     <div class="row d-flex justify-content-end mt-5">
                                                         <div class="col-md-6 d-flex justify-content-end">
-                                                            <table>
+                                                            <table class="table">
                                                                 <tbody class="totals">
                                                                     <tr>
                                                                         <td>
@@ -137,12 +146,12 @@
                                                                     <tr class="border-top border-bottom">
                                                                         <td>
                                                                             <div class="text-left">
-                                                                                <span class="font-weight-bold">Subtotal</span>
+                                                                                <span class="font-weight-bold">Total</span>
                                                                             </div>
                                                                         </td>
                                                                         <td>
                                                                             <div class="text-right">
-                                                                                <span class="font-weight-bold text-success">=${totalPrice - totalPrice * discount.discountPercent / 100} VND</span>
+                                                                                <span class="font-weight-bold text-success">${totalPrice - totalPrice * discount.discountPercent / 100} VND</span>
                                                                             </div>
                                                                         </td>
                                                                     </tr>
@@ -157,25 +166,25 @@
                                                                 <tr>
                                                                     <td>
                                                                         <div class="py-2">
-                                                                            <span class="d-block text-muted">Order Receiver:</span>
+                                                                            <span class="d-block text-muted"><i class="fas fa-user"></i> Order Receiver:</span>
                                                                             <span>${USER.userFullName}</span>
                                                                         </div>
                                                                     </td>
                                                                     <td>
                                                                         <div class="py-2">
-                                                                            <span class="d-block text-muted">Order Date:</span>
+                                                                            <span class="d-block text-muted"><i class="fas fa-calendar-alt"></i> Order Date:</span>
                                                                             <span>${ordernotconfirm.orderDate}</span>
                                                                         </div>
                                                                     </td>
                                                                     <td>
                                                                         <div class="py-2">
-                                                                            <span class="d-block text-muted">Receiver Phone</span>
+                                                                            <span class="d-block text-muted"><i class="fas fa-phone"></i> Receiver Phone:</span>
                                                                             <span>${ordernotconfirm.receiverPhone}</span>
                                                                         </div>
                                                                     </td>
                                                                     <td>
                                                                         <div class="py-2">
-                                                                            <span class="d-block text-muted">Note :</span>
+                                                                            <span class="d-block text-muted"><i class="fas fa-sticky-note"></i> Note:</span>
                                                                             <span>${ordernotconfirm.note}</span>
                                                                         </div>
                                                                     </td>
@@ -185,7 +194,7 @@
                                                     </div>
 
                                                     <div class="d-flex w-100 justify-content-end row">
-                                                        <p class="col-6">If you really want to buy, click the confirmation button!</p>
+                                                        <p class="col-6"><i class="fas fa-exclamation-circle"></i> If you really want to buy, click the confirmation button!</p>
                                                         <div class="col-6 d-flex justify-content-end">
                                                             <form action="confirmcontinue" method="post">
                                                                 <input type="hidden" name="shopid" value="${shop.shopID}">
@@ -206,7 +215,7 @@
                                                                         </label>
                                                                     </div>
                                                                 </c:if>
-                                                                <button type="button" class="btn btn-danger mx-2" onclick="javascript:history.go(-1);">Back</button>
+                                                                <button type="button" class="btn btn-danger mx-2" onclick="javascript:history.go(-1);"><i class="fas fa-arrow-left"></i> Back</button>
                                                                 <input type="submit" value="Confirm" class="btn btn-primary">
                                                             </form>
                                                         </div>
@@ -223,7 +232,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="alert alert-warning text-center">
-                                    <strong>Warning!</strong> Bạn không có đơn hàng nào chưa confirm.
+                                    <strong><i class="fas fa-exclamation-triangle"></i> Warning!</strong> Bạn không có đơn hàng nào chưa confirm.
                                 </div>
                             </div>
                         </div>
@@ -232,5 +241,8 @@
             </div>
         </div>
     </div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/js/bootstrap.min.js"></script>
 </body>
 <%@ include file="../include/footer.jsp" %>

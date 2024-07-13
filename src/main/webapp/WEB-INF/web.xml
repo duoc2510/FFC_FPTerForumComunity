@@ -44,6 +44,10 @@
         <description>ServletContextListener</description>
         <listener-class>util.SchedulerStarter</listener-class>
     </listener>
+    <listener>
+        <description>ServletContextListener</description>
+        <listener-class>util.EventNoti</listener-class>
+    </listener>
     <servlet>
         <servlet-name>User_marketplace</servlet-name>
         <servlet-class>controller.User_marketplace</servlet-class>
@@ -325,7 +329,6 @@
         <servlet-class>controller.Admin_viewFeedBack</servlet-class>
     </servlet>
     <servlet>
-
         <servlet-name>User_SearchSuggestion</servlet-name>
         <servlet-class>controller.User_SearchSuggestion</servlet-class>
     </servlet>
@@ -337,7 +340,6 @@
         <servlet-name>Admin_transaction</servlet-name>
         <servlet-class>controller.Admin_transaction</servlet-class>
     </servlet>
-         
     <servlet>
         <servlet-name>Advertising_Show</servlet-name>
         <servlet-class>controller.Advertising_Show</servlet-class>
@@ -353,6 +355,10 @@
     <servlet>
         <servlet-name>Event_eventList</servlet-name>
         <servlet-class>controller.Event_eventList</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>Shop_orderDetail</servlet-name>
+        <servlet-class>controller.Shop_orderDetail</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>PostComment</servlet-name>
@@ -618,23 +624,19 @@
         <servlet-name>Redirect</servlet-name>
         <url-pattern>/redirect</url-pattern>
     </servlet-mapping>
-    
     <servlet-mapping>
         <servlet-name>Advertising_Report</servlet-name>
         <url-pattern>/advertising/report</url-pattern>
     </servlet-mapping>
-    
     <servlet-mapping>
         <servlet-name>User_feedBack</servlet-name>
         <url-pattern>/feedBack</url-pattern>
     </servlet-mapping>
-    
     <servlet-mapping>
         <servlet-name>Admin_viewFeedBack</servlet-name>
         <url-pattern>/admin/viewFeedBack</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-
         <servlet-name>Shop_allshop</servlet-name>
         <url-pattern>/martketplace/allshop</url-pattern>
     </servlet-mapping>
@@ -642,19 +644,15 @@
         <servlet-name>Admin_transaction</servlet-name>
         <url-pattern>/admin/transaction</url-pattern>
     </servlet-mapping>
-    
-    
     <servlet-mapping>
         <servlet-name>User_SearchSuggestion</servlet-name>
         <url-pattern>/searchSuggestions</url-pattern>
     </servlet-mapping>
-    
     <servlet-mapping>
         <servlet-name>Advertising_Show</servlet-name>
         <url-pattern>/advertising/show</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-
         <servlet-name>Event_interested</servlet-name>
         <url-pattern>/interested</url-pattern>
     </servlet-mapping>
@@ -665,6 +663,10 @@
     <servlet-mapping>
         <servlet-name>Event_eventList</servlet-name>
         <url-pattern>/listEvent</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Shop_orderDetail</servlet-name>
+        <url-pattern>/marketplace/orderdetail</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index_guest.jsp</welcome-file>

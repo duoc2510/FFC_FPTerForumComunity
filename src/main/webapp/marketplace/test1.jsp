@@ -12,6 +12,6 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <h1>${orderList.size()}</h1>
+        <h1>${orderid}</h1>
     </body>
 </html>

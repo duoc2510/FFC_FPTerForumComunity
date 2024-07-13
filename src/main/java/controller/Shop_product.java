@@ -439,23 +439,6 @@ public class Shop_product extends HttpServlet {
             case "thanhcong":  ///////shop đã giao hàng thành công
                 int orderid3 = Integer.parseInt(orderid);
                 Order order = sdb.getOrderbyID(orderid3);
-                ArrayList<OrderItem> orderitemlist1 = sdb.getAllOrderItemByOrderID(orderid3);
-                double total1 = 0;
-                for (OrderItem o : orderitemlist1) {
-                    total1 = total1 + (o.getPrice() * o.getQuantity());
-                }
-                if (order.getDiscountid() > 0) {
-                    Discount dis = sdb.getDiscountByID(order.getDiscountid());
-                    if (dis.getShopId() == 0) {
-                        boolean check = udb.updateWalletByEmail(user.getUserEmail(), user.getUserWallet() + (total1 - order.getTotal()) - (total1 * 5 / 100));
-                        nw.saveNotificationToDatabaseWithStatusIsBalance(user.getUserId(), "Trả lại tiền voucher hệ thống :" + (total1 - order.getTotal()) + "và trừ tiền hoa hồng đơn hàng :" + (total1 * 5 / 100), "/walletbalance");
-
-                    } else {
-                        boolean check = udb.updateWalletByEmail(user.getUserEmail(), user.getUserWallet() - (total1 * 5 / 100));
-                        nw.saveNotificationToDatabaseWithStatusIsBalance(user.getUserId(), "Trừ tiền hoa hồng đơn hàng :" + (total1 * 5 / 100), "/walletbalance");
-
-                    }
-                }
 
                 User updatedUser = User_DB.getUserByEmailorUsername(user.getUserEmail());
                 request.getSession().setAttribute("USER", updatedUser);
@@ -502,11 +485,30 @@ public class Shop_product extends HttpServlet {
                 int orderid6 = Integer.parseInt(orderid);
                 Order or3 = sdb.getOrderbyID(orderid6);
 
+                ArrayList<OrderItem> orderitemlist1 = sdb.getAllOrderItemByOrderID(orderid6);
+                double total1 = 0;
+                for (OrderItem o : orderitemlist1) {
+                    total1 = total1 + (o.getPrice() * o.getQuantity());
+                }
+
                 ArrayList<OrderItem> orderitemlistnewnew1 = sdb.getAllOrderItemByOrderID(orderid6);
                 for (OrderItem ot : orderitemlistnewnew1) {
                     Product p2 = sdb.getProductByID(ot.getProductID());
                     Shop shop2 = sdb.getShopHaveStatusIs1ByShopID(p2.getShopId());
                     User owner = udb.getUserById(shop2.getOwnerID());
+                    if (or3.getDiscountid() > 0) {
+                        Discount dis = sdb.getDiscountByID(or3.getDiscountid());
+                        if (dis.getShopId() == 0) {
+                            boolean check = udb.updateWalletByEmail(owner.getUserEmail(), owner.getUserWallet() + (total1 - or3.getTotal()) - (total1 * 5 / 100));
+                            nw.saveNotificationToDatabaseWithStatusIsBalance(owner.getUserId(), "Trả lại tiền voucher hệ thống :" + (total1 - or3.getTotal()) + "và trừ tiền hoa hồng đơn hàng :" + (total1 * 5 / 100), "/walletbalance");
+
+                        } else {
+                            boolean check = udb.updateWalletByEmail(owner.getUserEmail(), owner.getUserWallet() - (total1 * 5 / 100));
+                            nw.saveNotificationToDatabaseWithStatusIsBalance(owner.getUserId(), "Trừ tiền hoa hồng đơn hàng :" + (total1 * 5 / 100), "/walletbalance");
+
+                        }
+                    }
+
                     //trả tiền lại cho shop khi đã thành công
                     if (or3.getPayment_status().equals("dathanhtoan")) {
                         boolean updateSuccess = User_DB.updateWalletByEmail(owner.getUserEmail(), owner.getUserWallet() + or3.getTotal());

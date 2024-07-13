@@ -11,6 +11,7 @@
     <!-- SweetAlert JS -->
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </head>
+
 <style>
     .shop-group {
         padding: 20px; /* Padding inside the box */
@@ -39,6 +40,21 @@
 
 </style>
 <body>
+    <script>
+        // Check if the message variable is set or not
+        document.addEventListener("DOMContentLoaded", (event) => {
+            var errorMessage = "${message}";
+            // Kiểm tra nếu errorMessage không rỗng, hiển thị thông báo lỗi
+            if (errorMessage != "") {
+                swal({
+                    title: "Error!",
+                    text: errorMessage,
+                    icon: "error",
+                    button: "OK",
+                });
+            }
+        });
+    </script>
 
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
          data-sidebar-position="fixed" data-header-position="fixed">
@@ -263,252 +279,244 @@
         </div>
     </div>
 </div>
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<!--<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>-->
 
 <script>
-                                            var selectedItemsMap = new Map();
-                                            var selectedDiscounts = [];
+    function listenForQuantityChange() {
+        console.log(1);
+        loadAd();
+    }
+    var selectedItemsMap = new Map();
+    var selectedDiscounts = [];
 
-                                            function handleQuantityChange(orderItemId, newQuantity) {
-                                                // Nếu newQuantity là null hoặc rỗng, gán giá trị là 0
-                                                if (!newQuantity) {
-                                                    newQuantity = 0;
-                                                }
+    function handleQuantityChange(orderItemId, newQuantity) {
+        // Nếu newQuantity là null hoặc rỗng, gán giá trị là 0
+        if (!newQuantity) {
+            newQuantity = 0;
+        }
 
-                                                var data = {
-                                                    action: "update",
-                                                    orderItemId: orderItemId,
-                                                    newQuantity: newQuantity
-                                                };
+        var data = {
+            action: "update",
+            orderItemId: orderItemId,
+            newQuantity: newQuantity
+        };
 
-                                                $.ajax({
-                                                    url: 'cart',
-                                                    type: 'POST',
-                                                    data: data,
-                                                    dataType: 'json',
-                                                    success: function (response) {
-                                                        if (response.success) {
-                                                            location.reload();
-                                                        } else {
-                                                            swal("Error!", response.message, "error");
-                                                        }
-                                                    },
-                                                    error: function (xhr, status, error) {
-                                                        swal("Error!", "Unable to update the item quantity.", "error");
-                                                    }
-                                                });
-                                            }
+        $.ajax({
+            url: 'cart',
+            type: 'POST',
+            data: data,
+            dataType: 'json',
+            success: function (response) {
+                if (response.success) {
+                    location.reload();
+                } else {
+                    swal("Error!", response.message, "error");
+                }
+            },
+            error: function (xhr, status, error) {
+                swal("Error!", "Unable to update the item quantity.", "error");
+            }
+        });
+    }
 
-                                            function moveOutProductFromCart(id) {
-                                                swal({
-                                                    title: "Are you sure?",
-                                                    text: "Once deleted, you will not be able to recover this item!",
-                                                    icon: "warning",
-                                                    buttons: true,
-                                                    dangerMode: true,
-                                                }).then((willDelete) => {
-                                                    if (willDelete) {
-                                                        $.ajax({
-                                                            url: 'cart',
-                                                            type: 'POST',
-                                                            data: {id: id, action: 'delete'},
-                                                            dataType: 'json',
-                                                            success: function (response) {
-                                                                if (response.success) {
-                                                                    swal("Success! Your item has been removed from the cart!", {
-                                                                        icon: "success",
-                                                                    }).then(() => {
-                                                                        location.reload();
-                                                                    });
-                                                                } else {
-                                                                    swal("Error! Unable to remove the item from the cart.", {
-                                                                        icon: "error",
-                                                                    });
-                                                                }
-                                                            },
-                                                            error: function (xhr, status, error) {
-                                                                swal("Error! Unable to remove the item from the cart.", {
-                                                                    icon: "error",
-                                                                });
-                                                            }
-                                                        });
-                                                    } else {
-                                                        swal("Your item is safe!");
-                                                    }
-                                                });
-                                            }
+    function moveOutProductFromCart(id) {
+        swal({
+            title: "Are you sure?",
+            text: "Once deleted, you will not be able to recover this item!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        }).then((willDelete) => {
+            if (willDelete) {
+                $.ajax({
+                    url: 'cart',
+                    type: 'POST',
+                    data: {id: id, action: 'delete'},
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.success) {
+                            swal("Success! Your item has been removed from the cart!", {
+                                icon: "success",
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            swal("Error! Unable to remove the item from the cart.", {
+                                icon: "error",
+                            });
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        swal("Error! Unable to remove the item from the cart.", {
+                            icon: "error",
+                        });
+                    }
+                });
+            } else {
+                swal("Your item is safe!");
+            }
+        });
+    }
 
-                                            function updateSummary(shopId) {
-                                                var subtotal = 0;
-                                                var selectedItems = selectedItemsMap.get(shopId) || new Set();
+    function updateSummary(shopId) {
+        var subtotal = 0;
+        var selectedItems = selectedItemsMap.get(shopId) || new Set();
 
-                                                selectedItems.forEach(function (item) {
-                                                    subtotal += item.quantity * item.price;
-                                                });
+        selectedItems.forEach(function (item) {
+            subtotal += item.quantity * item.price;
+        });
 
-                                                var subtotalElement = document.getElementById("subtotal-" + shopId);
-                                                var discountSection = document.getElementById("discountSection-" + shopId);
-                                                var discountSelect = document.getElementById("discountSelect-" + shopId);
-                                                var discountFeeElement = document.getElementById("discountFee-" + shopId);
-                                                var totalFeeElement = document.getElementById("totalFee-" + shopId);
+        var subtotalElement = document.getElementById("subtotal-" + shopId);
+        var discountSection = document.getElementById("discountSection-" + shopId);
+        var discountSelect = document.getElementById("discountSelect-" + shopId);
+        var discountFeeElement = document.getElementById("discountFee-" + shopId);
+        var totalFeeElement = document.getElementById("totalFee-" + shopId);
 
-                                                if (!subtotalElement || !discountSection || !discountSelect || !discountFeeElement || !totalFeeElement) {
-                                                    console.error(`Missing elements for shopId: ${shopId}`);
-                                                    return;
-                                                }
+        if (!subtotalElement || !discountSection || !discountSelect || !discountFeeElement || !totalFeeElement) {
+            console.error(`Missing elements for shopId: ${shopId}`);
+            return;
+        }
 
-                                                subtotalElement.textContent = subtotal.toFixed(2) + ' VND';
+        subtotalElement.textContent = subtotal.toFixed(2) + ' VND';
 
-                                                discountSection.style.display = selectedItems.size === 0 ? 'none' : 'block';
-                                                discountSelect.disabled = selectedItems.size === 0;
-                                                if (selectedItems.size === 0) {
-                                                    discountSelect.value = ""; // Reset discount to "No Discount"
-                                                }
-                                                filterDiscountOptions(shopId, subtotal);
-                                                updateDiscount(shopId);
-                                            }
+        discountSection.style.display = selectedItems.size === 0 ? 'none' : 'block';
+        discountSelect.disabled = selectedItems.size === 0;
+        if (selectedItems.size === 0) {
+            discountSelect.value = ""; // Reset discount to "No Discount"
+        }
+        filterDiscountOptions(shopId, subtotal);
+        updateDiscount(shopId);
+    }
 
-                                            function filterDiscountOptions(shopId, subtotal) {
-                                                var discountSelect = document.getElementById("discountSelect-" + shopId);
+    function filterDiscountOptions(shopId, subtotal) {
+        var discountSelect = document.getElementById("discountSelect-" + shopId);
 
-                                                if (!discountSelect) {
-                                                    console.error(`Missing discountSelect element for shopId: ${shopId}`);
-                                                    return;
-                                                }
+        if (!discountSelect) {
+            console.error(`Missing discountSelect element for shopId: ${shopId}`);
+            return;
+        }
 
-                                                var options = discountSelect.options;
+        var options = discountSelect.options;
 
-                                                for (var i = options.length - 1; i >= 0; i--) {
-                                                    var condition = parseFloat(options[i].getAttribute("data-condition"));
-                                                    if (subtotal >= condition) {
-                                                        options[i].disabled = false;
-                                                        options[i].style.display = 'block';
-                                                    } else {
-                                                        options[i].disabled = true;
-                                                        options[i].style.display = 'none';
-                                                    }
-                                                }
-                                            }
+        for (var i = options.length - 1; i >= 0; i--) {
+            var condition = parseFloat(options[i].getAttribute("data-condition"));
+            if (subtotal >= condition) {
+                options[i].disabled = false;
+                options[i].style.display = 'block';
+            } else {
+                options[i].disabled = true;
+                options[i].style.display = 'none';
+            }
+        }
+    }
 
-                                            function updateDiscount(shopId) {
-                                                var discountSelect = document.getElementById("discountSelect-" + shopId);
-                                                var subtotalElement = document.getElementById("subtotal-" + shopId);
-                                                var discountFeeElement = document.getElementById("discountFee-" + shopId);
-                                                var totalFeeElement = document.getElementById("totalFee-" + shopId);
+    function updateDiscount(shopId) {
+        var discountSelect = document.getElementById("discountSelect-" + shopId);
+        var subtotalElement = document.getElementById("subtotal-" + shopId);
+        var discountFeeElement = document.getElementById("discountFee-" + shopId);
+        var totalFeeElement = document.getElementById("totalFee-" + shopId);
 
-                                                if (!discountSelect || !subtotalElement || !discountFeeElement || !totalFeeElement) {
-                                                    console.error(`Missing elements for shopId: ${shopId}`);
-                                                    return;
-                                                }
+        if (!discountSelect || !subtotalElement || !discountFeeElement || !totalFeeElement) {
+            console.error(`Missing elements for shopId: ${shopId}`);
+            return;
+        }
 
-                                                var selectedOption = discountSelect.options[discountSelect.selectedIndex];
-                                                var subtotal = parseFloat(subtotalElement.textContent);
-                                                var discountFee = 0;
+        var selectedOption = discountSelect.options[discountSelect.selectedIndex];
+        var subtotal = parseFloat(subtotalElement.textContent);
+        var discountFee = 0;
 
-                                                if (selectedOption && selectedOption.value !== "") {
-                                                    var percent = parseFloat(selectedOption.getAttribute("data-percent"));
-                                                    discountFee = (percent * subtotal / 100).toFixed(2);
-                                                    discountFeeElement.textContent = '-' + discountFee + ' VND';
-                                                } else {
-                                                    discountFeeElement.textContent = '-0.00 VND';
-                                                }
+        if (selectedOption && selectedOption.value !== "") {
+            var percent = parseFloat(selectedOption.getAttribute("data-percent"));
+            discountFee = (percent * subtotal / 100).toFixed(2);
+            discountFeeElement.textContent = '-' + discountFee + ' VND';
+        } else {
+            discountFeeElement.textContent = '-0.00 VND';
+        }
 
-                                                var newTotal = subtotal - parseFloat(discountFee);
-                                                totalFeeElement.textContent = newTotal.toFixed(2) + ' VND';
+        var newTotal = subtotal - parseFloat(discountFee);
+        totalFeeElement.textContent = newTotal.toFixed(2) + ' VND';
 
-                                                updateCheckoutTotal();
+        updateCheckoutTotal();
 
-                                                // Update selected discounts array
-                                                var discountId = selectedOption && selectedOption.value !== "" ? selectedOption.value : "0";
-                                                var existingDiscount = selectedDiscounts.find(discount => discount.shopId === shopId);
-                                                if (existingDiscount) {
-                                                    existingDiscount.discountId = discountId;
-                                                    existingDiscount.total = newTotal;
-                                                } else {
-                                                    selectedDiscounts.push({shopId: shopId, discountId: discountId, total: newTotal});
-                                                }
-                                            }
+        // Update selected discounts array
+        var discountId = selectedOption && selectedOption.value !== "" ? selectedOption.value : "0";
+        var existingDiscount = selectedDiscounts.find(discount => discount.shopId === shopId);
+        if (existingDiscount) {
+            existingDiscount.discountId = discountId;
+            existingDiscount.total = newTotal;
+        } else {
+            selectedDiscounts.push({shopId: shopId, discountId: discountId, total: newTotal});
+        }
+    }
 
-                                            function updateCheckoutTotal() {
-                                                var totalFees = 0;
-                                                document.querySelectorAll('[id^="totalFee-"]').forEach(function (totalFeeElement) {
-                                                    var total = parseFloat(totalFeeElement.textContent);
-                                                    if (!isNaN(total)) {
-                                                        totalFees += total;
-                                                    }
-                                                });
+    function updateCheckoutTotal() {
+        var totalFees = 0;
+        document.querySelectorAll('[id^="totalFee-"]').forEach(function (totalFeeElement) {
+            var total = parseFloat(totalFeeElement.textContent);
+            if (!isNaN(total)) {
+                totalFees += total;
+            }
+        });
 
-                                                document.getElementById("checkoutTotal").textContent = totalFees.toFixed(2) + ' VND';
-                                                document.getElementById("totalInput").value = totalFees.toFixed(2);
-                                            }
+        document.getElementById("checkoutTotal").textContent = totalFees.toFixed(2) + ' VND';
+        document.getElementById("totalInput").value = totalFees.toFixed(2);
+    }
 
-                                            document.addEventListener("DOMContentLoaded", (event) => {
-                                                var checkboxes = document.querySelectorAll('.orderItemCheckbox');
-                                                checkboxes.forEach(function (checkbox) {
-                                                    checkbox.addEventListener('change', function () {
-                                                        var itemId = this.dataset.itemId;
-                                                        var shopId = this.getAttribute("data-shop-id");
-                                                        var item = {
-                                                            id: this.dataset.itemId,
-                                                            price: parseFloat(this.dataset.itemPrice),
-                                                            quantity: parseInt(this.dataset.itemQuantity),
-                                                            productQuantity: parseInt(this.dataset.productQuantity)
-                                                        };
+    document.addEventListener("DOMContentLoaded", (event) => {
+        var checkboxes = document.querySelectorAll('.orderItemCheckbox');
+        checkboxes.forEach(function (checkbox) {
+            checkbox.addEventListener('change', function () {
+                var itemId = this.dataset.itemId;
+                var shopId = this.getAttribute("data-shop-id");
+                var item = {
+                    id: this.dataset.itemId,
+                    price: parseFloat(this.dataset.itemPrice),
+                    quantity: parseInt(this.dataset.itemQuantity),
+                    productQuantity: parseInt(this.dataset.productQuantity)
+                };
 
-                                                        if (!selectedItemsMap.has(shopId)) {
-                                                            selectedItemsMap.set(shopId, new Set());
-                                                        }
+                if (!selectedItemsMap.has(shopId)) {
+                    selectedItemsMap.set(shopId, new Set());
+                }
 
-                                                        var selectedItems = selectedItemsMap.get(shopId);
+                var selectedItems = selectedItemsMap.get(shopId);
 
-                                                        if (this.checked) {
-                                                            selectedItems.add(item);
-                                                        } else {
-                                                            selectedItems.forEach(function (selectedItem) {
-                                                                if (selectedItem.id === item.id) {
-                                                                    selectedItems.delete(selectedItem);
-                                                                }
-                                                            });
-                                                        }
+                if (this.checked) {
+                    selectedItems.add(item);
+                } else {
+                    selectedItems.forEach(function (selectedItem) {
+                        if (selectedItem.id === item.id) {
+                            selectedItems.delete(selectedItem);
+                        }
+                    });
+                }
 
-                                                        updateSummary(shopId);
-                                                    });
-                                                });
+                updateSummary(shopId);
+            });
+        });
 
-                                                // Initial call to hide the discount select box if no items are selected
-                                                checkboxes.forEach(function (checkbox) {
-                                                    var shopId = checkbox.getAttribute("data-shop-id");
-                                                    updateSummary(shopId);
-                                                });
-                                            });
+        // Initial call to hide the discount select box if no items are selected
+        checkboxes.forEach(function (checkbox) {
+            var shopId = checkbox.getAttribute("data-shop-id");
+            updateSummary(shopId);
+        });
+    });
 
 // Append discount information to the form before submission
-                                            document.querySelector('form[action="confirmorder"]').addEventListener('submit', function (e) {
-                                                var discountInput = document.createElement('input');
-                                                discountInput.type = 'hidden';
-                                                discountInput.name = 'selectedDiscounts';
-                                                discountInput.value = JSON.stringify(selectedDiscounts);
-                                                this.appendChild(discountInput);
-                                            });
+    document.querySelector('form[action="confirmorder"]').addEventListener('submit', function (e) {
+        var discountInput = document.createElement('input');
+        discountInput.type = 'hidden';
+        discountInput.name = 'selectedDiscounts';
+        discountInput.value = JSON.stringify(selectedDiscounts);
+        this.appendChild(discountInput);
+    });
 
-                                            window.onload = function () {
-                                                listenForQuantityChange();
-                                            }
+    window.onload = function () {
+        listenForQuantityChange();
+    }
 
 
-                                            // Check if the message variable is set or not
-                                            document.addEventListener("DOMContentLoaded", (event) => {
-                                                var errorMessage = "${message}";
-                                                // Kiểm tra nếu errorMessage không rỗng, hiển thị thông báo lỗi
-                                                if (errorMessage != "") {
-                                                    swal({
-                                                        title: "Error!",
-                                                        text: errorMessage,
-                                                        icon: "error",
-                                                        button: "OK",
-                                                    });
-                                                }
-                                            });
+
 </script>
 
 </body>
