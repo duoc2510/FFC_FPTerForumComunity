@@ -9,54 +9,62 @@ User user = (User) session.getAttribute("USER");
 String userJson = new Gson().toJson(user);
 %>
 
-     <style>
-        #searchDropdown {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            display: none;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            max-height: 200px;
-            overflow-y: auto;
-            width: 190px; /* Adjust this value as needed */
-        }
+<style>
+    #searchDropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        display: none;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        max-height: 200px;
+        overflow-y: auto;
+        width: 190px; /* Adjust this value as needed */
+    }
 
-        #searchDropdown .list-group-item {
-            padding: 10px;
-            cursor: pointer;
-        }
+    #searchDropdown .list-group-item {
+        padding: 10px;
+        cursor: pointer;
+    }
 
-        #searchDropdown .list-group-item:hover {
-            background-color: #f1f1f1;
-        }
-        
-        .non-clickable {
-            background-color: #f8f9fa;
-            pointer-events: none;
-            color: #6c757d;
-            cursor: default;
-        }
+    #searchDropdown .list-group-item:hover {
+        background-color: #f1f1f1;
+    }
 
-        .non-clickable:hover {
-            background-color: #f8f9fa; /* Không đổi màu khi hover */
-        }
+    .non-clickable {
+        background-color: #f8f9fa;
+        pointer-events: none;
+        color: #6c757d;
+        cursor: default;
+    }
 
-        .history-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    .non-clickable:hover {
+        background-color: #f8f9fa; /* Không đổi màu khi hover */
+    }
 
-        .history-item .close-btn {
-            color: red;
-            cursor: pointer;
-            margin-left: 10px;
-        }
-    </style>
+    .history-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .history-item .close-btn {
+        color: red;
+        cursor: pointer;
+        margin-left: 10px;
+    }
+    .detectOnClick {
+        cursor: pointer;
+        margin-bottom: 2em;
+    }
+
+    .detectOnClick img {
+        width: 100%;
+    }
+</style>
 
 <header class="app-header border-bottom">
     <nav class="navbar navbar-expand-lg navbar-light">
@@ -129,7 +137,7 @@ String userJson = new Gson().toJson(user);
                             </a>
                             <div class="d-flex align-items-center gap-2">
                                 <a href="${pageContext.request.contextPath}/wallet" class="dropdown-item d-flex" id="walletLink">
-                                      <i class="ti ti-database fs-6 "></i><p class="mb-0 ms-2 fs-3" id="walletAmount"> ${USER.userWallet}</p>
+                                    <i class="ti ti-database fs-6 "></i><p class="mb-0 ms-2 fs-3" id="walletAmount"> ${USER.userWallet}</p>
                                 </a>
                                 <i class="ti ti-repeat" class="position-absolute p-1" id="reloadWalletIcon" style="cursor: pointer;"></i>
                             </div>
@@ -147,6 +155,49 @@ String userJson = new Gson().toJson(user);
             </ul>
         </div>
 
+        <!-- Webcam Modal -->
+        <div class="webcam-popup modal fade" id="webcamModal" tabindex="-1" aria-labelledby="webcamModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal-dialog">
+                <div class="modal-content rounded1dot2">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="webcamModalLabel">Hand Tracking</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <section id="demos">
+                            <div class="video-container" class="mb-3" id="liveView">
+                                <video id="webcam" autoplay playsinline></video>
+                                <canvas class="output_canvas" id="output_canvas"></canvas>
+                            </div>
+                            <h3>Distance between Index and Middle Fingers: <span id="fingerDistance">0</span></h3>
+
+                        </section>
+                        <p> 1 finger to turn Dark Mode On </p>
+                        <p> 3 fingers to turn Dark Mode Off </p>
+                        <p> 2 fingers to scroll </p>
+                        <p> 5 fingers to turn off Camera</p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="position-absolute w-100 h-100 top-0 right-0 d-flex justify-content-end align-items-center">
+            <div class="swipe-mode px-2" style="width: 100px">
+                <input type="checkbox" class="checkbox" id="checkbox">
+                <label for="checkbox" class="checkbox-label">
+                    <i class="fas fa-moon"></i>
+                    <i class="fas fa-sun"></i>
+                    <span class="ball"></span>
+                </label>
+            </div>
+            <div style="width: 50px">
+                <a id="webcamButton" class="nav-link" data-bs-toggle="modal" data-bs-target="#webcamModal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="currentColor" class="bi bi-lightning-charge-fill" viewBox="0 0 16 16">
+                    <path d="M11.251.068a.5.5 0 0 1 .227.58L9.677 6.5H13a.5.5 0 0 1 .364.843l-8 8.5a.5.5 0 0 1-.842-.49L6.323 9.5H3a.5.5 0 0 1-.364-.843l8-8.5a.5.5 0 0 1 .615-.09z"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
 
     </nav>
     <script type="text/javascript">
@@ -189,11 +240,11 @@ String userJson = new Gson().toJson(user);
                                 listItem.append(link);
                                 $('#notificationList').append(listItem);
                             });
-                                  } else {
+                        } else {
                             $('#notificationList').empty();
                             $('#notificationCount').text(oldNotificationCount).show();
                             $('#notificationList').append('<li class="notification-item"><a class="dropdown-item" >No new notifications</a></li>');
-                                                 }
+                        }
                     }
                 });
             }
@@ -293,7 +344,7 @@ String userJson = new Gson().toJson(user);
                 searchDropdown.empty();
 
                 // Add "History" title
-             
+
 
                 searchHistory.forEach(function (query) {
                     searchDropdown.append('<div class="list-group-item history-item">' +

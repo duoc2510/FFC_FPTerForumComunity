@@ -1,9 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+<!-- FullCalendar CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.1/main.min.css" rel="stylesheet">
 <%--<%@ include file="../include/header.jsp" %>--%>
 
-
 <body>
+
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
          data-sidebar-position="fixed" data-header-position="fixed">
         <c:if test="${USER.userRole > 1}">
@@ -15,34 +18,41 @@
         </c:if>
 
     </div>
+    <div class="col-12 d-flex justify-content-center my-4">
+        <div class="calendar-container bg-light p-3 rounded shadow-sm" style="max-width: 800px; width: 100%;">
+            <h3 class="text-center">Event Calendar</h3>
+            <hr/>
+            <div id="calendar" style="width: 100%;"></div>
+        </div>
+    </div>
+
+
     <div class="row shadow rounded">
-
         <!-- Event Cards -->
-        <div class="col-12 col-md-6  mb-5">
 
-            <c:if test="${not empty eventList}">
-                <c:forEach var="event" items="${eventList}">
-                    <div class="col-12 col-sm-6  mb-3">
-                        <div class="card m-2 rounded">
-                            <!-- Check if uploadPath exists -->
-                            <c:choose>
-                                <c:when test="${not empty event.uploadPath}">
-                                    <c:set var="uploadPath" value="${event.uploadPath}" />
-                                </c:when>
-                                <c:otherwise>
-                                    <c:set var="uploadPath" value="" />
-                                </c:otherwise>
-                            </c:choose>
-                            <!-- Display Event Image -->
-                            <a href="${pageContext.request.contextPath}/viewEvent?eventId=${event.eventId}">
-                                <img src="${pageContext.request.contextPath}/${uploadPath}" class="card-img-top event-img rounded-top" alt="...">
-                                <!-- Event Details -->
-                                <div class="card-body">
-                                    <h5 class="card-title">
-                                        <!-- Event Title -->
+        <c:if test="${not empty eventList}">
+            <c:forEach var="event" items="${eventList}">
+                <div class="col-sm-4">
+                    <div class="card m-2 rounded">
+                        <!-- Check if uploadPath exists -->
+                        <c:choose>
+                            <c:when test="${not empty event.uploadPath}">
+                                <c:set var="uploadPath" value="${event.uploadPath}" />
+                            </c:when>
+                            <c:otherwise>
+                                <c:set var="uploadPath" value="" />
+                            </c:otherwise>
+                        </c:choose>
+                        <!-- Display Event Image -->
+                        <a href="${pageContext.request.contextPath}/viewEvent?eventId=${event.eventId}">
+                            <img src="${pageContext.request.contextPath}/${uploadPath}" class="card-img-top event-img rounded-top" alt="...">
+                            <!-- Event Details -->
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <!-- Event Title -->
 
-                                        <h3>${event.title}</h3>
-                                         <!-- Check Event Status -->
+                                    <h3>${event.title}</h3>
+                                    <!-- Check Event Status -->
                                     <c:choose>
                                         <c:when test="${event.endDate < now}">
                                             <p class="text-danger mb-2"><strong>Ended</strong></p>
@@ -53,68 +63,83 @@
                                     </c:choose>
 
 
-                                        <!-- Three-dot menu for delete -->
-                                        <div class="dropdown float-end ">
-                                            <c:if test="${USER.userRole > 1}">
-                                                <div class="dropdown">
-                                                    <button class="p-0 btn rounded dropdown-toggle" type="button" id="dropdownMenuButton${event.eventId}" data-bs-toggle="dropdown" aria-expanded="false"></button>
-                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton${event.eventId}">
-                                                        <li>
-                                                            <a class="dropdown-item update-event-btn" 
-                                                               onclick="editEvent('${event.eventId}', '${event.title}', '${event.description}', '${event.startDate}',
+                                    <!-- Three-dot menu for delete -->
+                                    <div class="dropdown float-end ">
+                                        <c:if test="${USER.userRole > 1}">
+                                            <div class="dropdown">
+                                                <button class="p-0 btn rounded dropdown-toggle" type="button" id="dropdownMenuButton${event.eventId}" data-bs-toggle="dropdown" aria-expanded="false" style="display: none;"></button>
+                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton${event.eventId}">
+                                                    <li>
+                                                        <a class="dropdown-item update-event-btn" 
+                                                           onclick="editEvent('${event.eventId}', '${event.title}', '${event.description}', '${event.startDate}',
                                                                            '${event.endDate}', '${event.location}', '${event.place}', '${not empty event.uploadPath ? event.uploadPath : ''}')">
-                                                                Edit
-                                                            </a>
-                                                        </li>
-                                                        <li>
-                                                            <a class="dropdown-item" href="#" onclick="deleteEvent('${event.eventId}')">Delete</a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </c:if>
-                                        </div>
-                                    </h5>
-                        
-                                    <!-- Other Event Details -->
-                                    <p class="card-text mb-1">${event.description}</p>
-                                    <p class="card-text mb-1">Start Date: ${event.formattedStartDate}</p>
-                                    <p class="card-text mb-1">End Date: ${event.formattedEndDate}</p>
-                                    <p class="card-text mb-1">Location: ${event.location}</p>
-                                    <p class="card-text mb-3">Place: ${event.place}</p>
-                                    <!--<p class="card-text">Created At: ${event.createdAt}"</p>-->
-
-                                   
-                                    <!-- Interest Button -->
-                                    <div class="interest-button">
-                                        <c:choose>
-                                            <c:when test="${event.isInterest}">
-                                                <form action="${pageContext.request.contextPath}/interested" method="post">
-                                                    <input type="hidden" name="eventId" value="${event.eventId}">
-                                                    <input type="hidden" name="action" value="cancel">
-                                                    <button type="submit" class="btn rounded btn-secondary">Interested</button>
-                                                </form>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <form action="${pageContext.request.contextPath}/interested" method="post">
-                                                    <input type="hidden" name="eventId" value="${event.eventId}">
-                                                    <input type="hidden" name="action" value="add">
-                                                    <button type="submit" class="btn rounded btn-primary w-100">Interest</button>
-                                                </form>
-                                            </c:otherwise>
-                                        </c:choose>
+                                                            Edit
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item" href="#" onclick="deleteEvent('${event.eventId}')">Delete</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </c:if>
                                     </div>
+                                    <!-- Three-dot menu for delete -->
+                                    <div class="dropdown float-end ">
+                                        <c:if test="${USER.userRole > 1}">
+                                            <div class="dropdown">
+                                                <button class="p-0 btn rounded dropdown-toggle" type="button" id="dropdownMenuButton${event.eventId}" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton${event.eventId}">
+                                                    <li>
+                                                        <a class="dropdown-item update-event-btn" 
+                                                           onclick="editEvent('${event.eventId}', '${event.title}', '${event.description}', '${event.startDate}',
+                                                                           '${event.endDate}', '${event.location}', '${event.place}', '${not empty event.uploadPath ? event.uploadPath : ''}')">
+                                                            Edit
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item" href="#" onclick="deleteEvent('${event.eventId}')">Delete</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </c:if>
+                                    </div>
+                                </h5>
+
+                                <!-- Other Event Details -->
+                                <p class="card-text mb-1">${event.description}</p>
+                                <p class="card-text mb-1">Start Date: ${event.formattedStartDate}</p>
+                                <p class="card-text mb-1">End Date: ${event.formattedEndDate}</p>
+                                <p class="card-text mb-1">Location: ${event.location}</p>
+                                <p class="card-text mb-3">Place: ${event.place}</p>
+                                <!--<p class="card-text">Created At: ${event.createdAt}"</p>-->
+
+
+                                <!-- Interest Button -->
+                                <div class="interest-button">
+                                    <c:choose>
+                                        <c:when test="${event.isInterest}">
+                                            <form action="${pageContext.request.contextPath}/interested" method="post">
+                                                <input type="hidden" name="eventId" value="${event.eventId}">
+                                                <input type="hidden" name="action" value="cancel">
+                                                <button type="submit" class="btn rounded btn-secondary">Interested</button>
+                                            </form>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <form action="${pageContext.request.contextPath}/interested" method="post">
+                                                <input type="hidden" name="eventId" value="${event.eventId}">
+                                                <input type="hidden" name="action" value="add">
+                                                <button type="submit" class="btn rounded btn-primary w-100">Interest</button>
+                                            </form>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </div>
-                            </a>
-                        </div>
+                            </div>
+                        </a>
                     </div>
-                </c:forEach>
-            </c:if>
-        </div>
-        <div class="col-12 col-md-6 p-3">
-            <h3>Event Calendar</h3>
-            <hr/>
-            <div id="calendar"></div>
-        </div>
+                </div>
+            </c:forEach>
+        </c:if>
+
     </div>
 
     <!-- Modal for editing event -->
@@ -245,6 +270,14 @@
 </div>
 </body>
 <script>
+    // Listen for click event on "Add Event" button
+    document.getElementById('showFormBtn').addEventListener('click', function () {
+        document.getElementById('eventForm').style.display = 'block';
+    });
+
+    document.getElementById('editEventForm').onsubmit = function () {
+        console.log('Form submitted with action:', document.getElementsByName('action')[0].value);
+    };
     document.addEventListener('DOMContentLoaded', function () {
         const calendarEl = document.getElementById('calendar');
         const events = [
@@ -289,14 +322,7 @@
                         // Trả về định dạng 'yyyy-MM-dd'
                         return year + '-' + month + '-' + day;
                     }
-                    // Listen for click event on "Add Event" button
-                    document.getElementById('showFormBtn').addEventListener('click', function () {
-                        document.getElementById('eventForm').style.display = 'block';
-                    });
 
-                    document.getElementById('editEventForm').onsubmit = function () {
-                        console.log('Form submitted with action:', document.getElementsByName('action')[0].value);
-                    };
 
                     function editEvent(eventId, title, description, startDate, endDate, location, place, uploadPath) {
                         console.log("Edit Event called with:", {eventId, title, description, startDate, endDate, location, place, uploadPath});
