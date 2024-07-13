@@ -19,10 +19,10 @@
 
     </div>
     <div class="col-12 d-flex justify-content-center my-4">
-        <div class="calendar-container bg-light p-3 rounded shadow-sm" style="max-width: 800px; width: 100%;">
+        <div class="calendar-container bg-light p-3 rounded shadow-sm" style="max-width: 800px; width: 100%; height: auto;">
             <h3 class="text-center">Event Calendar</h3>
             <hr/>
-            <div id="calendar" style="width: 100%;"></div>
+            <div id="calendar" style="width: 100%; height: 300px;"></div>
         </div>
     </div>
 
@@ -51,87 +51,87 @@
                                 <h5 class="card-title">
                                     <!-- Event Title -->
 
-                                        <h3>${event.title}</h3>
-                                        <!-- Check Event Status -->
-                                        <c:choose>
-                                            <c:when test="${event.endDate < now}">
-                                                <p class="text-danger mb-2"><strong>Ended</strong></p>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <p class="text-success mb-2"><strong>On Going</strong></p>
-                                            </c:otherwise>
-                                        </c:choose>
-
-
-                                        <!-- Three-dot menu for delete -->
-                                        <div class="dropdown float-end " style="display:none">
-                                            <c:if test="${USER.userRole > 1}">
-                                                <div class="dropdown">
-                                                    <button class="p-0 btn rounded dropdown-toggle" type="button" id="dropdownMenuButton${event.eventId}" data-bs-toggle="dropdown" aria-expanded="false"></button>
-                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton${event.eventId}">
-                                                        <li>
-                                                            <a class="dropdown-item update-event-btn" 
-                                                               onclick="editEvent('${event.eventId}', '${event.title}', '${event.description}', '${event.startDate}',
-                                                                               '${event.endDate}', '${event.location}', '${event.place}', '${not empty event.uploadPath ? event.uploadPath : ''}')">
-                                                                Edit
-                                                            </a>
-                                                        </li>
-                                                        <li>
-                                                            <a class="dropdown-item" href="#" onclick="deleteEvent('${event.eventId}')">Delete</a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </c:if>
-                                        </div>
-                                        <div class="dropdown float-end " >
-                                            <c:if test="${USER.userRole > 1}">
-                                                <div class="dropdown">
-                                                    <button class="p-0 btn rounded dropdown-toggle" type="button" id="dropdownMenuButton${event.eventId}" data-bs-toggle="dropdown" aria-expanded="false"></button>
-                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton${event.eventId}">
-                                                        <li>
-                                                            <a class="dropdown-item update-event-btn" 
-                                                               onclick="editEvent('${event.eventId}', '${event.title}', '${event.description}', '${event.startDate}',
-                                                                               '${event.endDate}', '${event.location}', '${event.place}', '${not empty event.uploadPath ? event.uploadPath : ''}')">
-                                                                Edit
-                                                            </a>
-                                                        </li>
-                                                        <li>
-                                                            <a class="dropdown-item" href="#" onclick="deleteEvent('${event.eventId}')">Delete</a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </c:if>
-
-                                        </div>
-                                                                    
-                                <!-- Other Event Details -->
-                                <p class="card-text mb-1">${event.description}</p>
-                                <p class="card-text mb-1">Start Date: ${event.formattedStartDate}</p>
-                                <p class="card-text mb-1">End Date: ${event.formattedEndDate}</p>
-                                <p class="card-text mb-1">Location: ${event.location}</p>
-                                <p class="card-text mb-3">Place: ${event.place}</p>
-                                <!--<p class="card-text">Created At: ${event.createdAt}"</p>-->
-
-
-                                <!-- Interest Button -->
-                                <div class="interest-button">
+                                    <h3>${event.title}</h3>
+                                    <!-- Check Event Status -->
                                     <c:choose>
-                                        <c:when test="${event.isInterest}">
-                                            <form action="${pageContext.request.contextPath}/interested" method="post">
-                                                <input type="hidden" name="eventId" value="${event.eventId}">
-                                                <input type="hidden" name="action" value="cancel">
-                                                <button type="submit" class="btn rounded btn-secondary w-100">Interested</button>
-                                            </form>
+                                        <c:when test="${event.endDate < now}">
+                                            <p class="text-danger mb-2"><strong>Ended</strong></p>
                                         </c:when>
                                         <c:otherwise>
-                                            <form action="${pageContext.request.contextPath}/interested" method="post">
-                                                <input type="hidden" name="eventId" value="${event.eventId}">
-                                                <input type="hidden" name="action" value="add">
-                                                <button type="submit" class="btn rounded btn-primary w-100">Interest</button>
-                                            </form>
+                                            <p class="text-success mb-2"><strong>On Going</strong></p>
                                         </c:otherwise>
                                     </c:choose>
-                                </div>
+
+
+                                    <!-- Three-dot menu for delete -->
+                                    <div class="dropdown float-end " style="display:none">
+                                        <c:if test="${USER.userRole > 1}">
+                                            <div class="dropdown">
+                                                <button class="p-0 btn rounded dropdown-toggle" type="button" id="dropdownMenuButton${event.eventId}" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton${event.eventId}">
+                                                    <li>
+                                                        <a class="dropdown-item update-event-btn" 
+                                                           onclick="editEvent('${event.eventId}', '${event.title}', '${event.description}', '${event.startDate}',
+                                                                           '${event.endDate}', '${event.location}', '${event.place}', '${not empty event.uploadPath ? event.uploadPath : ''}')">
+                                                            Edit
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item" href="#" onclick="deleteEvent('${event.eventId}')">Delete</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </c:if>
+                                    </div>
+                                    <div class="dropdown float-end " >
+                                        <c:if test="${USER.userRole > 1}">
+                                            <div class="dropdown">
+                                                <button class="p-0 btn rounded dropdown-toggle" type="button" id="dropdownMenuButton${event.eventId}" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton${event.eventId}">
+                                                    <li>
+                                                        <a class="dropdown-item update-event-btn" 
+                                                           onclick="editEvent('${event.eventId}', '${event.title}', '${event.description}', '${event.startDate}',
+                                                                           '${event.endDate}', '${event.location}', '${event.place}', '${not empty event.uploadPath ? event.uploadPath : ''}')">
+                                                            Edit
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item" href="#" onclick="deleteEvent('${event.eventId}')">Delete</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </c:if>
+
+                                    </div>
+
+                                    <!-- Other Event Details -->
+                                    <p class="card-text mb-1">${event.description}</p>
+                                    <p class="card-text mb-1">Start Date: ${event.formattedStartDate}</p>
+                                    <p class="card-text mb-1">End Date: ${event.formattedEndDate}</p>
+                                    <p class="card-text mb-1">Location: ${event.location}</p>
+                                    <p class="card-text mb-3">Place: ${event.place}</p>
+                                    <!--<p class="card-text">Created At: ${event.createdAt}"</p>-->
+
+
+                                    <!-- Interest Button -->
+                                    <div class="interest-button">
+                                        <c:choose>
+                                            <c:when test="${event.isInterest}">
+                                                <form action="${pageContext.request.contextPath}/interested" method="post">
+                                                    <input type="hidden" name="eventId" value="${event.eventId}">
+                                                    <input type="hidden" name="action" value="cancel">
+                                                    <button type="submit" class="btn rounded btn-secondary w-100">Interested</button>
+                                                </form>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <form action="${pageContext.request.contextPath}/interested" method="post">
+                                                    <input type="hidden" name="eventId" value="${event.eventId}">
+                                                    <input type="hidden" name="action" value="add">
+                                                    <button type="submit" class="btn rounded btn-primary w-100">Interest</button>
+                                                </form>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </div>
                             </div>
                         </a>
                     </div>
@@ -269,14 +269,7 @@
 </div>
 </body>
 <script>
-    // Listen for click event on "Add Event" button
-    document.getElementById('showFormBtn').addEventListener('click', function () {
-        document.getElementById('eventForm').style.display = 'block';
-    });
 
-    document.getElementById('editEventForm').onsubmit = function () {
-        console.log('Form submitted with action:', document.getElementsByName('action')[0].value);
-    };
     document.addEventListener('DOMContentLoaded', function () {
         const calendarEl = document.getElementById('calendar');
         const events = [
@@ -321,7 +314,14 @@
                         // Trả về định dạng 'yyyy-MM-dd'
                         return year + '-' + month + '-' + day;
                     }
+                    // Listen for click event on "Add Event" button
+                    document.getElementById('showFormBtn').addEventListener('click', function () {
+                        document.getElementById('eventForm').style.display = 'block';
+                    });
 
+                    document.getElementById('editEventForm').onsubmit = function () {
+                        console.log('Form submitted with action:', document.getElementsByName('action')[0].value);
+                    };
 
                     function editEvent(eventId, title, description, startDate, endDate, location, place, uploadPath) {
                         console.log("Edit Event called with:", {eventId, title, description, startDate, endDate, location, place, uploadPath});
