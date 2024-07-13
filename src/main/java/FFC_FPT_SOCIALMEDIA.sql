@@ -501,5 +501,3 @@ VALUES
     (1, 4, NULL, NULL, N'tệ', N'pending'),
     (2, 4, NULL, NULL, N'tệ', N'pending'),
     (3, 4, NULL, NULL, N'tệ', N'pending');
-
-

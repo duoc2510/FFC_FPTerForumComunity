@@ -42,19 +42,19 @@
                                         <!-- Event Title -->
 
                                         <h3>${event.title}</h3>
-                                         <!-- Check Event Status -->
-                                    <c:choose>
-                                        <c:when test="${event.endDate < now}">
-                                            <p class="text-danger mb-2"><strong>Ended</strong></p>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <p class="text-success mb-2"><strong>On Going</strong></p>
-                                        </c:otherwise>
-                                    </c:choose>
+                                        <!-- Check Event Status -->
+                                        <c:choose>
+                                            <c:when test="${event.endDate < now}">
+                                                <p class="text-danger mb-2"><strong>Ended</strong></p>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <p class="text-success mb-2"><strong>On Going</strong></p>
+                                            </c:otherwise>
+                                        </c:choose>
 
 
                                         <!-- Three-dot menu for delete -->
-                                        <div class="dropdown float-end ">
+                                        <div class="dropdown float-end " style="display:none">
                                             <c:if test="${USER.userRole > 1}">
                                                 <div class="dropdown">
                                                     <button class="p-0 btn rounded dropdown-toggle" type="button" id="dropdownMenuButton${event.eventId}" data-bs-toggle="dropdown" aria-expanded="false"></button>
@@ -62,7 +62,7 @@
                                                         <li>
                                                             <a class="dropdown-item update-event-btn" 
                                                                onclick="editEvent('${event.eventId}', '${event.title}', '${event.description}', '${event.startDate}',
-                                                                           '${event.endDate}', '${event.location}', '${event.place}', '${not empty event.uploadPath ? event.uploadPath : ''}')">
+                                                                               '${event.endDate}', '${event.location}', '${event.place}', '${not empty event.uploadPath ? event.uploadPath : ''}')">
                                                                 Edit
                                                             </a>
                                                         </li>
@@ -73,8 +73,28 @@
                                                 </div>
                                             </c:if>
                                         </div>
+                                        <div class="dropdown float-end " >
+                                            <c:if test="${USER.userRole > 1}">
+                                                <div class="dropdown">
+                                                    <button class="p-0 btn rounded dropdown-toggle" type="button" id="dropdownMenuButton${event.eventId}" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton${event.eventId}">
+                                                        <li>
+                                                            <a class="dropdown-item update-event-btn" 
+                                                               onclick="editEvent('${event.eventId}', '${event.title}', '${event.description}', '${event.startDate}',
+                                                                               '${event.endDate}', '${event.location}', '${event.place}', '${not empty event.uploadPath ? event.uploadPath : ''}')">
+                                                                Edit
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="dropdown-item" href="#" onclick="deleteEvent('${event.eventId}')">Delete</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </c:if>
+
+                                        </div>
                                     </h5>
-                        
+
                                     <!-- Other Event Details -->
                                     <p class="card-text mb-1">${event.description}</p>
                                     <p class="card-text mb-1">Start Date: ${event.formattedStartDate}</p>
@@ -83,7 +103,7 @@
                                     <p class="card-text mb-3">Place: ${event.place}</p>
                                     <!--<p class="card-text">Created At: ${event.createdAt}"</p>-->
 
-                                   
+
                                     <!-- Interest Button -->
                                     <div class="interest-button">
                                         <c:choose>
