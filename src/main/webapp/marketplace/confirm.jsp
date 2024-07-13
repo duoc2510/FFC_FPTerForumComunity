@@ -8,6 +8,8 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
     <!-- SweetAlert JS -->
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </head>
@@ -107,7 +109,8 @@
                                                         <tr>
                                                             <td>
                                                                 <div class="text-left">
-                                                                    <span class="text-muted">Total</span>
+                                                                     <i class="bi bi-cash-stack"></i>
+                                                                    <span class="text-muted">Subtotal</span>
                                                                 </div>
                                                             </td>
                                                             <td>
@@ -116,23 +119,60 @@
                                                                 </div>
                                                             </td>
                                                         </tr>
-                                                        <c:set var="discount" value="${Shop_DB.getDiscountByID(order.discountid)}" />
+                                                        <c:set var="orderdiscountlist" value="${Shop_DB.getAllOrderDiscountByOrderID(order.order_ID)}" />
+                                                        <c:forEach var="dis" items="${orderdiscountlist}">
+                                                            <c:set var="discount" value="${Shop_DB.getDiscountByID(dis.discountID)}" />
+                                                            <c:choose>
+                                                                <c:when test="${discount.shopId != 0}">
+                                                                    <c:set var="selectedDiscount" value="${discount}" />
+                                                                </c:when>
+                                                            </c:choose>
+                                                        </c:forEach>
+
+                                                        <!-- Applying Shop-Specific Discount -->
                                                         <tr>
                                                             <td>
                                                                 <div class="text-left">
+                                                                    <i class="bi bi-tag-fill"></i>
                                                                     <span class="text-muted">Discount Fee</span>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div class="text-right">
-                                                                    <span>- ${totalPrice * discount.discountPercent / 100} VND</span>
+                                                                    <span>- ${totalPrice * selectedDiscount.discountPercent / 100} VND</span>
                                                                 </div>
                                                             </td>
                                                         </tr>
+                                                        <!-- Applying General Discount -->
+                                                        <c:set var="generalDiscount" value="${null}" />
+                                                        <c:forEach var="dis" items="${orderdiscountlist}">
+                                                            <c:set var="discount" value="${Shop_DB.getDiscountByID(dis.discountID)}" />
+                                                            <c:choose>
+                                                                <c:when test="${discount.shopId == 0}">
+                                                                    <c:set var="generalDiscount" value="${discount}" />
+                                                                </c:when>
+                                                            </c:choose>
+                                                        </c:forEach>
+
+                                                        <tr>
+                                                            <td>
+                                                                <div class="text-left">
+                                                                     <i class="bi bi-ticket-perforated"></i>
+                                                                    <span class="text-muted">General Discount Fee</span>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="text-right">
+                                                                    <span>- ${(totalPrice -(totalPrice * selectedDiscount.discountPercent / 100))  * (generalDiscount.discountPercent / 100)} VND</span>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+
                                                         <tr class="border-top border-bottom">
                                                             <td>
                                                                 <div class="text-left">
-                                                                    <span class="font-weight-bold">Subtotal</span>
+                                                                     <i class="bi bi-wallet-fill"></i>
+                                                                    <span class="font-weight-bold">Total</span>
                                                                 </div>
                                                             </td>
                                                             <td>
@@ -147,7 +187,7 @@
                                             </div>
                                         </div>
                                     </c:forEach>
-                                    <div class="text-right font-weight-bold mb-3">Total Final: ${totalfinal} VND</div>
+                                    <div class="text-right font-weight-bold mb-3" style="font-weight: bold;">Total Final: ${totalfinal} VND</div>
                                     <div class="border-top mt-3 mb-3">
                                         <table class="table">
                                             <tbody>

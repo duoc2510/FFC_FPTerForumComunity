@@ -34,8 +34,8 @@ public class RankResetJob implements Job {
 
             udb.updateScoreByEmail(u.getUserEmail(), 0);
 
-            nw.saveNotificationToDatabase(u.getUserId(), "Rank của bạn đã được cập nhật!", "/rank/userrank");
-            nw.sendNotificationToClient(u.getUserId(), "Rank của bạn đã được cập nhật!", "/rank/userrank");
+            nw.saveNotificationToDatabase(u.getUserId(), "Your rank has been updated!", "/rank/userrank");
+            nw.sendNotificationToClient(u.getUserId(), "Your rank has been updated!", "/rank/userrank");
         }
     }
 }

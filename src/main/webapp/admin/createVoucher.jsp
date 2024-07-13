@@ -19,7 +19,7 @@
                         <div class="col-lg-12">
                             <div id="report-sections">
                                 <div id="reported-posts-section">
-                                    <h2 class="mt-4 mb-4">Create coupons for the entire system</h2>
+                                    <h2 class="mt-4 mb-4" style="text-align: center;">Create coupons for the entire system</h2>
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">
                                             <form id="createVoucherForm">
@@ -33,7 +33,7 @@
                                                         <input type="number" class="form-control" id="discountPercentInput" name="discountPercent" required>
                                                     </div>
                                                     <div class="form-group mt-3">
-                                                        <label for="discountConditionInput">Discount Condition (Giá trị đơn hàng tối thiểu):</label>
+                                                        <label for="discountConditionInput">Discount Condition (Minimum order value):</label>
                                                         <input type="number" class="form-control" id="discountConditionInput" name="discountConditionInput" required>
                                                     </div>
                                                     <div class="form-group mt-3">
