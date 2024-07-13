@@ -100,8 +100,8 @@ public class Admin_createVoucher extends HttpServlet {
 
             out.print("{\"status\":\"success\"}");
             for (User u : userlist) {
-                nw.saveNotificationToDatabase(u.getUserId(), "Hot!Hot! System Voucher available! Hurry and buy now!", "/marketplace/allshop");
-                nw.sendNotificationToClient(u.getUserId(), "Hot!Hot! System Voucher available! Hurry and buy now!", "/marketplace/allshop");
+                nw.saveNotificationToDatabase(u.getUserId(), "Hot!Hot! System Voucher available! Hurry and buy now!", "/martketplace/allshop");
+                nw.sendNotificationToClient(u.getUserId(), "Hot!Hot! System Voucher available! Hurry and buy now!", "/martketplace/allshop");
             }
         } catch (Exception e) {
             e.printStackTrace();
