@@ -85,18 +85,18 @@ public class Shop_approve extends HttpServlet {
         try {
             if ("approve".equalsIgnoreCase(action)) {
                 Shop_DB.setStatusIs1ByShopID(shopId);
-                nw.saveNotificationToDatabase(user.getUserId(), "Shop của bạn đã được duyệt!", "/marketplace/myshop");
-                nw.sendNotificationToClient(user.getUserId(), "Shop của bạn đã được duyệt!", "/marketplace/myshop");
+                nw.saveNotificationToDatabase(user.getUserId(), "Your shop has been approved!", "/marketplace/myshop");
+                nw.sendNotificationToClient(user.getUserId(), "Your shop has been approved!", "/marketplace/myshop");
                 success = true;
                 message = "Shop approved successfully.";
             } else if ("not-approve".equalsIgnoreCase(action)) {
                 Shop_DB.setStatusIs0ByShopID(shopId);
-                nw.saveNotificationToDatabase(user.getUserId(), "Shop của bạn không được duyệt vì 1 số lí do!", "/marketplace/myshop");
-                nw.sendNotificationToClient(user.getUserId(), "Shop của bạn không được duyệt vì 1 số lí do!", "/marketplace/myshop");
+                nw.saveNotificationToDatabase(user.getUserId(), "Your shop was not approved for some reason!", "/marketplace/myshop");
+                nw.sendNotificationToClient(user.getUserId(), "Your shop was not approved for some reason!", "/marketplace/myshop");
 
                 // Deduct money from the buyer
                 boolean updateSuccess = User_DB.updateWalletByEmail(user.getUserEmail(), user.getUserWallet() + 50000);
-                nw.saveNotificationToDatabaseWithStatusIsBalance(user.getUserId(), "Trả lại tiền tạo shop không thành công : 50000đ!", "/walletbalance");
+                nw.saveNotificationToDatabaseWithStatusIsBalance(user.getUserId(), "Return money for unsuccessful shop creation : 50000đ!", "/walletbalance");
                 if (!updateSuccess) {
                     throw new Exception("Failed to update user wallet.");
                 }

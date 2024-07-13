@@ -117,7 +117,7 @@ public class Shop_myShop extends HttpServlet {
         if (isValidPhoneNumber(phone.trim()) == true) {
             if (user.getUserWallet() >= 50000) {
                 boolean updateSuccess = User_DB.updateWalletByEmail(user.getUserEmail(), user.getUserWallet() - 50000);
-                nw.saveNotificationToDatabaseWithStatusIsBalance(user.getUserId(), "Trừ phí tạo shop : 50000đ!", "/walletbalance");
+                nw.saveNotificationToDatabaseWithStatusIsBalance(user.getUserId(), "Minus the shop creation fee : 50000đ!", "/walletbalance");
                 Shop sh = new Shop(1, name, phone, campus, decription, user.getUserId(), null, 2);
                 sdb.addShop(sh);
                 Shop shop = sdb.getShopHaveStatusIs1ByUserID(user.getUserId());

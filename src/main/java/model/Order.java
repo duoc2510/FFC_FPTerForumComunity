@@ -1,7 +1,6 @@
 package model;
 
 import java.sql.Timestamp;
-import java.util.Date;
 
 /**
  *
@@ -14,7 +13,6 @@ public class Order {
     private java.sql.Timestamp orderDate;
     private String status;
     private double total;
-    private int discountid;
     private String note;
     private String feedback;
     private int star; // New field
@@ -24,13 +22,12 @@ public class Order {
     public Order() {
     }
 
-    public Order(int userID, int order_ID, Timestamp orderDate, String status, double total, int discountid, String note, String feedback, int star, String receiverPhone, String payment_status) {
+    public Order(int userID, int order_ID, Timestamp orderDate, String status, double total, String note, String feedback, int star, String receiverPhone, String payment_status) {
         this.userID = userID;
         this.order_ID = order_ID;
         this.orderDate = orderDate;
         this.status = status;
         this.total = total;
-        this.discountid = discountid;
         this.note = note;
         this.feedback = feedback;
         this.star = star;
@@ -78,14 +75,6 @@ public class Order {
         this.total = total;
     }
 
-    public int getDiscountid() {
-        return discountid;
-    }
-
-    public void setDiscountid(int discountid) {
-        this.discountid = discountid;
-    }
-
     public String getNote() {
         return note;
     }
@@ -128,7 +117,6 @@ public class Order {
 
     @Override
     public String toString() {
-        return "Order{" + "userID=" + userID + ", order_ID=" + order_ID + ", orderDate=" + orderDate + ", status=" + status + ", total=" + total + ", discountid=" + discountid + ", note=" + note + ", feedback=" + feedback + ", star=" + star + ", receiverPhone=" + receiverPhone + ", payment_status=" + payment_status + '}';
+        return "Order{" + "userID=" + userID + ", order_ID=" + order_ID + ", orderDate=" + orderDate + ", status=" + status + ", total=" + total + ", note=" + note + ", feedback=" + feedback + ", star=" + star + ", receiverPhone=" + receiverPhone + ", payment_status=" + payment_status + '}';
     }
-
 }

@@ -6,6 +6,7 @@ import model.DAO.Shop_DB;
 import model.DAO.User_DB;
 import model.Discount;
 import model.Order;
+import model.OrderDiscount;
 import model.OrderItem;
 import model.Product;
 import model.Shop;
@@ -43,24 +44,25 @@ public class OrderCheckJob implements Job {
                     Product p1 = sdb.getProductByID(ot.getProductID());
                     Shop shop1 = sdb.getShopHaveStatusIs1ByShopID(p1.getShopId());
                     User owner = User_DB.getUserById(shop1.getOwnerID());
-                    if (order.getDiscountid() > 0) {
-                        Discount dis = sdb.getDiscountByID(order.getDiscountid());
+                    ArrayList<OrderDiscount> orderdislist = sdb.getAllOrderDiscountByOrderID(order.getOrder_ID());
+                    for (OrderDiscount ord : orderdislist) {
+                        Discount dis = sdb.getDiscountByID(ord.getDiscountID());
                         if (dis.getShopId() == 0) {
                             boolean check = User_DB.updateWalletByEmail(owner.getUserEmail(), owner.getUserWallet() + (total1 - order.getTotal()) - (total1 * 5 / 100));
-                            nw.saveNotificationToDatabaseWithStatusIsBalance(owner.getUserId(), "Trả lại tiền voucher hệ thống :" + (total1 - order.getTotal()) + "và trừ tiền hoa hồng đơn hàng :" + (total1 * 5 / 100), "/walletbalance");
+                            nw.saveNotificationToDatabaseWithStatusIsBalance(owner.getUserId(), "Return system voucher money :" + (total1 - order.getTotal()) + " and deduct order commissions :" + (total1 * 5 / 100), "/walletbalance");
 
                         } else {
                             boolean check = User_DB.updateWalletByEmail(owner.getUserEmail(), owner.getUserWallet() - (total1 * 5 / 100));
-                            nw.saveNotificationToDatabaseWithStatusIsBalance(owner.getUserId(), "Trừ tiền hoa hồng đơn hàng :" + (total1 * 5 / 100), "/walletbalance");
+                            nw.saveNotificationToDatabaseWithStatusIsBalance(owner.getUserId(), "Minus order commissions :" + (total1 * 5 / 100), "/walletbalance");
 
                         }
                     }
 
                     boolean updateSuccess = User_DB.updateWalletByEmail(owner.getUserEmail(), owner.getUserWallet() + order.getTotal());
                     ///Trả về thông báo tại đây
-                    nw.saveNotificationToDatabaseWithStatusIsBalance(owner.getUserId(), "Thanh toán tiền đơn hàng đã thành công :" + order.getTotal(), "/walletbalance");
-                    nw.saveNotificationToDatabase(shop1.getOwnerID(), "Người đặt đã không đánh giá nên đơn hàng sẽ tự hoàn thành sau 3 ngày!", "/marketplace/allshop/shopdetail?shopid=" + shop1.getShopID());
-                    nw.sendNotificationToClient(shop1.getOwnerID(), "Người đặt đã không đánh giá nên đơn hàng sẽ tự hoàn thành sau 3 ngày!", "/marketplace/allshop/shopdetail?shopid=" + shop1.getShopID());
+                    nw.saveNotificationToDatabaseWithStatusIsBalance(owner.getUserId(), "Order payment has been successful :" + order.getTotal(), "/walletbalance");
+                    nw.saveNotificationToDatabase(shop1.getOwnerID(), "The person who placed the order did not rate it, so the order will be completed automatically after 3 days!", "/marketplace/allshop/shopdetail?shopid=" + shop1.getShopID());
+                    nw.sendNotificationToClient(shop1.getOwnerID(), "The person who placed the order did not rate it, so the order will be completed automatically after 3 days!", "/marketplace/allshop/shopdetail?shopid=" + shop1.getShopID());
                     sdb.updateOrderStatus(order.getOrder_ID(), "Success");
                     break;
                 }

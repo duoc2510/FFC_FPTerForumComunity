@@ -68,7 +68,7 @@
                                             <i class="fas fa-map-marker-alt"></i> ${SHOP.campus}
                                         </p>
                                         <p style="font-size: 18px;" class="card-text">
-                                            <i class="fas fa-info-circle"></i> Giới thiệu: ${SHOP.description}
+                                            <i class="fas fa-info-circle"></i> Descripton: ${SHOP.description}
                                         </p>
                                     </div>
                                 </div>
@@ -180,7 +180,7 @@
                                                 <c:choose>
                                                     <c:when test="${empty discounts}">
                                                         <tr>
-                                                            <td colspan="7">Không có discount nào.</td>
+                                                            <td colspan="7">There are no discounts.</td>
                                                         </tr>
                                                     </c:when>
                                                     <c:otherwise>
@@ -283,22 +283,22 @@
                                                         <td>${order.total} VNĐ</td>
                                                         <c:if test="${order.payment_status eq 'dathanhtoan'}">
                                                             <td>
-                                                                <p class="text-success">Đã Thanh Toán Trước</p>
+                                                                <p class="text-success">Paid in advance</p>
                                                             </td>
                                                         </c:if>
                                                         <c:if test="${order.payment_status eq 'thanhtoankhinhanhang'}">
                                                             <td>
-                                                                <p class="text-success">Chưa Thanh Toán Trước</p>
+                                                                <p class="text-success">Payment on delivery</p>
                                                             </td>
                                                         </c:if>
                                                         <c:if test="${order.total * 5 / 100 >= USER.userWallet}">
                                                             <c:if test="${order.status eq 'Pending'}">
                                                                 <td>
-                                                                    <p class="text-danger">Ví bạn không đủ tiền để thanh toán thuế!</p>
+                                                                    <p class="text-danger">Your wallet does not have enough money to pay taxes!</p>
                                                                     <form action="product" method="post">
                                                                         <input type="hidden" name="orderid" value="${order.order_ID}" />
                                                                         <input type="hidden" name="action" value="thatbai" />
-                                                                        <button type="submit" class="btn rounded w-100 btn-danger my-1">Không Nhận Đơn Hàng</button>
+                                                                        <button type="submit" class="btn rounded w-100 btn-danger my-1">No Orders Accepted</button>
                                                                     </form>
                                                                 </td>
                                                             </c:if>
@@ -307,28 +307,28 @@
                                                                     <form action="product" method="post">
                                                                         <input type="hidden" name="orderid" value="${order.order_ID}" />
                                                                         <input type="hidden" name="action" value="thanhcong" />
-                                                                        <button type="submit" class="btn rounded w-100 btn-primary my-1">Giao hàng thành công</button>
+                                                                        <button type="submit" class="btn rounded w-100 btn-primary my-1">Successful delivery</button>
                                                                     </form>
                                                                     <form action="product" method="post">
                                                                         <input type="hidden" name="orderid" value="${order.order_ID}" />
                                                                         <input type="hidden" name="action" value="thatbai" />
-                                                                        <button type="submit" class="btn rounded w-100 btn-danger my-1">Giao hàng thất bại</button>
+                                                                        <button type="submit" class="btn rounded w-100 btn-danger my-1">Delivery failed</button>
                                                                     </form>
                                                                 </td>
                                                             </c:if>
                                                             <c:if test="${order.status eq 'Completed'}">
                                                                 <td>
-                                                                    <p class="text-success">Đã giao hàng</p>
+                                                                    <p class="text-success">Delivered</p>
                                                                 </td>
                                                             </c:if>
                                                             <c:if test="${order.status eq 'Cancelled'}">
                                                                 <td>
-                                                                    <p class="text-danger">Đơn hàng bị người dùng hủy.</p>
+                                                                    <p class="text-danger">The order was canceled by the person who placed it</p>
                                                                 </td>
                                                             </c:if>
                                                             <c:if test="${order.status eq 'Fail'}">
                                                                 <td>
-                                                                    <p class="text-danger">Đơn hàng bị shop hủy.</p>
+                                                                    <p class="text-danger">The order was canceled by the store</p>
                                                                 </td>
                                                             </c:if>
                                                             <c:if test="${order.status eq 'Success'}">
@@ -343,12 +343,12 @@
                                                                     <form action="product" method="post">
                                                                         <input type="hidden" name="orderid" value="${order.order_ID}" />
                                                                         <input type="hidden" name="action" value="chapnhan" />
-                                                                        <button type="submit" class="btn rounded w-100 btn-primary my-1">Chấp Nhận Đơn Hàng</button>
+                                                                        <button type="submit" class="btn rounded w-100 btn-primary my-1">Order Acceptance</button>
                                                                     </form>
                                                                     <form action="product" method="post">
                                                                         <input type="hidden" name="orderid" value="${order.order_ID}" />
                                                                         <input type="hidden" name="action" value="thatbai" />
-                                                                        <button type="submit" class="btn rounded w-100 btn-danger my-1">Không Nhận Đơn Hàng</button>
+                                                                        <button type="submit" class="btn rounded w-100 btn-danger my-1">No Orders Accepted</button>
                                                                     </form>
                                                                 </td>
                                                             </c:if>
@@ -357,28 +357,28 @@
                                                                     <form action="product" method="post">
                                                                         <input type="hidden" name="orderid" value="${order.order_ID}" />
                                                                         <input type="hidden" name="action" value="thanhcong" />
-                                                                        <button type="submit" class="btn rounded w-100 btn-primary my-1">Giao hàng thành công</button>
+                                                                        <button type="submit" class="btn rounded w-100 btn-primary my-1">Successful delivery</button>
                                                                     </form>
                                                                     <form action="product" method="post">
                                                                         <input type="hidden" name="orderid" value="${order.order_ID}" />
                                                                         <input type="hidden" name="action" value="thatbai" />
-                                                                        <button type="submit" class="btn rounded w-100 btn-danger my-1">Giao hàng thất bại</button>
+                                                                        <button type="submit" class="btn rounded w-100 btn-danger my-1">Delivery failed</button>
                                                                     </form>
                                                                 </td>
                                                             </c:if>
                                                             <c:if test="${order.status eq 'Completed'}">
                                                                 <td>
-                                                                    <p class="text-success">Đã giao hàng</p>
+                                                                    <p class="text-success">Delivered</p>
                                                                 </td>
                                                             </c:if>
                                                             <c:if test="${order.status eq 'Cancelled'}">
                                                                 <td>
-                                                                    <p class="text-danger">Đơn hàng bị người dùng hủy.</p>
+                                                                    <p class="text-danger">The order was canceled by the person who placed it</p>
                                                                 </td>
                                                             </c:if>
                                                             <c:if test="${order.status eq 'Fail'}">
                                                                 <td>
-                                                                    <p class="text-danger">Đơn hàng bị shop hủy.</p>
+                                                                    <p class="text-danger">The order was canceled by the store</p>
                                                                 </td>
                                                             </c:if>
                                                             <c:if test="${order.status eq 'Success'}">
@@ -737,7 +737,7 @@
                             <input type="number" class="form-control mb-2 rounded" id="discountPercentInput" name="discountPercent" required>
                         </div>
                         <div class="form-group">
-                            <label for="discountConditionInput">Discount Condition (Giá trị đơn hàng tối thiểu):</label>
+                            <label for="discountConditionInput">Discount Condition (Minimum order value):</label>
                             <input type="number" class="form-control mb-2 rounded" id="discountConditionInput" name="discountConditionInput" required>
                         </div>
                         <div class="form-group">
@@ -839,7 +839,7 @@
                                 <input type="number" class="form-control mb-2 rounded" id="discountPercentInput" name="discountPercent" value="${discount.discountPercent}" required>
                             </div>
                             <div class="form-group">
-                                <label for="discountConditionInput">Discount Condition (Giá trị đơn hàng tối thiểu):</label>
+                                <label for="discountConditionInput">Discount Condition (Minimum order value):</label>
                                 <input type="number" class="form-control mb-2 rounded" id="discountConditionInput" name="discountConditionInput" value="${discount.condition}" required>
                             </div>
                             <div class="form-group">
