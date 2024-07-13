@@ -261,8 +261,8 @@
                                         </select>
 
                                         <!-- Add this element for the discount fee -->
-                                        <div class="d-flex justify-content-between">
-                                            <p class="mb-2">Billing Discount fee</p>
+                                        <div class="d-flex justify-content-between" style="margin-top: 10px;">
+                                            <p style="font-weight: 600;" class="mb-2">Billing Discount fee</p>
                                             <p class="mb-2" id="billingDiscountFee">-0 VND</p>
                                         </div>
 
@@ -565,13 +565,36 @@
                         }
                     });
 
-                    // Reset billing discount to "No Discount"
-                    document.getElementById("billingDiscountSelect").value = "";
+                    // Reset billingDiscountSelect to "No Discount"
+                    var billingDiscountSelect = document.getElementById("billingDiscountSelect");
+                    billingDiscountSelect.value = "";
                 }
 
                 updateSummary(shopId);
             });
         });
+
+        // Add change event listener to each discountSelect
+        var discountSelects = document.querySelectorAll('[id^="discountSelect-"]');
+        discountSelects.forEach(function (discountSelect) {
+            discountSelect.addEventListener('change', function () {
+                var shopId = this.getAttribute("data-shop-id");
+
+                // Reset billingDiscountSelect to "No Discount"
+                var billingDiscountSelect = document.getElementById("billingDiscountSelect");
+                billingDiscountSelect.value = "";
+
+                // Reset billingDiscountFee to 0 VND
+                var billingDiscountFeeElement = document.getElementById("billingDiscountFee");
+                if (billingDiscountFeeElement) {
+                    billingDiscountFeeElement.textContent = "-0.00 VND";
+                }
+
+                updateSummary(shopId);
+                updateBillingDiscount();
+            });
+        });
+
 
         checkboxes.forEach(function (checkbox) {
             var shopId = checkbox.getAttribute("data-shop-id");
@@ -580,6 +603,7 @@
 
         filterDiscountTotal();
     });
+
 
     document.querySelector('form[action="confirmorder"]').addEventListener('submit', function (e) {
         var discountInput = document.createElement('input');
