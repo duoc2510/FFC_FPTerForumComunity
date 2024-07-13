@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,6 +21,7 @@ import static model.DAO.DBinfo.dbUser;
 import static model.DAO.DBinfo.driver;
 import model.Discount;
 import model.Order;
+import model.OrderDiscount;
 import model.OrderItem;
 import model.Product;
 import model.Shop;
@@ -441,18 +443,17 @@ public class Shop_DB {
     }
 
     public static void addOrder(Order order) {
-        String insertQuery = "INSERT INTO [Order] (User_id, Order_date, Order_status, Total_amount, Note, Discount_id, Feedback, Star, Receiver_phone, Payment_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String insertQuery = "INSERT INTO [Order] (User_id, Order_date, Order_status, Total_amount, Note, Feedback, Star, Receiver_phone, Payment_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(insertQuery)) {
             pstmt.setInt(1, order.getUserID());
             pstmt.setTimestamp(2, order.getOrderDate());
             pstmt.setString(3, order.getStatus());
             pstmt.setDouble(4, order.getTotal());
             pstmt.setString(5, order.getNote());
-            pstmt.setObject(6, order.getDiscountid() == 0 ? null : order.getDiscountid());
-            pstmt.setString(7, order.getFeedback());
-            pstmt.setInt(8, order.getStar()); // Set the Star field
-            pstmt.setString(9, order.getReceiverPhone());
-            pstmt.setString(10, order.getPayment_status());
+            pstmt.setString(6, order.getFeedback());
+            pstmt.setInt(7, order.getStar()); // Set the Star field
+            pstmt.setString(8, order.getReceiverPhone());
+            pstmt.setString(9, order.getPayment_status());
             pstmt.executeUpdate();
         } catch (SQLException ex) {
             Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
@@ -471,12 +472,11 @@ public class Shop_DB {
                 String orderStatus = rs.getString("Order_status");
                 double totalAmount = rs.getDouble("Total_amount");
                 String note = rs.getString("Note");
-                int discountID = rs.getInt("Discount_id");
                 String feedback = rs.getString("Feedback");
                 int star = rs.getInt("Star"); // Get the Star field
                 String receiverPhone = rs.getString("Receiver_phone");
                 String payment_status = rs.getString("Payment_status");
-                order = new Order(userID, orderID, orderDate, orderStatus, totalAmount, discountID, note, feedback, star, receiverPhone, payment_status);
+                order = new Order(userID, orderID, orderDate, orderStatus, totalAmount, note, feedback, star, receiverPhone, payment_status);
             }
         } catch (SQLException ex) {
             Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
@@ -491,7 +491,7 @@ public class Shop_DB {
                 + "JOIN OrderItem oi ON o.Order_id = oi.Order_id "
                 + "JOIN Product p ON oi.Product_id = p.Product_id "
                 + "WHERE p.Shop_id = ? AND o.User_id = ? AND o.Order_status = 'NotConfirm' "
-                + "GROUP BY o.Order_id, o.User_id, o.Order_date, o.Order_status, o.Total_amount, o.Note, o.Discount_id, o.Feedback, o.Star, o.Receiver_phone, o.Payment_status "
+                + "GROUP BY o.Order_id, o.User_id, o.Order_date, o.Order_status, o.Total_amount, o.Note, o.Feedback, o.Star, o.Receiver_phone, o.Payment_status "
                 + "ORDER BY o.Order_date DESC";
 
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
@@ -508,7 +508,6 @@ public class Shop_DB {
                 order.setStatus(rs.getString("Order_status"));
                 order.setTotal(rs.getDouble("Total_amount"));
                 order.setNote(rs.getString("Note"));
-                order.setDiscountid(rs.getInt("Discount_id"));
                 order.setFeedback(rs.getString("Feedback"));
                 order.setStar(rs.getInt("Star"));
                 order.setReceiverPhone(rs.getString("Receiver_phone"));
@@ -540,11 +539,10 @@ public class Shop_DB {
                 order.setStatus(rs.getString("Order_status"));
                 order.setTotal(rs.getDouble("Total_amount"));
                 order.setNote(rs.getString("Note"));
-                order.setDiscountid(rs.getInt("Discount_id"));
                 order.setFeedback(rs.getString("Feedback"));
                 order.setStar(rs.getInt("Star"));
                 order.setReceiverPhone(rs.getString("Receiver_phone"));
-                order.setPayment_status("Payment_status");
+                order.setPayment_status(rs.getString("Payment_status"));
             }
         } catch (SQLException ex) {
             Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
@@ -599,20 +597,19 @@ public class Shop_DB {
         return count;
     }
 
-    public static void updateOrderbyID(Order order) {
-        String updateQuery = "UPDATE [Order] SET User_id = ?, Order_date = ?, Order_status = ?, Total_amount = ?, Note = ?, Discount_id = ?, Feedback = ?, Star = ?, Receiver_phone = ?, Payment_status = ? WHERE Order_id = ?";
+    public static void updateOrderByID(Order order) {
+        String updateQuery = "UPDATE [Order] SET User_id = ?, Order_date = ?, Order_status = ?, Total_amount = ?, Note = ?, Feedback = ?, Star = ?, Receiver_phone = ?, Payment_status = ? WHERE Order_id = ?";
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(updateQuery)) {
             pstmt.setInt(1, order.getUserID());
             pstmt.setTimestamp(2, new java.sql.Timestamp(new java.util.Date().getTime()));
             pstmt.setString(3, order.getStatus());
             pstmt.setDouble(4, order.getTotal());
             pstmt.setString(5, order.getNote());
-            pstmt.setObject(6, order.getDiscountid() == 0 ? null : order.getDiscountid());
-            pstmt.setString(7, order.getFeedback());
-            pstmt.setInt(8, order.getStar()); // Set the Star field
-            pstmt.setString(9, order.getReceiverPhone());
-            pstmt.setString(10, order.getPayment_status());
-            pstmt.setInt(11, order.getOrder_ID());
+            pstmt.setString(6, order.getFeedback());
+            pstmt.setInt(7, order.getStar()); // Set the Star field
+            pstmt.setString(8, order.getReceiverPhone());
+            pstmt.setString(9, order.getPayment_status());
+            pstmt.setInt(10, order.getOrder_ID());
 
             pstmt.executeUpdate();
         } catch (SQLException ex) {
@@ -627,7 +624,7 @@ public class Shop_DB {
                 + "JOIN OrderItem oi ON o.Order_id = oi.Order_id "
                 + "JOIN Product p ON oi.Product_id = p.Product_id "
                 + "WHERE p.Shop_id = ? AND o.Order_status IS NOT NULL AND o.Order_status != 'null' AND o.Order_status != 'notconfirm'  "
-                + "GROUP BY o.Order_id, o.User_id, o.Order_date, o.Order_status, o.Total_amount, o.Note, o.Discount_id, o.Feedback, o.Star, o.Receiver_phone, o.Payment_status";
+                + "GROUP BY o.Order_id, o.User_id, o.Order_date, o.Order_status, o.Total_amount, o.Note, o.Feedback, o.Star, o.Receiver_phone, o.Payment_status";
 
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
             pstmt.setInt(1, shopId);
@@ -641,7 +638,6 @@ public class Shop_DB {
                 order.setStatus(rs.getString("Order_status"));
                 order.setTotal(rs.getDouble("Total_amount"));
                 order.setNote(rs.getString("Note"));
-                order.setDiscountid(rs.getInt("Discount_id"));
                 order.setFeedback(rs.getString("Feedback"));
                 order.setStar(rs.getInt("Star"));
                 order.setReceiverPhone(rs.getString("Receiver_phone"));
@@ -654,17 +650,7 @@ public class Shop_DB {
         }
 
         // Sort the orders by order date, handling null values
-        orders.sort((o1, o2) -> {
-            if (o1.getOrderDate() == null && o2.getOrderDate() == null) {
-                return 0;
-            } else if (o1.getOrderDate() == null) {
-                return 1;
-            } else if (o2.getOrderDate() == null) {
-                return -1;
-            } else {
-                return o2.getOrderDate().compareTo(o1.getOrderDate());
-            }
-        });
+        orders.sort(Comparator.comparing(Order::getOrderDate, Comparator.nullsLast(Comparator.reverseOrder())));
 
         return orders;
     }
@@ -676,7 +662,7 @@ public class Shop_DB {
                 + "JOIN OrderItem oi ON o.Order_id = oi.Order_id "
                 + "JOIN Product p ON oi.Product_id = p.Product_id "
                 + "WHERE p.Shop_id = ? AND o.Order_status IS NOT NULL AND o.Order_status != 'null' AND o.Order_status != 'Cancelled' "
-                + "GROUP BY o.Order_id, o.User_id, o.Order_date, o.Order_status, o.Total_amount, o.Note, o.Discount_id, o.Feedback, o.Star, o.Receiver_phone, o.Payment_status";
+                + "GROUP BY o.Order_id, o.User_id, o.Order_date, o.Order_status, o.Total_amount, o.Note, o.Feedback, o.Star, o.Receiver_phone, o.Payment_status";
 
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
             pstmt.setInt(1, shopId);
@@ -691,7 +677,6 @@ public class Shop_DB {
                 order.setStatus(rs.getString("Order_status"));
                 order.setTotal(rs.getDouble("Total_amount"));
                 order.setNote(rs.getString("Note"));
-                order.setDiscountid(rs.getInt("Discount_id"));
                 order.setFeedback(rs.getString("Feedback"));
                 order.setStar(rs.getInt("Star"));
                 order.setReceiverPhone(rs.getString("Receiver_phone"));
@@ -704,7 +689,7 @@ public class Shop_DB {
         }
 
         // Sort the list by order date from newest to oldest
-        orders.sort((o1, o2) -> Integer.compare(o2.getOrder_ID(), o1.getOrder_ID()));
+        orders.sort(Comparator.comparing(Order::getOrder_ID).reversed());
 
         return orders;
     }
@@ -716,7 +701,7 @@ public class Shop_DB {
                 + "JOIN OrderItem oi ON o.Order_id = oi.Order_id "
                 + "JOIN Product p ON oi.Product_id = p.Product_id "
                 + "WHERE p.Shop_id = ? AND o.Order_status = 'Success' "
-                + "GROUP BY o.Order_id, o.User_id, o.Order_date, o.Order_status, o.Total_amount, o.Note, o.Discount_id, o.Feedback, o.Star, o.Receiver_phone, o.Payment_status";
+                + "GROUP BY o.Order_id, o.User_id, o.Order_date, o.Order_status, o.Total_amount, o.Note, o.Feedback, o.Star, o.Receiver_phone, o.Payment_status";
 
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
             pstmt.setInt(1, shopId);
@@ -731,7 +716,6 @@ public class Shop_DB {
                 order.setStatus(rs.getString("Order_status"));
                 order.setTotal(rs.getDouble("Total_amount"));
                 order.setNote(rs.getString("Note"));
-                order.setDiscountid(rs.getInt("Discount_id"));
                 order.setFeedback(rs.getString("Feedback"));
                 order.setStar(rs.getInt("Star"));
                 order.setReceiverPhone(rs.getString("Receiver_phone"));
@@ -743,8 +727,8 @@ public class Shop_DB {
             Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        // Sort the list by order date from newest to oldest
-        orders.sort((o1, o2) -> Integer.compare(o2.getOrder_ID(), o1.getOrder_ID()));
+        // Sort the list by order ID from newest to oldest
+        orders.sort(Comparator.comparing(Order::getOrder_ID).reversed());
 
         return orders;
     }
@@ -761,12 +745,11 @@ public class Shop_DB {
                 String orderStatus = rs.getString("Order_status");
                 double totalAmount = rs.getDouble("Total_amount");
                 String note = rs.getString("Note");
-                int discountID = rs.getInt("Discount_id");
                 String feedback = rs.getString("Feedback");
                 int star = rs.getInt("Star");
                 String receiverPhone = rs.getString("Receiver_phone");
                 String payment_status = rs.getString("Payment_status");
-                order = new Order(userID, orderId, orderDate, orderStatus, totalAmount, discountID, note, feedback, star, receiverPhone, payment_status);
+                order = new Order(userID, orderId, orderDate, orderStatus, totalAmount, note, feedback, star, receiverPhone, payment_status);
             }
         } catch (SQLException ex) {
             Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
@@ -827,7 +810,6 @@ public class Shop_DB {
                     order.setStatus(status);
                     order.setTotal(rs.getDouble("Total_amount"));
                     order.setNote(rs.getString("Note"));
-                    order.setDiscountid(rs.getInt("Discount_id"));
                     order.setFeedback(rs.getString("Feedback"));
                     order.setStar(rs.getInt("Star"));
                     order.setReceiverPhone(rs.getString("Receiver_phone"));
@@ -846,9 +828,8 @@ public class Shop_DB {
         ArrayList<Order> orders = new ArrayList<>();
         String query = "SELECT * FROM [Order] WHERE Order_status = ? AND Payment_status = ? ORDER BY Order_ID DESC";
         try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
-
-            pstmt.setString(1, "completed"); // Filter by Order_status = 'completed'
-            pstmt.setString(2, "dathanhtoan"); // Filter by Payment_status = 'thanhtoankhinhanhang'
+            pstmt.setString(1, "Completed"); // Filter by Order_status = 'Completed'
+            pstmt.setString(2, "ThanhToanKhiNhanHang"); // Filter by Payment_status = 'ThanhToanKhiNhanHang'
 
             ResultSet rs = pstmt.executeQuery();
 
@@ -860,7 +841,6 @@ public class Shop_DB {
                 order.setStatus(rs.getString("Order_status"));
                 order.setTotal(rs.getDouble("Total_amount"));
                 order.setNote(rs.getString("Note"));
-                order.setDiscountid(rs.getInt("Discount_id"));
                 order.setFeedback(rs.getString("Feedback"));
                 order.setStar(rs.getInt("Star"));
                 order.setReceiverPhone(rs.getString("Receiver_phone"));
@@ -1119,17 +1099,17 @@ public class Shop_DB {
 
     public static ArrayList<Discount> getAllDiscountOrder(Integer ownerID, Integer shopID) {
         ArrayList<Discount> discounts = new ArrayList<>();
-        StringBuilder query = new StringBuilder("SELECT * FROM Discount WHERE (Owner_id = ? OR Owner_id IS NULL) AND (Shop_id = ? OR Shop_id IS NULL) AND GETDATE() BETWEEN Valid_from AND Valid_to AND Usage_limit > 0");
+        String query = "SELECT * FROM Discount WHERE Shop_id = ? AND (Owner_id = ? OR Owner_id IS NULL) AND GETDATE() BETWEEN Valid_from AND Valid_to AND Usage_limit > 0";
 
-        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query.toString())) {
-            if (ownerID != null) {
-                pstmt.setInt(1, ownerID);
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
+            if (shopID != null) {
+                pstmt.setInt(1, shopID);
             } else {
                 pstmt.setNull(1, java.sql.Types.INTEGER);
             }
 
-            if (shopID != null) {
-                pstmt.setInt(2, shopID);
+            if (ownerID != null) {
+                pstmt.setInt(2, ownerID);
             } else {
                 pstmt.setNull(2, java.sql.Types.INTEGER);
             }
@@ -1155,6 +1135,52 @@ public class Shop_DB {
                 System.out.println("Code: " + code);
                 System.out.println("Owner ID: " + owner_id);
                 System.out.println("Shop ID: " + shop_id);
+                System.out.println("Discount Percent: " + discountPercent);
+                System.out.println("Valid From: " + validFrom);
+                System.out.println("Valid To: " + validTo);
+                System.out.println("Usage Limit: " + usageLimit);
+                System.out.println("Usage Count: " + usageCount);
+                System.out.println("Condition: " + condition);
+                System.out.println("---------------------------");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return discounts;
+    }
+
+    public static ArrayList<Discount> getAllDiscountOrderByOwner(Integer ownerID) {
+        ArrayList<Discount> discounts = new ArrayList<>();
+        StringBuilder query = new StringBuilder("SELECT * FROM Discount WHERE (Owner_id = ? OR Owner_id IS NULL) AND Shop_id IS NULL AND GETDATE() BETWEEN Valid_from AND Valid_to AND Usage_limit > 0");
+
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query.toString())) {
+            if (ownerID != null) {
+                pstmt.setInt(1, ownerID);
+            } else {
+                pstmt.setNull(1, java.sql.Types.INTEGER);
+            }
+
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                int discountID = rs.getInt("Discount_id");
+                String code = rs.getString("Code");
+                int owner_id = rs.getInt("Owner_id");
+                int shop_id = rs.getInt("Shop_id"); // This will always be null
+                double discountPercent = rs.getDouble("Discount_percent");
+                Date validFrom = rs.getDate("Valid_from");
+                Date validTo = rs.getDate("Valid_to");
+                int usageLimit = rs.getInt("Usage_limit");
+                int usageCount = rs.getInt("Usage_count");
+                double condition = rs.getDouble("Condition");
+
+                Discount discount = new Discount(discountID, code, owner_id, shop_id, discountPercent, validFrom, validTo, usageLimit, usageCount, condition);
+                discounts.add(discount);
+
+                // Print the Discount object
+                System.out.println("Discount ID: " + discountID);
+                System.out.println("Code: " + code);
+                System.out.println("Owner ID: " + owner_id);
+                System.out.println("Shop ID: " + shop_id); // This will always print null
                 System.out.println("Discount Percent: " + discountPercent);
                 System.out.println("Valid From: " + validFrom);
                 System.out.println("Valid To: " + validTo);
@@ -1318,6 +1344,63 @@ public class Shop_DB {
         } catch (SQLException ex) {
             Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public static ArrayList<OrderDiscount> getAllOrderDiscountByOrderId(int orderId) {
+        ArrayList<OrderDiscount> orderDiscounts = new ArrayList<>();
+        String query = "SELECT * FROM OrderDiscount WHERE Order_id = ?";
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setInt(1, orderId);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                OrderDiscount orderDiscount = new OrderDiscount();
+                orderDiscount.setOrder_ID(rs.getInt("Order_id"));
+                orderDiscount.setDiscountID(rs.getInt("Discount_id"));
+                orderDiscounts.add(orderDiscount);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return orderDiscounts;
+    }
+
+    public static boolean addNewOrderDiscount(OrderDiscount orderDiscount) {
+        String insertQuery = "INSERT INTO OrderDiscount (Order_id, Discount_id) VALUES (?, ?)";
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(insertQuery)) {
+            pstmt.setInt(1, orderDiscount.getOrder_ID());
+            pstmt.setInt(2, orderDiscount.getDiscountID());
+            int rowsAffected = pstmt.executeUpdate();
+            return rowsAffected > 0; // Trả về true nếu thêm thành công, ngược lại là false
+        } catch (SQLException ex) {
+            Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+
+    public static ArrayList<OrderDiscount> getAllOrderDiscountByOrderID(int orderID) {
+        ArrayList<OrderDiscount> orderDiscounts = new ArrayList<>();
+        String query = "SELECT * FROM OrderDiscount WHERE Order_id = ?";
+
+        try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPass); PreparedStatement pstmt = con.prepareStatement(query)) {
+            pstmt.setInt(1, orderID);
+
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                int discountID = rs.getInt("Discount_id");
+                OrderDiscount orderDiscount = new OrderDiscount(orderID, discountID);
+                orderDiscounts.add(orderDiscount);
+
+                // Print the OrderDiscount object
+                System.out.println("Order ID: " + orderID);
+                System.out.println("Discount ID: " + discountID);
+                System.out.println("---------------------------");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Shop_DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return orderDiscounts;
     }
 
     public static void main(String[] args) {

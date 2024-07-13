@@ -101,7 +101,7 @@
         <script type="module">
             import { GoogleGenerativeAI } from "@google/generative-ai";
 
-            const API_KEY = "AIzaSyBiU9x-qZ67Y8F3Xu9QY58klyQlVw-p4M0"; // Replace with your actual API key
+            const API_KEY = "AIzaSyAEQfpz3e1lFMdeJk1kmnVRVrWZKbL0X5k"; // Replace with your actual API key
 
             const genAI = new GoogleGenerativeAI(API_KEY);
             const model = genAI.getGenerativeModel({model: "gemini-1.5-flash"});
@@ -136,7 +136,7 @@
                 messagesDiv.appendChild(botResponseDiv);
             }
 
-            document.getElementById("userInput").addEventListener("keydown", function(event) {
+            document.getElementById("userInput").addEventListener("keydown", function (event) {
                 if (event.key === "Enter") {
                     handleButtonClick();
                 }
