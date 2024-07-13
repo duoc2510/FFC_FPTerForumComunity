@@ -19,9 +19,13 @@ public class Event {
     private boolean isInterest;
     private String formattedStartDate;
     private String formattedEndDate;
-
-    // Constructors
+    
     public Event() {
+    }
+
+    public Event(int eventId, String title) {
+        this.eventId = eventId;
+        this.title = title;
     }
 
     public Event(int eventId, String title, String description, Timestamp startDate, Timestamp endDate, int userId) {
@@ -176,5 +180,8 @@ public class Event {
     public void setUploadPath(String uploadPath) {
         this.uploadPath = uploadPath;
     }
+
+
+   
    
 }

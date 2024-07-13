@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -335,5 +337,50 @@ public class Event_DB {
             return false;
         }
     }
+ public static List<Event> checkEvents() {
+    LocalDate currentDate = LocalDate.now();
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    List<Event> events = new ArrayList<>();
+    
+    String eventQuery = "SELECT Event_id, Title FROM Event WHERE CAST(Start_date AS DATE) = ?";
 
+    try (Connection connection = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass);
+         PreparedStatement eventStmt = connection.prepareStatement(eventQuery)) {
+
+        eventStmt.setString(1, currentDate.format(formatter));
+        
+        try (ResultSet eventRs = eventStmt.executeQuery()) {
+            while (eventRs.next()) {
+                int eventId = eventRs.getInt("Event_id");
+                String eventTitle = eventRs.getString("Title");
+                events.add(new Event(eventId, eventTitle));
+            }   
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return events;
+}
+    public static List<Integer> getUsersFollowingEvent(int eventId) {
+        List<Integer> userIds = new ArrayList<>();
+        String followQuery = "SELECT User_id FROM UserFollow WHERE Event_id = ?";
+
+        try (Connection connection = DriverManager.getConnection(DBinfo.dbURL, DBinfo.dbUser, DBinfo.dbPass);
+             PreparedStatement followStmt = connection.prepareStatement(followQuery)) {
+
+            followStmt.setInt(1, eventId);
+
+            try (ResultSet followRs = followStmt.executeQuery()) {
+                while (followRs.next()) {
+                    userIds.add(followRs.getInt("User_id"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return userIds;
+    }
+  
 }
