@@ -6,6 +6,7 @@
 <!--<script src="${pageContext.request.contextPath}/static/assets/libs/simplebar/dist/simplebar.js"></script>-->
 <!--<script src="${pageContext.request.contextPath}/static/js/dashboard.js"></script>-->
 <script src="${pageContext.request.contextPath}/static/js/validate.js"></script>
+<script src="${pageContext.request.contextPath}/static/js/darkmode.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>

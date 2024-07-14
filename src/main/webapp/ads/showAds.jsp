@@ -15,7 +15,7 @@ Không pull cái này lên chỉ test Advertising
 
         <img id="adImage" class="card-img-top event-img rounded-top" alt="..." style="border-radius: ">
     </a>
-    <div class="card-body">
+    <div class="card-body rounded">
         <h5 id="adTitle" class="card-title  my-3"><strong>Loading ad...</strong></h5>
 
         <small><p id="adOrganizer" class="card-text"></p></small>

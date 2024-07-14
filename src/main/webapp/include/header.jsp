@@ -16,56 +16,6 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.css" integrity="sha512-UTNP5BXLIptsaj5WdKFrkFov94lDx+eBvbKyoe1YAfjeRPC+gT5kyZ10kOHCfNZqEui1sxmqvodNUx3KbuYI/A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <style>
-            html, body {
-                max-width: 100%;
-                overflow-x: hidden;
-            }
-            .row>*{
-                padding:0
-            }
-            .card-body{
-                padding:20px
-            }
-            .app-header{
-                padding:0 12px
-            }
-            .container-fluid{
-                width:calc(100% - 248px);
-                position:relative;
-                right:123px
-            }
-            #profile-wrapper{
-                margin-bottom:20px
-            }
-            .profile img{
-                width:130px;
-                height:130px
-            }
-            .profile .edit-cover{
-                position:relative;
-                color:#fff;
-                right:0;
-                height:-webkit-fit-content;
-                border:1px solid
-            }
-            @media (max-width:1000px){
-                .row .m-2{
-                    margin:0!important
-                }
-                .container-fluid{
-                    width:calc(100%);
-                    right:0
-                }
-                .right-sidebar{
-                    display:none
-                }
-                #boxchat{
-                    display:none!important
-                }
-            }
-            .card-body{
-                padding: 20px;
-            }
-        </style>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     </head>
