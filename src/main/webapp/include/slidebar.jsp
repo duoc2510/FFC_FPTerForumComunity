@@ -7,6 +7,49 @@
             font-size: 13px;
             padding-left: 20px;
         }
+        .invisible {
+            opacity: 0.2;
+        }
+
+        .note {
+            font-style: italic;
+            font-size: 130%;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            margin: auto;
+        }
+
+        video {
+            display: block;
+            width: 100%;
+            transform: rotateY(180deg);
+            -webkit-transform: rotateY(180deg);
+            -moz-transform: rotateY(180deg);
+        }
+
+        .output_canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            transform: rotateY(180deg);
+            -webkit-transform: rotateY(180deg);
+            -moz-transform: rotateY(180deg);
+        }
+
+        .detectOnClick {
+            cursor: pointer;
+            margin-bottom: 2em;
+        }
+
+        .detectOnClick img {
+            width: 100%;
+        }
     </style>
 
     <!-- Sidebar scroll-->  
@@ -174,7 +217,7 @@
 
 
         <!-- Webcam Modal -->
-        <div class="webcam-popup modal fade" id="webcamModal" tabindex="-1" aria-labelledby="webcamModalLabel" aria-hidden="true"  data-bs-keyboard="false">
+        <div class="webcam-popup modal fade" id="webcamModal" tabindex="-1" aria-labelledby="webcamModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
             <div class="modal-dialog">
                 <div class="modal-content rounded1dot2">
                     <div class="modal-header">
@@ -204,6 +247,307 @@
 
     </nav>
 </aside>
+<script type="module">
+    import { HandLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0";
+    const demosSection = document.getElementById("demos");
+    let handLandmarker = undefined;
+    let runningMode = "IMAGE";
+    let webcamRunning = false;
+    const enableWebcamButton = document.getElementById("webcamButton");
+    const video = document.getElementById("webcam");
+    const canvasElement = document.getElementById("output_canvas");
+    const canvasCtx = canvasElement.getContext("2d");
+    let lastVideoTime = -1;
+    let results = undefined;
+    const checkbox = document.getElementById("checkbox");
+    const webcamModal = document.getElementById("webcamModal");
+
+    // Biến lưu trữ vị trí ngón tay trước đó để làm mượt
+    let previousIndexTip = {x: 0, y: 0};
+    let previousMiddleTip = {x: 0, y: 0};
+
+    enableWebcamButton.addEventListener("click", toggleWebcam);
+
+    async function createHandLandmarker() {
+        const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm");
+        handLandmarker = await HandLandmarker.createFromOptions(vision, {
+            baseOptions: {
+                modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
+                delegate: "GPU"
+            },
+            runningMode: runningMode,
+            numHands: 2
+        });
+        demosSection.classList.remove("invisible");
+    }
+    createHandLandmarker();
+
+    async function toggleWebcam() {
+        if (!handLandmarker) {
+            console.log("Wait! handLandmarker not loaded yet.");
+            return;
+        }
+
+        if (webcamRunning) {
+            stopWebcam();
+        } else {
+            startWebcam();
+        }
+    }
+
+    function startWebcam() {
+        navigator.mediaDevices.getUserMedia({video: true})
+                .then((stream) => {
+                    video.srcObject = stream;
+                    video.addEventListener("loadeddata", () => {
+                        runningMode = "VIDEO";
+                        handLandmarker.setOptions({runningMode: "VIDEO"});
+                        webcamRunning = true;
+                        predictWebcam();
+                    });
+                })
+                .catch((error) => {
+                    console.error("Error accessing webcam:", error);
+                });
+    }
+
+    function stopWebcam() {
+        if (video.srcObject) {
+            video.srcObject.getTracks().forEach(track => track.stop());
+        }
+        video.srcObject = null;
+        webcamRunning = false;
+    }
+
+    async function predictWebcam() {
+        canvasElement.style.width = "100%";
+        canvasElement.style.height = "100%";
+        canvasElement.width = video.videoWidth;
+        canvasElement.height = video.videoHeight;
+
+        if (runningMode === "IMAGE") {
+            runningMode = "VIDEO";
+            await handLandmarker.setOptions({runningMode: "VIDEO"});
+        }
+        let startTimeMs = performance.now();
+        if (lastVideoTime !== video.currentTime) {
+            lastVideoTime = video.currentTime;
+            results = await handLandmarker.detectForVideo(video, startTimeMs);
+        }
+        canvasCtx.save();
+        canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+
+        if (results.landmarks) {
+            for (const landmarks of results.landmarks) {
+                drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {color: "#00FF00", lineWidth: 5});
+                drawLandmarks(canvasCtx, landmarks, {color: "#FF0000", lineWidth: 2});
+
+                const fingerCount = countFingers(landmarks);
+                handleScroll(landmarks);
+
+                if (fingerCount === 1) {
+                    console.log("1 ngón tay được phát hiện, bật dark mode");
+                    checkbox.checked = true;
+                    document.body.classList.add("dark");
+                    await delay(500); // Thêm delay 500ms trước khi tiếp tục
+                } else if (fingerCount === 3) {
+                    console.log("3 ngón tay được phát hiện, tắt dark mode");
+                    checkbox.checked = false;
+                    document.body.classList.remove("dark");
+                    await delay(500); // Thêm delay 500ms trước khi tiếp tục
+                } else if (fingerCount === 5) {
+                    console.log("5 ngón tay được phát hiện, đóng webcam");
+                    stopWebcam();
+                    const modal = bootstrap.Modal.getInstance(webcamModal);
+                    if (modal) {
+                        modal.hide();
+                    }
+                    await delay(500); // Thêm delay 500ms trước khi tiếp tục
+                } else if (fingerCount === 2) {
+                    console.log("2 ngón tay được phát hiện");
+                    const distance = calculateFingerDistance(landmarks);
+                    if (distance > 10) {
+                        const indexTip = landmarks[8];
+                        const middleTip = landmarks[12];
+
+                        // Tính toán vị trí trung bình động
+                        const smoothedIndexTip = {
+                            x: (indexTip.x + previousIndexTip.x) / 2,
+                            y: (indexTip.y + previousIndexTip.y) / 2
+                        };
+                        const smoothedMiddleTip = {
+                            x: (middleTip.x + previousMiddleTip.x) / 2,
+                            y: (middleTip.y + previousMiddleTip.y) / 2
+                        };
+
+                        // Cập nhật vị trí ngón tay trước đó
+                        previousIndexTip = smoothedIndexTip;
+                        previousMiddleTip = smoothedMiddleTip;
+
+                        if (smoothedIndexTip.y < 0.5 && smoothedMiddleTip.y < 0.5) {
+                            // Scroll up
+                            window.scrollBy(0, -1000);
+                            await delay(500); // Thêm delay 500ms trước khi tiếp tục
+                        } else if (smoothedIndexTip.y > 0.5 && smoothedMiddleTip.y > 0.5) {
+                            // Scroll down
+                            window.scrollBy(0, 1000);
+                            await delay(500); // Thêm delay 500ms trước khi tiếp tục
+                        }
+                    }
+                } else {
+                    console.log("Không có hành động phù hợp với số lượng ngón tay được phát hiện");
+                }
+            }
+        }
+
+        canvasCtx.restore();
+
+        if (webcamRunning === true) {
+            window.requestAnimationFrame(predictWebcam);
+        }
+    }
+
+    function countFingers(landmarks) {
+        const fingerTips = [8, 12, 16, 20];
+        let count = 0;
+
+        if (landmarks[8].y < landmarks[6].y)
+            count++;
+        if (landmarks[12].y < landmarks[10].y)
+            count++;
+        if (landmarks[16].y < landmarks[14].y)
+            count++;
+        if (landmarks[20].y < landmarks[18].y)
+            count++;
+        if (landmarks[4].x < landmarks[3].x)
+            count++; // Thumb detection
+        return count;
+    }
+
+    function handleScroll(landmarks) {
+        const canvasHeight = canvasElement.height;
+        const indexTip = landmarks[8];
+        const middleTip = landmarks[12];
+
+        const distance = Math.abs(indexTip.y - middleTip.y) * canvasHeight;
+
+        document.getElementById('fingerDistance').textContent = distance.toFixed(2);
+
+        if (indexTip.y * canvasHeight > canvasHeight && middleTip.y * canvasHeight > canvasHeight) {
+            window.scrollBy(0, 1000);
+        } else if (indexTip.y * canvasHeight < 0 && middleTip.y * canvasHeight < 0) {
+            window.scrollBy(0, -1000);
+        }
+    }
+
+    function calculateFingerDistance(landmarks) {
+        const fingerTips = [8, 12, 16, 20];
+        let totalDistance = 0;
+        let count = 0;
+        for (let i = 0; i < fingerTips.length; i++) {
+            for (let j = i + 1; j < fingerTips.length; j++) {
+                const distance = Math.sqrt(
+                        Math.pow(landmarks[fingerTips[i]].x - landmarks[fingerTips[j]].x, 2) +
+                        Math.pow(landmarks[fingerTips[i]].y - landmarks[fingerTips[j]].y, 2)
+                        );
+                totalDistance += distance;
+                count++;
+            }
+        }
+        return totalDistance / count;
+    }
+
+    const HAND_CONNECTIONS = [
+        [0, 1], [1, 2], [2, 3], [3, 4],
+        [0, 5], [5, 6], [6, 7], [7, 8],
+        [5, 9], [9, 10], [10, 11], [11, 12],
+        [9, 13], [13, 14], [14, 15], [15, 16],
+        [13, 17], [0, 17], [17, 18], [18, 19], [19, 20], [17, 20]
+    ];
+
+    function drawConnectors(ctx, landmarks, connections, { color, lineWidth }) {
+        const canvasWidth = ctx.canvas.width;
+        const canvasHeight = ctx.canvas.height;
+
+        ctx.lineWidth = lineWidth;
+        ctx.strokeStyle = color;
+
+        connections.forEach(([start, end]) => {
+            const startLandmark = landmarks[start];
+            const endLandmark = landmarks[end];
+
+            ctx.beginPath();
+            ctx.moveTo(startLandmark.x * canvasWidth, startLandmark.y * canvasHeight);
+            ctx.lineTo(endLandmark.x * canvasWidth, endLandmark.y * canvasHeight);
+            ctx.stroke();
+        });
+    }
+
+    function drawLandmarks(ctx, landmarks, { color, lineWidth }) {
+        const canvasWidth = ctx.canvas.width;
+        const canvasHeight = ctx.canvas.height;
+
+        ctx.fillStyle = color;
+        ctx.lineWidth = lineWidth;
+
+        landmarks.forEach(landmark => {
+            ctx.beginPath();
+            ctx.arc(landmark.x * canvasWidth, landmark.y * canvasHeight, lineWidth, 0, 2 * Math.PI);
+            ctx.fill();
+        });
+    }
+
+    function setCookie(name, value, days) {
+        const d = new Date();
+        d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+        const expires = "expires=" + d.toUTCString();
+        document.cookie = name + "=" + (value || "") + ";" + expires + ";path=/";
+    }
+
+    function getCookie(name) {
+        const nameEQ = name + "=";
+        const ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) === ' ')
+                c = c.substring(1);
+            if (c.indexOf(nameEQ) === 0)
+                return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    }
+
+    function applyDarkMode() {
+        const darkMode = getCookie("darkMode");
+        if (darkMode === "true") {
+            document.body.classList.add("dark");
+            checkbox.checked = true;
+        } else {
+            document.body.classList.remove("dark");
+            checkbox.checked = false;
+        }
+    }
+
+    checkbox.addEventListener("change", () => {
+        const isChecked = checkbox.checked;
+        if (isChecked) {
+            document.body.classList.add("dark");
+        } else {
+            document.body.classList.remove("dark");
+        }
+        setCookie("darkMode", isChecked, 7); // Save the preference for 7 days
+    });
+
+    applyDarkMode();
+
+    webcamModal.addEventListener("hidden.bs.modal", () => {
+        stopWebcam();
+    });
+
+    function delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+</script>
 
 
 
@@ -442,3 +786,4 @@
     });
 
 </script>
+
