@@ -20714,7 +20714,7 @@ body.dark .card{
 body.dark .bg-gradient-a{
     background-image: linear-gradient(176deg, #292c35 20%, #fd7002 108%) !important;
 }
-body.dark .container,body.dark  .content{
+body.dark .container,body.dark .about .content{
     background: #333333;
 }
 body.dark .modal-content{
