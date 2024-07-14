@@ -231,20 +231,16 @@
                                 <canvas class="output_canvas" id="output_canvas"></canvas>
                             </div>
                             <h3>Distance between Index and Middle Fingers: <span id="fingerDistance">0</span></h3>
-
                         </section>
                         <p> 1 finger to turn Dark Mode On </p>
                         <p> 3 fingers to turn Dark Mode Off </p>
                         <p> 2 fingers to scroll </p>
                         <p> 5 fingers to turn off Camera</p>
-
                     </div>
                 </div>
             </div>
         </div>
         <!-- Webcam Modal -->
-
-
     </nav>
 </aside>
 <script type="module">
