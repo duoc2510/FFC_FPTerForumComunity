@@ -20620,18 +20620,18 @@ html, body {
 /*DARK MODE*/
 body.dark .dropdown-item:hover{
     color:black !important;
-    
+
 }
 body.dark  .table{
-        border-color: #ebf1f624;
+    border-color: #ebf1f624;
 }
 body.dark .dropdown-item:active{
     background-color:none;
 }
 
 body.dark .dropdown-menu{
-        background: #8282827a;
-        border: none;
+    background: #8282827a;
+    border: none;
 }
 body.dark {
     background-color: #1f1f1f !important;
@@ -20641,13 +20641,13 @@ body.dark {
     height:100%;
 }
 body.dark .dropdown-menu{
-      backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
 }
 body.dark .app-header{
-        border-bottom: 1px solid #333333 !important;
+    border-bottom: 1px solid #333333 !important;
 }
 body.dark .bg-light,body.dark .bg-white , body.dark .card{
-     background-color: #1f1f1f !important;
+    background-color: #1f1f1f !important;
 }
 body.dark .form-settings .card{
     border-radius: 0 0 20px 20px !important;
@@ -20656,19 +20656,19 @@ body.dark .form-control{
     border: var(--bs-border-width) solid #333333  !important;
 }
 body.dark .left-sidebar{
-        border-right: 1px solid rgb(229 234 239 / 12%);
+    border-right: 1px solid rgb(229 234 239 / 12%);
 }
 body.dark  .border{
     border: 1px solid rgb(229 234 239 / 12%) !important;
 }
 body.dark .notification-item{
-      background: #333333 !important;
+    background: #333333 !important;
 }
 body.dark container{
     background: #333333 !important;
 }
 body.dark  .table>:not(caption)>*>*{
-        background: #333333 !important;
+    background: #333333 !important;
     color: white;
     border: 1px solid #ffffff36;
 }
@@ -20684,8 +20684,23 @@ body.dark .right-sidebar{
 body.dark border-bottom{
     border-bottom: 1px solid rgb(229 234 239 / 12%) !important;
 }
-body.dark .right-sidebar, body.dark  .left-sidebar,body.dark .app-header, body.dark .card-body{
-     background-color: #1f1f1f !important;
+body.dark .right-sidebar, body.dark  .left-sidebar,body.dark .app-header, body.dark .card-body,body.dark section,body.dark footer,body.dark .footer-newsletter{
+    background-color: #1f1f1f !important;
+}
+
+body.dark .footer .container, body.dark .faq .container,  body.dark .values .container, body.dark .about .container{
+    background: transparent !important;
+}
+body.dark .values .card,body.dark  .faq-container, body.dark  .faq-container .accordion-item,body.dark .faq-container button{
+    background: #333333 !important;
+}
+
+body.dark .accordion-header{
+    color: white !important;
+}
+body.dark .accordion-item{
+    color:white;
+    border: 1px solid #ebf1f669;
 }
 body.dark h1, body.dark a , body.dark p, body.dark h2, body.dark h3, body.dark h4, body.dark h5, body.dark h6,body.dark .timePeriodLabel {
     color: #fff !important;
@@ -20699,18 +20714,17 @@ body.dark .card{
 body.dark .bg-gradient-a{
     background-image: linear-gradient(176deg, #292c35 20%, #fd7002 108%) !important;
 }
-body.dark .container{
+body.dark .container,body.dark .about .content{
     background: #333333;
 }
 body.dark .modal-content{
-        background: rgb(109 109 109 / 50%);
+    background: rgb(109 109 109 / 50%);
     backdrop-filter: blur(10px);
 }
-body.dark footer {
-    background-image: linear-gradient(-178deg, #292c35 100%, #fd7002 108%) !important;
-}
+
+
 body.dark .sidebar-item>.sidebar-link.active{
-  background:#333333 !important;
+    background:#333333 !important;
 }
 body.dark .btn{
     border: none;
@@ -20726,16 +20740,23 @@ body.dark .list-group-item{
     color: white;
 }
 body.dark .nav-pills .nav-link.active{
-     background-color: #333333;
-     border: 1px solid #ffffff78;
+    background-color: #333333;
+    border: 1px solid #ffffff78;
 }
 body.dark .slider{
     background-color: #ffffff78;
 }
-.modal-backdrop.show{
-   display: none;
+
+body.dark .overplay-map{
+    background-image: linear-gradient(174deg, #000000 34%, #eeb570 139%);
 }
-    
+body.dark .section-map .container{
+    background: transparent !important;
+}
+.modal-backdrop.show{
+    display: none;
+}
+
 .checkbox-label {
     background-color: #111;
     width: 50px;
@@ -20766,11 +20787,126 @@ body.dark .slider{
 
 .checkbox:checked + .checkbox-label .ball {
     transform: translateX(24px);
-}   
+}
 .fa-moon {
     color: #f1c40f;
 }
 
 .fa-sun {
     color: #f39c12;
+}
+
+
+/*Building*/
+.section-map .cel-overlay{
+    padding: 0;
+    margin: 0;
+    border-radius: 30px;
+    background: linear-gradient(0deg, rgb(0 0 0 / 31%) 16%, rgba(0, 0, 0, 0) 28%, rgba(0, 212, 255, 0) 82%) !important;
+}
+.building-map {
+    height:400px;
+
+}
+.section-map{
+    padding: 80px 20px 100px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    backdrop-filter: blur(20px);
+}
+.section-map a, .section-map svg{
+    opacity: 1;
+    color: black;
+}
+.overplay-map{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-image: linear-gradient(174deg, #ffffff 34%, #eeb570 139%);
+    opacity: 0.8;
+}
+
+.building-select {
+    color: white;
+}
+.text-black{
+    z-index: 22;
+    position: relative;
+    color: black;
+}
+.building-select a{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+.building-select a:first-child{
+    top: 8%;
+    left: 21%;
+}
+
+.building-select a:nth-child(2){
+    top: 38%;
+    left: 35%;
+}
+.building-select a:nth-child(3){
+    top: 41%;
+    left: 37%;
+}
+
+.building-select a:nth-child(4){
+    top: 60%;
+    left: 49%;
+}
+
+.building-select a:nth-child(5){
+    top: 80%;
+    left: 23%;
+}
+
+
+.building-select a:nth-child(6){
+    top: 74%;
+    left: 31%;
+}
+
+.building-select a:nth-child(7){
+    top: 40%;
+    left: 70%;
+
+}
+
+.building-select a:nth-child(8){
+    top: 93%;
+    left: 58%;
+
+}
+.building-map .content h2{
+    position: relative;
+    color: white;
+    font-size: 25px;
+    padding-left: 5px;
+    z-index: 99;
+}
+
+.section-map .building-map img{
+    height:400px;
+    border-radius: 30px;
+    width: 100%;
+    object-fit: cover;
+}
+
+.pulse {
+    animation: pulse-animation 1s infinite;
+}
+
+@keyframes pulse-animation {
+    0% {
+        box-shadow: 0 0 0 0px rgba(0, 0, 0, 0.2);
+    }
+    100% {
+        box-shadow: 0 0 0 20px rgba(0, 0, 0, 0);
+    }
 }
