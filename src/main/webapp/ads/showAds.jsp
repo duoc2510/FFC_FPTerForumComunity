@@ -25,8 +25,8 @@ Không pull cái này lên chỉ test Advertising
 
 
 <script>
-    function loadAd() {
-        var comboType = 'like'; // Example comboType
+    function loadAdTraffic() {
+        var comboType = 'traffic'; // Example comboType
         var targetSex = '${USER.userSex}'.toLowerCase(); // Replace with your dynamic value from server
 
         var url = '${pageContext.request.contextPath}/advertising/show?comboType=' + comboType + '&targetSex=' + targetSex;
@@ -61,8 +61,6 @@ document.getElementById('showAds').style.display = 'block';
 
 // Call loadAd() when the window loads
     window.onload = function () {
-        loadAd();
-        
+        loadAdTraffic();
     };
-
 </script>

@@ -3,24 +3,24 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 <div class="col-lg-12">
     <div class="w-100">
-        <div class="p-4 bg-white shadow rounded mb-3">
-            <div class="pb-3 d-flex row">
-                <div class="col-1 text-center mt-2">
+        <div class="pt-4 px-4 pb-0 bg-white shadow rounded mb-3">
+            <div class="pb-3 d-flex-inline row px-3">
+                <div class="col-1">
                     <c:choose>
                         <c:when test="${post.userId == USER.userId}">
                             <a href="${pageContext.request.contextPath}/profile">
-                                <img src="${pageContext.request.contextPath}/${post.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
+                                <img src="${pageContext.request.contextPath}/${post.user.userAvatar}" alt=""  class="rounded-circle avatar-cover" style="width: 50px; height:50px">
                             </a>
                         </c:when>
                         <c:otherwise>
                             <a href="${pageContext.request.contextPath}/profile?username=${post.user.username}">
-                                <img src="${pageContext.request.contextPath}/${post.user.userAvatar}" alt="" width="35" class="rounded-circle avatar-cover">
+                                <img src="${pageContext.request.contextPath}/${post.user.userAvatar}" alt="" class="rounded-circle avatar-cover" style="width: 50px; height:50px">
                             </a>
                         </c:otherwise>
                     </c:choose>
                 </div>
-                <div class="col-9 mx-3">
-                    <h6 class="card-title fw-semibold mb-4 d-inline">${post.user.username}</h6>
+                <div class="col-10 d-flex ps-3" style="    flex-direction: column;">
+                    <h6 class="card-title fw-semibold d-inline">${post.user.username}</h6>
                     <a href="${pageContext.request.contextPath}/post/detail?postId=${post.postId}" class="s-4">${post.createDate}</a>
                 </div>
                 <c:choose>
@@ -236,27 +236,28 @@
                     </c:otherwise>
                 </c:choose>
             </div>
-            <div class="mt-1">
-                <p class="fs-8">${post.content}</p>
+            <div class="mt-1 px-1">
+                <p>${post.content}</p>
 
                 <c:if test="${not empty post.uploadPath}">
                     <img src="${pageContext.request.contextPath}/${post.uploadPath}" alt="Post Image" class="post-image rounded mx-auto d-block">
                 </c:if>
             </div>
+            <span class="mx-1 my-3" />
             <div class="">
-                <div class="row p-3 d-flex justify-content-center text-center">
+                <div class="row py-3 px-3">
                     <!-- Like button (Th? <a>), hi?n th? khi ch?a like -->
-                    <span id="like-count-${post.postId}">Post Likes: ${post.likeCount}</span>
+                    <p id="like-count-${post.postId}"> ${post.likeCount} like</p>
 
                     <!-- Nút Like -->
                     <a href="#" id="like-btn-${post.postId}" class="col nav-link nav-icon-hover" style="${post.likedByCurrentUser ? 'display:none;' : ''}" onclick="handleLike(event, ${post.postId}, 'like')" data-postid="${post.postId}" data-action="like">
-                        <span><i class="ti ti-message-plus" style="color: green;"></i></span>
+                        <span><i class="ti ti-heart" style="color: green;"></i></span>
                         <span class="hide-menu" style="color: green;">Like</span>
                     </a>
 
                     <!-- Nút Unlike -->
                     <a href="#" id="unlike-btn-${post.postId}" class="col nav-link nav-icon-hover" style="${post.likedByCurrentUser ? '' : 'display:none;'}" onclick="handleLike(event, ${post.postId}, 'unlike')" data-postid="${post.postId}" data-action="unlike">
-                        <span><i class="ti ti-message-minus" style="color: red;"></i></span>
+                        <span><i class="ti ti-heart-broken" style="color: red;"></i></span>
                         <span class="hide-menu" style="color: red;">Unlike</span>
                     </a>
 
@@ -270,8 +271,10 @@
                     <input type="hidden" name="action" value="addComment">
                     <input type="hidden" name="postId" value="${post.postId}">
                     <input type="hidden" name="userId" value="${user.userId}">
-                    <input type="text" class="form-control" name="content" placeholder="Write a comment" required>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <input type="text" class="form-control rounded " name="content" placeholder="Write a comment" required>
+                    <button type="submit" class="btn btn-primary rounded ms-3"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-return-left" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5"/>
+                        </svg> </button>
                 </form>
                 <div class="comments mt-3">
                     <c:forEach var="comment" items="${post.comments}">

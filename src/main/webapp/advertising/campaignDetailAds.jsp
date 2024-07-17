@@ -130,21 +130,25 @@
                             <label for="productNameInput">Title:</label>
                             <input type="text" class="form-control" name="Title" required>
                         </div>
-                      
-                         <div class="form-group mb-3">
+
+                        <div class="form-group mb-3">
                             <label for="fileInput">Choose Image File:</label>
                             <input type="file" class="form-control-file" id="fileInput" name="file" accept="image/*" required>
                         </div>
-                         <div class="form-group mb-3">
+                        <div class="form-group mb-3">
                             <label for="productDescriptionInput">Content:</label>
                             <textarea class="form-control" name="Content" required></textarea>
                         </div>
-                     
-                        <div class="form-group mb-3">
-                            <label for="productURIInput">URL:</label>
-                            <input type="text" class="form-control" name="URI" required>
-                        </div>
-                          <div class="form-group checkboxLocation">
+                        <%--<c:choose>--%>
+                            <%--<c:when test="${adsCombo.comboType == 'traffic'}">--%>
+                                <div class="form-group mb-3">
+                                    <label for="productURIInput">URL:</label>
+                                    <input type="text" class="form-control" name="URI" required>
+                                </div>
+                            <%--</c:when>--%>
+                        <%--</c:choose>--%>
+                        
+                        <div class="form-group checkboxLocation">
                             <div class="checkbox my-2">
                                 <label>
                                     <input type="checkbox" name="campus" class="check" id="checkAll" value="All"> All campus
@@ -152,7 +156,7 @@
                             </div>
                             <!-- Other checkboxes will be dynamically added here -->
                         </div>
-                           <div class="form-group mb-3">
+                        <div class="form-group mb-3">
                             <label for="budgetInput">Gender</label>
                             <select class="form-select" name="targetSex">
                                 <option value="all">All</option>
@@ -160,9 +164,9 @@
                                 <option value="female">Female</option>
                             </select>
                         </div>
-                       
-                       
-                        
+
+
+
                         <!-- Hidden input fields -->
                         <input type="hidden" name="adsDetailId" value="${AdsComboID}"/>
                         <input type="hidden" id="location${adsCombo.adsDetailId}" name="location">
