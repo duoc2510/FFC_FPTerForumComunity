@@ -36,6 +36,22 @@
 </script>
 <aside class="left-sidebar">
     <style>
+        .webcam-popup video{
+            border-radius: 1.2em;
+            margin-bottom: 1em;
+        }
+
+        .webcam-popup .modal-dialog{
+            position: fixed;
+            width: 100%;
+            right: 2vh;
+            height: 95vh;
+            z-index: 9;
+            display: flex;
+            margin: 0;
+            align-content: flex-end;
+            align-items: flex-end;
+        }
         .sub-item{
             font-size: 13px;
             padding-left: 20px;
