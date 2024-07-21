@@ -7,7 +7,8 @@
 <!--<script src="${pageContext.request.contextPath}/static/js/dashboard.js"></script>-->
 <script src="${pageContext.request.contextPath}/static/js/validate.js"></script>
 <script src="${pageContext.request.contextPath}/static/js/darkmode.js"></script>
-
+<script id="kami-chat-widget" src="https://kamimind.ai/kami-chat-widget.js" token="bDgSxj5N1K97mklImQzpbCHCdhEcQhTf" charset="utf-8" botToken="ec530b26-efd7-4e55-bce0-4e61459a4efe" defer
+></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>

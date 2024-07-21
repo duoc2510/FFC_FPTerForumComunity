@@ -83,6 +83,7 @@ CREATE TABLE [Order] (
     Payment_status NVARCHAR(50), -- Trạng thái thanh toán
     CONSTRAINT fk_user_order FOREIGN KEY (User_id) REFERENCES Users(User_id) -- Tham chiếu đến User_id trong bảng Users
 );
+alter table [Order] DELETE Discount_id
 Go
 -- Bảng nối giữa Order và Discount
 CREATE TABLE OrderDiscount (
