@@ -1,8 +1,57 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
+<script>
+    // bỏ darmode lên đầu để tối ưu hiệu năng
+    function setCookie(name, value, days) {
+        const d = new Date();
+        d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+        const expires = "expires=" + d.toUTCString();
+        document.cookie = name + "=" + (value || "") + ";" + expires + ";path=/";
+    }
 
+    function getCookie(name) {
+        const nameEQ = name + "=";
+        const ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) === ' ')
+                c = c.substring(1);
+            if (c.indexOf(nameEQ) === 0)
+                return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    }
+
+    function applyDarkMode() {
+        const darkMode = getCookie("darkMode");
+        if (darkMode === "true") {
+            document.body.classList.add("dark");
+            checkbox.checked = true;
+        } else {
+            document.body.classList.remove("dark");
+            checkbox.checked = false;
+        }
+    }
+    applyDarkMode();
+</script>
 <aside class="left-sidebar">
     <style>
+        .webcam-popup video{
+            border-radius: 1.2em;
+            margin-bottom: 1em;
+        }
+
+        .webcam-popup .modal-dialog{
+            position: fixed;
+            width: 100%;
+            right: 2vh;
+            height: 95vh;
+            z-index: 9;
+            display: flex;
+            margin: 0;
+            align-content: flex-end;
+            align-items: flex-end;
+        }
         .sub-item{
             font-size: 13px;
             padding-left: 20px;
@@ -244,6 +293,8 @@
     </nav>
 </aside>
 <script type="module">
+
+
     import { HandLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0";
     const demosSection = document.getElementById("demos");
     let handLandmarker = undefined;
@@ -493,36 +544,8 @@
         });
     }
 
-    function setCookie(name, value, days) {
-        const d = new Date();
-        d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
-        const expires = "expires=" + d.toUTCString();
-        document.cookie = name + "=" + (value || "") + ";" + expires + ";path=/";
-    }
 
-    function getCookie(name) {
-        const nameEQ = name + "=";
-        const ca = document.cookie.split(';');
-        for (let i = 0; i < ca.length; i++) {
-            let c = ca[i];
-            while (c.charAt(0) === ' ')
-                c = c.substring(1);
-            if (c.indexOf(nameEQ) === 0)
-                return c.substring(nameEQ.length, c.length);
-        }
-        return null;
-    }
 
-    function applyDarkMode() {
-        const darkMode = getCookie("darkMode");
-        if (darkMode === "true") {
-            document.body.classList.add("dark");
-            checkbox.checked = true;
-        } else {
-            document.body.classList.remove("dark");
-            checkbox.checked = false;
-        }
-    }
 
     checkbox.addEventListener("change", () => {
         const isChecked = checkbox.checked;
@@ -534,7 +557,6 @@
         setCookie("darkMode", isChecked, 7); // Save the preference for 7 days
     });
 
-    applyDarkMode();
 
     webcamModal.addEventListener("hidden.bs.modal", () => {
         stopWebcam();

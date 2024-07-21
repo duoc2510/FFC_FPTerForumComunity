@@ -80,18 +80,18 @@
                                     <p class="mb-4">You have no campaigns.</p>
                                     <div class="d-flex">
                                         <div class="d-flex col-6" style="margin-right:2%;">
-                                            <button class="btn btn-primary w-100" data-toggle="modal" data-target="#createCampaign" href="javascript:void(0)">Create new campaign</button>
+                                            <button class="btn btn-primary w-100 rounded" data-toggle="modal" data-target="#createCampaign" href="javascript:void(0)">Create new campaign</button>
                                         </div>
                                         <div class="d-flex col-6" style="width: 48%">
                                             <a class="w-100" href="${pageContext.request.contextPath}/advertising/combo">
-                                                <button class="btn btn-light border w-100">Quick start with combo</button>
+                                                <button class="btn btn-light border w-100 rounded">Quick start with combo</button>
                                             </a>
                                         </div>
                                     </div>
                                 </c:if>
                                 <c:if test="${not empty allAdsCombo}"> 
                                     <div class="d-flex mb-4">
-                                        <button class="btn btn-primary" data-toggle="modal" data-target="#createCampaign" href="javascript:void(0)">Create new campaign</button>
+                                        <button class="btn btn-primary rounded" data-toggle="modal" data-target="#createCampaign" href="javascript:void(0)">Create new campaign</button>
                                     </div>
                                     <c:forEach var="adsCombo" items="${allAdsCombo}">
                                         <c:set var="createDate" value="${adsCombo.createDate}" />
@@ -106,9 +106,9 @@
                                                     <div class="border px-3 py-2 mx-2 rounded">
                                                         <c:choose>
                                                             <c:when test="${adsCombo.comboType == 'view'}">
-                                                                <i class="ti ti-eye d-inline"></i> <p class="d-inline">Awareness</p>
+                                                                <i class="ti ti-eye d-inline"></i> <p class="d-inline">View</p>
                                                             </c:when>
-                                                            <c:when test="${adsCombo.comboType == 'click'}">
+                                                            <c:when test="${adsCombo.comboType == 'traffic'}">
                                                                 <i class="ti ti-location d-inline"></i> <p class="d-inline">Traffic</p>
                                                             </c:when>
                                                             <c:when test="${adsCombo.comboType == 'message'}">
@@ -130,14 +130,14 @@
                                                     <p>Reacted
                                                         <c:choose>
                                                             <c:when test="${adsCombo.comboType == 'view'}">views</c:when>
-                                                            <c:when test="${adsCombo.comboType == 'click'}">clicks</c:when>
+                                                            <c:when test="${adsCombo.comboType == 'traffic'}">clicks</c:when>
                                                             <c:when test="${adsCombo.comboType == 'message'}">messages</c:when>
                                                         </c:choose>
                                                         : ${adsCombo.totalReact}</p>
                                                     <p>Total
                                                         <c:choose>
                                                             <c:when test="${adsCombo.comboType == 'view'}">views</c:when>
-                                                            <c:when test="${adsCombo.comboType == 'click'}">clicks</c:when>
+                                                            <c:when test="${adsCombo.comboType == 'traffic'}">clicks</c:when>
                                                             <c:when test="${adsCombo.comboType == 'message'}">messages</c:when>
                                                         </c:choose>
                                                         : ${adsCombo.maxReact}</p>
@@ -155,8 +155,8 @@
                                                 </div>
                                             </div>
                                             <div class="col-12 mt-2 mx-2 d-flex justify-content-end">
-                                                <a class="btn btn-light mx-3" data-toggle="modal" data-target="#view${adsCombo.adsDetailId}" href="javascript:void(0)">View</a>
-                                                <a class="btn btn-primary mx-3" href="campaign/detail?id=${adsCombo.adsDetailId}">Continue</a>
+                                                <a class="btn btn-light me-3 rounded" data-toggle="modal" data-target="#view${adsCombo.adsDetailId}" href="javascript:void(0)">View</a>
+                                                <a class="btn btn-primary  rounded" href="campaign/detail?id=${adsCombo.adsDetailId}">Continue</a>
                                             </div>
                                         </div>
                                     </c:forEach>
@@ -184,7 +184,7 @@
                                     <c:if test="${adsCombo.comboType == 'view'}">
                                         <i class="ti ti-eye d-inline"></i> <p class="d-inline">Awareness</p>
                                     </c:if>
-                                    <c:if test="${adsCombo.comboType == 'click'}">
+                                    <c:if test="${adsCombo.comboType == 'traffic'}">
                                         <i class="ti ti-location d-inline"></i> <p class="d-inline">Traffic</p>
                                     </c:if>
                                     <c:if test="${adsCombo.comboType == 'message'}">
@@ -204,7 +204,7 @@
 
                                         <p>Total 
                                             <c:if test="${adsCombo.comboType == 'view'}">views</c:if>
-                                            <c:if test="${adsCombo.comboType == 'click'}">clicks</c:if>
+                                            <c:if test="${adsCombo.comboType == 'traffic'}">clicks</c:if>
                                             <c:if test="${adsCombo.comboType == 'message'}">messages</c:if>
                                             : ${adsCombo.maxReact}</p>
 
@@ -214,7 +214,7 @@
                                         <p>Duration day: ${adsCombo.durationDay}</p>
                                         <p>Rate: <span id="rate">${adsCombo.budget / adsCombo.maxReact / adsCombo.durationDay}</span> VND /
                                             <c:if test="${adsCombo.comboType == 'view'}">view</c:if>
-                                            <c:if test="${adsCombo.comboType == 'click'}">click</c:if>
+                                            <c:if test="${adsCombo.comboType == 'traffic'}">click</c:if>
                                             <c:if test="${adsCombo.comboType == 'message'}">message</c:if></p>
                                         </div>
 
@@ -248,8 +248,8 @@
                         <div class="form-group mb-3">
                             <label for="budgetInput">Campaign type</label>
                             <select class="form-select" name="comboType">
-                                <option value="like">Awareness</option>
-                                <option value="click">Traffic</option>
+                                <option value="view">View</option>
+                                <option value="traffic">Traffic</option>
                                 <option value="message">Message</option>
                             </select>
                         </div>
