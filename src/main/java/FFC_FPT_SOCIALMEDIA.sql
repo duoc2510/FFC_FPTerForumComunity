@@ -83,7 +83,6 @@ CREATE TABLE [Order] (
     Payment_status NVARCHAR(50), -- Trạng thái thanh toán
     CONSTRAINT fk_user_order FOREIGN KEY (User_id) REFERENCES Users(User_id) -- Tham chiếu đến User_id trong bảng Users
 );
-alter table [Order] DELETE Discount_id
 Go
 -- Bảng nối giữa Order và Discount
 CREATE TABLE OrderDiscount (
@@ -410,12 +409,12 @@ GO
 -- Chèn dữ liệu mẫu vào bảng Users
 INSERT INTO Users (Username, usernameVip, User_email, User_password, User_role, User_fullName, User_wallet, User_avatar, User_story, User_rank, User_score, User_sex, User_activeStatus)
 VALUES 
-('ban', NULL, 'duoc1@fpt.edu.vn', '123', 0,N'Thành Được', 100.00, "upload/images.jpg", Null, 1, 10, 'Male', 1),
-('swpduoc', NULL, 'duoc@fpt.edu.vn', '123', 1, N'Thành Được', 100.00, "upload/images.jpg", Null, 1, 10, 'Male', 1),
-('swpdiem', NULL, 'diem@fe.edu.vn', '123', 1, N'Thị Diễm', 200.00, "upload/images.jpg", Null, 2, 20, 'Female', 1),
-('swpphuc', NULL, 'phuc@fe.edu.vn', '123', 2, N'Hoàng Phúc', 200.00, "upload/images.jpg", Null, 2, 20, 'Male', 1),
-('swptrung', NULL, 'trung@fe.edu.vn', '123', 3, N'Quốc Trung', 200.00, "upload/images.jpg", Null, 2, 20, 'Male', 1),
-('vipswptruong', 'truongvipprolugach', 'truong@fpt.edu.vn', '123', 3, N'Hải Trường', 500.00, "upload/images.jpg", Null, 3, 30, 'Male', 1);
+('ban', NULL, 'duoc1@fpt.edu.vn', '123', 0,N'Thành Được', 100.00, 'upload/images.jpg', Null, 1, 10, 'Male', 1),
+('swpduoc', NULL, 'duoc@fpt.edu.vn', '123', 1, N'Thành Được', 100.00, 'upload/images.jpg', Null, 1, 10, 'Male', 1),
+('swpdiem', NULL, 'diem@fe.edu.vn', '123', 1, N'Thị Diễm', 200.00, 'upload/images.jpg', Null, 2, 20, 'Female', 1),
+('swpphuc', NULL, 'phuc@fe.edu.vn', '123', 2, N'Hoàng Phúc', 200.00, 'upload/images.jpg', Null, 2, 20, 'Male', 1),
+('swptrung', NULL, 'trung@fe.edu.vn', '123', 3, N'Quốc Trung', 200.00, 'upload/images.jpg', Null, 2, 20, 'Male', 1),
+('vipswptruong', 'truongvipprolugach', 'truong@fpt.edu.vn', '123', 3, N'Hải Trường', 500.00, 'upload/images.jpg', Null, 3, 30, 'Male', 1);
 GO
 -- Chèn dữ liệu mẫu vào bảng Shop
 INSERT INTO Shop (Owner_id, Shop_name, Shop_phone, Shop_campus, Description, Image, Status)
