@@ -6,7 +6,6 @@ import org.quartz.impl.StdSchedulerFactory;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
-import util.EventNotificationJob;
 
 @WebListener
 public class EventNoti implements ServletContextListener {
@@ -14,7 +13,7 @@ public class EventNoti implements ServletContextListener {
     private Scheduler scheduler;
 
     @Override
-   public void contextInitialized(ServletContextEvent sce) {
+    public void contextInitialized(ServletContextEvent sce) {
         try {
             // Create an instance of Scheduler
             scheduler = StdSchedulerFactory.getDefaultScheduler();
@@ -33,6 +32,12 @@ public class EventNoti implements ServletContextListener {
                     .withIdentity("eventNotificationTrigger", "group1")
                     .withSchedule(CronScheduleBuilder.dailyAtHourAndMinute(hour, minute))
                     .build();
+
+            // Check if the job already exists
+            if (scheduler.checkExists(job.getKey())) {
+                // If it exists, replace the job
+                scheduler.deleteJob(job.getKey());
+            }
 
             // Schedule the job using the trigger
             scheduler.scheduleJob(job, trigger);
