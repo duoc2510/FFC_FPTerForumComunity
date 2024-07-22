@@ -180,6 +180,13 @@ public class Shop_confirmOrder extends HttpServlet {
                     }
                 }
 
+                // Check if no items are selected
+                if (selectedOrderItems.isEmpty()) {
+                    session.setAttribute("message", "No products have been selected.");
+                    response.sendRedirect("cart");
+                    return;
+                }
+
                 for (OrderItem od : selectedOrderItems) {
                     Product p = sdb.getProductByID(od.getProductID());
                     if (p.getQuantity() == 0) {

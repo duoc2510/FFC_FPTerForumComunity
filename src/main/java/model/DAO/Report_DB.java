@@ -149,7 +149,7 @@ public class Report_DB {
 
                 // Lấy thông tin từ bảng Users cho người bị báo cáo
                 String reportedUserName = rs.getString("ReportedUserName");
-                User reportedUser = new User(userId, reportedUserName);
+                User reportedUser = new User(userId,reportedUserName);
 
                 // Tạo đối tượng Report từ các dữ liệu lấy được từ cơ sở dữ liệu
                 Report report = new Report(reportId, reporterId, userId, postId, reason, status, post, reportedUser);

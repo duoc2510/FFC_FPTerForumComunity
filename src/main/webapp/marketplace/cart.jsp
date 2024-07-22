@@ -623,6 +623,7 @@
 
 
     window.onload = function () {
+        loadAdTraffic();
         listenForQuantityChange();
         filterDiscountTotal();
     }

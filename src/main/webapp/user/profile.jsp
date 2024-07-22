@@ -153,10 +153,10 @@
                                 </form>
                             </div>
                         </div>
-                        <div class=" bg-white shadow rounded p-4 mt-4">
+                        <div class="">
 
                             <div class="p0">
-                                <h5 class="mb-2">Bài viết của bạn</h5>
+                                <h5 class="my-4">Bài viết của bạn</h5>
                             </div>
                             <div>
                                 <c:forEach var="post" items="${posts}">

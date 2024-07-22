@@ -59,6 +59,12 @@
                 </c:if>
                 <div class="col-lg-12">
                     <div class="w-100 row">
+
+                        <!--QUANG CAO MESSAGE-->
+                        <%@ include file="shopAds.jsp" %>
+                        <!--QUANG CAO MESSAGE-->
+
+
                         <c:forEach var="shop" items="${shoplist}">
                             <div class="col-md-4">
                                 <div class="card mx-2">
