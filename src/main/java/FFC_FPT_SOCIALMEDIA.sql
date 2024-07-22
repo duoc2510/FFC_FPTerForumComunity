@@ -508,8 +508,3 @@ VALUES
     (1, 3, NULL, NULL, N'tệ', N'pending'),
     (2, 3, NULL, NULL, N'tệ', N'pending');
 
-INSERT INTO Report (Reporter_id, User_id, Post_id, Shop_id, Reason, Status)
-VALUES 
-    (2, 3, 7, NULL, N'tệ', N'pending'),
-    (3, 3, 7, NULL, N'tệ', N'pending');
-
