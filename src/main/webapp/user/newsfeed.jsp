@@ -8,7 +8,7 @@
             <%@ include file="../include/navbar.jsp" %>
             <div class="container-fluid">
                 <div class="row">
-                    <div id="profile-wrapper">
+                    <div id="profile-wrapper" style="max-width: 650px ; margin:auto;">
                         <style>
                             .post {
                                 border: 1px solid #ccc;
@@ -53,7 +53,6 @@
                             }
 
                             .post-image {
-                                max-width: 50%;
                                 height: auto;
                                 margin-top: 10px;
                             }
@@ -68,11 +67,26 @@
                                 top: 20em;
                             }
                         </style>
+                         <%@include file="post_ads.jsp" %>
                         <c:forEach var="post" items="${postsUser}">
                             <c:if test="${ post.postStatus eq 'Public' && post.status ne 'banned'}">
                                 <%@include file="post.jsp" %>
+                               
                             </c:if>
                         </c:forEach>
+
+
+                        <!--QUANG CAO--> 
+                        <!--2 BAI XUAT HIEN QUANG CAO 1 LAN--> 
+                      
+
+
+                        <!--QUANG CAO--> 
+
+
+
+
+
                         <%@include file="modalpost.jsp" %>
                         <script>
                             function editComment(commentId, content) {

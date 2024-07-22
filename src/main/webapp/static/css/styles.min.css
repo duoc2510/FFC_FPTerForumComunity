@@ -20212,6 +20212,9 @@ ul {
 .user-name {
     margin: 0;
 }
+.right-sidebar{
+    position: fixed !important;
+}
 
 .post-status {
     margin: 5px 0 0;
@@ -20378,8 +20381,9 @@ ul {
 
 
 .avatar-cover {
-    width: 35px;
-    height: 35px;
+        width: 40px;
+    height: 40px;
+ border: 2px solid #bebebe;
     object-fit: cover;
 }
 
@@ -20702,7 +20706,7 @@ body.dark .accordion-item{
     color:white;
     border: 1px solid #ebf1f669;
 }
-body.dark h1, body.dark a , body.dark p, body.dark h2, body.dark h3, body.dark h4, body.dark h5, body.dark h6,body.dark .timePeriodLabel {
+body.dark h1, body.dark a , body.dark label,body.dark span, body.dark i, body.dark p, body.dark h2, body.dark h3, body.dark h4, body.dark h5, body.dark h6,body.dark .timePeriodLabel {
     color: #fff !important;
 }
 body.dark .hero-section{
@@ -20721,7 +20725,6 @@ body.dark .modal-content{
     background: rgb(109 109 109 / 50%);
     backdrop-filter: blur(10px);
 }
-
 
 body.dark .sidebar-item>.sidebar-link.active{
     background:#333333 !important;

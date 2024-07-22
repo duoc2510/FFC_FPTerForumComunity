@@ -13,10 +13,10 @@
             <img src="${pageContext.request.contextPath}/static/images/ad-2.svg" class="mx-2" width="20px">Advertising</a>
     </li>
     
-    <li class="list-inline-item w-100 mt-2">
+<!--    <li class="list-inline-item w-100 mt-2">
         <a href="${pageContext.request.contextPath}/advertising/combo" class="rounded btn btn-outline-dark btn-sm w-100 d-flex justify-content-start px-2 py-2">
             <img src="${pageContext.request.contextPath}/static/images/ad.svg" class="mx-2" width="20px">Quick start with combo</a>
-    </li>
+    </li>-->
 
     <li class="list-inline-item w-100 mt-2">
         <a href="${pageContext.request.contextPath}/advertising/campaign" class="rounded btn btn-outline-dark btn-sm w-100 d-flex justify-content-start px-2 py-2">

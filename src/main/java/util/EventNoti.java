@@ -24,8 +24,8 @@ public class EventNoti implements ServletContextListener {
                     .build();
 
             // Set the hour and minute for testing
-            int hour = 0; // Change this to the hour you want
-            int minute = 0; // Change this to the minute you want
+            int hour = 7; // Change this to the hour you want
+            int minute = 40; // Change this to the minute you want
 
             // Create a trigger that fires every day at the specified hour and minute
             Trigger trigger = TriggerBuilder.newTrigger()
